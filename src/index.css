@@ -1,3 +1,160 @@
 ﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ========================================================================= */
+/* 🌌 एनिमेटेड मेश ग्रेडिएंट बैकग्राउंड (इमेज जैसी पेस्टल थीम वाइब)            */
+/* ========================================================================= */
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  width: 100vw;
+  min-height: 100vh;
+  /* पीच, पिंक और पर्पल शेड्स का मिक्सचर जो धीरे-धीरे मूव होगा */
+  background: linear-gradient(135deg, #fbcfe8 0%, #e9d5ff 25%, #fed7aa 50%, #fbcfe8 75%, #e9d5ff 100%);
+  background-size: 400% 400%;
+  animation: meshGradientAnimation 12s ease infinite;
+}
+
+/* 🧘 रंगों को बैकग्राउंड में धीरे-धीरे और स्मूथली तैराने का जादू */
+@keyframes meshGradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ========================================================================= */
+/* 🔮 VIEW 1: ISOMETRIC LANDING PANELS (तैरते हुए ब्लॉक्स)                 */
+/* ========================================================================= */
+
+/* हवा में धीरे तैरने का (Floating) एनिमेशन - 4 सेकंड */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+/* थोड़ा तेज़ तैरने का एनिमेशन - 3 सेकंड */
+@keyframes floatFast {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 4s ease-in-out infinite;
+}
+
+.animate-float-fast {
+  animation: floatFast 3s ease-in-out infinite;
+}
+
+/* फ्रंट पेज के एलिमेंट्स को स्मूथली लोड करने का एंट्री इफ़ेक्ट */
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: scale(0.98); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* ========================================================================= */
+/* 🔑 VIEW 2: SLIDING AUTH PANELS (लॉगिन / साइनअप ट्रांजिशन्स)             */
+/* ========================================================================= */
+
+/* 1. डिफ़ॉल्ट स्टेट्स (Normal State - Sign In सामने रहेगा) */
+.sign-in-panel {
+  transform: translateX(0);
+  opacity: 1;
+  transition: all 0.7s ease-in-out;
+}
+
+.sign-up-panel {
+  transform: translateX(0);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.7s ease-in-out;
+  z-index: 1;
+}
+
+.overlay-panel {
+  transition: all 0.7s ease-in-out;
+}
+
+.overlay-content {
+  transition: all 0.7s ease-in-out;
+}
+
+.content-left {
+  transform: translateX(-200%);
+  transition: all 0.7s ease-in-out;
+}
+
+.content-right {
+  transform: translateX(0);
+  transition: all 0.7s ease-in-out;
+}
+
+/* 2. एक्टिव स्टेट्स (Active State - जब 'Sign Up' बटन दबेगा) */
+.auth-container.active .sign-in-panel {
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.auth-container.active .sign-up-panel {
+  transform: translateX(100%);
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 5;
+  animation: showSignUpForm 0.7s;
+}
+
+.auth-container.active .overlay-panel {
+  transform: translateX(-100%);
+  border-radius: 0 150px 100px 0;
+}
+
+.auth-container.active .overlay-content {
+  transform: translateX(50%);
+}
+
+.auth-container.active .content-left {
+  transform: translateX(0);
+}
+
+.auth-container.active .content-right {
+  transform: translateX(200%);
+}
+
+/* 🔄 हाफ-वे मार्क पर साइनअप फॉर्म को सही से डिस्प्ले करने के लिए की-फ्रेम */
+@keyframes showSignUpForm {
+  0%, 49.99% {
+    opacity: 0;
+    z-index: 1;
+  }
+  50%, 100% {
+    opacity: 1;
+    z-index: 5;
+  }
+}

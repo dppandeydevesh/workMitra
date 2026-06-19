@@ -1,13 +1,64 @@
 ﻿import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export default function HomePage() {
   const navigate = useNavigate();
+  
+  // Aeroplane animation state
+  const [position, setPosition] = useState(0);
+  
+  // Orange ball pointer state
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  // Aeroplane moving animation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPosition((prev) => (prev >= 100 ? 0 : prev + 1));
+    }, 30);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Orange ball pointer (cursor effect)
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 relative overflow-hidden">
       
+      {/* Orange Ball Pointer */}
+      <div 
+        className="fixed w-8 h-8 bg-orange-500 rounded-full pointer-events-none z-50 transition-transform duration-75"
+        style={{ 
+          left: mousePos.x - 16, 
+          top: mousePos.y - 16,
+          boxShadow: '0 0 20px rgba(249,115,22,0.5)'
+        }}
+      />
+
+      {/* Aeroplane */}
+      <div 
+        className="fixed z-40 transition-all duration-75"
+        style={{ 
+          left: `${position}%`, 
+          top: '20%',
+          transform: 'translateY(-50%)'
+        }}
+      >
+        <div className="text-5xl animate-pulse">✈️</div>
+        {/* Trail effect */}
+        <div className="absolute -z-10 w-32 h-1 bg-gradient-to-r from-transparent to-blue-500 right-full top-1/2" />
+      </div>
+
+      {/* Moving line path */}
+      <div className="absolute top-[20%] left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-blue-400 to-transparent" />
+
       {/* Navbar */}
-      <nav className="bg-white shadow-md">
+      <nav className="bg-white shadow-md relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
@@ -50,7 +101,7 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
         
         {/* Question */}
         <div className="text-center mb-8">
@@ -82,40 +133,29 @@ export default function HomePage() {
           </button>
         </div>
 
-        {/* 3 Cards Section */}
-        <div className="grid md:grid-cols-3 gap-6 mt-12">
+        {/* 2 CARDS - (Pehle 3 the, ab 2) */}
+        <div className="grid md:grid-cols-2 gap-6 mt-12 max-w-4xl mx-auto">
           
-          {/* Card 1 */}
-          <div className="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          {/* Card 1: Search Jobs */}
+          <div className="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-all duration-300 hover:scale-105 group">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition">
               <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold mb-2">First you have to create a account here</h3>
-            <p className="text-gray-500">Get started in minutes</p>
-          </div>
-
-          {/* Card 2 */}
-          <div className="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold mb-2">Search the best freelance work here</h3>
-            <p className="text-gray-500">Find jobs that match your skills</p>
+            <h3 className="text-xl font-bold mb-2">Search Jobs</h3>
+            <p className="text-gray-500">Find the best freelance work that matches your skills</p>
           </div>
 
-          {/* Card 3 */}
-          <div className="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition">
-            <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+          {/* Card 2: Search Freelancers */}
+          <div className="bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-all duration-300 hover:scale-105 group">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition">
+              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold mb-2">Apply or save and start your work</h3>
-            <p className="text-gray-500">Save jobs and apply later</p>
+            <h3 className="text-xl font-bold mb-2">Search Freelancers</h3>
+            <p className="text-gray-500">Hire top-rated freelancers for your projects</p>
           </div>
         </div>
 

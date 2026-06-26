@@ -1,4 +1,4 @@
-﻿import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 export default function HomePage() {
@@ -6,9 +6,6 @@ export default function HomePage() {
   
   // Aeroplane animation state
   const [position, setPosition] = useState(0);
-  
-  // Orange ball pointer state
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   // Aeroplane moving animation
   useEffect(() => {
@@ -18,27 +15,10 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Orange ball pointer (cursor effect)
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 relative overflow-hidden">
       
-      {/* Orange Ball Pointer */}
-      <div 
-        className="fixed w-8 h-8 bg-orange-500 rounded-full pointer-events-none z-50 transition-transform duration-75"
-        style={{ 
-          left: mousePos.x - 16, 
-          top: mousePos.y - 16,
-          boxShadow: '0 0 20px rgba(249,115,22,0.5)'
-        }}
-      />
 
       {/* Aeroplane */}
       <div 

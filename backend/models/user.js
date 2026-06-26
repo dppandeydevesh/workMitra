@@ -10,6 +10,14 @@ const UserSchema = new mongoose.Schema({
     companyName: { type: String, default: null },
     targetSkills: { type: String, default: null },
     projectType: { type: String, default: null },
+    collegeName: { type: String, default: null },
+    enrollmentNumber: { type: String, default: null },
+    resumeUrl: { type: String, default: null },
+    resumeText: { type: String, default: null },
+    cvReviewReport: { type: mongoose.Schema.Types.Mixed, default: null },
+    
+    // 🚀 NEW FEATURE: Boolean tracking flag for single-time form onboarding
+    hasCompletedProfile: { type: Boolean, default: false },
     
     googleId: { type: String, default: null },
     facebookId: { type: String, default: null },

@@ -12,9 +12,6 @@ export default function RegisterPage() {
 
   // Aeroplane animation
   const [position, setPosition] = useState(0);
-  
-  // Orange ball pointer
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -23,13 +20,7 @@ export default function RegisterPage() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -48,15 +39,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4 relative overflow-hidden">
       
-      {/* Orange Ball Pointer */}
-      <div 
-        className="fixed w-8 h-8 bg-orange-500 rounded-full pointer-events-none z-50 transition-transform duration-75"
-        style={{ 
-          left: mousePos.x - 16, 
-          top: mousePos.y - 16,
-          boxShadow: '0 0 20px rgba(249,115,22,0.5)'
-        }}
-      />
+
 
       {/* Aeroplane */}
       <div 

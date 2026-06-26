@@ -1,8 +1,10 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../config";
 
 export default function Preferences() {
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
   
   // User preferences state
   const [preferences, setPreferences] = useState({
@@ -10,7 +12,8 @@ export default function Preferences() {
     bio: "",
     skills: [],
     experience: "beginner",
-    interests: []
+    interests: [],
+    resumeUrl: ""
   });
 
   const skillsList = ["React", "Node.js", "Python", "UI/UX", "Content Writing", "Video Editing", "Marketing", "Data Entry"];
@@ -32,12 +35,54 @@ export default function Preferences() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Yahan preferences save hongi (baad mein database mein)
-    console.log("User Preferences:", preferences);
-    // Dashboard pe le jayenge
-    navigate("/dashboard");
+    setErrorMessage("");
+
+    const savedUser = localStorage.getItem("user");
+    if (!savedUser) {
+      setErrorMessage("Authentication session context missing.");
+      return;
+    }
+
+    const parsedUser = JSON.parse(savedUser);
+
+    try {
+      // Save resume details
+      await fetch(`${API_BASE_URL}/api/profile/resume`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: parsedUser.email,
+          resumeUrl: preferences.resumeUrl,
+          resumeText: ""
+        })
+      });
+
+      // 🚀 🆕 LOCK ONBOARDING FLAG MATRIX: Flip hasCompletedProfile to true in MongoDB
+      const response = await fetch(`${API_BASE_URL}/api/auth/complete-profile`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: parsedUser.email })
+      });
+
+      if (response.ok) {
+        // Update local memory cache states cleanly
+        parsedUser.hasCompletedProfile = true;
+        parsedUser.resumeUrl = preferences.resumeUrl;
+        // Optionally map target skills so the Smart Matching engine calculates scores correctly
+        parsedUser.targetSkills = preferences.skills.join(", ");
+        localStorage.setItem("user", JSON.stringify(parsedUser));
+
+        console.log("User Preferences Locked:", preferences);
+        navigate("/dashboard"); // Sends student to the marketplace grid containing live company tasks
+      } else {
+        const data = await response.json();
+        setErrorMessage(data.error || "Failed to update profile configurations.");
+      }
+    } catch (err) {
+      setErrorMessage("Gateway server communication failure.");
+    }
   };
 
   return (
@@ -53,6 +98,12 @@ export default function Preferences() {
         {/* Form Card */}
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
           
+          {errorMessage && (
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 font-bold rounded-xl text-xs mb-4">
+              ⚠️ {errorMessage}
+            </div>
+          )}
+
           {/* Name */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-1">What should we call you?</label>
@@ -83,7 +134,7 @@ export default function Preferences() {
             <label className="block text-sm font-medium text-gray-700 mb-2">Your experience level</label>
             <div className="flex gap-4">
               {["beginner", "intermediate", "expert"].map(level => (
-                <label key={level} className="flex items-center gap-2">
+                <label key={level} className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="radio"
                     value={level}
@@ -91,7 +142,7 @@ export default function Preferences() {
                     onChange={(e) => setPreferences({...preferences, experience: e.target.value})}
                     className="w-4 h-4 text-blue-600"
                   />
-                  <span className="capitalize">{level}</span>
+                  <span className="capitalize text-sm text-gray-700 font-medium">{level}</span>
                 </label>
               ))}
             </div>
@@ -106,9 +157,9 @@ export default function Preferences() {
                   key={skill}
                   type="button"
                   onClick={() => handleSkillToggle(skill)}
-                  className={`px-3 py-1 rounded-full text-sm transition ${
+                  className={`px-3 py-1 rounded-full text-sm transition font-medium ${
                     preferences.skills.includes(skill)
-                      ? "bg-blue-600 text-white"
+                      ? "bg-blue-600 text-white shadow-sm"
                       : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                   }`}
                 >
@@ -127,9 +178,9 @@ export default function Preferences() {
                   key={interest}
                   type="button"
                   onClick={() => handleInterestToggle(interest)}
-                  className={`px-3 py-1 rounded-full text-sm transition ${
+                  className={`px-3 py-1 rounded-full text-sm transition font-medium ${
                     preferences.interests.includes(interest)
-                      ? "bg-green-600 text-white"
+                      ? "bg-green-600 text-white shadow-sm"
                       : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                   }`}
                 >
@@ -139,10 +190,24 @@ export default function Preferences() {
             </div>
           </div>
 
+          {/* Resume Link */}
+          <div className="mb-8 border-t pt-6">
+            <label className="block text-sm font-semibold text-gray-800 mb-1">Resume / CV Shareable Link</label>
+            <p className="text-xs text-gray-500 mb-2">Upload your resume to Google Drive or Dropbox and paste the link below so companies can inspect it.</p>
+            <input
+              type="url"
+              value={preferences.resumeUrl}
+              onChange={(e) => setPreferences({...preferences, resumeUrl: e.target.value})}
+              placeholder="https://drive.google.com/file/d/..."
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+              required
+            />
+          </div>
+
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-medium shadow-md active:scale-[0.99]"
           >
             Continue to Dashboard →
           </button>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API_BASE_URL } from "../config";
 import { useNavigate } from "react-router-dom";
 
 export default function CompanyPreferences() {
@@ -66,14 +67,33 @@ export default function CompanyPreferences() {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/api/profile/company", {
+      // 1. Save the deployed project / company preferences data profile
+      const response = await fetch(`${API_BASE_URL}/api/profile/company`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
       
       const data = await response.json();
+      
       if (response.ok) {
+        // 🚀 🆕 NEW FEATURE FEATURE: Lock the onboarding flag so the form never repeats
+        const savedUser = localStorage.getItem("user");
+        if (savedUser) {
+          const parsedUser = JSON.parse(savedUser);
+          
+          // Call your new backend endpoint to set hasCompletedProfile to true
+          await fetch(`${API_BASE_URL}/api/auth/complete-profile`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: parsedUser.email })
+          });
+
+          // Update local cache state so the app knows the profile is done
+          parsedUser.hasCompletedProfile = true;
+          localStorage.setItem("user", JSON.stringify(parsedUser));
+        }
+
         alert("Company profile requirements saved successfully!");
         navigate("/dashboard");
       } else {

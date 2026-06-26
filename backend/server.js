@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
@@ -512,6 +513,14 @@ ${textToAnalyze}`;
     res.status(500).json({ error: err.message });
   }
 });
+
+// Serve static assets in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../dist')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../dist', 'index.html'));
+  });
+}
 
 app.listen(PORT, () => {
     console.log(`🚀 Server running smoothly on http://localhost:${PORT}`);

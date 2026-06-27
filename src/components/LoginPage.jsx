@@ -34,6 +34,15 @@ export default function LoginPage() {
 
   const navigate = useNavigate();
 
+  // ✈️ Aeroplane flying motion animation background theme
+  const [airplanePos, setAirplanePos] = useState(-10);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAirplanePos((prev) => (prev >= 110 ? -10 : prev + 0.5));
+    }, 30);
+    return () => clearInterval(interval);
+  }, []);
+
 
   // ==========================================
   // 🧠 Password Strength Checker Logic
@@ -205,6 +214,23 @@ export default function LoginPage() {
         <div className="hidden md:block absolute bottom-24 left-16 bg-white/40 backdrop-blur-md border border-blue-300/50 px-5 py-3 rounded-2xl text-blue-900 text-sm font-bold shadow-sm">
           📦 Media Server
         </div>
+
+        {/* ✈️ Aeroplane Motion Background Theme Elements */}
+        <div 
+          className="absolute z-10 transition-all duration-75"
+          style={{ 
+            left: `${airplanePos}%`, 
+            top: '20%',
+            transform: 'translateY(-50%)'
+          }}
+        >
+          <div className="text-4xl md:text-5xl opacity-35 animate-pulse">✈️</div>
+          {/* Trail effect */}
+          <div className="absolute -z-10 w-24 md:w-32 h-1 bg-gradient-to-r from-transparent to-purple-500/20 right-full top-1/2" />
+        </div>
+
+        {/* Moving line path */}
+        <div className="absolute top-[20%] left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-purple-300/20 to-transparent" />
       </div>
 
       {/* ========================================================================= */}

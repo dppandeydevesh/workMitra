@@ -529,33 +529,36 @@ export default function Dashboard() {
                         )}
                       </div>
                     </div>
-                    <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Pasted Resume Text (For AI Parsing)</label>
-                      <textarea
-                        placeholder="Paste your skills, experience history, projects, and educational summary here..."
-                        value={resumeText}
-                        onChange={(e) => setResumeText(e.target.value)}
-                        rows={6}
-                        className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
-                      />
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        type="submit"
-                        disabled={updatingResume}
-                        className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs py-2.5 rounded-xl transition shadow-sm border border-gray-200"
-                      >
-                        {updatingResume ? "Saving..." : "Save Details"}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleReviewCVWithAI}
-                        disabled={loadingReview}
-                        className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-2.5 rounded-xl transition shadow-md"
-                      >
-                        {loadingReview ? "Analyzing..." : "Review CV"}
-                      </button>
-                    </div>
+                    {resumeText ? (
+                      <div className="bg-emerald-50 border border-emerald-200/50 p-3 rounded-xl text-left flex items-center gap-2">
+                        <span className="text-emerald-600 text-sm">✅</span>
+                        <div>
+                          <div className="text-[10px] font-bold text-emerald-800">CV PDF Loaded</div>
+                          <div className="text-[9px] text-emerald-600/80">Ready for AI review critique</div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-amber-50 border border-amber-200/50 p-3 rounded-xl text-left flex items-center gap-2">
+                        <span className="text-amber-500 text-sm">⚠️</span>
+                        <div>
+                          <div className="text-[10px] font-bold text-amber-800">No CV Uploaded</div>
+                          <div className="text-[9px] text-amber-600/80">Please upload a PDF to begin</div>
+                        </div>
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={handleReviewCVWithAI}
+                      disabled={loadingReview || !resumeText}
+                      className={`w-full py-3 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-md ${
+                        !resumeText || loadingReview 
+                          ? "bg-gray-300 cursor-not-allowed" 
+                          : "bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98]"
+                      }`}
+                    >
+                      {loadingReview ? "Analyzing..." : "Review CV"}
+                    </button>
                   </form>
                 </div>
               </div>

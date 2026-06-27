@@ -17,7 +17,7 @@ const Application = require('./models/Application');
 const CompanyProfile = require('./models/CompanyProfile');
 const PendingUser = require('./models/PendingUser'); // 🔑 न्यू इम्पोर्ट: पेंडिंग यूजर मॉडल
 const multer = require('multer');
-const pdfParse = require('pdf-parse');
+const { PDFParse } = require('pdf-parse');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -926,9 +926,10 @@ app.post("/api/profile/upload-cv", authenticateToken, upload.single("cvFile"), a
       return res.status(403).json({ error: "Unauthorized profile context." });
     }
 
-    // Parse the PDF buffer using pdf-parse
-    const pdfData = await pdfParse(req.file.buffer);
-    const extractedText = pdfData.text;
+    // Parse the PDF buffer using PDFParse class
+    const parser = new PDFParse({});
+    await parser.load(req.file.buffer);
+    const extractedText = await parser.getText();
 
     if (!extractedText || extractedText.trim().length === 0) {
       return res.status(400).json({ error: "Could not extract text from the uploaded PDF. Please make sure the PDF has selectable text." });

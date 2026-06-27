@@ -46,8 +46,84 @@ mongoose.connect(dbURI)
     });
 
 // =========================================================================
-// 📝 Route: Dynamic Registration Engine (Updated with Mobile Support)
+// 🚀 UTILITIES: Live SMS & Email Delivery Gateways
 // =========================================================================
+const sendSmsOtp = async (toMobile, otp) => {
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+  const fromNumber = process.env.TWILIO_PHONE_NUMBER;
+
+  if (!accountSid || !authToken || !fromNumber) {
+    console.log(`⚠️ Twilio credentials missing. SMS OTP [${otp}] simulation logged.`);
+    return false;
+  }
+
+  try {
+    const twilio = require("twilio");
+    const client = twilio(accountSid, authToken);
+    
+    // Add country code +91 if not specified (defaulting to India for standard local numbers)
+    const formattedMobile = toMobile.startsWith("+") ? toMobile : `+91${toMobile}`;
+    
+    await client.messages.create({
+      body: `Your workMitra Sign Up verification code is: ${otp}`,
+      from: fromNumber,
+      to: formattedMobile
+    });
+    console.log(`📱 Live Twilio SMS OTP sent successfully to ${formattedMobile}`);
+    return true;
+  } catch (err) {
+    console.error("❌ Failed to deliver live SMS OTP via Twilio:", err.message);
+    return false;
+  }
+};
+
+const sendEmailOtp = async (toEmail, otp) => {
+  const emailUser = process.env.EMAIL_USER;
+  const emailPass = process.env.EMAIL_PASS;
+
+  if (!emailUser || !emailPass) {
+    console.log(`⚠️ Email SMTP credentials missing. Email OTP [${otp}] simulation logged.`);
+    return false;
+  }
+
+  try {
+    const nodemailer = require("nodemailer");
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: emailUser,
+        pass: emailPass
+      }
+    });
+
+    const mailOptions = {
+      from: `"workMitra Portal" <${emailUser}>`,
+      to: toEmail,
+      subject: "workMitra Sign Up Verification OTP Code",
+      text: `Your workMitra email verification code is: ${otp}. This code expires in 10 minutes.`,
+      html: `
+        <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 500px; margin: auto;">
+          <h2 style="color: #4f46e5; text-align: center;">workMitra Account Verification</h2>
+          <p>Hello,</p>
+          <p>Thank you for signing up on workMitra. Please enter the following One-Time Password (OTP) code to verify your email address:</p>
+          <div style="font-size: 24px; font-weight: bold; text-align: center; padding: 15px; background: #f3f4f6; border-radius: 8px; letter-spacing: 4px; margin: 20px 0; color: #1e1b4b;">
+            ${otp}
+          </div>
+          <p style="color: #6b7280; font-size: 11px; text-align: center;">This verification code is valid for 10 minutes.</p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`✉️ Live Email OTP sent successfully to ${toEmail}`);
+    return true;
+  } catch (err) {
+    console.error("❌ Failed to deliver live Email OTP via Nodemailer:", err.message);
+    return false;
+  }
+};
+
 // =========================================================================
 // 📝 Route: Register Step 1 - Initiate Registration & Generate OTPs
 // =========================================================================
@@ -83,6 +159,10 @@ app.post("/api/auth/register", async (req, res) => {
     console.log(`✉️ Simulated OTP for Email [${email}]: ${emailOtp}`);
     console.log(`📱 Simulated OTP for Mobile [${mobile}]: ${mobileOtp}`);
     console.log(`========================================\n`);
+
+    // Deliver actual OTPs if gateway configs exist
+    await sendEmailOtp(email, emailOtp);
+    await sendSmsOtp(mobile, mobileOtp);
 
     // Save pending registration
     await PendingUser.findOneAndDelete({ email }); // Clear previous pending entries

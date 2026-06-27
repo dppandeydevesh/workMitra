@@ -286,6 +286,29 @@ export default function LoginPage() {
                 <p className="text-xs text-gray-400 mt-1">We sent verification codes to your registered email and phone number.</p>
               </div>
 
+              {/* Dev/Staging Bypass OTP Help Card */}
+              {(simulatedEmailOtp || simulatedMobileOtp) && (
+                <div className="bg-indigo-50 border border-indigo-200/50 p-4 rounded-2xl text-left space-y-2.5">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-950">
+                    <span>💡</span>
+                    <span>Staging Simulator Bypass Details</span>
+                  </div>
+                  <p className="text-[10px] text-indigo-700/80 leading-normal font-medium">
+                    Because your Resend/Twilio endpoints are in sandbox/trial mode, we've simulated these verification codes for you to test registration:
+                  </p>
+                  <div className="grid grid-cols-2 gap-2 text-center">
+                    <div className="bg-white/80 p-2 rounded-xl border border-indigo-100">
+                      <p className="text-[9px] uppercase font-bold text-gray-400">Email Code</p>
+                      <p className="font-extrabold text-sm text-purple-950 select-all tracking-wider mt-0.5">{simulatedEmailOtp || "------"}</p>
+                    </div>
+                    <div className="bg-white/80 p-2 rounded-xl border border-indigo-100">
+                      <p className="text-[9px] uppercase font-bold text-gray-400">Mobile Code</p>
+                      <p className="font-extrabold text-sm text-purple-950 select-all tracking-wider mt-0.5">{simulatedMobileOtp || "------"}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <form onSubmit={handleOtpVerifySubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>

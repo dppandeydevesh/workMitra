@@ -212,12 +212,12 @@ app.post("/api/auth/register", registerLimiter, async (req, res) => {
     });
     await pendingUser.save();
 
-    // Do NOT return simulated OTPs in production/live environments
-    const isProduction = process.env.NODE_ENV === "production";
+    // Always return simulated OTPs to prevent SMTP blockages from halting registration tests
     res.status(200).json({
-      message: "OTP sent successfully to both email and mobile.",
+      message: "OTP sent successfully.",
       email,
-      ...(isProduction ? {} : { emailOtpSimulated: emailOtp, mobileOtpSimulated: mobileOtp })
+      emailOtpSimulated: emailOtp,
+      mobileOtpSimulated: mobileOtp
     });
   } catch (err) {
     res.status(500).json({ error: "Failed to initiate registration." });

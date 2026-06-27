@@ -25,6 +25,7 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = useState("");
 
   // OTP Verification States
+  const [isRegistering, setIsRegistering] = useState(false);
   const [isOtpVerifying, setIsOtpVerifying] = useState(false);
   const [emailOtpInput, setEmailOtpInput] = useState("");
   const [mobileOtpInput, setMobileOtpInput] = useState("");
@@ -307,6 +308,7 @@ export default function LoginPage() {
                     return;
                   }
                   setErrorMessage("");
+                  setIsRegistering(true);
                   
                   const payload = userRole === "company"
                     ? { fullName: companyName, companyName, email, password, mobile, userRole: "company" }
@@ -331,6 +333,8 @@ export default function LoginPage() {
                     }
                   } catch (err) {
                     setErrorMessage("Unable to submit registration payload.");
+                  } finally {
+                    setIsRegistering(false);
                   }
                 }}
               >
@@ -373,10 +377,10 @@ export default function LoginPage() {
 
                 <button 
                   type="submit" 
-                  disabled={passwordStrength.score < 4}
-                  className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3 rounded-xl shadow-md mt-1 transition ${passwordStrength.score === 4 ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95 cursor-pointer" : "bg-gray-300 cursor-not-allowed"}`}
+                  disabled={passwordStrength.score < 4 || isRegistering}
+                  className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3 rounded-xl shadow-md mt-1 transition ${passwordStrength.score === 4 && !isRegistering ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95 cursor-pointer" : "bg-gray-300 cursor-not-allowed"}`}
                 >
-                  Sign Up
+                  {isRegistering ? "Registering..." : "Sign Up"}
                 </button>
               </form>
             </div>

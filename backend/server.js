@@ -927,8 +927,8 @@ app.post("/api/profile/upload-cv", authenticateToken, upload.single("cvFile"), a
     }
 
     // Parse the PDF buffer using PDFParse class
-    const parser = new PDFParse({});
-    await parser.load(req.file.buffer);
+    const parser = new PDFParse({ data: new Uint8Array(req.file.buffer) });
+    await parser.load();
     const extractedText = await parser.getText();
 
     if (!extractedText || extractedText.trim().length === 0) {

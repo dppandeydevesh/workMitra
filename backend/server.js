@@ -387,7 +387,8 @@ app.post("/api/auth/forgot-password", async (req, res) => {
       // resetLink is NOT returned to the client in production!
     });
   } catch (err) {
-    res.status(500).json({ error: "Failed to process forgot password request." });
+    console.error("Forgot Password Error:", err);
+    res.status(500).json({ error: `Failed to process forgot password request: ${err.message}` });
   }
 });
 

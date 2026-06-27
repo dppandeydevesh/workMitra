@@ -128,6 +128,73 @@ app.post('/api/auth/login', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+// =========================================================================
+// 🔑 ROUTE: Initiate Password Recovery & Generate Token Link
+// =========================================================================
+app.post("/api/auth/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "Email address is required." });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "No account registered with this email." });
+    }
+
+    // Generate a simple secure random token hex string
+    const crypto = require("crypto");
+    const token = crypto.randomBytes(20).toString("hex");
+
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 Hour lifespan
+    await user.save();
+
+    // In local dev, we return the reset link directly in the response payload
+    const resetLink = `http://localhost:5173/reset-password/${token}`;
+    
+    res.status(200).json({
+      message: "Reset token generated successfully.",
+      resetLink,
+      email: user.email
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// =========================================================================
+// 🔄 ROUTE: Reset Password using valid recovery token
+// =========================================================================
+app.post("/api/auth/reset-password/:token", async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    if (!password) {
+      return res.status(400).json({ error: "New password is required." });
+    }
+
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: "Password reset token is invalid or has expired." });
+    }
+
+    // Update password and clear token fields
+    user.password = password;
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+    await user.save();
+
+    res.status(200).json({ message: "Password updated successfully!" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // =========================================================================

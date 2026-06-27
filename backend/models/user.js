@@ -21,6 +21,11 @@ const UserSchema = new mongoose.Schema({
     
     googleId: { type: String, default: null },
     facebookId: { type: String, default: null },
+    
+    // 🔑 Password reset tokens
+    resetPasswordToken: { type: String, default: null },
+    resetPasswordExpires: { type: Date, default: null },
+    
     createdAt: { type: Date, default: Date.now }
 });
 

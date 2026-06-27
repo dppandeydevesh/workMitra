@@ -87,8 +87,43 @@ export default function LoginPage() {
     }
   };
 
+  // Recovery States
+  const [recoveryEmail, setRecoveryEmail] = useState("");
+  const [recoveryMessage, setRecoveryMessage] = useState("");
+  const [generatedResetLink, setGeneratedResetLink] = useState("");
+  const [sendingRecovery, setSendingRecovery] = useState(false);
+
   const handleForgotPassword = () => {
-    alert("Password recovery module initialization hook. A reset link workflow can be mapped here.");
+    setView("forgot");
+    setErrorMessage("");
+    setRecoveryMessage("");
+    setGeneratedResetLink("");
+  };
+
+  const handleRecoverySubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage("");
+    setRecoveryMessage("");
+    setSendingRecovery(true);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: recoveryEmail })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setRecoveryMessage("Password reset instructions generated successfully!");
+        setGeneratedResetLink(data.resetLink);
+      } else {
+        setErrorMessage(data.error || "Failed to generate recovery link.");
+      }
+    } catch (err) {
+      setErrorMessage("Error connecting to server gateway.");
+    } finally {
+      setSendingRecovery(false);
+    }
   };
 
   return (
@@ -295,6 +330,86 @@ export default function LoginPage() {
               </div>
             </div>
 
+          </div>
+        </div>
+      )}
+      {/* ========================================================================= */}
+      {/* 🔑 VIEW 3: Password Recovery Screen                                      */}
+      {/* ========================================================================= */}
+      {view === "forgot" && (
+        <div className="w-full min-h-screen flex flex-col items-center justify-center p-6 z-10 animate-fade-in">
+          <div className="bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 max-w-md w-full border border-white/60 text-center space-y-6">
+            <div className="flex justify-center">
+              <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain filter drop-shadow-md mix-blend-multiply" />
+            </div>
+            
+            <div>
+              <h2 className="text-2xl font-black text-purple-950">Reset Password</h2>
+              <p className="text-xs text-gray-400 mt-1">Initialize your credentials node recovery workflow.</p>
+            </div>
+
+            {errorMessage && (
+              <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-xl text-left">
+                ⚠️ {errorMessage}
+              </div>
+            )}
+
+            {recoveryMessage ? (
+              <div className="space-y-4">
+                <div className="p-4 bg-green-50 border border-green-200 text-green-700 text-xs font-bold rounded-xl text-left">
+                  ✓ {recoveryMessage}
+                </div>
+                {generatedResetLink && (
+                  <div className="bg-purple-50 border border-purple-100 p-4 rounded-xl text-left space-y-2">
+                    <span className="text-[10px] font-extrabold text-purple-700 uppercase block tracking-wider">Dev Mode Recovery Link</span>
+                    <a 
+                      href={generatedResetLink} 
+                      className="text-xs text-blue-600 hover:text-blue-800 font-bold break-all hover:underline"
+                    >
+                      {generatedResetLink}
+                    </a>
+                    <p className="text-[9px] text-gray-400 leading-relaxed">
+                      Click the simulated reset link above to open the reset password screen in local sandbox mode.
+                    </p>
+                  </div>
+                )}
+                <button
+                  onClick={() => { setView("auth"); setRecoveryEmail(""); }}
+                  className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition animate-pulse"
+                >
+                  Return to Sign In
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleRecoverySubmit} className="space-y-4">
+                <input
+                  type="email"
+                  placeholder="Enter your registered email address"
+                  value={recoveryEmail}
+                  onChange={(e) => setRecoveryEmail(e.target.value)}
+                  className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  required
+                />
+                
+                <button
+                  type="submit"
+                  disabled={sendingRecovery}
+                  className="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition hover:opacity-95"
+                >
+                  {sendingRecovery ? "Initiating recovery..." : "Send Reset Link"}
+                </button>
+
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => { setView("auth"); setErrorMessage(""); }}
+                    className="text-xs text-purple-600 hover:text-pink-600 font-bold transition hover:underline"
+                  >
+                    ← Back to Sign In
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}

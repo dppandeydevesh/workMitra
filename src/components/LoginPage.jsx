@@ -333,12 +333,12 @@ export default function LoginPage() {
               </form>
 
               {/* Dev Mode Simulated Helper */}
-              {generatedEmailOtp && (
+              {simulatedEmailOtp && (
                 <div className="bg-amber-50 border border-amber-200/50 p-4 rounded-2xl text-left space-y-2 mt-4">
                   <span className="text-[10px] font-black text-amber-800 uppercase block tracking-wider">Dev Sandbox Verification Codes</span>
                   <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div>Email OTP: <span className="font-mono font-black text-amber-900 bg-amber-100 px-1.5 py-0.5 rounded">{generatedEmailOtp}</span></div>
-                    <div>Mobile OTP: <span className="font-mono font-black text-amber-900 bg-amber-100 px-1.5 py-0.5 rounded">{generatedMobileOtp}</span></div>
+                    <div>Email OTP: <span className="font-mono font-black text-amber-900 bg-amber-100 px-1.5 py-0.5 rounded">{simulatedEmailOtp}</span></div>
+                    <div>Mobile OTP: <span className="font-mono font-black text-amber-900 bg-amber-100 px-1.5 py-0.5 rounded">{simulatedMobileOtp}</span></div>
                   </div>
                 </div>
               )}

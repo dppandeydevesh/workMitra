@@ -285,22 +285,6 @@ export default function LoginPage() {
                 <p className="text-xs text-gray-400 mt-1">We sent a 6-digit verification code to your registered email address.</p>
               </div>
 
-              {/* Dev/Staging Bypass OTP Help Card */}
-              {simulatedEmailOtp && (
-                <div className="bg-indigo-50 border border-indigo-200/50 p-4 rounded-2xl text-left space-y-2">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-950">
-                    <span>💡</span>
-                    <span>Domain Propagation Delay Helper</span>
-                  </div>
-                  <p className="text-[10px] text-indigo-700/80 leading-normal font-medium">
-                    If your DNS changes have not propagated yet, you can use this simulated bypass code to verify immediately:
-                  </p>
-                  <div className="bg-white/80 p-2.5 rounded-xl border border-indigo-100 text-center max-w-[180px] mx-auto">
-                    <p className="text-[9px] uppercase font-bold text-gray-400">Email Code</p>
-                    <p className="font-extrabold text-sm text-purple-950 select-all tracking-wider mt-0.5">{simulatedEmailOtp}</p>
-                  </div>
-                </div>
-              )}
 
               <form onSubmit={handleOtpVerifySubmit} className="space-y-4 text-left">
                 <div>

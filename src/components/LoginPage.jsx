@@ -187,7 +187,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden select-none p-4 bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50">
+    <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden select-none p-4">
       
       {/* 🌌 Background Decorative Flow Elements */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">

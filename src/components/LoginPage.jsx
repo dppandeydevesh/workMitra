@@ -331,17 +331,6 @@ export default function LoginPage() {
                   </button>
                 </div>
               </form>
-
-              {/* Dev Mode Simulated Helper */}
-              {simulatedEmailOtp && (
-                <div className="bg-amber-50 border border-amber-200/50 p-4 rounded-2xl text-left space-y-2 mt-4">
-                  <span className="text-[10px] font-black text-amber-800 uppercase block tracking-wider">Dev Sandbox Verification Codes</span>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div>Email OTP: <span className="font-mono font-black text-amber-900 bg-amber-100 px-1.5 py-0.5 rounded">{simulatedEmailOtp}</span></div>
-                    <div>Mobile OTP: <span className="font-mono font-black text-amber-900 bg-amber-100 px-1.5 py-0.5 rounded">{simulatedMobileOtp}</span></div>
-                  </div>
-                </div>
-              )}
             </div>
           ) : (
             /* Desktop/Mobile Adaptive Form Container */

@@ -9,6 +9,7 @@ const User = require('./models/User');
 const Project = require('./models/Project');
 const Application = require('./models/Application');
 const CompanyProfile = require('./models/CompanyProfile');
+const PendingUser = require('./models/PendingUser'); // 🔑 न्यू इम्पोर्ट: पेंडिंग यूजर मॉडल
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -47,9 +48,11 @@ mongoose.connect(dbURI)
 // =========================================================================
 // 📝 Route: Dynamic Registration Engine (Updated with Mobile Support)
 // =========================================================================
+// =========================================================================
+// 📝 Route: Register Step 1 - Initiate Registration & Generate OTPs
+// =========================================================================
 app.post("/api/auth/register", async (req, res) => {
   try {
-    // 🎯 NEW FEATURE: डिस्ट्रक्चरिंग में mobile, collegeName, enrollmentNumber फ़ील्ड्स को ऐड किया गया है
     const { fullName, companyName, email, password, userRole, mobile, collegeName, enrollmentNumber } = req.body;
 
     if (!email || !password || !mobile) {
@@ -57,25 +60,77 @@ app.post("/api/auth/register", async (req, res) => {
     }
 
     if (userRole === "student") {
-      if (!fullName) {
-        return res.status(400).json({ error: "Full Name is required" });
-      }
-      if (!collegeName) {
-        return res.status(400).json({ error: "College Name is required" });
-      }
-      if (!enrollmentNumber) {
-        return res.status(400).json({ error: "Enrollment Number is required" });
+      if (!fullName || !collegeName || !enrollmentNumber) {
+        return res.status(400).json({ error: "Full Name, College, and Enrollment Number are required for students." });
       }
     }
 
     if (userRole === "company" && !companyName) {
-      return res.status(400).json({ error: "Company Name is required" });
+      return res.status(400).json({ error: "Company Name is required." });
     }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: "Email already exists" });
+      return res.status(400).json({ error: "Email already registered." });
     }
+
+    // Generate random 6-digit OTPs
+    const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    const mobileOtp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Log simulated OTPs to system console
+    console.log(`\n========================================`);
+    console.log(`✉️ Simulated OTP for Email [${email}]: ${emailOtp}`);
+    console.log(`📱 Simulated OTP for Mobile [${mobile}]: ${mobileOtp}`);
+    console.log(`========================================\n`);
+
+    // Save pending registration
+    await PendingUser.findOneAndDelete({ email }); // Clear previous pending entries
+    const pendingUser = new PendingUser({
+      email,
+      emailOtp,
+      mobileOtp,
+      registrationData: req.body
+    });
+    await pendingUser.save();
+
+    res.status(200).json({
+      message: "OTP sent successfully to both email and mobile.",
+      email,
+      emailOtpSimulated: emailOtp,
+      mobileOtpSimulated: mobileOtp
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// =========================================================================
+// 🔑 Route: Register Step 2 - Verify OTPs & Create Account
+// =========================================================================
+app.post("/api/auth/register-verify", async (req, res) => {
+  try {
+    const { email, emailOtp, mobileOtp } = req.body;
+
+    if (!email || !emailOtp || !mobileOtp) {
+      return res.status(400).json({ error: "Email, Email OTP, and Mobile OTP are required." });
+    }
+
+    const pending = await PendingUser.findOne({ email });
+    if (!pending) {
+      return res.status(400).json({ error: "Verification session expired or invalid. Please try registering again." });
+    }
+
+    if (pending.emailOtp !== emailOtp) {
+      return res.status(400).json({ error: "Invalid Email verification code." });
+    }
+
+    if (pending.mobileOtp !== mobileOtp) {
+      return res.status(400).json({ error: "Invalid Mobile verification code." });
+    }
+
+    // Verify successful! Save actual user
+    const { fullName, companyName, password, userRole, mobile, collegeName, enrollmentNumber } = pending.registrationData;
 
     const newUser = new User({
       fullName,
@@ -85,11 +140,27 @@ app.post("/api/auth/register", async (req, res) => {
       mobile,
       collegeName: userRole === "student" ? collegeName : null,
       enrollmentNumber: userRole === "student" ? enrollmentNumber : null,
-      userRole,
+      userRole
     });
 
     await newUser.save();
-    res.status(201).json({ message: "Registration successful" });
+    await PendingUser.findOneAndDelete({ email }); // Clear pending record
+
+    res.status(201).json({
+      message: "Registration successful!",
+      user: {
+        fullName: newUser.fullName,
+        companyName: newUser.companyName,
+        email: newUser.email,
+        userRole: newUser.userRole,
+        hasCompletedProfile: false,
+        collegeName: newUser.collegeName || null,
+        enrollmentNumber: newUser.enrollmentNumber || null,
+        resumeUrl: null,
+        resumeText: null,
+        cvReviewReport: null
+      }
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -128,6 +199,7 @@ app.post('/api/auth/login', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+});
 // =========================================================================
 // 🔑 ROUTE: Initiate Password Recovery & Generate Token Link
 // =========================================================================

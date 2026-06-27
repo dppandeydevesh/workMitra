@@ -24,6 +24,13 @@ export default function LoginPage() {
 
   const [errorMessage, setErrorMessage] = useState("");
 
+  // OTP Verification States
+  const [isOtpVerifying, setIsOtpVerifying] = useState(false);
+  const [emailOtpInput, setEmailOtpInput] = useState("");
+  const [mobileOtpInput, setMobileOtpInput] = useState("");
+  const [simulatedEmailOtp, setSimulatedEmailOtp] = useState("");
+  const [simulatedMobileOtp, setSimulatedMobileOtp] = useState("");
+
   const navigate = useNavigate();
 
 
@@ -126,6 +133,50 @@ export default function LoginPage() {
     }
   };
 
+  const handleOtpVerifySubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage("");
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register-verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          emailOtp: emailOtpInput,
+          mobileOtp: mobileOtpInput
+        })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        alert("Registration Successful!");
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        // Reset registration fields
+        setCompanyName("");
+        setFullName("");
+        setEmail("");
+        setPassword("");
+        setMobile("");
+        setCollegeName("");
+        setEnrollmentNumber("");
+        setPasswordStrength({ score: 0, text: "" });
+        setIsSignUp(false);
+        setIsOtpVerifying(false);
+
+        if (data.user.userRole === "company") {
+          navigate("/company-dashboard");
+        } else {
+          navigate("/preferences");
+        }
+      } else {
+        setErrorMessage(data.error || "Verification failed.");
+      }
+    } catch (err) {
+      setErrorMessage("Error communicating with server portal.");
+    }
+  };
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden select-none p-4">
       
@@ -185,7 +236,80 @@ export default function LoginPage() {
           <button onClick={() => { setView("landing"); setErrorMessage(""); }} className="absolute top-6 left-6 px-4 py-2 bg-purple-950/10 border border-purple-950/20 rounded-full text-xs font-bold text-purple-950 transition">← Back to Paths</button>
           {errorMessage && <div className="mb-4 px-4 py-2 bg-red-100 text-red-700 text-xs font-bold rounded-xl border border-red-200 z-50 shadow-md">⚠️ {errorMessage}</div>}
           
-          <div className={`auth-container ${isSignUp ? "active" : ""} relative w-full max-w-[768px] min-h-[560px] bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] overflow-hidden flex border border-white/60`}>
+          {isOtpVerifying ? (
+            <div className="w-full max-w-md bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 border border-white/60 text-center space-y-6 animate-fade-in z-20">
+              <div className="flex justify-center">
+                <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain filter drop-shadow-md mix-blend-multiply" />
+              </div>
+              
+              <div>
+                <h2 className="text-2xl font-black text-purple-950">Verify Your Account</h2>
+                <p className="text-xs text-gray-400 mt-1">We sent simulated OTP verification codes to your nodes.</p>
+              </div>
+
+              {/* Dev simulated helper badge */}
+              <div className="bg-purple-50 border border-purple-100 p-4 rounded-xl text-left space-y-2">
+                <span className="text-[10px] font-extrabold text-purple-700 uppercase block tracking-wider">Dev Mode OTP Simulation</span>
+                <div className="grid grid-cols-2 gap-2 text-xs font-bold text-gray-700">
+                  <div>
+                    <span className="text-[9px] uppercase font-bold text-gray-400 block">Email OTP</span>
+                    <span className="text-sm font-black text-purple-950">{simulatedEmailOtp}</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] uppercase font-bold text-gray-400 block">Mobile OTP</span>
+                    <span className="text-sm font-black text-purple-950">{simulatedMobileOtp}</span>
+                  </div>
+                </div>
+              </div>
+
+              <form onSubmit={handleOtpVerifySubmit} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-left text-[9px] font-bold text-gray-400 uppercase mb-1.5 px-1">Email Verification Code</label>
+                    <input
+                      type="text"
+                      maxLength="6"
+                      value={emailOtpInput}
+                      onChange={(e) => setEmailOtpInput(e.target.value)}
+                      placeholder="6-digit code"
+                      className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-center tracking-widest font-black"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-left text-[9px] font-bold text-gray-400 uppercase mb-1.5 px-1">Mobile Verification Code</label>
+                    <input
+                      type="text"
+                      maxLength="6"
+                      value={mobileOtpInput}
+                      onChange={(e) => setMobileOtpInput(e.target.value)}
+                      placeholder="6-digit code"
+                      className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-center tracking-widest font-black"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition hover:opacity-95 mt-2"
+                >
+                  Verify and Create Account
+                </button>
+
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => { setIsOtpVerifying(false); setErrorMessage(""); }}
+                    className="text-xs text-purple-600 hover:text-pink-600 font-bold transition hover:underline"
+                  >
+                    ← Cancel and Edit Registration
+                  </button>
+                </div>
+              </form>
+            </div>
+          ) : (
+            <div className={`auth-container ${isSignUp ? "active" : ""} relative w-full max-w-[768px] min-h-[560px] bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] overflow-hidden flex border border-white/60`}>
             
             {/* 📝 SIGN UP PORTAL PANEL */}
             <div className="sign-up-panel absolute top-0 left-0 h-full w-1/2 opacity-0 z-1 pointer-events-none flex flex-col items-center justify-center px-12 text-center text-gray-800 overflow-y-auto py-6">
@@ -211,33 +335,12 @@ export default function LoginPage() {
                     });
                     const data = await response.json();
                     if (response.ok) {
-                      alert("Registration Successful!");
-                      
-                      localStorage.setItem("user", JSON.stringify({ 
-                        fullName: payload.fullName, 
-                        companyName: payload.companyName, 
-                        email: payload.email, 
-                        userRole: payload.userRole,
-                        collegeName: payload.collegeName || null,
-                        enrollmentNumber: payload.enrollmentNumber || null,
-                        hasCompletedProfile: false
-                      }));
-
-                      setCompanyName("");
-                      setFullName("");
-                      setEmail("");
-                      setPassword("");
-                      setMobile("");
-                      setCollegeName("");
-                      setEnrollmentNumber("");
-                      setPasswordStrength({ score: 0, text: "" });
-                      setIsSignUp(false);
-
-                      if (payload.userRole === "company") {
-                        navigate("/company-dashboard");
-                      } else {
-                        navigate("/preferences");
-                      }
+                      setSimulatedEmailOtp(data.emailOtpSimulated);
+                      setSimulatedMobileOtp(data.mobileOtpSimulated);
+                      setIsOtpVerifying(true);
+                      setErrorMessage("");
+                      setEmailOtpInput("");
+                      setMobileOtpInput("");
                     } else {
                       setErrorMessage(data.error || "Registration system error.");
                     }
@@ -329,8 +432,8 @@ export default function LoginPage() {
                 </div>
               </div>
             </div>
-
           </div>
+        )}
         </div>
       )}
       {/* ========================================================================= */}

@@ -118,6 +118,39 @@ app.get("/api/debug/smtp-logs", (req, res) => {
   res.json(smtpLogs);
 });
 
+// 📊 DIAGNOSTIC ROUTE: Check collection sizes and database storage stats
+app.get("/api/debug/db-size", async (req, res) => {
+  try {
+    const stats = await mongoose.connection.db.stats();
+    const collections = await mongoose.connection.db.listCollections().toArray();
+    const collectionStats = [];
+    
+    for (const col of collections) {
+      const colStats = await mongoose.connection.db.collection(col.name).stats();
+      collectionStats.push({
+        name: col.name,
+        count: colStats.count,
+        sizeMB: (colStats.size / (1024 * 1024)).toFixed(2),
+        storageSizeMB: (colStats.storageSize / (1024 * 1024)).toFixed(2),
+        indexSizeMB: (colStats.totalIndexSize / (1024 * 1024)).toFixed(2)
+      });
+    }
+    
+    res.json({
+      dbStats: {
+        collectionsCount: stats.collections,
+        objectsCount: stats.objects,
+        dataSizeMB: (stats.dataSize / (1024 * 1024)).toFixed(2),
+        storageSizeMB: (stats.storageSize / (1024 * 1024)).toFixed(2),
+        indexSizeMB: (stats.indexSize / (1024 * 1024)).toFixed(2)
+      },
+      collections: collectionStats
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 const sendEmailOtp = async (toEmail, otp) => {
   const resendApiKey = process.env.RESEND_API_KEY;
 

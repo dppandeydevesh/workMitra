@@ -929,7 +929,8 @@ app.post("/api/profile/upload-cv", authenticateToken, upload.single("cvFile"), a
     // Parse the PDF buffer using PDFParse class
     const parser = new PDFParse({ data: new Uint8Array(req.file.buffer) });
     await parser.load();
-    const extractedText = await parser.getText();
+    const pdfData = await parser.getText();
+    const extractedText = pdfData.text;
 
     if (!extractedText || extractedText.trim().length === 0) {
       return res.status(400).json({ error: "Could not extract text from the uploaded PDF. Please make sure the PDF has selectable text." });

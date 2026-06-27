@@ -31,6 +31,7 @@ export default function Dashboard() {
   const [cvReport, setCvReport] = useState(null);
   const [loadingReview, setLoadingReview] = useState(false);
   const [updatingResume, setUpdatingResume] = useState(false);
+  const [uploadingCV, setUploadingCV] = useState(false);
 
   // Search & Filter States
   const [searchTerm, setSearchTerm] = useState("");
@@ -83,6 +84,47 @@ export default function Dashboard() {
 
     initializeDashboardData();
   }, []);
+
+  const handleUploadCVFile = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.type !== "application/pdf") {
+      alert("Only PDF formats are supported for automatic CV text extraction.");
+      return;
+    }
+
+    setUploadingCV(true);
+    const formData = new FormData();
+    formData.append("cvFile", file);
+    formData.append("email", currentUser.email);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/profile/upload-cv`, {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setResumeText(data.resumeText);
+        alert("CV PDF uploaded and text extracted successfully! You can now review the extracted details or click 'Review CV' to run the AI critique.");
+        
+        const updatedUser = {
+          ...currentUser,
+          resumeText: data.resumeText
+        };
+        setCurrentUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      } else {
+        alert(data.error || "Failed to upload and parse CV PDF.");
+      }
+    } catch (err) {
+      alert("Error communicating with server upload gateway.");
+    } finally {
+      setUploadingCV(false);
+    }
+  };
 
   const handleUpdateResumeDetails = async (e) => {
     e.preventDefault();
@@ -464,14 +506,28 @@ export default function Dashboard() {
 
                   <form onSubmit={handleUpdateResumeDetails} className="space-y-4">
                     <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Resume Cloud Link</label>
-                      <input
-                        type="url"
-                        placeholder="https://drive.google.com/file/d/..."
-                        value={resumeUrl}
-                        onChange={(e) => setResumeUrl(e.target.value)}
-                        className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      />
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Upload CV PDF (Auto-Extract Details)</label>
+                      <div className="relative border-2 border-dashed border-gray-200 rounded-xl p-3 text-center hover:border-indigo-400 transition cursor-pointer bg-gray-50/50">
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={handleUploadCVFile}
+                          disabled={uploadingCV}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                        {uploadingCV ? (
+                          <div className="flex flex-col items-center justify-center space-y-1.5 py-1">
+                            <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                            <span className="text-[10px] text-indigo-600 font-bold">Extracting text...</span>
+                          </div>
+                        ) : (
+                          <div className="space-y-1">
+                            <div className="text-base">📄</div>
+                            <div className="text-[10px] font-bold text-gray-700">Drag & Drop or Click to Upload PDF</div>
+                            <div className="text-[9px] text-gray-400">PDF format up to 5MB</div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div>
                       <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Pasted Resume Text (For AI Parsing)</label>

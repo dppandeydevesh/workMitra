@@ -16,6 +16,8 @@ const Project = require('./models/Project');
 const Application = require('./models/Application');
 const CompanyProfile = require('./models/CompanyProfile');
 const PendingUser = require('./models/PendingUser'); // 🔑 न्यू इम्पोर्ट: पेंडिंग यूजर मॉडल
+const multer = require('multer');
+const pdfParse = require('pdf-parse');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -896,6 +898,60 @@ app.post("/api/profile/resume", authenticateToken, async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: "Failed to update candidate resume details." });
+  }
+});
+
+// Configure multer storage in memory for PDF uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
+
+// 🏢 ROUTE: Upload CV PDF, parse text and save to user profile
+app.post("/api/profile/upload-cv", authenticateToken, upload.single("cvFile"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No CV file was uploaded." });
+    }
+
+    if (req.file.mimetype !== "application/pdf") {
+      return res.status(400).json({ error: "Only PDF CV formats are supported." });
+    }
+
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "Email is required." });
+    }
+    if (req.user.email !== email) {
+      return res.status(403).json({ error: "Unauthorized profile context." });
+    }
+
+    // Parse the PDF buffer using pdf-parse
+    const pdfData = await pdfParse(req.file.buffer);
+    const extractedText = pdfData.text;
+
+    if (!extractedText || extractedText.trim().length === 0) {
+      return res.status(400).json({ error: "Could not extract text from the uploaded PDF. Please make sure the PDF has selectable text." });
+    }
+
+    // Save extracted text to user document
+    const updatedUser = await User.findOneAndUpdate(
+      { email },
+      { resumeText: extractedText },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    res.status(200).json({
+      message: "CV PDF uploaded and text parsed successfully.",
+      resumeText: extractedText
+    });
+  } catch (err) {
+    console.error("PDF upload/parse error:", err);
+    res.status(500).json({ error: `Failed to upload and parse CV PDF: ${err.message}` });
   }
 });
 

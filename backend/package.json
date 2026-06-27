@@ -17,7 +17,9 @@
     "helmet": "^8.2.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.7.1",
+    "multer": "^2.2.0",
     "nodemailer": "^9.0.1",
+    "pdf-parse": "^2.4.5",
     "twilio": "^6.0.2",
     "ws": "^8.21.0"
   },

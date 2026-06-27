@@ -305,6 +305,66 @@ app.get("/api/projects/:projectId/applicants", async (req, res) => {
 });
 
 // =========================================================================
+// 🏢 ROUTE: Fetch all applications for a specific company's projects
+// =========================================================================
+app.get("/api/applications/company/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    // Find all projects posted by this company
+    const companyProjects = await Project.find({ companyId: email });
+    const projectIds = companyProjects.map(p => p._id);
+
+    // Find all applications for these projects
+    const applications = await Application.find({ projectId: { $in: projectIds } })
+      .populate("projectId")
+      .sort({ appliedAt: -1 });
+
+    if (applications.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    const enrichedApps = await Promise.all(
+      applications.map(async (app) => {
+        const studentUser = await User.findOne({ email: app.studentEmail });
+        const currentProject = app.projectId;
+        
+        let matchPercentage = 0;
+        if (currentProject && currentProject.requiredSkills && studentUser && studentUser.targetSkills) {
+          const targetSkills = currentProject.requiredSkills.map(s => s.toLowerCase());
+          const studentSkillsArray = studentUser.targetSkills
+            .split(",")
+            .map(s => s.trim().toLowerCase());
+          const intersections = studentSkillsArray.filter(skill => targetSkills.includes(skill));
+          matchPercentage = Math.round((intersections.length / targetSkills.length) * 100);
+        }
+
+        return {
+          applicationId: app._id,
+          projectId: currentProject?._id || null,
+          projectTitle: currentProject?.title || "Unknown Project",
+          studentName: app.studentName,
+          studentEmail: app.studentEmail,
+          status: app.status,
+          appliedAt: app.appliedAt,
+          skills: studentUser?.targetSkills || "Not specified",
+          resumeUrl: studentUser?.resumeUrl || null,
+          matchScore: matchPercentage,
+          submissionText: app.submissionText || null,
+          submissionLink: app.submissionLink || null,
+          submittedAt: app.submittedAt || null,
+          feedbackText: app.feedbackText || null
+        };
+      })
+    );
+
+    res.status(200).json(enrichedApps);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// =========================================================================
 // 🔎 ROUTE: Fetch full student application details with populated project metrics
 // =========================================================================
 app.get("/api/applications/student-details/:email", async (req, res) => {

@@ -52,20 +52,24 @@ export default function CompanyDashboard() {
             </button>
 
             {/* Action Card 3: Analytics */}
-            <div className="p-6 bg-purple-50 border border-purple-100 rounded-xl opacity-75 relative cursor-not-allowed">
-              <span className="absolute top-3 right-3 bg-purple-200 text-purple-800 text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Phase 7</span>
+            <button 
+              onClick={() => navigate("/analytics")}
+              className="group text-left p-6 bg-purple-50 border border-purple-100 rounded-xl hover:bg-purple-100/70 transition transform hover:-translate-y-0.5"
+            >
               <div className="text-3xl mb-4">📊</div>
               <h3 className="font-bold text-lg text-gray-800 mb-1">Analytics</h3>
               <p className="text-gray-600 text-xs leading-relaxed">Analyze applicant data distributions, matching counts, and average ratings.</p>
-            </div>
+            </button>
 
             {/* Action Card 4: Applicants */}
-            <div className="p-6 bg-green-50 border border-green-100 rounded-xl opacity-75 relative cursor-not-allowed">
-              <span className="absolute top-3 right-3 bg-green-200 text-green-800 text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Phase 6</span>
+            <button 
+              onClick={() => navigate("/applicants")}
+              className="group text-left p-6 bg-green-50 border border-green-100 rounded-xl hover:bg-green-100/70 transition transform hover:-translate-y-0.5"
+            >
               <div className="text-3xl mb-4">👨‍🎓</div>
               <h3 className="font-bold text-lg text-gray-800 mb-1">Applicants</h3>
               <p className="text-gray-600 text-xs leading-relaxed">Audit code applications, view matching profiles, and filter portfolios.</p>
-            </div>
+            </button>
 
           </div>
         </div>

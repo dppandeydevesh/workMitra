@@ -1,4 +1,4 @@
-﻿import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./components/LoginPage"; // 👈 सीधे हमारा मुख्य पेज लोड होगा
 import Preferences from "./pages/Preferences";
 import CompanyPreferences from "./pages/CompanyPreferences"; // 👈 न्यू कंपनी प्रिफरेंस पेज
@@ -6,6 +6,8 @@ import Dashboard from "./pages/Dashboard";
 import CompanyDashboard from "./pages/CompanyDashboard"; // 👈 🏢 न्यू इम्पोर्ट: कंपनी डैशबोर्ड
 import AddProject from "./pages/AddProject";             // 👈 ➕ न्यू इम्पोर्ट: प्रोजेक्ट फॉर्म पेज
 import MyProjects from "./pages/MyProjects";             // 👈 📂 न्यू इम्पोर्ट: प्रोजेक्ट एनालिसिस हब
+import ApplicantsHub from "./pages/ApplicantsHub";       // 👈 👨‍🎓 न्यू इम्पोर्ट: एप्लिकेंट्स कमांड सेंटर
+import AnalyticsDashboard from "./pages/AnalyticsDashboard"; // 👈 📈 न्यू इम्पोर्ट: रिक्रूटर एनालिटिक्स हब
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
         <Route path="/company-dashboard" element={<CompanyDashboard />} />
         <Route path="/add-project" element={<AddProject />} />
         <Route path="/my-projects" element={<MyProjects />} /> {/* 📊 न्यू प्रोजेक्ट एनालिसिस रूट */}
+        <Route path="/applicants" element={<ApplicantsHub />} /> {/* 👨‍🎓 न्यू एप्लिकेंट्स रूट */}
+        <Route path="/analytics" element={<AnalyticsDashboard />} /> {/* 📈 न्यू एनालिटिक्स रूट */}
       </Routes>
     </BrowserRouter>
   );

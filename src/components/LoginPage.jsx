@@ -341,7 +341,7 @@ export default function LoginPage() {
             </div>
           ) : (
             /* Desktop/Mobile Adaptive Form Container */
-            <div className="w-full max-w-md md:max-w-[768px] min-h-[580px] bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] overflow-hidden relative flex flex-col md:flex-row border border-white/60">
+            <div className={`auth-container ${isSignUp ? "active" : ""} w-full max-w-md md:max-w-[768px] min-h-[580px] bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] overflow-hidden relative flex flex-col md:flex-row border border-white/60`}>
               
               {/* MOBILE ONLY NAVIGATION TABS */}
               <div className="flex md:hidden border-b border-purple-100 w-full">
@@ -359,10 +359,10 @@ export default function LoginPage() {
                 </button>
               </div>
 
-              {/* 📝 SIGN UP PORTAL PANEL (Responsive Layout logic) */}
-              <div className={`w-full md:w-1/2 flex flex-col items-center justify-center px-6 md:px-12 text-center text-gray-800 overflow-y-auto py-8 ${
-                isSignUp ? "flex" : "hidden md:flex opacity-0 pointer-events-none z-1 absolute top-0 left-0 h-full"
-              }`}>
+              {/* 📝 SIGN UP PORTAL PANEL */}
+              <div className={`sign-up-panel flex flex-col items-center justify-center px-6 md:px-12 text-center text-gray-800 overflow-y-auto py-8 ${
+                isSignUp ? "w-full min-h-[500px] flex" : "hidden md:flex opacity-0 pointer-events-none z-1"
+              } md:absolute md:top-0 md:left-0 md:h-full md:w-1/2`}>
                 <form 
                   className="w-full space-y-3" 
                   onSubmit={async (e) => {
@@ -450,9 +450,9 @@ export default function LoginPage() {
               </div>
 
               {/* 🔑 SIGN IN PORTAL PANEL */}
-              <div className={`w-full md:w-1/2 flex flex-col items-center justify-center px-6 md:px-12 text-center text-gray-800 py-8 ${
-                !isSignUp ? "flex" : "hidden md:flex absolute top-0 left-0 h-full w-1/2"
-              }`}>
+              <div className={`sign-in-panel flex flex-col items-center justify-center px-6 md:px-12 text-center text-gray-800 py-8 ${
+                !isSignUp ? "w-full min-h-[500px] flex" : "hidden md:flex absolute top-0 left-0 h-full w-1/2"
+              } md:absolute md:top-0 md:left-0 md:h-full md:w-1/2`}>
                 <form className="w-full space-y-4" onSubmit={handleLoginSubmit}>
                   <div className="flex justify-center -mb-2">
                     <img src="/logo.png" alt="workMitra Logo" className="h-16 object-contain" />

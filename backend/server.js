@@ -875,6 +875,111 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-app.listen(PORT, () => {
+// =========================================================================
+// 🔎 ROUTE: Fetch chat message history between two users
+// =========================================================================
+app.get("/api/chat/history/:user1/:user2", async (req, res) => {
+  try {
+    const { user1, user2 } = req.params;
+    const Message = require("./models/Message");
+    
+    const messages = await Message.find({
+      $or: [
+        { sender: user1, receiver: user2 },
+        { sender: user2, receiver: user1 }
+      ]
+    }).sort({ timestamp: 1 });
+
+    res.status(200).json(messages);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// =========================================================================
+// 🔎 ROUTE: Fetch list of recent chat partners
+// =========================================================================
+app.get("/api/chat/partners/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+    const Message = require("./models/Message");
+
+    // Find all unique email addresses that this user has messaged or received messages from
+    const senders = await Message.distinct("sender", { receiver: email });
+    const receivers = await Message.distinct("receiver", { sender: email });
+    const uniqueEmails = Array.from(new Set([...senders, ...receivers]));
+
+    // Fetch user details for each partner email
+    const partners = await User.find({ email: { $in: uniqueEmails } }, "fullName email companyName userRole");
+    res.status(200).json(partners);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+const server = app.listen(PORT, () => {
     console.log(`🚀 Server running smoothly on http://localhost:${PORT}`);
+});
+
+// =========================================================================
+// 💬 WEBSOCKET CHAT ENGINE (Real-time Messaging Gateway)
+// =========================================================================
+const ws = require("ws");
+const wss = new ws.Server({ server });
+
+const clients = new Map(); // Key: userEmail, Value: socket instance
+
+wss.on("connection", (socket) => {
+  let userEmail = null;
+
+  socket.on("message", async (messageStr) => {
+    try {
+      const data = JSON.parse(messageStr);
+
+      if (data.type === "auth") {
+        userEmail = data.email;
+        clients.set(userEmail, socket);
+        console.log(`💬 WebSocket connection authenticated for: ${userEmail}`);
+        socket.send(JSON.stringify({ type: "status", status: "connected" }));
+        return;
+      }
+
+      if (data.type === "chat") {
+        const { sender, receiver, text } = data;
+        if (!sender || !receiver || !text) return;
+
+        // Save message to MongoDB
+        const Message = require("./models/Message");
+        const newMessage = new Message({ sender, receiver, text });
+        await newMessage.save();
+
+        const payload = {
+          type: "message",
+          _id: newMessage._id,
+          sender,
+          receiver,
+          text,
+          timestamp: newMessage.timestamp
+        };
+
+        // Send to receiver if online
+        const receiverSocket = clients.get(receiver);
+        if (receiverSocket && receiverSocket.readyState === ws.OPEN) {
+          receiverSocket.send(JSON.stringify(payload));
+        }
+
+        // Echo back to sender
+        socket.send(JSON.stringify(payload));
+      }
+    } catch (err) {
+      console.error("❌ WebSocket message error:", err.message);
+    }
+  });
+
+  socket.on("close", () => {
+    if (userEmail) {
+      clients.delete(userEmail);
+      console.log(`🔌 WebSocket connection closed for: ${userEmail}`);
+    }
+  });
 });

@@ -328,6 +328,7 @@ export default function Dashboard() {
               )}
 
               <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => navigate(`/student-profile/${currentUser?.email}`)}>Profile</button>
+              <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => navigate("/chat")}>Chat</button>
               <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => { localStorage.clear(); navigate("/login"); }}>Logout</button>
             </div>
           </div>
@@ -681,22 +682,33 @@ export default function Dashboard() {
                           </div>
 
                           {/* Interface State Management */}
-                          {currentUser?.userRole === "company" ? (
-                            <button className="bg-gray-100 text-gray-500 font-bold text-xs px-4 py-2 rounded-lg cursor-not-allowed border" disabled>
-                              Company View
-                            </button>
-                          ) : isAlreadyApplied ? (
-                            <button className="bg-emerald-100 text-emerald-700 font-extrabold text-xs px-4 py-2 rounded-lg border border-emerald-200 cursor-not-allowed" disabled>
-                              ✓ Applied
-                            </button>
-                          ) : (
-                            <button 
-                              onClick={() => handleApplyProject(project._id)}
-                              className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm"
-                            >
-                              Apply Project
-                            </button>
-                          )}
+                          <div className="flex gap-2">
+                            {currentUser?.userRole === "company" ? (
+                              <button className="bg-gray-100 text-gray-500 font-bold text-xs px-4 py-2 rounded-lg cursor-not-allowed border" disabled>
+                                Company View
+                              </button>
+                            ) : isAlreadyApplied ? (
+                              <button className="bg-emerald-100 text-emerald-700 font-extrabold text-xs px-4 py-2 rounded-lg border border-emerald-200 cursor-not-allowed" disabled>
+                                ✓ Applied
+                              </button>
+                            ) : (
+                              <button 
+                                onClick={() => handleApplyProject(project._id)}
+                                className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm"
+                              >
+                                Apply Project
+                              </button>
+                            )}
+
+                            {currentUser?.userRole === "student" && (
+                              <button
+                                onClick={() => navigate(`/chat/${project.companyId}`)}
+                                className="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm"
+                              >
+                                Chat
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>

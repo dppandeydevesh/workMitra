@@ -10,6 +10,7 @@ import ApplicantsHub from "./pages/ApplicantsHub";       // 👈 👨‍🎓 न
 import AnalyticsDashboard from "./pages/AnalyticsDashboard"; // 👈 📈 न्यू इम्पोर्ट: रिक्रूटर एनालिटिक्स हब
 import StudentProfile from "./pages/StudentProfile";       // 👈 🎓 न्यू इम्पोर्ट: स्टूडेंट प्रोफाइल/पोर्टफोलियो
 import ResetPasswordPage from "./pages/ResetPasswordPage"; // 👈 🔑 न्यू इम्पोर्ट: रीसेट पासवर्ड पेज
+import ChatPage from "./pages/ChatPage"; // 👈 💬 न्यू इम्पोर्ट: चैट रूम पेज
 
 function App() {
   return (
@@ -32,6 +33,8 @@ function App() {
         <Route path="/analytics" element={<AnalyticsDashboard />} /> {/* 📈 न्यू एनालिटिक्स रूट */}
         <Route path="/student-profile/:email" element={<StudentProfile />} /> {/* 🎓 न्यू स्टूडेंट प्रोफाइल रूट */}
         <Route path="/reset-password/:token" element={<ResetPasswordPage />} /> {/* 🔑 न्यू रीसेट पासवर्ड रूट */}
+        <Route path="/chat" element={<ChatPage />} /> {/* 💬 न्यू चैट रूट */}
+        <Route path="/chat/:recipientEmail" element={<ChatPage />} /> {/* 💬 न्यू चैट रेसिपीएंट रूट */}
       </Routes>
     </BrowserRouter>
   );

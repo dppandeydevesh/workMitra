@@ -14,6 +14,7 @@ export default function CompanyDashboard() {
             </div>
             <div className="flex space-x-4">
               <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => navigate("/company-preferences")}>Profile</button>
+              <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => navigate("/chat")}>Chat</button>
               <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => { localStorage.clear(); navigate("/login"); }}>Logout</button>
             </div>
           </div>

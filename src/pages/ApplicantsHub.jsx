@@ -146,6 +146,7 @@ export default function ApplicantsHub() {
             <div className="flex space-x-4">
               <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => navigate("/company-dashboard")}>Dashboard</button>
               <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => navigate("/company-preferences")}>Profile</button>
+              <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => navigate("/chat")}>Chat</button>
               <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => { localStorage.clear(); navigate("/login"); }}>Logout</button>
             </div>
           </div>
@@ -272,12 +273,20 @@ export default function ApplicantsHub() {
                     </div>
 
                     <div>
-                      <h4 
-                        onClick={() => navigate(`/student-profile/${app.studentEmail}`)}
-                        className="text-lg font-bold text-gray-900 hover:text-blue-600 cursor-pointer hover:underline"
-                      >
-                        {app.studentName}
-                      </h4>
+                      <div className="flex items-center gap-2">
+                        <h4 
+                          onClick={() => navigate(`/student-profile/${app.studentEmail}`)}
+                          className="text-lg font-bold text-gray-900 hover:text-blue-600 cursor-pointer hover:underline"
+                        >
+                          {app.studentName}
+                        </h4>
+                        <button
+                          onClick={() => navigate(`/chat/${app.studentEmail}`)}
+                          className="text-[10px] bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold border border-purple-200/50 px-2.5 py-0.5 rounded-full transition shadow-sm"
+                        >
+                          Chat
+                        </button>
+                      </div>
                       <p className="text-xs text-gray-400 font-medium">{app.studentEmail}</p>
                     </div>
 

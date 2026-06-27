@@ -133,6 +133,12 @@ export default function StudentProfile() {
               </button>
               <button 
                 className="text-gray-700 hover:text-blue-600 font-medium" 
+                onClick={() => navigate("/chat")}
+              >
+                Chat
+              </button>
+              <button 
+                className="text-gray-700 hover:text-blue-600 font-medium" 
                 onClick={() => { localStorage.clear(); navigate("/login"); }}
               >
                 Logout
@@ -180,6 +186,15 @@ export default function StudentProfile() {
                   className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-md"
                 >
                   ✏️ Edit Portfolio
+                </button>
+              )}
+
+              {!isOwner && currentUser?.userRole === "company" && (
+                <button
+                  onClick={() => navigate(`/chat/${profileUser.email}`)}
+                  className="px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95 text-white rounded-xl text-xs font-bold transition shadow-md flex items-center gap-1.5"
+                >
+                  💬 Chat with Student
                 </button>
               )}
             </div>

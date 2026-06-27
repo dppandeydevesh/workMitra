@@ -205,13 +205,13 @@ export default function LoginPage() {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-300/20 rounded-full blur-[100px]"></div>
 
         {/* Floating Ambient Badges */}
-        <div className="hidden md:block absolute top-12 left-12 bg-white/40 backdrop-blur-md border border-purple-300/50 px-6 py-3 rounded-2xl text-purple-900 text-sm font-bold shadow-sm">
+        <div className="hidden md:block absolute top-12 left-12 bg-white/40 backdrop-blur-md border border-purple-300/50 px-6 py-3 rounded-2xl text-purple-900 text-sm font-bold animate-float-slow shadow-sm">
           🖥️ Agent Server
         </div>
-        <div className="hidden md:block absolute top-24 right-20 bg-white/50 backdrop-blur-md border border-pink-300/50 px-6 py-4 rounded-3xl text-pink-900 font-extrabold text-base shadow-sm">
+        <div className="hidden md:block absolute top-24 right-20 bg-white/50 backdrop-blur-md border border-pink-300/50 px-6 py-4 rounded-3xl text-pink-900 font-extrabold text-base animate-float-fast shadow-sm">
           🧠 AI Engine
         </div>
-        <div className="hidden md:block absolute bottom-24 left-16 bg-white/40 backdrop-blur-md border border-blue-300/50 px-5 py-3 rounded-2xl text-blue-900 text-sm font-bold shadow-sm">
+        <div className="hidden md:block absolute bottom-24 left-16 bg-white/40 backdrop-blur-md border border-blue-300/50 px-5 py-3 rounded-2xl text-blue-900 text-sm font-bold animate-float-slow shadow-sm">
           📦 Media Server
         </div>
 
@@ -239,21 +239,21 @@ export default function LoginPage() {
       {view === "landing" && (
         <div className="w-full min-h-screen flex flex-col items-center justify-center relative p-6 z-10 animate-fade-in">
           <div className="text-center max-w-2xl mb-12 z-10 flex flex-col items-center animate-fade-in">
-            <img src="/logo.png" alt="workMitra Logo" className="w-72 h-72 object-contain mb-4 filter drop-shadow-lg" />
+            <img src="/logo.png" alt="workMitra Logo" className="w-72 h-72 object-contain mb-4 filter drop-shadow-lg mix-blend-multiply" />
             <p className="text-purple-900/80 mt-2 text-sm md:text-base font-semibold leading-relaxed">Choose your path to establish active student-employer connection nodes.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl w-full z-10 px-4">
             
-            <button onClick={() => { setUserRole("student"); setView("auth"); }} className="group text-left p-8 bg-white/60 backdrop-blur-lg border border-white/80 rounded-[32px] hover:border-purple-400 hover:bg-white/85 transition-all duration-300 relative overflow-hidden shadow-sm">
+            <button onClick={() => { setUserRole("student"); setView("auth"); }} className="group text-left p-8 bg-white/40 backdrop-blur-lg border border-white/60 rounded-[32px] hover:border-purple-400 hover:bg-white/60 transition-all duration-300 relative overflow-hidden">
               <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">💼</div>
-              <div className="w-12 h-12 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center text-2xl mb-4">🚀</div>
+              <div className="w-12 h-12 rounded-2xl bg-purple-50 text-white flex items-center justify-center text-2xl mb-4">🚀</div>
               <h3 className="text-2xl font-bold text-purple-950 mb-2">I Need a Job</h3>
               <p className="text-sm text-purple-900/70">Build student profiles, submit skill proofs, and clear tasks.</p>
             </button>
 
-            <button onClick={() => { setUserRole("company"); setView("auth"); }} className="group text-left p-8 bg-white/60 backdrop-blur-lg border border-white/80 rounded-[32px] hover:border-pink-400 hover:bg-white/85 transition-all duration-300 relative overflow-hidden shadow-sm">
+            <button onClick={() => { setUserRole("company"); setView("auth"); }} className="group text-left p-8 bg-white/40 backdrop-blur-lg border border-white/60 rounded-[32px] hover:border-pink-400 hover:bg-white/60 transition-all duration-300 relative overflow-hidden">
               <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">🏢</div>
-              <div className="w-12 h-12 rounded-2xl bg-pink-100 text-pink-700 flex items-center justify-center text-2xl mb-4">🤝</div>
+              <div className="w-12 h-12 rounded-2xl bg-pink-500 text-white flex items-center justify-center text-2xl mb-4">🤝</div>
               <h3 className="text-2xl font-bold text-purple-950 mb-2">I Want to Hire</h3>
               <p className="text-sm text-purple-900/70">Post corporate tracks, evaluate task solutions, and fund assignments.</p>
             </button>
@@ -274,7 +274,7 @@ export default function LoginPage() {
           {isOtpVerifying ? (
             <div className="w-full max-w-md bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 border border-white/60 text-center space-y-6 animate-fade-in z-20">
               <div className="flex justify-center">
-                <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain" />
+                <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain mix-blend-multiply" />
               </div>
               
               <div>
@@ -500,7 +500,7 @@ export default function LoginPage() {
         <div className="w-full min-h-screen flex flex-col items-center justify-center p-6 z-10 animate-fade-in">
           <div className="bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 max-w-md w-full border border-white/60 text-center space-y-6">
             <div className="flex justify-center">
-              <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain" />
+              <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain mix-blend-multiply" />
             </div>
             
             <div>

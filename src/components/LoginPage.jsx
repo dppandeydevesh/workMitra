@@ -158,8 +158,7 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
-          emailOtp: emailOtpInput,
-          mobileOtp: mobileOtpInput
+          emailOtp: emailOtpInput
         })
       });
       const data = await response.json();
@@ -283,58 +282,38 @@ export default function LoginPage() {
               
               <div>
                 <h2 className="text-2xl font-black text-purple-950">Verify Your Account</h2>
-                <p className="text-xs text-gray-400 mt-1">We sent verification codes to your registered email and phone number.</p>
+                <p className="text-xs text-gray-400 mt-1">We sent a 6-digit verification code to your registered email address.</p>
               </div>
 
               {/* Dev/Staging Bypass OTP Help Card */}
-              {(simulatedEmailOtp || simulatedMobileOtp) && (
-                <div className="bg-indigo-50 border border-indigo-200/50 p-4 rounded-2xl text-left space-y-2.5">
+              {simulatedEmailOtp && (
+                <div className="bg-indigo-50 border border-indigo-200/50 p-4 rounded-2xl text-left space-y-2">
                   <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-950">
                     <span>💡</span>
-                    <span>Staging Simulator Bypass Details</span>
+                    <span>Domain Propagation Delay Helper</span>
                   </div>
                   <p className="text-[10px] text-indigo-700/80 leading-normal font-medium">
-                    Because your Resend/Twilio endpoints are in sandbox/trial mode, we've simulated these verification codes for you to test registration:
+                    If your DNS changes have not propagated yet, you can use this simulated bypass code to verify immediately:
                   </p>
-                  <div className="grid grid-cols-2 gap-2 text-center">
-                    <div className="bg-white/80 p-2 rounded-xl border border-indigo-100">
-                      <p className="text-[9px] uppercase font-bold text-gray-400">Email Code</p>
-                      <p className="font-extrabold text-sm text-purple-950 select-all tracking-wider mt-0.5">{simulatedEmailOtp || "------"}</p>
-                    </div>
-                    <div className="bg-white/80 p-2 rounded-xl border border-indigo-100">
-                      <p className="text-[9px] uppercase font-bold text-gray-400">Mobile Code</p>
-                      <p className="font-extrabold text-sm text-purple-950 select-all tracking-wider mt-0.5">{simulatedMobileOtp || "------"}</p>
-                    </div>
+                  <div className="bg-white/80 p-2.5 rounded-xl border border-indigo-100 text-center max-w-[180px] mx-auto">
+                    <p className="text-[9px] uppercase font-bold text-gray-400">Email Code</p>
+                    <p className="font-extrabold text-sm text-purple-950 select-all tracking-wider mt-0.5">{simulatedEmailOtp}</p>
                   </div>
                 </div>
               )}
 
-              <form onSubmit={handleOtpVerifySubmit} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-left text-[9px] font-bold text-gray-400 uppercase mb-1.5 px-1">Email Verification Code</label>
-                    <input
-                      type="text"
-                      maxLength="6"
-                      value={emailOtpInput}
-                      onChange={(e) => setEmailOtpInput(e.target.value)}
-                      placeholder="6-digit code"
-                      className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-center tracking-widest font-black"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-left text-[9px] font-bold text-gray-400 uppercase mb-1.5 px-1">Mobile Verification Code</label>
-                    <input
-                      type="text"
-                      maxLength="6"
-                      value={mobileOtpInput}
-                      onChange={(e) => setMobileOtpInput(e.target.value)}
-                      placeholder="6-digit code"
-                      className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-center tracking-widest font-black"
-                      required
-                    />
-                  </div>
+              <form onSubmit={handleOtpVerifySubmit} className="space-y-4 text-left">
+                <div>
+                  <label className="block text-left text-[9px] font-bold text-gray-400 uppercase mb-1.5 px-1">Email Verification Code</label>
+                  <input
+                    type="text"
+                    maxLength="6"
+                    value={emailOtpInput}
+                    onChange={(e) => setEmailOtpInput(e.target.value)}
+                    placeholder="6-digit code"
+                    className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-center tracking-widest font-black"
+                    required
+                  />
                 </div>
 
                 <button

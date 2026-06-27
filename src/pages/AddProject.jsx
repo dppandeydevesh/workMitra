@@ -62,17 +62,17 @@ export default function AddProject() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col items-center py-12 px-4 font-sans select-none">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-4 sm:p-8 border border-gray-100">
         
-        <div className="flex justify-between items-center border-b pb-4 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b pb-4 mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Deploy New Project</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Configure live task constraints for immediate matching assignment.</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Deploy New Project</h1>
+            <p className="text-xs sm:text-sm text-gray-500 mt-0.5">Configure live task constraints for immediate matching assignment.</p>
           </div>
           <button 
             type="button" 
             onClick={() => navigate("/company-dashboard")}
-            className="text-xs font-bold text-gray-500 hover:text-blue-600 bg-gray-100 px-3 py-1.5 rounded-lg transition"
+            className="w-full sm:w-auto text-center text-xs font-bold text-gray-500 hover:text-indigo-600 bg-gray-100 px-3.5 py-2 rounded-lg transition"
           >
             ← Cancel
           </button>

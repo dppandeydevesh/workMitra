@@ -16,6 +16,7 @@ export default function ChatPage() {
   const [messageInput, setMessageInput] = useState("");
   const [wsConnected, setWsConnected] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [showMobileChat, setShowMobileChat] = useState(!!recipientEmail);
 
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -46,10 +47,12 @@ export default function ChatPage() {
               const userData = await userRes.json();
               setPartners(prev => [userData, ...prev]);
               setActivePartner(userData);
+              setShowMobileChat(true);
             }
           } else {
             const partnerObj = data.find(p => p.email === recipientEmail);
             setActivePartner(partnerObj);
+            setShowMobileChat(true);
           }
         } else if (data.length > 0 && !activePartner) {
           // Default to first chat partner if none selected
@@ -171,19 +174,35 @@ export default function ChatPage() {
   if (!loggedInUser) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50 p-4 md:p-8 flex flex-col">
-      <div className="max-w-6xl w-full mx-auto bg-white/60 backdrop-blur-xl rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.1)] border border-white/80 flex flex-col md:flex-row flex-1 overflow-hidden min-h-[600px]">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50 p-4 md:p-8 flex flex-col font-sans">
+      {/* 🧭 TOP HEADER BAR */}
+      <div className="max-w-6xl w-full mx-auto flex justify-between items-center mb-6 bg-white/40 backdrop-blur-md px-5 py-3 sm:px-6 sm:py-4 rounded-3xl border border-white/60 shadow-sm">
+        <img 
+          src="/logo.png" 
+          alt="workMitra Logo" 
+          className="h-8 sm:h-9 object-contain cursor-pointer" 
+          onClick={() => navigate(loggedInUser.userRole === "company" ? "/company-dashboard" : "/dashboard")} 
+        />
+        <button 
+          onClick={() => navigate(loggedInUser.userRole === "company" ? "/company-dashboard" : "/dashboard")}
+          className="text-xs font-bold bg-purple-950/10 hover:bg-purple-950/20 text-purple-950 px-3.5 py-2 rounded-xl transition"
+        >
+          ← Dashboard
+        </button>
+      </div>
+
+      <div className="max-w-6xl w-full mx-auto bg-white/60 backdrop-blur-xl rounded-[32px] sm:rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.1)] border border-white/80 flex flex-col md:flex-row flex-1 overflow-hidden min-h-[500px] sm:min-h-[600px]">
         
         {/* ========================================================================= */}
         {/* 📇 LEFT SIDEBAR: Active Chat Partners List                               */}
         {/* ========================================================================= */}
-        <div className="w-full md:w-80 border-r border-purple-100 flex flex-col bg-white/40">
-          <div className="p-6 border-b border-purple-100">
-            <h2 className="text-xl font-black text-purple-950">Messages</h2>
-            <p className="text-xs text-gray-400 mt-1">Connect with recruiters and students</p>
+        <div className={`w-full md:w-80 border-r border-purple-100 flex-col bg-white/40 ${showMobileChat ? "hidden md:flex" : "flex"}`}>
+          <div className="p-5 sm:p-6 border-b border-purple-100">
+            <h2 className="text-lg sm:text-xl font-black text-purple-950">Messages</h2>
+            <p className="text-[11px] sm:text-xs text-gray-400 mt-1">Connect with recruiters and students</p>
           </div>
           
-          <div className="flex-1 overflow-y-auto p-4 space-y-2">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
             {partners.length === 0 ? (
               <div className="text-center py-12 text-xs text-gray-400">
                 💬 No conversations started yet.
@@ -196,9 +215,10 @@ export default function ChatPage() {
                     key={partner.email}
                     onClick={() => {
                       setActivePartner(partner);
+                      setShowMobileChat(true);
                       navigate(`/chat/${partner.email}`);
                     }}
-                    className={`w-full flex items-center gap-3 p-3.5 rounded-2xl transition text-left ${
+                    className={`w-full flex items-center gap-3 p-3 rounded-2xl transition text-left ${
                       isActive 
                         ? "bg-gradient-to-r from-purple-600/10 to-pink-600/10 border border-purple-200/50" 
                         : "hover:bg-white/40 border border-transparent"
@@ -225,17 +245,27 @@ export default function ChatPage() {
         {/* ========================================================================= */}
         {/* 💬 RIGHT CONTAINER: Chat Conversation                                    */}
         {/* ========================================================================= */}
-        <div className="flex-1 flex flex-col bg-white/20">
+        <div className={`flex-1 flex-col bg-white/20 ${!showMobileChat ? "hidden md:flex" : "flex"}`}>
           {activePartner ? (
             <>
               {/* Top Conversation Status Header */}
-              <div className="p-6 border-b border-purple-100 flex items-center justify-between bg-white/40">
+              <div className="p-4 sm:p-6 border-b border-purple-100 flex items-center justify-between bg-white/40">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold flex items-center justify-center text-sm shadow-sm">
+                  <button 
+                    onClick={() => {
+                      setShowMobileChat(false);
+                      navigate("/chat");
+                    }} 
+                    className="md:hidden text-purple-600 hover:text-pink-600 font-bold mr-1 text-sm p-1.5 rounded-lg hover:bg-purple-100/30 transition flex items-center justify-center"
+                    title="Back to list"
+                  >
+                    ◀
+                  </button>
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold flex items-center justify-center text-xs sm:text-sm shadow-sm">
                     {activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || "?"}
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-purple-950">
+                    <h3 className="text-xs sm:text-sm font-bold text-purple-950">
                       {activePartner.fullName || activePartner.companyName}
                     </h3>
                     <div className="flex items-center gap-1.5 mt-0.5">

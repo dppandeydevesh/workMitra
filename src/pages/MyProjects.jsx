@@ -212,13 +212,13 @@ export default function MyProjects() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Navigation back home Header */}
-        <div className="flex justify-between items-center mb-8 bg-white p-6 rounded-2xl shadow-sm">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-white p-4 sm:p-6 rounded-2xl shadow-sm">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Project Analysis Hub</h1>
-            <p className="text-xs text-gray-500 mt-0.5">Audit historical requirements and evaluate student application match rates.</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Project Analysis Hub</h1>
+            <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">Audit historical requirements and evaluate student application match rates.</p>
           </div>
-          <button onClick={() => navigate("/company-dashboard")} className="text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition shadow-sm">
-            ← Dashboard Home
+          <button onClick={() => navigate("/company-dashboard")} className="w-full sm:w-auto text-center text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl transition shadow-sm">
+            ← Command Center
           </button>
         </div>
 

@@ -159,7 +159,7 @@ export default function Preferences() {
           {/* Experience Level */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">Your experience level</label>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-4 sm:gap-6">
               {["beginner", "intermediate", "expert"].map(level => (
                 <label key={level} className="flex items-center gap-2 cursor-pointer">
                   <input

@@ -348,7 +348,7 @@ export default function Dashboard() {
 
               {/* Notifications Dropdown menu */}
               {showNotifications && (
-                <div className="absolute right-24 top-12 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 w-80 max-h-96 overflow-y-auto z-50 text-left animate-fade-in">
+                <div className="absolute right-0 sm:right-24 top-12 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 w-72 sm:w-80 max-h-96 overflow-y-auto z-50 text-left animate-fade-in">
                   <h4 className="font-extrabold text-xs text-gray-400 uppercase tracking-wider mb-3">Notification Logs ({notificationsList.length})</h4>
                   {notificationsList.length === 0 ? (
                     <p className="text-xs text-gray-400 italic text-center py-4">No recent status alerts</p>
@@ -369,9 +369,18 @@ export default function Dashboard() {
                 </div>
               )}
 
-              <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => navigate(`/student-profile/${currentUser?.email}`)}>Profile</button>
-              <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => navigate("/chat")}>Chat</button>
-              <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => { localStorage.clear(); navigate("/login"); }}>Logout</button>
+              <button className="text-gray-700 hover:text-indigo-600 font-bold flex items-center gap-1 text-xs md:text-sm" onClick={() => navigate(`/student-profile/${currentUser?.email}`)}>
+                <span>👤</span>
+                <span className="hidden sm:inline">Profile</span>
+              </button>
+              <button className="text-gray-700 hover:text-indigo-600 font-bold flex items-center gap-1 text-xs md:text-sm" onClick={() => navigate("/chat")}>
+                <span>💬</span>
+                <span className="hidden sm:inline">Chat</span>
+              </button>
+              <button className="text-gray-700 hover:text-red-600 font-bold flex items-center gap-1 text-xs md:text-sm" onClick={() => { localStorage.clear(); navigate("/login"); }}>
+                <span>🚪</span>
+                <span className="hidden sm:inline">Logout</span>
+              </button>
             </div>
           </div>
         </div>
@@ -379,8 +388,8 @@ export default function Dashboard() {
 
       {/* Dashboard Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to Dashboard, {currentUser?.fullName || "Student"}!</h1>
+        <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-2">Welcome, {currentUser?.fullName || "Student"}!</h1>
           {currentUser?.collegeName && (
             <p className="text-sm font-semibold text-indigo-600 mb-4">
               🎓 Verified Student of {currentUser.collegeName} (ID: {currentUser.enrollmentNumber})
@@ -389,24 +398,24 @@ export default function Dashboard() {
           <p className="text-gray-600">You have successfully logged in to workMitra portal.</p>
           
           {/* Old Feature Cards (Interactive) */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
             <button 
               onClick={() => scrollToSection("gigs-section")}
-              className="group text-left bg-blue-50 p-6 rounded-xl hover:bg-blue-100/70 hover:-translate-y-0.5 transition-all duration-200 shadow-sm border border-blue-100/30"
+              className="group text-left bg-blue-50 p-4 sm:p-6 rounded-xl hover:bg-blue-100/70 hover:-translate-y-0.5 transition-all duration-200 shadow-sm border border-blue-100/30"
             >
               <h3 className="font-bold text-lg text-blue-950 mb-2 group-hover:text-blue-700">My Gigs</h3>
               <p className="text-gray-600 text-xs">Manage and view your applied gigs</p>
             </button>
             <button 
               onClick={() => scrollToSection("projects-section")}
-              className="group text-left bg-green-50 p-6 rounded-xl hover:bg-green-100/70 hover:-translate-y-0.5 transition-all duration-200 shadow-sm border border-green-100/30"
+              className="group text-left bg-green-50 p-4 sm:p-6 rounded-xl hover:bg-green-100/70 hover:-translate-y-0.5 transition-all duration-200 shadow-sm border border-green-100/30"
             >
               <h3 className="font-bold text-lg text-green-950 mb-2 group-hover:text-green-700">Orders</h3>
               <p className="text-gray-600 text-xs">Explore new projects in the marketplace</p>
             </button>
             <button 
               onClick={() => navigate("/chat")}
-              className="group text-left bg-purple-50 p-6 rounded-xl hover:bg-purple-100/70 hover:-translate-y-0.5 transition-all duration-200 shadow-sm border border-purple-100/30"
+              className="group text-left bg-purple-50 p-4 sm:p-6 rounded-xl hover:bg-purple-100/70 hover:-translate-y-0.5 transition-all duration-200 shadow-sm border border-purple-100/30"
             >
               <h3 className="font-bold text-lg text-purple-950 mb-2 group-hover:text-purple-700">Messages</h3>
               <p className="text-gray-600 text-xs">Chat directly with hiring managers</p>
@@ -418,7 +427,7 @@ export default function Dashboard() {
           {/* ========================================================================= */}
           {currentUser && currentUser.userRole !== "company" && (
             <div id="gigs-section" className="mt-12 pt-8 border-t border-gray-100">
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">My Gigs & Applications</h2>
+              <h2 className="text-lg sm:text-2xl font-bold text-gray-800 mb-2">My Gigs & Applications</h2>
               <p className="text-sm text-gray-500 mb-6">Track your job applications and submit tasks for payout verification.</p>
 
               {myApplications.length === 0 ? (
@@ -494,9 +503,9 @@ export default function Dashboard() {
           {/* 🧠 workMitra AI CV ANALYZER & CRITIQUE DASHBOARD                          */}
           {/* ========================================================================= */}
           {currentUser && currentUser.userRole !== "company" && (
-            <div className="mt-12 pt-8 border-t border-gray-100 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-100 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
               {/* Left Panel: Inputs for CV share link and Raw Text */}
-              <div className="lg:col-span-1 bg-white border border-gray-200 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+              <div className="lg:col-span-1 bg-white border border-gray-200 p-4 sm:p-6 rounded-2xl shadow-sm flex flex-col justify-between">
                 <div>
                   <h3 className="text-lg font-bold text-gray-800 mb-1 flex items-center gap-1.5">
                     <span>🧠 AI CV Reviewer</span>
@@ -564,7 +573,7 @@ export default function Dashboard() {
               </div>
 
               {/* Right Panel: Quality Report Display */}
-              <div className="lg:col-span-2 bg-gradient-to-br from-indigo-950 to-slate-900 text-white p-6 rounded-2xl shadow-xl flex flex-col justify-between min-h-[350px]">
+              <div className="lg:col-span-2 bg-gradient-to-br from-indigo-950 to-slate-900 text-white p-4 sm:p-6 rounded-2xl shadow-xl flex flex-col justify-between min-h-[250px] sm:min-h-[350px]">
                 {loadingReview ? (
                   <div className="flex flex-col items-center justify-center h-full my-auto space-y-4">
                     <div className="w-12 h-12 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
@@ -637,8 +646,8 @@ export default function Dashboard() {
           {/* 🚀 DEPLOYED COMPANY PROJECTS MARKETPLACE BLOCK                            */}
           {/* ========================================================================= */}
           <div id="projects-section" className="mt-12 pt-8 border-t border-gray-100">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Deployed Company Projects</h2>
-            <p className="text-sm text-gray-500 mb-6">Explore the latest real-world tasks deployed by verified companies.</p>
+            <h2 className="text-lg sm:text-2xl font-bold text-gray-800 mb-2">Deployed Company Projects</h2>
+            <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">Explore the latest real-world tasks deployed by verified companies.</p>
 
             {/* Marketplace Filters Panel */}
             <div className="bg-gray-50/60 border border-gray-100 p-4 rounded-2xl mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -704,7 +713,7 @@ export default function Dashboard() {
                   return (
                     <div 
                       key={project._id} 
-                      className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm flex flex-col justify-between hover:border-blue-400 hover:shadow-md transition-all duration-200"
+                      className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm flex flex-col justify-between hover:border-blue-400 hover:shadow-md transition-all duration-200"
                     >
                       <div>
                         <div className="flex justify-between items-center mb-3">
@@ -743,7 +752,7 @@ export default function Dashboard() {
                           </div>
 
                           {/* Interface State Management */}
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 flex-wrap">
                             {currentUser?.userRole === "company" ? (
                               <button className="bg-gray-100 text-gray-500 font-bold text-xs px-4 py-2 rounded-lg cursor-not-allowed border" disabled>
                                 Company View

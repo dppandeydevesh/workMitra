@@ -12,25 +12,34 @@ export default function CompanyDashboard() {
             <div className="flex items-center">
               <img src="/logo.png" alt="workMitra Logo" className="h-10 object-contain" />
             </div>
-            <div className="flex space-x-4">
-              <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => navigate("/company-preferences")}>Profile</button>
-              <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => navigate("/chat")}>Chat</button>
-              <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => { localStorage.clear(); navigate("/login"); }}>Logout</button>
+            <div className="flex items-center space-x-4">
+              <button className="text-gray-700 hover:text-indigo-600 font-bold flex items-center gap-1 text-xs md:text-sm" onClick={() => navigate("/company-preferences")}>
+                <span>👤</span>
+                <span className="hidden sm:inline">Profile</span>
+              </button>
+              <button className="text-gray-700 hover:text-indigo-600 font-bold flex items-center gap-1 text-xs md:text-sm" onClick={() => navigate("/chat")}>
+                <span>💬</span>
+                <span className="hidden sm:inline">Chat</span>
+              </button>
+              <button className="text-gray-700 hover:text-red-600 font-bold flex items-center gap-1 text-xs md:text-sm" onClick={() => { localStorage.clear(); navigate("/login"); }}>
+                <span>🚪</span>
+                <span className="hidden sm:inline">Logout</span>
+              </button>
             </div>
           </div>
         </div>
       </nav>
 
       {/* Main Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
           <div className="border-b pb-4 mb-6">
-            <h1 className="text-3xl font-bold text-gray-800">Company Command Center</h1>
-            <p className="text-gray-600 mt-1">Deploy new tracks, review technical solutions, and manage student talent nodes.</p>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">Company Command Center</h1>
+            <p className="text-xs sm:text-sm text-gray-600 mt-1">Deploy new tracks, review technical solutions, and manage student talent nodes.</p>
           </div>
 
           {/* Core Action Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-6 sm:mt-8">
             
             {/* Action Card 1: Add New Project */}
             <button 

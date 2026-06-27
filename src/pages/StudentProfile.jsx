@@ -124,24 +124,27 @@ export default function StudentProfile() {
                 onClick={() => navigate(currentUser?.userRole === "company" ? "/company-dashboard" : "/dashboard")} 
               />
             </div>
-            <div className="flex space-x-4">
+            <div className="flex items-center space-x-4">
               <button 
-                className="text-gray-700 hover:text-blue-600 font-medium" 
+                className="text-gray-700 hover:text-indigo-600 font-bold flex items-center gap-1 text-xs md:text-sm" 
                 onClick={() => navigate(currentUser?.userRole === "company" ? "/company-dashboard" : "/dashboard")}
               >
-                Dashboard
+                <span>🏠</span>
+                <span className="hidden sm:inline">Dashboard</span>
               </button>
               <button 
-                className="text-gray-700 hover:text-blue-600 font-medium" 
+                className="text-gray-700 hover:text-indigo-600 font-bold flex items-center gap-1 text-xs md:text-sm" 
                 onClick={() => navigate("/chat")}
               >
-                Chat
+                <span>💬</span>
+                <span className="hidden sm:inline">Chat</span>
               </button>
               <button 
-                className="text-gray-700 hover:text-blue-600 font-medium" 
+                className="text-gray-700 hover:text-red-600 font-bold flex items-center gap-1 text-xs md:text-sm" 
                 onClick={() => { localStorage.clear(); navigate("/login"); }}
               >
-                Logout
+                <span>🚪</span>
+                <span className="hidden sm:inline">Logout</span>
               </button>
             </div>
           </div>

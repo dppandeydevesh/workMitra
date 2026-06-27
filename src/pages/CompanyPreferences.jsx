@@ -207,7 +207,7 @@ export default function CompanyPreferences() {
           {/* Section 6: Budget */}
           <div className="space-y-3">
             <h3 className="text-lg font-bold text-purple-950 border-b pb-2">Section 6: Budget Range (INR)</h3>
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <input type="number" placeholder="Min Budget (e.g. 10000)" value={budgetMin} onChange={e => setBudgetMin(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500" required />
               <input type="number" placeholder="Max Budget (e.g. 50000)" value={budgetMax} onChange={e => setBudgetMax(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500" required />
             </div>

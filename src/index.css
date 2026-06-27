@@ -9,7 +9,8 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  width: 100vw;
+  width: 100%;
+  overflow-x: hidden;
   min-height: 100vh;
   /* पीच, पिंक और पर्पल शेड्स का मिक्सचर जो धीरे-धीरे मूव होगा */
   background: linear-gradient(135deg, #fbcfe8 0%, #e9d5ff 25%, #fed7aa 50%, #fbcfe8 75%, #e9d5ff 100%);

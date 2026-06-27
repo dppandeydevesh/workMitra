@@ -12,8 +12,7 @@ export default function Preferences() {
     bio: "",
     skills: [],
     experience: "beginner",
-    interests: [],
-    resumeUrl: ""
+    interests: []
   });
 
   useEffect(() => {
@@ -23,7 +22,6 @@ export default function Preferences() {
       setPreferences(prev => ({
         ...prev,
         name: parsedUser.fullName || "",
-        resumeUrl: parsedUser.resumeUrl || "",
         skills: parsedUser.targetSkills ? parsedUser.targetSkills.split(",").map(s => s.trim()) : []
       }));
     }
@@ -76,8 +74,7 @@ export default function Preferences() {
           enrollmentNumber: parsedUser.enrollmentNumber,
           mobile: parsedUser.mobile,
           targetSkills: preferences.skills.join(","),
-          projectType: preferences.experience === "beginner" ? "Micro Tasks" : "Freelance",
-          resumeUrl: preferences.resumeUrl
+          projectType: preferences.experience === "beginner" ? "Micro Tasks" : "Freelance"
         })
       });
 
@@ -86,20 +83,6 @@ export default function Preferences() {
         setErrorMessage(errData.error || "Failed to update profile parameters.");
         return;
       }
-
-      // Save resume details
-      await fetch(`${API_BASE_URL}/api/profile/resume`, {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          email: parsedUser.email,
-          resumeUrl: preferences.resumeUrl,
-          resumeText: ""
-        })
-      });
 
       // 🚀 🆕 LOCK ONBOARDING FLAG MATRIX: Flip hasCompletedProfile to true in MongoDB
       const response = await fetch(`${API_BASE_URL}/api/auth/complete-profile`, {
@@ -115,7 +98,6 @@ export default function Preferences() {
         // Update local memory cache states cleanly
         parsedUser.fullName = preferences.name || parsedUser.fullName;
         parsedUser.hasCompletedProfile = true;
-        parsedUser.resumeUrl = preferences.resumeUrl;
         parsedUser.targetSkills = preferences.skills.join(", ");
         localStorage.setItem("user", JSON.stringify(parsedUser));
 
@@ -235,19 +217,7 @@ export default function Preferences() {
             </div>
           </div>
 
-          {/* Resume Link */}
-          <div className="mb-8 border-t pt-6">
-            <label className="block text-sm font-semibold text-gray-800 mb-1">Resume / CV Shareable Link</label>
-            <p className="text-xs text-gray-500 mb-2">Upload your resume to Google Drive or Dropbox and paste the link below so companies can inspect it.</p>
-            <input
-              type="url"
-              value={preferences.resumeUrl}
-              onChange={(e) => setPreferences({...preferences, resumeUrl: e.target.value})}
-              placeholder="https://drive.google.com/file/d/..."
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-              required
-            />
-          </div>
+
 
           {/* Submit Button */}
           <button

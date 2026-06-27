@@ -117,50 +117,102 @@ app.get("/api/debug/smtp-logs", (req, res) => {
 });
 
 const sendEmailOtp = async (toEmail, otp) => {
-  const emailUser = process.env.EMAIL_USER;
-  const emailPass = process.env.EMAIL_PASS;
+  const resendApiKey = process.env.RESEND_API_KEY;
 
-  if (!emailUser || !emailPass) {
-    console.log(`⚠️ Email SMTP credentials missing. Email OTP [${otp}] simulation logged.`);
-    smtpLogs.push({ timestamp: new Date(), toEmail, error: "SMTP credentials missing from environment variables." });
+  if (!resendApiKey) {
+    console.log(`⚠️ Resend API key missing. Email OTP [${otp}] simulation logged.`);
+    smtpLogs.push({ timestamp: new Date(), toEmail, error: "Resend API key missing from environment variables." });
     return false;
   }
 
   try {
-    const nodemailer = require("nodemailer");
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: emailUser,
-        pass: emailPass
-      }
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${resendApiKey}`
+      },
+      body: JSON.stringify({
+        from: "workMitra <onboarding@resend.dev>",
+        to: toEmail,
+        subject: "workMitra Sign Up Verification OTP Code",
+        html: `
+          <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 500px; margin: auto;">
+            <h2 style="color: #4f46e5; text-align: center;">workMitra Account Verification</h2>
+            <p>Hello,</p>
+            <p>Thank you for signing up on workMitra. Please enter the following One-Time Password (OTP) code to verify your email address:</p>
+            <div style="font-size: 24px; font-weight: bold; text-align: center; padding: 15px; background: #f3f4f6; border-radius: 8px; letter-spacing: 4px; margin: 20px 0; color: #1e1b4b;">
+              ${otp}
+            </div>
+            <p style="color: #6b7280; font-size: 11px; text-align: center;">This verification code is valid for 10 minutes.</p>
+          </div>
+        `
+      })
     });
 
-    const mailOptions = {
-      from: `"workMitra Portal" <${emailUser}>`,
-      to: toEmail,
-      subject: "workMitra Sign Up Verification OTP Code",
-      text: `Your workMitra email verification code is: ${otp}. This code expires in 10 minutes.`,
-      html: `
-        <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 500px; margin: auto;">
-          <h2 style="color: #4f46e5; text-align: center;">workMitra Account Verification</h2>
-          <p>Hello,</p>
-          <p>Thank you for signing up on workMitra. Please enter the following One-Time Password (OTP) code to verify your email address:</p>
-          <div style="font-size: 24px; font-weight: bold; text-align: center; padding: 15px; background: #f3f4f6; border-radius: 8px; letter-spacing: 4px; margin: 20px 0; color: #1e1b4b;">
-            ${otp}
-          </div>
-          <p style="color: #6b7280; font-size: 11px; text-align: center;">This verification code is valid for 10 minutes.</p>
-        </div>
-      `
-    };
-
-    await transporter.sendMail(mailOptions);
-    console.log(`✉️ Live Email OTP sent successfully to ${toEmail}`);
-    smtpLogs.push({ timestamp: new Date(), toEmail, status: "Success", response: "Delivered to SMTP relay" });
-    return true;
+    const data = await response.json();
+    if (response.ok) {
+      console.log(`✉️ Live Email OTP sent successfully to ${toEmail} via Resend HTTP API`);
+      smtpLogs.push({ timestamp: new Date(), toEmail, status: "Success", response: data });
+      return true;
+    } else {
+      console.error("❌ Failed to deliver live Email OTP via Resend:", data.message || data);
+      smtpLogs.push({ timestamp: new Date(), toEmail, error: data.message || JSON.stringify(data) });
+      return false;
+    }
   } catch (err) {
-    console.error("❌ Failed to deliver live Email OTP via Nodemailer:", err.message);
+    console.error("❌ Failed to deliver live Email OTP via Resend HTTP:", err.message);
     smtpLogs.push({ timestamp: new Date(), toEmail, error: err.message, stack: err.stack });
+    return false;
+  }
+};
+
+const sendResetPasswordEmail = async (toEmail, resetLink) => {
+  const resendApiKey = process.env.RESEND_API_KEY;
+
+  if (!resendApiKey) {
+    console.log(`⚠️ Resend API key missing. Reset Link [${resetLink}] simulation logged.`);
+    smtpLogs.push({ timestamp: new Date(), toEmail, error: "Resend API key missing for password reset email." });
+    return false;
+  }
+
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${resendApiKey}`
+      },
+      body: JSON.stringify({
+        from: "workMitra <onboarding@resend.dev>",
+        to: toEmail,
+        subject: "workMitra Password Reset Recovery Link",
+        html: `
+          <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 500px; margin: auto;">
+            <h2 style="color: #4f46e5; text-align: center;">workMitra Password Recovery</h2>
+            <p>Hello,</p>
+            <p>You requested a password reset track initiation. Please click the button below to establish new credentials:</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${resetLink}" style="background: #4f46e5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px; display: inline-block;">
+                Reset Password
+              </a>
+            </div>
+            <p style="color: #6b7280; font-size: 11px;">If you did not request this, you can ignore this email. This recovery link is valid for 1 hour.</p>
+          </div>
+        `
+      })
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      console.log(`✉️ Password reset email sent successfully to ${toEmail} via Resend HTTP API`);
+      return true;
+    } else {
+      console.error("❌ Failed to deliver password reset via Resend:", data.message || data);
+      return false;
+    }
+  } catch (err) {
+    console.error("❌ Failed to deliver password reset via Resend HTTP:", err.message);
     return false;
   }
 };
@@ -384,11 +436,9 @@ app.post("/api/auth/forgot-password", async (req, res) => {
     // Use environment variable frontend URL or fallback
     const frontendUrl = process.env.NODE_ENV === "production" ? "https://workmitra.me" : "http://localhost:5173";
     const resetLink = `${frontendUrl}/reset-password/${token}`;
-    
-    // Log token to console in development
-    if (process.env.NODE_ENV !== "production") {
-      console.log(`🔑 Reset Password Link: ${resetLink}`);
-    }
+
+    // Send the password recovery link via Resend HTTP email delivery
+    await sendResetPasswordEmail(user.email, resetLink);
 
     res.status(200).json({
       message: "Reset token generated successfully.",

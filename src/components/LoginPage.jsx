@@ -244,22 +244,7 @@ export default function LoginPage() {
               
               <div>
                 <h2 className="text-2xl font-black text-purple-950">Verify Your Account</h2>
-                <p className="text-xs text-gray-400 mt-1">We sent simulated OTP verification codes to your nodes.</p>
-              </div>
-
-              {/* Dev simulated helper badge */}
-              <div className="bg-purple-50 border border-purple-100 p-4 rounded-xl text-left space-y-2">
-                <span className="text-[10px] font-extrabold text-purple-700 uppercase block tracking-wider">Dev Mode OTP Simulation</span>
-                <div className="grid grid-cols-2 gap-2 text-xs font-bold text-gray-700">
-                  <div>
-                    <span className="text-[9px] uppercase font-bold text-gray-400 block">Email OTP</span>
-                    <span className="text-sm font-black text-purple-950">{simulatedEmailOtp}</span>
-                  </div>
-                  <div>
-                    <span className="text-[9px] uppercase font-bold text-gray-400 block">Mobile OTP</span>
-                    <span className="text-sm font-black text-purple-950">{simulatedMobileOtp}</span>
-                  </div>
-                </div>
+                <p className="text-xs text-gray-400 mt-1">We sent verification codes to your registered email and phone number.</p>
               </div>
 
               <form onSubmit={handleOtpVerifySubmit} className="space-y-4">

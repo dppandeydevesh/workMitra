@@ -272,7 +272,12 @@ export default function ApplicantsHub() {
                     </div>
 
                     <div>
-                      <h4 className="text-lg font-bold text-gray-900">{app.studentName}</h4>
+                      <h4 
+                        onClick={() => navigate(`/student-profile/${app.studentEmail}`)}
+                        className="text-lg font-bold text-gray-900 hover:text-blue-600 cursor-pointer hover:underline"
+                      >
+                        {app.studentName}
+                      </h4>
                       <p className="text-xs text-gray-400 font-medium">{app.studentEmail}</p>
                     </div>
 

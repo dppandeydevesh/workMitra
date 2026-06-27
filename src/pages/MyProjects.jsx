@@ -14,6 +14,16 @@ export default function MyProjects() {
   const [activeAppToReview, setActiveAppToReview] = useState(null);
   const [feedbackText, setFeedbackText] = useState("");
 
+  // Edit Project States
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editSkills, setEditSkills] = useState("");
+  const [editBudget, setEditBudget] = useState("");
+  const [editDuration, setEditDuration] = useState("");
+  const [editDeadline, setEditDeadline] = useState("");
+  const [submittingEdit, setSubmittingEdit] = useState(false);
+
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
     const companyEmail = savedUser.email;
@@ -121,6 +131,82 @@ export default function MyProjects() {
     }
   };
 
+  const handleDeleteProject = async (projectId) => {
+    if (!window.confirm("Are you absolutely sure you want to delete this project? This will permanently delete all applicant submissions and cannot be undone.")) return;
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
+        method: "DELETE"
+      });
+      if (response.ok) {
+        alert("Project stack deleted successfully.");
+        setSelectedProject(null);
+        // Refresh project list
+        const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
+        if (savedUser.email) {
+          const res = await fetch(`${API_BASE_URL}/api/projects/company/${savedUser.email}`);
+          const data = await res.json();
+          if (res.ok) setProjects(data);
+        }
+      } else {
+        alert("Failed to delete project stack.");
+      }
+    } catch (err) {
+      alert("Error sending delete payload.");
+    }
+  };
+
+  const handleOpenEditModal = (proj) => {
+    setEditTitle(proj.title);
+    setEditDescription(proj.description);
+    setEditSkills(proj.requiredSkills?.join(", ") || "");
+    setEditBudget(proj.budget);
+    setEditDuration(proj.duration);
+    setEditDeadline(proj.deadline);
+    setShowEditModal(true);
+  };
+
+  const handleSaveEditProject = async (e) => {
+    e.preventDefault();
+    if (!selectedProject) return;
+    setSubmittingEdit(true);
+
+    const payload = {
+      title: editTitle,
+      description: editDescription,
+      requiredSkills: editSkills.split(",").map(s => s.trim()).filter(Boolean),
+      budget: Number(editBudget),
+      duration: editDuration,
+      deadline: editDeadline
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/projects/${selectedProject._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+      if (response.ok) {
+        alert("Project updated successfully!");
+        setSelectedProject(data);
+        setShowEditModal(false);
+        // Refresh project list
+        const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
+        if (savedUser.email) {
+          const res = await fetch(`${API_BASE_URL}/api/projects/company/${savedUser.email}`);
+          const projectsData = await res.json();
+          if (res.ok) setProjects(projectsData);
+        }
+      } else {
+        alert("Failed to update project.");
+      }
+    } catch (err) {
+      alert("Error saving project details.");
+    } finally {
+      setSubmittingEdit(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 font-sans select-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -175,9 +261,29 @@ export default function MyProjects() {
             ) : (
               <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
                 <div className="border-b pb-4 mb-6">
-                  <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wide">Selected Stream</span>
-                  <h2 className="text-xl font-bold text-gray-900 mt-2">{selectedProject.title}</h2>
-                  <p className="text-xs text-gray-500 mt-1">Duration: {selectedProject.duration} | Budget: ₹{selectedProject.budget.toLocaleString()}</p>
+                  <div className="flex justify-between items-start gap-4">
+                    <div>
+                      <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wide">Selected Stream</span>
+                      <h2 className="text-xl font-bold text-gray-900 mt-2">{selectedProject.title}</h2>
+                    </div>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => handleOpenEditModal(selectedProject)}
+                        className="px-2.5 py-1.5 border border-gray-200 text-gray-600 hover:bg-gray-50 rounded-lg text-xs font-bold transition flex items-center gap-1"
+                        title="Edit Project Details"
+                      >
+                        ✏️ Edit
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteProject(selectedProject._id)}
+                        className="px-2.5 py-1.5 border border-red-100 text-red-600 hover:bg-red-50 rounded-lg text-xs font-bold transition flex items-center gap-1"
+                        title="Delete Project Stack"
+                      >
+                        🗑️ Delete
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1.5">Duration: {selectedProject.duration} | Budget: ₹{selectedProject.budget.toLocaleString()}</p>
                 </div>
 
                 {loadingApplicants ? (
@@ -319,6 +425,107 @@ export default function MyProjects() {
                     </div>
                   </form>
                 </div>
+              </div>
+            </div>
+          )}
+          {/* ========================================================================= */}
+
+          {/* ========================================================================= */}
+          {/* ✏️ PROJECT EDIT OVERLAY MODAL                                            */}
+          {/* ========================================================================= */}
+          {showEditModal && selectedProject && (
+            <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl p-6 border animate-fade-in text-left">
+                <div className="flex justify-between items-center border-b pb-3 mb-4">
+                  <h3 className="font-bold text-base text-gray-900 font-sans">Edit Project Stack details</h3>
+                  <button onClick={() => setShowEditModal(false)} className="text-gray-400 hover:text-gray-600 text-lg">×</button>
+                </div>
+                <form onSubmit={handleSaveEditProject} className="space-y-4">
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Project Title</label>
+                    <input
+                      type="text"
+                      value={editTitle}
+                      onChange={(e) => setEditTitle(e.target.value)}
+                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Description</label>
+                    <textarea
+                      value={editDescription}
+                      onChange={(e) => setEditDescription(e.target.value)}
+                      rows={3}
+                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Budget Payout (₹)</label>
+                      <input
+                        type="number"
+                        value={editBudget}
+                        onChange={(e) => setEditBudget(e.target.value)}
+                        className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Duration</label>
+                      <input
+                        type="text"
+                        value={editDuration}
+                        onChange={(e) => setEditDuration(e.target.value)}
+                        className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Deadline Date</label>
+                      <input
+                        type="text"
+                        value={editDeadline}
+                        onChange={(e) => setEditDeadline(e.target.value)}
+                        className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Required Skills (Comma separated)</label>
+                      <input
+                        type="text"
+                        value={editSkills}
+                        onChange={(e) => setEditSkills(e.target.value)}
+                        placeholder="React, Python, Figma"
+                        className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end space-x-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowEditModal(false)}
+                      className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 transition"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={submittingEdit}
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-md"
+                    >
+                      {submittingEdit ? "Saving..." : "Save Changes"}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           )}

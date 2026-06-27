@@ -8,6 +8,7 @@ import AddProject from "./pages/AddProject";             // 👈 ➕ न्य�
 import MyProjects from "./pages/MyProjects";             // 👈 📂 न्यू इम्पोर्ट: प्रोजेक्ट एनालिसिस हब
 import ApplicantsHub from "./pages/ApplicantsHub";       // 👈 👨‍🎓 न्यू इम्पोर्ट: एप्लिकेंट्स कमांड सेंटर
 import AnalyticsDashboard from "./pages/AnalyticsDashboard"; // 👈 📈 न्यू इम्पोर्ट: रिक्रूटर एनालिटिक्स हब
+import StudentProfile from "./pages/StudentProfile";       // 👈 🎓 न्यू इम्पोर्ट: स्टूडेंट प्रोफाइल/पोर्टफोलियो
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/my-projects" element={<MyProjects />} /> {/* 📊 न्यू प्रोजेक्ट एनालिसिस रूट */}
         <Route path="/applicants" element={<ApplicantsHub />} /> {/* 👨‍🎓 न्यू एप्लिकेंट्स रूट */}
         <Route path="/analytics" element={<AnalyticsDashboard />} /> {/* 📈 न्यू एनालिटिक्स रूट */}
+        <Route path="/student-profile/:email" element={<StudentProfile />} /> {/* 🎓 न्यू स्टूडेंट प्रोफाइल रूट */}
       </Routes>
     </BrowserRouter>
   );

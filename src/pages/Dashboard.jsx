@@ -32,6 +32,14 @@ export default function Dashboard() {
   const [loadingReview, setLoadingReview] = useState(false);
   const [updatingResume, setUpdatingResume] = useState(false);
 
+  // Search & Filter States
+  const [searchTerm, setSearchTerm] = useState("");
+  const [skillFilter, setSkillFilter] = useState("All");
+  const [workTypeFilter, setWorkTypeFilter] = useState("All");
+
+  // Notifications dropdown toggle state
+  const [showNotifications, setShowNotifications] = useState(false);
+
   useEffect(() => {
     // 1. Get logged-in user context
     const savedUser = localStorage.getItem("user");
@@ -224,6 +232,57 @@ export default function Dashboard() {
     }
   };
 
+  // Dynamic application notifications log feed
+  const notificationsList = myApplications.map(app => {
+    const project = app.projectId;
+    if (!project) return null;
+    if (app.status === "Approved") {
+      return {
+        id: app._id,
+        title: "Application Approved! 🎉",
+        message: `Your application for "${project.title}" was approved. You can now submit your solution.`,
+        date: app.appliedAt,
+        type: "info"
+      };
+    }
+    if (app.status === "Completed") {
+      return {
+        id: app._id,
+        title: "Gig Verified & Completed! 🏆",
+        message: `Your solution for "${project.title}" was approved. Feedback: "${app.feedbackText || "Excellent work!"}"`,
+        date: app.submittedAt || app.appliedAt,
+        type: "success"
+      };
+    }
+    if (app.status === "Rejected") {
+      return {
+        id: app._id,
+        title: "Application Rejected ✕",
+        message: `Your application for "${project.title}" was rejected.`,
+        date: app.appliedAt,
+        type: "danger"
+      };
+    }
+    return null;
+  }).filter(Boolean);
+
+  const uniqueSkillsList = [
+    ...new Set(projects.flatMap(p => p.requiredSkills || []).map(s => s.trim()))
+  ];
+
+  const filteredProjects = projects.filter((project) => {
+    const query = searchTerm.toLowerCase();
+    const matchesSearch = 
+      project.title.toLowerCase().includes(query) ||
+      (project.companyId && project.companyId.toLowerCase().includes(query)) ||
+      project.description.toLowerCase().includes(query);
+      
+    const matchesSkill = skillFilter === "All" || (project.requiredSkills && project.requiredSkills.includes(skillFilter));
+    const matchesWorkType = workTypeFilter === "All" || project.workType === workTypeFilter;
+    
+    return matchesSearch && matchesSkill && matchesWorkType;
+  });
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Navbar */}
@@ -233,8 +292,42 @@ export default function Dashboard() {
             <div className="flex items-center">
               <img src="/logo.png" alt="workMitra Logo" className="h-10 object-contain" />
             </div>
-            <div className="flex space-x-4">
-              <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => navigate("/preferences")}>Profile</button>
+            <div className="flex items-center space-x-4 relative">
+              {/* Notification bell button */}
+              <button 
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="relative text-gray-500 hover:text-indigo-600 p-2 rounded-full hover:bg-gray-100 transition focus:outline-none"
+              >
+                <span className="text-lg">🔔</span>
+                {notificationsList.length > 0 && (
+                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+                )}
+              </button>
+
+              {/* Notifications Dropdown menu */}
+              {showNotifications && (
+                <div className="absolute right-24 top-12 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 w-80 max-h-96 overflow-y-auto z-50 text-left animate-fade-in">
+                  <h4 className="font-extrabold text-xs text-gray-400 uppercase tracking-wider mb-3">Notification Logs ({notificationsList.length})</h4>
+                  {notificationsList.length === 0 ? (
+                    <p className="text-xs text-gray-400 italic text-center py-4">No recent status alerts</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {notificationsList.map(notif => (
+                        <div key={notif.id} className={`p-2.5 rounded-xl border text-xs ${
+                          notif.type === 'success' ? 'bg-green-50/50 border-green-100' :
+                          notif.type === 'danger' ? 'bg-red-50/50 border-red-100' :
+                          'bg-blue-50/50 border-blue-100'
+                        }`}>
+                          <p className="font-extrabold text-gray-900">{notif.title}</p>
+                          <p className="text-gray-600 mt-0.5 leading-relaxed">{notif.message}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => navigate(`/student-profile/${currentUser?.email}`)}>Profile</button>
               <button className="text-gray-700 hover:text-blue-600 font-medium" onClick={() => { localStorage.clear(); navigate("/login"); }}>Logout</button>
             </div>
           </div>
@@ -487,6 +580,46 @@ export default function Dashboard() {
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Deployed Company Projects</h2>
             <p className="text-sm text-gray-500 mb-6">Explore the latest real-world tasks deployed by verified companies.</p>
 
+            {/* Marketplace Filters Panel */}
+            <div className="bg-gray-50/60 border border-gray-100 p-4 rounded-2xl mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">Search Keywords</label>
+                <input
+                  type="text"
+                  placeholder="Search title, details, or company..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full bg-white border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
+              <div>
+                <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">Filter by Required Skill</label>
+                <select
+                  value={skillFilter}
+                  onChange={(e) => setSkillFilter(e.target.value)}
+                  className="w-full bg-white border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
+                  <option value="All">All Skills</option>
+                  {uniqueSkillsList.map((skill, idx) => (
+                    <option key={idx} value={skill}>{skill}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">Filter by Work Type</label>
+                <select
+                  value={workTypeFilter}
+                  onChange={(e) => setWorkTypeFilter(e.target.value)}
+                  className="w-full bg-white border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
+                  <option value="All">All Types</option>
+                  <option value="Internship">Internship</option>
+                  <option value="Project Track">Project Track</option>
+                  <option value="Freelance Gig">Freelance Gig</option>
+                </select>
+              </div>
+            </div>
+
             {errorMessage && (
               <div className="p-4 mb-6 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-xl">
                 ⚠️ {errorMessage}
@@ -497,13 +630,13 @@ export default function Dashboard() {
               <div className="text-center py-8 text-gray-500 font-medium animate-pulse">
                 🔄 Fetching live corporate projects from database...
               </div>
-            ) : projects.length === 0 ? (
-              <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 font-medium bg-gray-50">
-                📭 No projects have been deployed by companies yet.
+            ) : filteredProjects.length === 0 ? (
+              <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 font-medium bg-gray-50/50">
+                📭 No projects match your current filter settings.
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {projects.map((project) => {
+                {filteredProjects.map((project) => {
                   // Standardize check against string tracking records
                   const isAlreadyApplied = appliedProjectIds.includes(project._id.toString());
                   return (

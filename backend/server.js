@@ -574,6 +574,78 @@ ${textToAnalyze}`;
   }
 });
 
+// =========================================================================
+// 🔎 ROUTE: Get a User's profile details (excluding password)
+// =========================================================================
+app.get("/api/auth/user/:email", async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.params.email }, "-password");
+    if (!user) {
+      return res.status(404).json({ error: "Student profile not found." });
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// =========================================================================
+// 📝 ROUTE: Save Student Profile updates
+// =========================================================================
+app.put("/api/profile/student/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+    const { fullName, collegeName, enrollmentNumber, mobile, targetSkills, projectType, resumeUrl } = req.body;
+    
+    const user = await User.findOneAndUpdate(
+      { email },
+      { fullName, collegeName, enrollmentNumber, mobile, targetSkills, projectType, resumeUrl },
+      { new: true }
+    );
+    
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    res.status(200).json({ user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// =========================================================================
+// ✏️ ROUTE: Update project details
+// =========================================================================
+app.put("/api/projects/:projectId", async (req, res) => {
+  try {
+    const project = await Project.findByIdAndUpdate(req.params.projectId, req.body, { new: true });
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+    res.status(200).json(project);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// =========================================================================
+// 🗑️ ROUTE: Delete project and its corresponding applications
+// =========================================================================
+app.delete("/api/projects/:projectId", async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const project = await Project.findByIdAndDelete(projectId);
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+    // Cascade delete applications
+    await Application.deleteMany({ projectId });
+    res.status(200).json({ message: "Project and associated applications deleted successfully." });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../dist')));

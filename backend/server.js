@@ -110,12 +110,19 @@ const sendSmsOtp = async (toMobile, otp) => {
   }
 };
 
+const smtpLogs = [];
+
+app.get("/api/debug/smtp-logs", (req, res) => {
+  res.json(smtpLogs);
+});
+
 const sendEmailOtp = async (toEmail, otp) => {
   const emailUser = process.env.EMAIL_USER;
   const emailPass = process.env.EMAIL_PASS;
 
   if (!emailUser || !emailPass) {
     console.log(`⚠️ Email SMTP credentials missing. Email OTP [${otp}] simulation logged.`);
+    smtpLogs.push({ timestamp: new Date(), toEmail, error: "SMTP credentials missing from environment variables." });
     return false;
   }
 
@@ -149,9 +156,11 @@ const sendEmailOtp = async (toEmail, otp) => {
 
     await transporter.sendMail(mailOptions);
     console.log(`✉️ Live Email OTP sent successfully to ${toEmail}`);
+    smtpLogs.push({ timestamp: new Date(), toEmail, status: "Success", response: "Delivered to SMTP relay" });
     return true;
   } catch (err) {
     console.error("❌ Failed to deliver live Email OTP via Nodemailer:", err.message);
+    smtpLogs.push({ timestamp: new Date(), toEmail, error: err.message, stack: err.stack });
     return false;
   }
 };

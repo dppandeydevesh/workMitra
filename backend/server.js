@@ -126,7 +126,7 @@ app.get("/api/debug/db-size", async (req, res) => {
     const collectionStats = [];
     
     for (const col of collections) {
-      const colStats = await mongoose.connection.db.collection(col.name).stats();
+      const colStats = await mongoose.connection.db.command({ collStats: col.name });
       collectionStats.push({
         name: col.name,
         count: colStats.count,

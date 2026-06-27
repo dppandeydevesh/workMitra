@@ -351,7 +351,8 @@ app.post("/api/auth/register-verify", async (req, res) => {
       }
     });
   } catch (err) {
-    res.status(500).json({ error: "Failed to verify registration." });
+    console.error("Verification Error:", err);
+    res.status(500).json({ error: `Failed to verify registration: ${err.message}` });
   }
 });
 

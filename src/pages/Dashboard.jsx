@@ -363,7 +363,7 @@ export default function Dashboard() {
               <p className="text-gray-600 text-xs">Explore new projects in the marketplace</p>
             </button>
             <button 
-              onClick={() => alert("💬 Chat module integration hook: In production, this launches a WebSocket socket connection allowing students to chat with recruiters directly.")}
+              onClick={() => navigate("/chat")}
               className="group text-left bg-purple-50 p-6 rounded-xl hover:bg-purple-100/70 hover:-translate-y-0.5 transition-all duration-200 shadow-sm border border-purple-100/30"
             >
               <h3 className="font-bold text-lg text-purple-950 mb-2 group-hover:text-purple-700">Messages</h3>
@@ -487,7 +487,7 @@ export default function Dashboard() {
                       <button
                         type="submit"
                         disabled={updatingResume}
-                        className="flex-1 bg-gray-150 hover:bg-gray-200 text-gray-700 font-bold text-xs py-2.5 rounded-xl transition shadow-sm border border-gray-200"
+                        className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs py-2.5 rounded-xl transition shadow-sm border border-gray-200"
                       >
                         {updatingResume ? "Saving..." : "Save Details"}
                       </button>
@@ -615,8 +615,10 @@ export default function Dashboard() {
                 >
                   <option value="All">All Types</option>
                   <option value="Internship">Internship</option>
-                  <option value="Project Track">Project Track</option>
-                  <option value="Freelance Gig">Freelance Gig</option>
+                  <option value="Part-Time">Part-Time</option>
+                  <option value="Full-Time">Full-Time</option>
+                  <option value="Freelance">Freelance</option>
+                  <option value="Micro Tasks">Micro Tasks</option>
                 </select>
               </div>
             </div>

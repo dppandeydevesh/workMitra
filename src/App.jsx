@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./components/LoginPage"; // 👈 सीधे हमारा मुख्य पेज लोड होगा
 import Preferences from "./pages/Preferences";
 import CompanyPreferences from "./pages/CompanyPreferences"; // 👈 न्यू कंपनी प्रिफरेंस पेज
@@ -11,30 +11,51 @@ import AnalyticsDashboard from "./pages/AnalyticsDashboard"; // 👈 📈 न्
 import StudentProfile from "./pages/StudentProfile";       // 👈 🎓 न्यू इम्पोर्ट: स्टूडेंट प्रोफाइल/पोर्टफोलियो
 import ResetPasswordPage from "./pages/ResetPasswordPage"; // 👈 🔑 न्यू इम्पोर्ट: रीसेट पासवर्ड पेज
 import ChatPage from "./pages/ChatPage"; // 👈 💬 न्यू इम्पोर्ट: चैट रूम पेज
+import ProtectedRoute from "./components/ProtectedRoute";
+import NotFoundPage from "./pages/NotFoundPage";
+
+const PublicRoute = ({ children }) => {
+  const savedUser = localStorage.getItem("user");
+  const token = localStorage.getItem("token");
+  if (savedUser && token) {
+    const user = JSON.parse(savedUser);
+    if (user.userRole === "company") {
+      return <Navigate to="/company-dashboard" replace />;
+    } else {
+      return <Navigate to="/dashboard" replace />;
+    }
+  }
+  return children;
+};
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         {/* 🚀 वेबसाइट खुलते ही (यानी '/') सीधे लॉगिन पेज दिखेगा */}
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/preferences" element={<Preferences />} />
-        <Route path="/company-preferences" element={<CompanyPreferences />} /> {/* 🏢 न्यू कंपनी रूट */}
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/" element={<PublicRoute><LoginPage /></PublicRoute>} />
+        <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+        
+        <Route path="/preferences" element={<ProtectedRoute allowedRoles={["student"]}><Preferences /></ProtectedRoute>} />
+        <Route path="/company-preferences" element={<ProtectedRoute allowedRoles={["company"]}><CompanyPreferences /></ProtectedRoute>} />
+        <Route path="/dashboard" element={<ProtectedRoute allowedRoles={["student"]}><Dashboard /></ProtectedRoute>} />
         
         {/* ========================================================================= */}
         {/* 🚀 NEW CORPORATE MANAGEMENT ROUTES (Phase 1, 2 & 5)                       */}
         {/* ========================================================================= */}
-        <Route path="/company-dashboard" element={<CompanyDashboard />} />
-        <Route path="/add-project" element={<AddProject />} />
-        <Route path="/my-projects" element={<MyProjects />} /> {/* 📊 न्यू प्रोजेक्ट एनालिसिस रूट */}
-        <Route path="/applicants" element={<ApplicantsHub />} /> {/* 👨‍🎓 न्यू एप्लिकेंट्स रूट */}
-        <Route path="/analytics" element={<AnalyticsDashboard />} /> {/* 📈 न्यू एनालिटिक्स रूट */}
-        <Route path="/student-profile/:email" element={<StudentProfile />} /> {/* 🎓 न्यू स्टूडेंट प्रोफाइल रूट */}
-        <Route path="/reset-password/:token" element={<ResetPasswordPage />} /> {/* 🔑 न्यू रीसेट पासवर्ड रूट */}
-        <Route path="/chat" element={<ChatPage />} /> {/* 💬 न्यू चैट रूट */}
-        <Route path="/chat/:recipientEmail" element={<ChatPage />} /> {/* 💬 न्यू चैट रेसिपीएंट रूट */}
+        <Route path="/company-dashboard" element={<ProtectedRoute allowedRoles={["company"]}><CompanyDashboard /></ProtectedRoute>} />
+        <Route path="/add-project" element={<ProtectedRoute allowedRoles={["company"]}><AddProject /></ProtectedRoute>} />
+        <Route path="/my-projects" element={<ProtectedRoute allowedRoles={["company"]}><MyProjects /></ProtectedRoute>} />
+        <Route path="/applicants" element={<ProtectedRoute allowedRoles={["company"]}><ApplicantsHub /></ProtectedRoute>} />
+        <Route path="/analytics" element={<ProtectedRoute allowedRoles={["company"]}><AnalyticsDashboard /></ProtectedRoute>} />
+        
+        <Route path="/student-profile/:email" element={<ProtectedRoute><StudentProfile /></ProtectedRoute>} />
+        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+        <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
+        <Route path="/chat/:recipientEmail" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
+        
+        {/* 404 Wildcard Catch-All */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

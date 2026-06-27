@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 
@@ -15,6 +15,19 @@ export default function Preferences() {
     interests: [],
     resumeUrl: ""
   });
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      const parsedUser = JSON.parse(savedUser);
+      setPreferences(prev => ({
+        ...prev,
+        name: parsedUser.fullName || "",
+        resumeUrl: parsedUser.resumeUrl || "",
+        skills: parsedUser.targetSkills ? parsedUser.targetSkills.split(",").map(s => s.trim()) : []
+      }));
+    }
+  }, []);
 
   const skillsList = ["React", "Node.js", "Python", "UI/UX", "Content Writing", "Video Editing", "Marketing", "Data Entry"];
   const interestsList = ["Web Development", "Mobile Apps", "AI/ML", "Design", "Writing", "Business", "Teaching"];
@@ -48,10 +61,39 @@ export default function Preferences() {
     const parsedUser = JSON.parse(savedUser);
 
     try {
+      const token = localStorage.getItem("token");
+      
+      // Save profile preferences using student update API
+      const profileResponse = await fetch(`${API_BASE_URL}/api/profile/student/${parsedUser.email}`, {
+        method: "PUT",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          fullName: preferences.name || parsedUser.fullName,
+          collegeName: parsedUser.collegeName,
+          enrollmentNumber: parsedUser.enrollmentNumber,
+          mobile: parsedUser.mobile,
+          targetSkills: preferences.skills.join(","),
+          projectType: preferences.experience === "beginner" ? "Micro Tasks" : "Freelance",
+          resumeUrl: preferences.resumeUrl
+        })
+      });
+
+      if (!profileResponse.ok) {
+        const errData = await profileResponse.json();
+        setErrorMessage(errData.error || "Failed to update profile parameters.");
+        return;
+      }
+
       // Save resume details
       await fetch(`${API_BASE_URL}/api/profile/resume`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({
           email: parsedUser.email,
           resumeUrl: preferences.resumeUrl,
@@ -62,15 +104,18 @@ export default function Preferences() {
       // 🚀 🆕 LOCK ONBOARDING FLAG MATRIX: Flip hasCompletedProfile to true in MongoDB
       const response = await fetch(`${API_BASE_URL}/api/auth/complete-profile`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({ email: parsedUser.email })
       });
 
       if (response.ok) {
         // Update local memory cache states cleanly
+        parsedUser.fullName = preferences.name || parsedUser.fullName;
         parsedUser.hasCompletedProfile = true;
         parsedUser.resumeUrl = preferences.resumeUrl;
-        // Optionally map target skills so the Smart Matching engine calculates scores correctly
         parsedUser.targetSkills = preferences.skills.join(", ");
         localStorage.setItem("user", JSON.stringify(parsedUser));
 

@@ -194,7 +194,7 @@ export default function AnalyticsDashboard() {
                           <span>✓ Verified Solutions (Completed)</span>
                           <span>{statusCounts.Completed}</span>
                         </div>
-                        <div className="w-full bg-gray-150 h-2 rounded-full overflow-hidden">
+                        <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
                           <div 
                             className="bg-green-500 h-full rounded-full transition-all duration-500"
                             style={{ width: `${totalApplicationsCount > 0 ? (statusCounts.Completed / totalApplicationsCount) * 100 : 0}%` }}
@@ -208,7 +208,7 @@ export default function AnalyticsDashboard() {
                           <span>🔵 Approved Gigs (In Progress)</span>
                           <span>{statusCounts.Approved}</span>
                         </div>
-                        <div className="w-full bg-gray-150 h-2 rounded-full overflow-hidden">
+                        <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
                           <div 
                             className="bg-blue-500 h-full rounded-full transition-all duration-500"
                             style={{ width: `${totalApplicationsCount > 0 ? (statusCounts.Approved / totalApplicationsCount) * 100 : 0}%` }}
@@ -222,7 +222,7 @@ export default function AnalyticsDashboard() {
                           <span>🟡 Submissions under Audit</span>
                           <span>{statusCounts.Submitted}</span>
                         </div>
-                        <div className="w-full bg-gray-150 h-2 rounded-full overflow-hidden">
+                        <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
                           <div 
                             className="bg-amber-400 h-full rounded-full transition-all duration-500"
                             style={{ width: `${totalApplicationsCount > 0 ? (statusCounts.Submitted / totalApplicationsCount) * 100 : 0}%` }}
@@ -236,7 +236,7 @@ export default function AnalyticsDashboard() {
                           <span>📭 New Applicants (Pending)</span>
                           <span>{statusCounts.Pending}</span>
                         </div>
-                        <div className="w-full bg-gray-150 h-2 rounded-full overflow-hidden">
+                        <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
                           <div 
                             className="bg-gray-400 h-full rounded-full transition-all duration-500"
                             style={{ width: `${totalApplicationsCount > 0 ? (statusCounts.Pending / totalApplicationsCount) * 100 : 0}%` }}
@@ -299,7 +299,7 @@ export default function AnalyticsDashboard() {
                               <span className="bg-gray-50 px-2 py-0.5 rounded border text-[10px] text-gray-600">{skill}</span>
                               <span className="text-[10px] text-gray-400 uppercase font-black">{count} {count > 1 ? 'Projects' : 'Project'}</span>
                             </div>
-                            <div className="w-full bg-gray-150 h-1.5 rounded-full overflow-hidden">
+                            <div className="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
                               <div 
                                 className="bg-indigo-600 h-full rounded-full transition-all duration-500"
                                 style={{ width: `${(count / totalProjectsCount) * 100}%` }}

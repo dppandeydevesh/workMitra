@@ -67,10 +67,13 @@ export default function CompanyPreferences() {
     };
 
     try {
-      // 1. Save the deployed project / company preferences data profile
+      const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}/api/profile/company`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify(payload)
       });
       
@@ -78,6 +81,7 @@ export default function CompanyPreferences() {
       
       if (response.ok) {
         // 🚀 🆕 NEW FEATURE FEATURE: Lock the onboarding flag so the form never repeats
+        const token = localStorage.getItem("token");
         const savedUser = localStorage.getItem("user");
         if (savedUser) {
           const parsedUser = JSON.parse(savedUser);
@@ -85,7 +89,10 @@ export default function CompanyPreferences() {
           // Call your new backend endpoint to set hasCompletedProfile to true
           await fetch(`${API_BASE_URL}/api/auth/complete-profile`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            },
             body: JSON.stringify({ email: parsedUser.email })
           });
 
@@ -95,7 +102,7 @@ export default function CompanyPreferences() {
         }
 
         alert("Company profile requirements saved successfully!");
-        navigate("/dashboard");
+        navigate("/company-dashboard");
       } else {
         setErrorMessage(data.error || "Failed to preserve requirements.");
       }

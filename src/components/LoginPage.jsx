@@ -76,6 +76,9 @@ export default function LoginPage() {
       if (response.ok) {
         if (data.user) {
           localStorage.setItem("user", JSON.stringify(data.user));
+          if (data.token) {
+            localStorage.setItem("token", data.token);
+          }
           
           if (data.user.userRole === "company") {
             navigate("/company-dashboard"); 
@@ -122,8 +125,10 @@ export default function LoginPage() {
       });
       const data = await response.json();
       if (response.ok) {
-        setRecoveryMessage("Password reset instructions generated successfully!");
-        setGeneratedResetLink(data.resetLink);
+        setRecoveryMessage("Password reset instructions sent successfully!");
+        if (data.resetLink) {
+          setGeneratedResetLink(data.resetLink);
+        }
       } else {
         setErrorMessage(data.error || "Failed to generate recovery link.");
       }
@@ -152,6 +157,9 @@ export default function LoginPage() {
       if (response.ok) {
         alert("Registration Successful!");
         localStorage.setItem("user", JSON.stringify(data.user));
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
 
         // Reset registration fields
         setCompanyName("");
@@ -179,23 +187,22 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden select-none p-4">
+    <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden select-none p-4 bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50">
       
-
       {/* 🌌 Background Decorative Flow Elements */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         {/* Soft background glow spheres */}
         <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-white/20 rounded-full blur-[80px]"></div>
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-300/20 rounded-full blur-[100px]"></div>
 
-        {/* Floating Ambient Badges - Hidden on mobile to avoid overlap, placed at screen edges on desktop */}
-        <div className="hidden md:block absolute top-12 left-12 bg-white/40 backdrop-blur-md border border-purple-300/50 px-6 py-3 rounded-2xl text-purple-900 text-sm font-bold animate-float-slow shadow-sm">
+        {/* Floating Ambient Badges */}
+        <div className="hidden md:block absolute top-12 left-12 bg-white/40 backdrop-blur-md border border-purple-300/50 px-6 py-3 rounded-2xl text-purple-900 text-sm font-bold shadow-sm">
           🖥️ Agent Server
         </div>
-        <div className="hidden md:block absolute top-24 right-20 bg-white/50 backdrop-blur-md border border-pink-300/50 px-6 py-4 rounded-3xl text-pink-900 font-extrabold text-base animate-float-fast shadow-sm">
+        <div className="hidden md:block absolute top-24 right-20 bg-white/50 backdrop-blur-md border border-pink-300/50 px-6 py-4 rounded-3xl text-pink-900 font-extrabold text-base shadow-sm">
           🧠 AI Engine
         </div>
-        <div className="hidden md:block absolute bottom-24 left-16 bg-white/40 backdrop-blur-md border border-blue-300/50 px-5 py-3 rounded-2xl text-blue-900 text-sm font-bold animate-float-slow shadow-sm">
+        <div className="hidden md:block absolute bottom-24 left-16 bg-white/40 backdrop-blur-md border border-blue-300/50 px-5 py-3 rounded-2xl text-blue-900 text-sm font-bold shadow-sm">
           📦 Media Server
         </div>
       </div>
@@ -205,22 +212,22 @@ export default function LoginPage() {
       {/* ========================================================================= */}
       {view === "landing" && (
         <div className="w-full min-h-screen flex flex-col items-center justify-center relative p-6 z-10 animate-fade-in">
-          <div className="text-center max-w-2xl mb-12 z-10 flex flex-col items-center">
-            <img src="/logo.png" alt="workMitra Logo" className="w-72 h-72 object-contain mb-4 filter drop-shadow-lg mix-blend-multiply" />
+          <div className="text-center max-w-2xl mb-12 z-10 flex flex-col items-center animate-fade-in">
+            <img src="/logo.png" alt="workMitra Logo" className="w-72 h-72 object-contain mb-4 filter drop-shadow-lg" />
             <p className="text-purple-900/80 mt-2 text-sm md:text-base font-semibold leading-relaxed">Choose your path to establish active student-employer connection nodes.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl w-full z-10 px-4">
             
-            <button onClick={() => { setUserRole("student"); setView("auth"); }} className="group text-left p-8 bg-white/40 backdrop-blur-lg border border-white/60 rounded-[32px] hover:border-purple-400 hover:bg-white/60 transition-all duration-300 relative overflow-hidden">
+            <button onClick={() => { setUserRole("student"); setView("auth"); }} className="group text-left p-8 bg-white/60 backdrop-blur-lg border border-white/80 rounded-[32px] hover:border-purple-400 hover:bg-white/85 transition-all duration-300 relative overflow-hidden shadow-sm">
               <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">💼</div>
-              <div className="w-12 h-12 rounded-2xl bg-purple-50 text-white flex items-center justify-center text-2xl mb-4">🚀</div>
+              <div className="w-12 h-12 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center text-2xl mb-4">🚀</div>
               <h3 className="text-2xl font-bold text-purple-950 mb-2">I Need a Job</h3>
               <p className="text-sm text-purple-900/70">Build student profiles, submit skill proofs, and clear tasks.</p>
             </button>
 
-            <button onClick={() => { setUserRole("company"); setView("auth"); }} className="group text-left p-8 bg-white/40 backdrop-blur-lg border border-white/60 rounded-[32px] hover:border-pink-400 hover:bg-white/60 transition-all duration-300 relative overflow-hidden">
+            <button onClick={() => { setUserRole("company"); setView("auth"); }} className="group text-left p-8 bg-white/60 backdrop-blur-lg border border-white/80 rounded-[32px] hover:border-pink-400 hover:bg-white/85 transition-all duration-300 relative overflow-hidden shadow-sm">
               <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">🏢</div>
-              <div className="w-12 h-12 rounded-2xl bg-pink-500 text-white flex items-center justify-center text-2xl mb-4">🤝</div>
+              <div className="w-12 h-12 rounded-2xl bg-pink-100 text-pink-700 flex items-center justify-center text-2xl mb-4">🤝</div>
               <h3 className="text-2xl font-bold text-purple-950 mb-2">I Want to Hire</h3>
               <p className="text-sm text-purple-900/70">Post corporate tracks, evaluate task solutions, and fund assignments.</p>
             </button>
@@ -230,17 +237,18 @@ export default function LoginPage() {
       )}
 
       {/* ========================================================================= */}
-      {/* 🔑 VIEW 2: Sliding Authentication Layout                                 */}
+      {/* 🔑 VIEW 2: Authentication Layout (Mobile-Responsive Redesign)            */}
       {/* ========================================================================= */}
       {view === "auth" && (
         <div className="w-full min-h-screen flex flex-col items-center justify-center p-4 relative z-20">
           <button onClick={() => { setView("landing"); setErrorMessage(""); }} className="absolute top-6 left-6 px-4 py-2 bg-purple-950/10 border border-purple-950/20 rounded-full text-xs font-bold text-purple-950 transition">← Back to Paths</button>
+          
           {errorMessage && <div className="mb-4 px-4 py-2 bg-red-100 text-red-700 text-xs font-bold rounded-xl border border-red-200 z-50 shadow-md">⚠️ {errorMessage}</div>}
           
           {isOtpVerifying ? (
             <div className="w-full max-w-md bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 border border-white/60 text-center space-y-6 animate-fade-in z-20">
               <div className="flex justify-center">
-                <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain filter drop-shadow-md mix-blend-multiply" />
+                <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain" />
               </div>
               
               <div>
@@ -293,138 +301,172 @@ export default function LoginPage() {
                   </button>
                 </div>
               </form>
+
+              {/* Dev Mode Simulated Helper */}
+              {generatedEmailOtp && (
+                <div className="bg-amber-50 border border-amber-200/50 p-4 rounded-2xl text-left space-y-2 mt-4">
+                  <span className="text-[10px] font-black text-amber-800 uppercase block tracking-wider">Dev Sandbox Verification Codes</span>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div>Email OTP: <span className="font-mono font-black text-amber-900 bg-amber-100 px-1.5 py-0.5 rounded">{generatedEmailOtp}</span></div>
+                    <div>Mobile OTP: <span className="font-mono font-black text-amber-900 bg-amber-100 px-1.5 py-0.5 rounded">{generatedMobileOtp}</span></div>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
-            <div className={`auth-container ${isSignUp ? "active" : ""} relative w-full max-w-[768px] min-h-[560px] bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] overflow-hidden flex border border-white/60`}>
-            
-            {/* 📝 SIGN UP PORTAL PANEL */}
-            <div className="sign-up-panel absolute top-0 left-0 h-full w-1/2 opacity-0 z-1 pointer-events-none flex flex-col items-center justify-center px-12 text-center text-gray-800 overflow-y-auto py-6">
-              <form 
-                className="w-full space-y-3" 
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  if (passwordStrength.score < 4) {
-                    setErrorMessage("Please establish a stronger password structure before continuing.");
-                    return;
-                  }
-                  setErrorMessage("");
-                  setIsRegistering(true);
-                  
-                  const payload = userRole === "company"
-                    ? { fullName: companyName, companyName, email, password, mobile, userRole: "company" }
-                    : { fullName, email, password, mobile, collegeName, enrollmentNumber, userRole: "student" };
-
-                  try {
-                    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify(payload),
-                    });
-                    const data = await response.json();
-                    if (response.ok) {
-                      setSimulatedEmailOtp(data.emailOtpSimulated);
-                      setSimulatedMobileOtp(data.mobileOtpSimulated);
-                      setIsOtpVerifying(true);
-                      setErrorMessage("");
-                      setEmailOtpInput("");
-                      setMobileOtpInput("");
-                    } else {
-                      setErrorMessage(data.error || "Registration system error.");
-                    }
-                  } catch (err) {
-                    setErrorMessage("Unable to submit registration payload.");
-                  } finally {
-                    setIsRegistering(false);
-                  }
-                }}
-              >
-                <div className="flex justify-center -mb-2">
-                  <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain" />
-                </div>
-                <h1 className="text-2xl font-extrabold text-purple-950">Create Account</h1>
-                <p className="text-xs text-purple-600 font-bold uppercase tracking-wider">Joining as {userRole}</p>
-                
-                {userRole === "company" ? (
-                  <>
-                    <input type="text" placeholder="Company Name" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                    <input type="email" placeholder="Company Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                  </>
-                ) : (
-                  <>
-                    <input type="text" placeholder="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                    <input type="email" placeholder="Student Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                    <input type="text" placeholder="College / University Name" value={collegeName} onChange={(e) => setCollegeName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                    <input type="text" placeholder="Enrollment / Roll Number" value={enrollmentNumber} onChange={(e) => setEnrollmentNumber(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                  </>
-                )}
-                
-                <input type="tel" pattern="[0-9]{10}" placeholder="Mobile Number (10 digits)" value={mobile} onChange={(e) => setMobile(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                <input type="password" placeholder="Password" value={password} onChange={(e) => checkPasswordStrength(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                
-                {password && (
-                  <div className="w-full text-left text-[11px] font-bold px-1 space-y-1">
-                    <p className={passwordStrength.score === 4 ? "text-green-600" : "text-amber-600"}>
-                      Strength: {passwordStrength.text}
-                    </p>
-                    <div className="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
-                      <div 
-                        className={`h-full transition-all duration-300 ${passwordStrength.score === 4 ? "bg-green-500" : passwordStrength.score >= 2 ? "bg-amber-400" : "bg-red-400"}`}
-                        style={{ width: `${(passwordStrength.score / 4) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-                )}
-
+            /* Desktop/Mobile Adaptive Form Container */
+            <div className="w-full max-w-md md:max-w-[768px] min-h-[580px] bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] overflow-hidden relative flex flex-col md:flex-row border border-white/60">
+              
+              {/* MOBILE ONLY NAVIGATION TABS */}
+              <div className="flex md:hidden border-b border-purple-100 w-full">
                 <button 
-                  type="submit" 
-                  disabled={passwordStrength.score < 4 || isRegistering}
-                  className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3 rounded-xl shadow-md mt-1 transition ${passwordStrength.score === 4 && !isRegistering ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95 cursor-pointer" : "bg-gray-300 cursor-not-allowed"}`}
+                  onClick={() => { setIsSignUp(false); setErrorMessage(""); }} 
+                  className={`flex-1 py-4 text-sm font-bold ${!isSignUp ? "text-purple-600 border-b-2 border-purple-600" : "text-gray-400"}`}
                 >
-                  {isRegistering ? "Registering..." : "Sign Up"}
+                  Sign In
                 </button>
-              </form>
-            </div>
+                <button 
+                  onClick={() => { setIsSignUp(true); setErrorMessage(""); }} 
+                  className={`flex-1 py-4 text-sm font-bold ${isSignUp ? "text-purple-600 border-b-2 border-purple-600" : "text-gray-400"}`}
+                >
+                  Sign Up
+                </button>
+              </div>
 
-            {/* 🔑 SIGN IN PORTAL PANEL */}
-            <div className="sign-in-panel absolute top-0 left-0 h-full w-1/2 z-2 flex flex-col items-center justify-center px-12 text-center text-gray-800">
-              <form className="w-full space-y-4" onSubmit={handleLoginSubmit}>
-                <div className="flex justify-center -mb-2">
-                  <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain" />
-                </div>
-                <h1 className="text-3xl font-extrabold text-purple-950">Sign In</h1>
-                <p className="text-xs text-pink-600 font-bold uppercase tracking-wider">Accessing portal</p>
-                <input type="email" placeholder={userRole === "company" ? "Company Email" : "Student Email"} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                
-                <div className="text-right px-1">
-                  <button type="button" onClick={handleForgotPassword} className="text-[11px] text-purple-600 hover:text-pink-600 font-bold transition outline-none">
-                    Forgot Password?
+              {/* 📝 SIGN UP PORTAL PANEL (Responsive Layout logic) */}
+              <div className={`w-full md:w-1/2 flex flex-col items-center justify-center px-6 md:px-12 text-center text-gray-800 overflow-y-auto py-8 ${
+                isSignUp ? "flex" : "hidden md:flex opacity-0 pointer-events-none z-1 absolute top-0 left-0 h-full"
+              }`}>
+                <form 
+                  className="w-full space-y-3" 
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    if (passwordStrength.score < 4) {
+                      setErrorMessage("Please establish a stronger password structure before continuing.");
+                      return;
+                    }
+                    setErrorMessage("");
+                    setIsRegistering(true);
+                    
+                    const payload = userRole === "company"
+                      ? { fullName: companyName, companyName, email, password, mobile, userRole: "company" }
+                      : { fullName, email, password, mobile, collegeName, enrollmentNumber, userRole: "student" };
+
+                    try {
+                      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload),
+                      });
+                      const data = await response.json();
+                      if (response.ok) {
+                        setSimulatedEmailOtp(data.emailOtpSimulated);
+                        setSimulatedMobileOtp(data.mobileOtpSimulated);
+                        setIsOtpVerifying(true);
+                        setErrorMessage("");
+                        setEmailOtpInput("");
+                        setMobileOtpInput("");
+                      } else {
+                        setErrorMessage(data.error || "Registration system error.");
+                      }
+                    } catch (err) {
+                      setErrorMessage("Unable to submit registration payload.");
+                    } finally {
+                      setIsRegistering(false);
+                    }
+                  }}
+                >
+                  <div className="flex justify-center -mb-2">
+                    <img src="/logo.png" alt="workMitra Logo" className="h-16 object-contain" />
+                  </div>
+                  <h1 className="text-xl md:text-2xl font-extrabold text-purple-950">Create Account</h1>
+                  <p className="text-xs text-purple-600 font-bold uppercase tracking-wider">Joining as {userRole}</p>
+                  
+                  {userRole === "company" ? (
+                    <>
+                      <input type="text" placeholder="Company Name" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="email" placeholder="Company Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                    </>
+                  ) : (
+                    <>
+                      <input type="text" placeholder="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="email" placeholder="Student Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder="College Name" value={collegeName} onChange={(e) => setCollegeName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder="Enrollment / Roll Number" value={enrollmentNumber} onChange={(e) => setEnrollmentNumber(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                    </>
+                  )}
+                  
+                  <input type="tel" pattern="[0-9]{10}" placeholder="Mobile Number (10 digits)" value={mobile} onChange={(e) => setMobile(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                  <input type="password" placeholder="Password" value={password} onChange={(e) => checkPasswordStrength(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                  
+                  {password && (
+                    <div className="w-full text-left text-[11px] font-bold px-1 space-y-1">
+                      <p className={passwordStrength.score === 4 ? "text-green-600" : "text-amber-600"}>
+                        Strength: {passwordStrength.text}
+                      </p>
+                      <div className="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full transition-all duration-300 ${passwordStrength.score === 4 ? "bg-green-500" : passwordStrength.score >= 2 ? "bg-amber-400" : "bg-red-400"}`}
+                          style={{ width: `${(passwordStrength.score / 4) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <button 
+                    type="submit" 
+                    disabled={passwordStrength.score < 4 || isRegistering}
+                    className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3 rounded-xl shadow-md mt-1 transition ${passwordStrength.score === 4 && !isRegistering ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95 cursor-pointer" : "bg-gray-300 cursor-not-allowed"}`}
+                  >
+                    {isRegistering ? "Registering..." : "Sign Up"}
                   </button>
-                </div>
+                </form>
+              </div>
 
-                <button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold uppercase tracking-wider py-3.5 rounded-xl shadow-md mt-1">Sign In</button>
-              </form>
-            </div>
+              {/* 🔑 SIGN IN PORTAL PANEL */}
+              <div className={`w-full md:w-1/2 flex flex-col items-center justify-center px-6 md:px-12 text-center text-gray-800 py-8 ${
+                !isSignUp ? "flex" : "hidden md:flex absolute top-0 left-0 h-full w-1/2"
+              }`}>
+                <form className="w-full space-y-4" onSubmit={handleLoginSubmit}>
+                  <div className="flex justify-center -mb-2">
+                    <img src="/logo.png" alt="workMitra Logo" className="h-16 object-contain" />
+                  </div>
+                  <h1 className="text-2xl md:text-3xl font-extrabold text-purple-950">Sign In</h1>
+                  <p className="text-xs text-pink-600 font-bold uppercase tracking-wider">Accessing portal</p>
+                  <input type="email" placeholder={userRole === "company" ? "Company Email" : "Student Email"} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                  <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                  
+                  <div className="text-right px-1">
+                    <button type="button" onClick={handleForgotPassword} className="text-[11px] text-purple-600 hover:text-pink-600 font-bold transition outline-none">
+                      Forgot Password?
+                    </button>
+                  </div>
 
-            {/* 🔀 DYNAMIC SLIDING SHIELD PANELS */}
-            <div className="overlay-panel absolute top-0 left-1/2 w-1/2 h-full overflow-hidden z-30 rounded-l-[150px]">
-              <div className="overlay-content bg-gradient-to-br from-purple-600 via-indigo-600 to-pink-600 text-white relative -left-full h-full w-[200%] transform translate-x-0 flex">
-                <div className="content-left absolute top-0 h-full w-1/2 flex flex-col items-center justify-center px-10 text-center transform -translate-x-[200%]">
-                  <h1 className="text-3xl font-extrabold mb-2">Welcome Back!</h1>
-                  <p className="text-xs text-purple-100 max-w-[240px] leading-relaxed mb-6">Enter your credentials to return to your configuration tracks.</p>
-                  <button type="button" onClick={() => { setIsSignUp(false); setErrorMessage(""); }} className="border-2 border-white text-white text-xs font-bold uppercase tracking-wider px-10 py-2.5 rounded-xl bg-transparent hover:bg-white hover:text-purple-950 transition-all active:scale-95">Sign In</button>
-                </div>
-                <div className="content-right absolute top-0 right-0 h-full w-1/2 flex flex-col items-center justify-center px-10 text-center transform translate-x-0">
-                  <h1 className="text-3xl font-extrabold mb-2">Hello, Friend!</h1>
-                  <p className="text-xs text-purple-100 max-w-[240px] leading-relaxed mb-6">Register your custom tracking details to activate credentials.</p>
-                  <button type="button" onClick={() => { setIsSignUp(true); setErrorMessage(""); }} className="border-2 border-white text-white text-xs font-bold uppercase tracking-wider px-10 py-2.5 rounded-xl bg-transparent hover:bg-white hover:text-purple-950 transition-all active:scale-95">Sign Up</button>
+                  <button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold uppercase tracking-wider py-3.5 rounded-xl shadow-md mt-1">Sign In</button>
+                </form>
+              </div>
+
+              {/* 🔀 DESKTOP ONLY SLIDING SHIELD PANELS */}
+              <div className="hidden md:block overlay-panel absolute top-0 left-1/2 w-1/2 h-full overflow-hidden z-30 rounded-l-[150px]">
+                <div className="overlay-content bg-gradient-to-br from-purple-600 via-indigo-600 to-pink-600 text-white relative -left-full h-full w-[200%] transform translate-x-0 flex">
+                  <div className="content-left absolute top-0 h-full w-1/2 flex flex-col items-center justify-center px-10 text-center transform -translate-x-[200%]">
+                    <h1 className="text-3xl font-extrabold mb-2">Welcome Back!</h1>
+                    <p className="text-xs text-purple-100 max-w-[240px] leading-relaxed mb-6">Enter your credentials to return to your configuration tracks.</p>
+                    <button type="button" onClick={() => { setIsSignUp(false); setErrorMessage(""); }} className="border-2 border-white text-white text-xs font-bold uppercase tracking-wider px-10 py-2.5 rounded-xl bg-transparent hover:bg-white hover:text-purple-950 transition-all active:scale-95">Sign In</button>
+                  </div>
+                  <div className="content-right absolute top-0 right-0 h-full w-1/2 flex flex-col items-center justify-center px-10 text-center transform translate-x-0">
+                    <h1 className="text-3xl font-extrabold mb-2">Hello, Friend!</h1>
+                    <p className="text-xs text-purple-100 max-w-[240px] leading-relaxed mb-6">Register your custom tracking details to activate credentials.</p>
+                    <button type="button" onClick={() => { setIsSignUp(true); setErrorMessage(""); }} className="border-2 border-white text-white text-xs font-bold uppercase tracking-wider px-10 py-2.5 rounded-xl bg-transparent hover:bg-white hover:text-purple-950 transition-all active:scale-95">Sign Up</button>
+                  </div>
                 </div>
               </div>
+
             </div>
-          </div>
-        )}
+          )}
         </div>
       )}
+
       {/* ========================================================================= */}
       {/* 🔑 VIEW 3: Password Recovery Screen                                      */}
       {/* ========================================================================= */}
@@ -432,7 +474,7 @@ export default function LoginPage() {
         <div className="w-full min-h-screen flex flex-col items-center justify-center p-6 z-10 animate-fade-in">
           <div className="bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 max-w-md w-full border border-white/60 text-center space-y-6">
             <div className="flex justify-center">
-              <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain filter drop-shadow-md mix-blend-multiply" />
+              <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain" />
             </div>
             
             <div>
@@ -467,7 +509,7 @@ export default function LoginPage() {
                 )}
                 <button
                   onClick={() => { setView("auth"); setRecoveryEmail(""); }}
-                  className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition animate-pulse"
+                  className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition"
                 >
                   Return to Sign In
                 </button>

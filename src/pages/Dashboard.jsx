@@ -351,7 +351,10 @@ export default function Dashboard() {
 
   const fetchApplications = async (userEmail) => {
     try {
-      const detailsRes = await fetch(`${API_BASE_URL}/api/applications/student-details/${userEmail}`);
+      const token = localStorage.getItem("token");
+      const detailsRes = await fetch(`${API_BASE_URL}/api/applications/student-details/${userEmail}`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
       if (detailsRes.ok) {
         const details = await detailsRes.json();
         setMyApplications(details);
@@ -461,9 +464,13 @@ export default function Dashboard() {
     }
 
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}/api/applications/apply`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({
           projectId: projectId.toString(), // 🎯 Strong typing string representation to prevent findOne crashes
           studentEmail: currentUser.email,

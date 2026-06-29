@@ -5,7 +5,7 @@ const UserSchema = new mongoose.Schema({
     fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true, index: true },
     password: { type: String, required: function() { return !this.googleId && !this.facebookId; } }, 
-    userRole: { type: String, default: "student" }, // student or company
+    userRole: { type: String, default: "student", enum: ["student", "company", "college", "admin"] }, // student, company, college, or admin
     
     // 🏢 Extra properties fields parsed perfectly by the frontend logic
     companyName: { type: String, default: null },
@@ -78,6 +78,7 @@ const UserSchema = new mongoose.Schema({
 // Hash password before saving if modified
 UserSchema.pre('save', async function() {
     if (!this.isModified('password')) return;
+    if (this.password && (this.password.startsWith('$2a$') || this.password.startsWith('$2b$'))) return;
     try {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);

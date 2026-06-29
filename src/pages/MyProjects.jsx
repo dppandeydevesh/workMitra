@@ -50,7 +50,10 @@ export default function MyProjects() {
 
     const fetchCompanyData = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/projects/company/${companyEmail}`);
+        const token = localStorage.getItem("token");
+        const response = await fetch(`${API_BASE_URL}/api/projects/company/${companyEmail}`, {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
         const data = await response.json();
         if (response.ok) setProjects(data);
       } catch (err) {
@@ -67,7 +70,10 @@ export default function MyProjects() {
     setSelectedProject(project);
     setLoadingApplicants(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/projects/${project._id}/applicants`);
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${API_BASE_URL}/api/projects/${project._id}/applicants`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
       const data = await response.json();
       if (response.ok) setApplicants(data);
     } catch (err) {
@@ -80,9 +86,13 @@ export default function MyProjects() {
   const handleAcceptApplicant = async (applicationId) => {
     if (!window.confirm("Are you sure you want to approve this application?")) return;
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}/api/applications/${applicationId}/status`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({ status: "Approved" })
       });
       const data = await response.json();
@@ -102,9 +112,13 @@ export default function MyProjects() {
   const handleRejectApplicant = async (applicationId) => {
     if (!window.confirm("Are you sure you want to reject this application?")) return;
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}/api/applications/${applicationId}/status`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({ status: "Rejected" })
       });
       const data = await response.json();
@@ -134,9 +148,13 @@ export default function MyProjects() {
     if (!activeAppToReview) return;
 
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}/api/applications/${activeAppToReview.applicationId}/complete`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({ feedbackText, rating, ratingReview })
       });
       const data = await response.json();
@@ -158,8 +176,10 @@ export default function MyProjects() {
   const handleDeleteProject = async (projectId) => {
     if (!window.confirm("Are you absolutely sure you want to delete this project? This will permanently delete all applicant submissions and cannot be undone.")) return;
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
       });
       if (response.ok) {
         alert("Project stack deleted successfully.");
@@ -167,7 +187,9 @@ export default function MyProjects() {
         // Refresh project list
         const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
         if (savedUser.email) {
-          const res = await fetch(`${API_BASE_URL}/api/projects/company/${savedUser.email}`);
+          const res = await fetch(`${API_BASE_URL}/api/projects/company/${savedUser.email}`, {
+            headers: { "Authorization": `Bearer ${token}` }
+          });
           const data = await res.json();
           if (res.ok) setProjects(data);
         }
@@ -204,9 +226,13 @@ export default function MyProjects() {
     };
 
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}/api/projects/${selectedProject._id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify(payload)
       });
       const data = await response.json();
@@ -217,7 +243,9 @@ export default function MyProjects() {
         // Refresh project list
         const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
         if (savedUser.email) {
-          const res = await fetch(`${API_BASE_URL}/api/projects/company/${savedUser.email}`);
+          const res = await fetch(`${API_BASE_URL}/api/projects/company/${savedUser.email}`, {
+            headers: { "Authorization": `Bearer ${token}` }
+          });
           const projectsData = await res.json();
           if (res.ok) setProjects(projectsData);
         }

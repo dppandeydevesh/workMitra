@@ -1,4 +1,5 @@
 const express = require('express');
+const ws = require('ws');
 const path = require('path');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -70,19 +71,21 @@ const authenticateToken = (req, res, next) => {
 const seedAdmin = async () => {
   try {
     const User = require("./models/User");
-    const existingAdmin = await User.findOne({ email: "admin@workmitra.com" });
+    const adminEmail = process.env.ADMIN_EMAIL || "admin@workmitra.com";
+    const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
+    const existingAdmin = await User.findOne({ email: adminEmail });
     if (!existingAdmin) {
       const newAdmin = new User({
         fullName: "Super Admin",
-        email: "admin@workmitra.com",
-        password: "admin123",
+        email: adminEmail,
+        password: adminPassword,
         userRole: "admin",
         mobile: "9999999999",
         hasCompletedProfile: true,
         isVerified: true
       });
       await newAdmin.save();
-      console.log("👑 Seeded administrator account: admin@workmitra.com / admin123");
+      console.log("👑 Seeded administrator account successfully.");
     }
   } catch (err) {
     console.error("Failed to seed admin:", err.message);
@@ -271,8 +274,21 @@ app.post("/api/auth/register", registerLimiter, async (req, res) => {
   try {
     const { fullName, companyName, email, password, userRole, mobile, collegeName, enrollmentNumber } = req.body;
 
-    if (!email || !password || !mobile) {
-      return res.status(400).json({ error: "Email, Password, and Mobile Number are required parameters." });
+    if (!email || !password || !mobile || !userRole) {
+      return res.status(400).json({ error: "Email, Password, Mobile Number, and User Role are required parameters." });
+    }
+
+    if (!["student", "company"].includes(userRole)) {
+      return res.status(400).json({ error: "Invalid user role registration attempt." });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: "Invalid email format." });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({ error: "Password must be at least 8 characters long." });
     }
 
     if (userRole === "student") {
@@ -314,13 +330,28 @@ app.post("/api/auth/register", registerLimiter, async (req, res) => {
     await sendEmailOtp(email, emailOtp);
     await sendSmsOtp(mobile, mobileOtp);
 
-    // Save pending registration
-    await PendingUser.findOneAndDelete({ email }); // Clear previous pending entries
+    // Save pending registration (F48: hash password before storing in cache)
+    const bcrypt = require('bcryptjs');
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const registrationData = {
+      fullName,
+      companyName,
+      email,
+      password: hashedPassword,
+      userRole,
+      mobile,
+      collegeName: userRole === "student" ? collegeName : null,
+      enrollmentNumber: userRole === "student" ? enrollmentNumber : null
+    };
+
+    await PendingUser.findOneAndDelete({ email });
     const pendingUser = new PendingUser({
       email,
       emailOtp,
       mobileOtp,
-      registrationData: req.body
+      registrationData
     });
     await pendingUser.save();
 
@@ -339,10 +370,10 @@ app.post("/api/auth/register", registerLimiter, async (req, res) => {
 // =========================================================================
 app.post("/api/auth/register-verify", async (req, res) => {
   try {
-    const { email, emailOtp } = req.body;
+    const { email, emailOtp, mobileOtp } = req.body;
 
-    if (!email || !emailOtp) {
-      return res.status(400).json({ error: "Email and Email OTP are required." });
+    if (!email || !emailOtp || !mobileOtp) {
+      return res.status(400).json({ error: "Email, Email OTP, and Mobile OTP are required." });
     }
 
     const pending = await PendingUser.findOne({ email });
@@ -352,6 +383,10 @@ app.post("/api/auth/register-verify", async (req, res) => {
 
     if (pending.emailOtp !== emailOtp) {
       return res.status(400).json({ error: "Invalid Email verification code." });
+    }
+
+    if (pending.mobileOtp !== mobileOtp) {
+      return res.status(400).json({ error: "Invalid Mobile verification code." });
     }
 
     // Verify successful! Save actual user
@@ -373,7 +408,7 @@ app.post("/api/auth/register-verify", async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { email: newUser.email, userRole: newUser.userRole },
+      { userId: newUser._id.toString(), email: newUser.email, userRole: newUser.userRole },
       JWT_SECRET,
       { expiresIn: "7d" }
     );
@@ -429,7 +464,7 @@ app.post('/api/auth/login', loginLimiter, async (req, res) => {
 
         // Generate JWT token
         const token = jwt.sign(
-          { email: user.email, userRole: user.userRole },
+          { userId: user._id.toString(), email: user.email, userRole: user.userRole },
           JWT_SECRET,
           { expiresIn: "7d" }
         );
@@ -751,7 +786,11 @@ app.get("/api/applications/student/:email", authenticateToken, async (req, res) 
 // =========================================================================
 app.post("/api/projects", authenticateToken, async (req, res) => {
   try {
-    const { companyId, title, description, budget } = req.body;
+    if (req.user.userRole !== "company" && req.user.userRole !== "admin") {
+      return res.status(403).json({ error: "Access denied. Only recruiters can publish projects." });
+    }
+
+    const { companyId, title, description, budget, requiredSkills, duration, deadline, workType, complexity, targetUniversity, hasPpiBadge, departmentName } = req.body;
     
     if (!companyId || !title || !description || !budget) {
       return res.status(400).json({ error: "Missing mandatory project field metrics." });
@@ -761,9 +800,28 @@ app.post("/api/projects", authenticateToken, async (req, res) => {
       return res.status(403).json({ error: "Unauthorized project owner identifier." });
     }
 
-    const project = new Project(req.body);
-    await project.save();
+    const parsedBudget = Number(budget);
+    if (isNaN(parsedBudget) || parsedBudget <= 0) {
+      return res.status(400).json({ error: "Budget must be a positive number." });
+    }
+
+    const project = new Project({
+      companyId,
+      title,
+      description,
+      budget: parsedBudget,
+      requiredSkills,
+      duration,
+      deadline,
+      workType,
+      complexity,
+      targetUniversity,
+      hasPpiBadge,
+      departmentName,
+      status: "Published"
+    });
     
+    await project.save();
     res.status(201).json(project);
   } catch (err) {
     res.status(500).json({ error: "Failed to publish new project stack." });
@@ -1084,6 +1142,10 @@ app.post("/api/applications/:applicationId/submit", authenticateToken, async (re
 
     if (req.user.email !== application.studentEmail) {
       return res.status(403).json({ error: "Unauthorized project submitter." });
+    }
+
+    if (application.status !== "Approved" && application.status !== "Revision Requested" && application.status !== "Submitted" && application.status !== "Flagged") {
+      return res.status(403).json({ error: "Cannot submit work for this application. You must be approved for the task first." });
     }
 
     application.submissionLink = submissionLink;
@@ -1871,13 +1933,27 @@ app.post("/api/profile/vouch", authenticateToken, async (req, res) => {
     if (req.user.email === studentEmail) {
       return res.status(400).json({ error: "You cannot vouch for your own profile." });
     }
+    
+    // F9: Prevent duplicate vouches
+    const hasAlreadyVouched = student.softSkillsVouches.some(v => v.vouchedBy === req.user.email);
+    if (hasAlreadyVouched) {
+      return res.status(400).json({ error: "You have already vouched for this student." });
+    }
+
     student.softSkillsVouches.push({
       vouchedBy: req.user.email,
       skills,
       comment
     });
     await student.save();
-    res.status(200).json({ message: "Vouch endorsement submitted successfully!", student });
+
+    // Sanitize user object response
+    const sanitizedStudent = student.toObject();
+    delete sanitizedStudent.password;
+    delete sanitizedStudent.resetPasswordToken;
+    delete sanitizedStudent.resetPasswordExpires;
+
+    res.status(200).json({ message: "Vouch endorsement submitted successfully!", student: sanitizedStudent });
   } catch (err) {
     res.status(500).json({ error: "Failed to submit vouch endorsement." });
   }
@@ -2210,7 +2286,11 @@ app.put("/api/auth/company-profile", authenticateToken, async (req, res) => {
     if (autoApproveApplications !== undefined) user.autoApproveApplications = autoApproveApplications;
 
     await user.save();
-    res.status(200).json({ message: "Company profile updated successfully.", user });
+    const sanitizedUser = user.toObject();
+    delete sanitizedUser.password;
+    delete sanitizedUser.resetPasswordToken;
+    delete sanitizedUser.resetPasswordExpires;
+    res.status(200).json({ message: "Company profile updated successfully.", user: sanitizedUser });
   } catch (err) {
     console.error("Company profile update error:", err.message);
     res.status(500).json({ error: "Failed to update company profile." });
@@ -2390,12 +2470,12 @@ app.post("/api/college/bulk-import", authenticateToken, async (req, res) => {
         continue;
       }
 
-      // Seed student user
-      const defaultPassword = "password123";
+      // Seed student user (F20: Secure random passwords)
+      const randomPassword = "WM-" + Math.random().toString(36).slice(-8) + "-Secure!";
       const newUser = new User({
         fullName: student.fullName.trim(),
         email: emailLower,
-        password: defaultPassword,
+        password: randomPassword,
         collegeName: collegeUser.collegeName,
         enrollmentNumber: student.enrollmentNumber.trim(),
         userRole: "student",
@@ -2520,7 +2600,12 @@ app.post("/api/applications/:applicationId/offer-placement", authenticateToken, 
       );
     }
 
-    res.status(200).json({ message: "Placement offer extended successfully.", studentUser });
+    const sanitizedStudent = studentUser.toObject();
+    delete sanitizedStudent.password;
+    delete sanitizedStudent.resetPasswordToken;
+    delete sanitizedStudent.resetPasswordExpires;
+
+    res.status(200).json({ message: "Placement offer extended successfully.", studentUser: sanitizedStudent });
   } catch (err) {
     console.error("Offer extension error:", err.message);
     res.status(500).json({ error: "Failed to extend placement job offer." });
@@ -2571,7 +2656,12 @@ app.post("/api/applications/:applicationId/resolve-offer", authenticateToken, as
     }
 
     await studentUser.save();
-    res.status(200).json({ message: `Offer has been ${status.toLowerCase()}.`, studentUser });
+    const sanitizedStudent = studentUser.toObject();
+    delete sanitizedStudent.password;
+    delete sanitizedStudent.resetPasswordToken;
+    delete sanitizedStudent.resetPasswordExpires;
+
+    res.status(200).json({ message: `Offer has been ${status.toLowerCase()}.`, studentUser: sanitizedStudent });
   } catch (err) {
     console.error("Resolve offer error:", err.message);
     res.status(500).json({ error: "Failed to resolve placement offer." });
@@ -2585,9 +2675,18 @@ app.post("/api/applications/:applicationId/update-pipeline", authenticateToken, 
       return res.status(400).json({ error: "Target pipeline status required." });
     }
 
-    const application = await Application.findById(req.params.applicationId);
+    const application = await Application.findById(req.params.applicationId).populate("projectId");
     if (!application) {
       return res.status(404).json({ error: "Application not found." });
+    }
+
+    if (!application.projectId) {
+      return res.status(400).json({ error: "Underlying project details missing." });
+    }
+
+    // Verify company owner status
+    if (req.user.email !== application.projectId.companyId && req.user.userRole !== "admin") {
+      return res.status(403).json({ error: "Unauthorized: Only the project owner can update candidate pipelines." });
     }
 
     // Set matching application status
@@ -2611,7 +2710,6 @@ const server = app.listen(PORT, () => {
 // =========================================================================
 // 💬 WEBSOCKET CHAT ENGINE (Real-time Messaging Gateway)
 // =========================================================================
-const ws = require("ws");
 const wss = new ws.Server({ server });
 
 

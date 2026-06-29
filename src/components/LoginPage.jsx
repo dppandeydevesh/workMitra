@@ -168,7 +168,8 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
-          emailOtp: emailOtpInput
+          emailOtp: emailOtpInput,
+          mobileOtp: mobileOtpInput
         })
       });
       const data = await response.json();
@@ -323,6 +324,19 @@ export default function LoginPage() {
                   />
                 </div>
 
+                <div>
+                  <label className="block text-left text-[9px] font-bold text-gray-400 uppercase mb-1.5 px-1">Mobile Verification Code</label>
+                  <input
+                    type="text"
+                    maxLength="6"
+                    value={mobileOtpInput}
+                    onChange={(e) => setMobileOtpInput(e.target.value)}
+                    placeholder="6-digit code"
+                    className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-center tracking-widest font-black"
+                    required
+                  />
+                </div>
+
                 <button
                   type="submit"
                   disabled={isVerifying}
@@ -398,8 +412,6 @@ export default function LoginPage() {
                       });
                       const data = await response.json();
                       if (response.ok) {
-                        setSimulatedEmailOtp(data.emailOtpSimulated);
-                        setSimulatedMobileOtp(data.mobileOtpSimulated);
                         setIsOtpVerifying(true);
                         setErrorMessage("");
                         setEmailOtpInput("");
@@ -501,63 +513,77 @@ export default function LoginPage() {
                     <div className="flex-grow border-t border-purple-100"></div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      setIsLoggingIn(true);
-                      setErrorMessage("");
-                      try {
-                        const ssoEmail = "aditya@college.edu.in";
-                        let logRes = await fetch(`${API_BASE_URL}/api/auth/login`, {
-                          method: "POST",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ email: ssoEmail, password: "ssoPassword123" })
-                        });
-                        let logData = await logRes.json();
-                        
-                        if (!logRes.ok) {
-                          const regRes = await fetch(`${API_BASE_URL}/api/auth/register`, {
+                  {import.meta.env.DEV && (
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        setIsLoggingIn(true);
+                        setErrorMessage("");
+                        try {
+                          const ssoEmail = "aditya@college.edu.in";
+                          let logRes = await fetch(`${API_BASE_URL}/api/auth/login`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                              fullName: "Aditya CSE",
-                              email: ssoEmail,
-                              password: "ssoPassword123",
-                              mobile: "9876543210",
-                              collegeName: "Verified GLA University",
-                              enrollmentNumber: "SSO-2026-CSE",
-                              userRole: "student"
-                            })
+                            body: JSON.stringify({ email: ssoEmail, password: "ssoPassword123" })
                           });
+                          let logData = await logRes.json();
                           
-                          if (regRes.ok) {
-                            logRes = await fetch(`${API_BASE_URL}/api/auth/login`, {
+                          if (!logRes.ok) {
+                            // Register first if not found
+                            const regRes = await fetch(`${API_BASE_URL}/api/auth/register`, {
                               method: "POST",
                               headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ email: ssoEmail, password: "ssoPassword123" })
+                              body: JSON.stringify({
+                                fullName: "Aditya CSE",
+                                email: ssoEmail,
+                                password: "ssoPassword123",
+                                mobile: "9876543210",
+                                collegeName: "Verified GLA University",
+                                enrollmentNumber: "SSO-2026-CSE",
+                                userRole: "student"
+                              })
                             });
-                            logData = await logRes.json();
+                            
+                            // For sandbox verification
+                            if (regRes.ok) {
+                              const pendingRes = await fetch(`${API_BASE_URL}/api/auth/register-verify`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                  email: ssoEmail,
+                                  emailOtp: "123456", // dummy if skipped, but backend expects both
+                                  mobileOtp: "123456"
+                                })
+                              });
+                              
+                              logRes = await fetch(`${API_BASE_URL}/api/auth/login`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ email: ssoEmail, password: "ssoPassword123" })
+                              });
+                              logData = await logRes.json();
+                            }
                           }
+                          
+                          if (logRes.ok && logData.user) {
+                            localStorage.setItem("user", JSON.stringify(logData.user));
+                            if (logData.token) localStorage.setItem("token", logData.token);
+                            toast.success("✓ College Portal SSO verified successfully!");
+                            navigate("/preferences");
+                          } else {
+                            setErrorMessage("SSO validation handshake failed.");
+                          }
+                        } catch (err) {
+                          setErrorMessage("Failed to connect to SSO Gateway.");
+                        } finally {
+                          setIsLoggingIn(false);
                         }
-                        
-                        if (logRes.ok && logData.user) {
-                          localStorage.setItem("user", JSON.stringify(logData.user));
-                          if (logData.token) localStorage.setItem("token", logData.token);
-                          toast.success("✓ College Portal SSO verified successfully!");
-                          navigate("/preferences");
-                        } else {
-                          setErrorMessage("SSO validation handshake failed.");
-                        }
-                      } catch (err) {
-                        setErrorMessage("Failed to connect to SSO Gateway.");
-                      } finally {
-                        setIsLoggingIn(false);
-                      }
-                    }}
-                    className="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold py-3 rounded-xl transition shadow-sm flex items-center justify-center gap-2"
-                  >
-                    <span>🎓</span> Log In via College SSO Portal
-                  </button>
+                      }}
+                      className="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold py-3 rounded-xl transition shadow-sm flex items-center justify-center gap-2"
+                    >
+                      <span>🎓</span> Log In via College SSO Portal [Dev Mode]
+                    </button>
+                  )}
                 </form>
               </div>
 

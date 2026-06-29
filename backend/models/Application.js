@@ -16,7 +16,8 @@ const applicationSchema = new mongoose.Schema({
   },
   status: { 
     type: String, 
-    default: "Pending" 
+    default: "Pending",
+    enum: ["Pending", "Approved", "Rejected", "Submitted", "Completed", "Disputed", "Flagged", "Revision Requested"]
   },
   submissionText: {
     type: String,

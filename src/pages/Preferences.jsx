@@ -83,7 +83,9 @@ export default function Preferences() {
           projectType: preferences.experience === "beginner" ? "Micro Tasks" : "Freelance",
           githubUrl: preferences.githubUrl,
           linkedinUrl: preferences.linkedinUrl,
-          portfolioUrl: preferences.portfolioUrl
+          portfolioUrl: preferences.portfolioUrl,
+          bio: preferences.bio,
+          interests: preferences.interests
         })
       });
 
@@ -111,6 +113,8 @@ export default function Preferences() {
         parsedUser.githubUrl = preferences.githubUrl;
         parsedUser.linkedinUrl = preferences.linkedinUrl;
         parsedUser.portfolioUrl = preferences.portfolioUrl;
+        parsedUser.bio = preferences.bio;
+        parsedUser.interests = preferences.interests;
         localStorage.setItem("user", JSON.stringify(parsedUser));
 
         console.log("User Preferences Locked:", preferences);

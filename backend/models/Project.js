@@ -13,6 +13,18 @@ const projectSchema = new mongoose.Schema({
   budget: { type: Number, required: true },
   duration: { type: String, required: true },
   deadline: { type: String, required: true },
+  status: { type: String, default: "Published" }, // Published or Draft
+  complexity: { type: String, default: "Intermediate" }, // Beginner, Intermediate, Advanced
+  minReadinessScore: { type: Number, default: 0 },
+  targetUniversity: { type: String, default: "" }, // targeted broadcast domain
+  isNdaRequired: { type: Boolean, default: false },
+  hasPpiBadge: { type: Boolean, default: false },
+  departmentName: { type: String, default: "Core Team" },
+  preTestQuestions: [{
+    question: { type: String },
+    options: { type: [String] },
+    correctAnswer: { type: String }
+  }],
   createdAt: { type: Date, default: Date.now }
 });
 

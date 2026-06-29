@@ -13,6 +13,8 @@ if (!process.env.JWT_SECRET) {
   console.warn("⚠️ WARNING: JWT_SECRET environment variable is missing. Using insecure fallback.");
 }
 
+global.wsClients = new Map(); // Global registry for WebSocket client sockets
+
 // Models Loading
 const User = require('./models/User');
 const Project = require('./models/Project');
@@ -64,10 +66,36 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+// Seed default admin account
+const seedAdmin = async () => {
+  try {
+    const User = require("./models/User");
+    const existingAdmin = await User.findOne({ email: "admin@workmitra.com" });
+    if (!existingAdmin) {
+      const newAdmin = new User({
+        fullName: "Super Admin",
+        email: "admin@workmitra.com",
+        password: "admin123",
+        userRole: "admin",
+        mobile: "9999999999",
+        hasCompletedProfile: true,
+        isVerified: true
+      });
+      await newAdmin.save();
+      console.log("👑 Seeded administrator account: admin@workmitra.com / admin123");
+    }
+  } catch (err) {
+    console.error("Failed to seed admin:", err.message);
+  }
+};
+
 // Database Connection
 const dbURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/workmitra";
 mongoose.connect(dbURI)
-    .then(() => console.log("🔌 Connected to MongoDB Successfully!"))
+    .then(() => {
+        console.log("🔌 Connected to MongoDB Successfully!");
+        seedAdmin();
+    })
     .catch((err) => {
         console.error("❌ MongoDB connection error:", err);
         if (dbURI !== "mongodb://127.0.0.1:27017/workmitra") {
@@ -549,8 +577,24 @@ app.get("/api/projects/all", authenticateToken, async (req, res) => {
   try {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
+
+    let blockedCompanyEmails = [];
+    if (req.user.userRole === "student") {
+      const student = await User.findOne({ email: req.user.email });
+      if (student && student.collegeName) {
+        const collegeAdmin = await User.findOne({ userRole: "college", collegeName: student.collegeName });
+        if (collegeAdmin && collegeAdmin.collegeBlockedCompanies) {
+          blockedCompanyEmails = collegeAdmin.collegeBlockedCompanies;
+        }
+      }
+    }
     
-    let query = Project.find().sort({ createdAt: -1 });
+    let queryConditions = {};
+    if (blockedCompanyEmails.length > 0) {
+      queryConditions.companyId = { $nin: blockedCompanyEmails };
+    }
+
+    let query = Project.find(queryConditions).sort({ createdAt: -1 });
     
     if (page && limit) {
       const skip = (page - 1) * limit;
@@ -558,7 +602,14 @@ app.get("/api/projects/all", authenticateToken, async (req, res) => {
     }
     
     const projects = await query;
-    res.status(200).json(projects);
+    const projectsWithCounts = await Promise.all(projects.map(async (p) => {
+      const applicantCount = await Application.countDocuments({ projectId: p._id });
+      return {
+        ...p.toObject(),
+        applicantCount
+      };
+    }));
+    res.status(200).json(projectsWithCounts);
   } catch (err) {
     res.status(500).json({ error: "Failed to retrieve projects." });
   }
@@ -609,10 +660,67 @@ app.post("/api/applications/apply", authenticateToken, async (req, res) => {
       return res.status(400).json({ error: "You have already applied to this project!" });
     }
 
+    const project = await Project.findById(projectId);
+    const studentUser = await User.findOne({ email: studentEmail });
+
+    // Compute standard match score fallback
+    let matchScore = 0;
+    let aiRationale = "Calculated using skill matches.";
+
+    if (project && project.requiredSkills && studentUser && studentUser.targetSkills) {
+      const targetSkills = project.requiredSkills.map(s => s.toLowerCase());
+      const studentSkillsArray = studentUser.targetSkills.split(",").map(s => s.trim().toLowerCase());
+      const intersections = studentSkillsArray.filter(skill => targetSkills.includes(skill));
+      if (targetSkills.length > 0) {
+        matchScore = Math.round((intersections.length / targetSkills.length) * 100);
+      }
+    }
+
+    // Attempt Gemini AI evaluation if resume is uploaded
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (apiKey && studentUser && studentUser.resumeText && project) {
+      try {
+        const prompt = `Analyze this candidate's resume text against the project description and required skills. Estimate a match percentage (integer 0 to 100) and provide a concise, one-sentence rationale. Return ONLY a valid JSON object matching this schema:
+{
+  "matchScore": number,
+  "aiRationale": "string"
+}
+
+Required Skills: ${project.requiredSkills.join(", ")}
+Project Description: ${project.description}
+Candidate Resume Text: ${studentUser.resumeText}`;
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { responseMimeType: "application/json" }
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (aiText) {
+            const aiData = JSON.parse(aiText);
+            if (typeof aiData.matchScore === "number") {
+              matchScore = aiData.matchScore;
+              aiRationale = aiData.aiRationale;
+            }
+          }
+        }
+      } catch (aiErr) {
+        console.error("Gemini applicant match score evaluation bypassed:", aiErr.message);
+      }
+    }
+
     const newApplication = new Application({
       projectId,
       studentEmail,
-      studentName
+      studentName,
+      matchScore,
+      aiRationale
     });
 
     await newApplication.save();
@@ -659,6 +767,21 @@ app.post("/api/projects", authenticateToken, async (req, res) => {
     res.status(201).json(project);
   } catch (err) {
     res.status(500).json({ error: "Failed to publish new project stack." });
+  }
+});
+
+// =========================================================================
+// 📂 ROUTE: Get Specific Project by ID
+// =========================================================================
+app.get("/api/projects/:projectId", authenticateToken, async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+    if (!project) {
+      return res.status(404).json({ error: "Project not found." });
+    }
+    res.status(200).json(project);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to retrieve project details." });
   }
 });
 
@@ -713,10 +836,12 @@ app.get("/api/projects/:projectId/applicants", authenticateToken, async (req, re
             .map(s => s.trim().toLowerCase());
         }
 
-        let matchPercentage = 0;
-        if (targetSkills.length > 0 && studentSkillsArray.length > 0) {
-          const intersections = studentSkillsArray.filter(skill => targetSkills.includes(skill));
-          matchPercentage = Math.round((intersections.length / targetSkills.length) * 100);
+        let matchPercentage = app.matchScore !== null && app.matchScore !== undefined ? app.matchScore : 0;
+        if (app.matchScore === null || app.matchScore === undefined) {
+          if (targetSkills.length > 0 && studentSkillsArray.length > 0) {
+            const intersections = studentSkillsArray.filter(skill => targetSkills.includes(skill));
+            matchPercentage = Math.round((intersections.length / targetSkills.length) * 100);
+          }
         }
 
         return {
@@ -728,11 +853,17 @@ app.get("/api/projects/:projectId/applicants", authenticateToken, async (req, re
           skills: studentUser?.targetSkills || "Not specified",
           projectTypePreference: studentUser?.projectType || "Remote Track",
           matchScore: matchPercentage,
+          aiRationale: app.aiRationale || "Calculated using skill matches.",
           resumeUrl: studentUser?.resumeUrl || null,
+          githubUrl: studentUser?.githubUrl || null,
+          linkedinUrl: studentUser?.linkedinUrl || null,
+          portfolioUrl: studentUser?.portfolioUrl || null,
           submissionText: app.submissionText || null,
           submissionLink: app.submissionLink || null,
           submittedAt: app.submittedAt || null,
-          feedbackText: app.feedbackText || null
+          feedbackText: app.feedbackText || null,
+          rating: app.rating || null,
+          ratingReview: app.ratingReview || null
         };
       })
     );
@@ -772,14 +903,16 @@ app.get("/api/applications/company/:email", authenticateToken, async (req, res) 
         const studentUser = await User.findOne({ email: app.studentEmail });
         const currentProject = app.projectId;
         
-        let matchPercentage = 0;
-        if (currentProject && currentProject.requiredSkills && studentUser && studentUser.targetSkills) {
-          const targetSkills = currentProject.requiredSkills.map(s => s.toLowerCase());
-          const studentSkillsArray = studentUser.targetSkills
-            .split(",")
-            .map(s => s.trim().toLowerCase());
-          const intersections = studentSkillsArray.filter(skill => targetSkills.includes(skill));
-          matchPercentage = Math.round((intersections.length / targetSkills.length) * 100);
+        let matchPercentage = app.matchScore !== null && app.matchScore !== undefined ? app.matchScore : 0;
+        if (app.matchScore === null || app.matchScore === undefined) {
+          if (currentProject && currentProject.requiredSkills && studentUser && studentUser.targetSkills) {
+            const targetSkills = currentProject.requiredSkills.map(s => s.toLowerCase());
+            const studentSkillsArray = studentUser.targetSkills
+              .split(",")
+              .map(s => s.trim().toLowerCase());
+            const intersections = studentSkillsArray.filter(skill => targetSkills.includes(skill));
+            matchPercentage = Math.round((intersections.length / targetSkills.length) * 100);
+          }
         }
 
         return {
@@ -792,11 +925,17 @@ app.get("/api/applications/company/:email", authenticateToken, async (req, res) 
           appliedAt: app.appliedAt,
           skills: studentUser?.targetSkills || "Not specified",
           resumeUrl: studentUser?.resumeUrl || null,
+          githubUrl: studentUser?.githubUrl || null,
+          linkedinUrl: studentUser?.linkedinUrl || null,
+          portfolioUrl: studentUser?.portfolioUrl || null,
           matchScore: matchPercentage,
+          aiRationale: app.aiRationale || "Calculated using skill matches.",
           submissionText: app.submissionText || null,
           submissionLink: app.submissionLink || null,
           submittedAt: app.submittedAt || null,
-          feedbackText: app.feedbackText || null
+          feedbackText: app.feedbackText || null,
+          rating: app.rating || null,
+          ratingReview: app.ratingReview || null
         };
       })
     );
@@ -847,6 +986,30 @@ app.post("/api/applications/:applicationId/status", authenticateToken, async (re
     application.status = status;
     await application.save();
 
+    // Push live real-time notification alert if student is online
+    try {
+      const receiverSocket = global.wsClients.get(application.studentEmail);
+      const ws = require("ws");
+      if (receiverSocket && receiverSocket.readyState === ws.OPEN) {
+        receiverSocket.send(
+          JSON.stringify({
+            type: "notification",
+            statusUpdate: true,
+            message: {
+              id: application._id,
+              title: status === "Approved" ? "🎉 Proposal Approved!" : "😞 Application Update",
+              message: status === "Approved"
+                ? `Your application for "${application.projectId.title}" was approved by the company.`
+                : `Your application for "${application.projectId.title}" was rejected.`,
+              type: status === "Approved" ? "success" : "danger"
+            }
+          })
+        );
+      }
+    } catch (wsErr) {
+      console.error("Failed to push real-time status update socket alert:", wsErr.message);
+    }
+
     res.status(200).json({ message: `Application status updated to ${status}.`, application });
   } catch (err) {
     res.status(500).json({ error: "Failed to modify application status." });
@@ -856,9 +1019,60 @@ app.post("/api/applications/:applicationId/status", authenticateToken, async (re
 // =========================================================================
 // 📤 ROUTE: Submit completed work for review
 // =========================================================================
+function calculateSimilarity(str1, str2) {
+  if (!str1 || !str2) return 0;
+  const s1 = str1.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const s2 = str2.toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (s1 === s2) return 100;
+  
+  const getBigrams = (str) => {
+    const bigrams = new Set();
+    for (let i = 0; i < str.length - 1; i++) {
+      bigrams.add(str.substring(i, i + 2));
+    }
+    return bigrams;
+  };
+
+  const b1 = getBigrams(s1);
+  const b2 = getBigrams(s2);
+  if (b1.size === 0 || b2.size === 0) return 0;
+
+  let intersection = 0;
+  b1.forEach(bg => {
+    if (b2.has(bg)) intersection++;
+  });
+
+  return Math.round((2 * intersection) / (b1.size + b2.size) * 100);
+}
+
+function runLinter(code) {
+  const warnings = [];
+  if (!code) return warnings;
+
+  const openBraces = (code.match(/{/g) || []).length;
+  const closeBraces = (code.match(/}/g) || []).length;
+  if (openBraces !== closeBraces) {
+    warnings.push(`Syntax Warning: Unbalanced braces detected (${openBraces} open vs ${closeBraces} close).`);
+  }
+
+  if (code.includes("console.log")) {
+    warnings.push("Style Warning: Avoid leaving debugging tags 'console.log' in production code.");
+  }
+
+  if (code.match(/\{\s*\}/)) {
+    warnings.push("Refactor Warning: Empty block statement detected. Implement logic or clear block.");
+  }
+
+  if (code.includes("const ") && !code.includes(";")) {
+    warnings.push("Formatting Warning: Missing semicolon line delimiters.");
+  }
+
+  return warnings;
+}
+
 app.post("/api/applications/:applicationId/submit", authenticateToken, async (req, res) => {
   try {
-    const { submissionLink, submissionText } = req.body;
+    const { submissionLink, submissionText, githubRepoUrl, liveDeploymentUrl, aiDeclaration, selfAssessment } = req.body;
     if (!submissionLink || !submissionText) {
       return res.status(400).json({ error: "Submission Link and Explanatory Notes are required." });
     }
@@ -872,15 +1086,191 @@ app.post("/api/applications/:applicationId/submit", authenticateToken, async (re
       return res.status(403).json({ error: "Unauthorized project submitter." });
     }
 
-    application.status = "Submitted";
     application.submissionLink = submissionLink;
+    application.githubRepoUrl = githubRepoUrl || null;
+    application.liveDeploymentUrl = liveDeploymentUrl || null;
     application.submissionText = submissionText;
     application.submittedAt = new Date();
+
+    // 1. Check Plagiarism (compare with other submissions for this project)
+    let plagiarismScore = 0;
+    const siblingApplications = await Application.find({
+      projectId: application.projectId,
+      status: { $in: ["Submitted", "Completed"] },
+      _id: { $ne: application._id }
+    });
+    for (const sib of siblingApplications) {
+      if (sib.submissionText) {
+        const sim = calculateSimilarity(submissionText, sib.submissionText);
+        if (sim > plagiarismScore) plagiarismScore = sim;
+      }
+    }
+    application.plagiarismScore = plagiarismScore;
+    
+    // Set status to Flagged if plagiarism score exceeds 70%
+    if (plagiarismScore > 70) {
+      application.status = "Flagged";
+    } else {
+      application.status = "Submitted";
+    }
+
+    // 2. Run Linter Simulation
+    const lintWarnings = runLinter(submissionText);
+    application.lintWarnings = lintWarnings;
+
+    // 3. AI Code Auditor (Google Gemini)
+    let matchScore = null;
+    let aiRationale = null;
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (apiKey) {
+      try {
+        const prompt = `Analyze this student's task submission code against the requirements. Grade the solution's code quality, correct implementation, and completeness on a scale of 0 to 100. Also write a one-sentence critique/rationale. Return ONLY a valid JSON object matching this schema:
+{
+  "score": number,
+  "rationale": "string"
+}
+
+Submission Code: ${submissionText}
+Explanatory details: ${submissionText}`;
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { responseMimeType: "application/json" }
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (aiText) {
+            const aiData = JSON.parse(aiText);
+            if (typeof aiData.score === "number") {
+              matchScore = aiData.score;
+              aiRationale = aiData.rationale;
+            }
+          }
+        }
+      } catch (aiErr) {
+        console.error("Gemini AI code auditor bypassed:", aiErr.message);
+      }
+    }
+    if (matchScore !== null) {
+      application.matchScore = matchScore;
+      application.aiRationale = aiRationale;
+    }
+
+    // Push version history node
+    application.submissionVersions.push({
+      submissionLink,
+      githubRepoUrl: githubRepoUrl || null,
+      liveDeploymentUrl: liveDeploymentUrl || null,
+      submissionText,
+      aiDeclaration: aiDeclaration || { usedAi: false, aiPercentage: 0, toolsUsed: "" },
+      selfAssessment: selfAssessment || {},
+      submittedAt: new Date()
+    });
+
     await application.save();
 
     res.status(200).json({ message: "Work submitted successfully for company review.", application });
   } catch (err) {
+    console.error("Submission error:", err.message);
     res.status(500).json({ error: "Failed to register project solution details." });
+  }
+});
+
+// =========================================================================
+// ⏳ ROUTE: Request Deadline Extension (Phase 12)
+// =========================================================================
+app.post("/api/applications/:applicationId/request-extension", authenticateToken, async (req, res) => {
+  try {
+    const { requestedDays, reason } = req.body;
+    if (!requestedDays || !reason) {
+      return res.status(400).json({ error: "Requested days and extension reason are required." });
+    }
+
+    const application = await Application.findById(req.params.applicationId);
+    if (!application) {
+      return res.status(404).json({ error: "Application not found." });
+    }
+
+    if (req.user.email !== application.studentEmail) {
+      return res.status(403).json({ error: "Unauthorized operation." });
+    }
+
+    application.extensionRequests.push({
+      requestedDays: Number(requestedDays),
+      reason,
+      status: "Pending",
+      requestedAt: new Date()
+    });
+
+    await application.save();
+    res.status(200).json({ message: "Deadline extension requested.", application });
+  } catch (err) {
+    console.error("Request extension error:", err.message);
+    res.status(500).json({ error: "Failed to submit deadline extension request." });
+  }
+});
+
+// =========================================================================
+// ⏳ ROUTE: Review Deadline Extension (Phase 12)
+// =========================================================================
+app.post("/api/applications/:applicationId/review-extension", authenticateToken, async (req, res) => {
+  try {
+    const { requestId, status } = req.body; // status: 'Approved' | 'Rejected'
+    if (!requestId || !status) {
+      return res.status(400).json({ error: "Request ID and review status are required." });
+    }
+
+    const application = await Application.findById(req.params.applicationId).populate("projectId");
+    if (!application) {
+      return res.status(404).json({ error: "Application not found." });
+    }
+
+    const reqIndex = application.extensionRequests.findIndex(r => r._id.toString() === requestId);
+    if (reqIndex === -1) {
+      return res.status(404).json({ error: "Extension request not found." });
+    }
+
+    application.extensionRequests[reqIndex].status = status;
+    application.extensionRequests[reqIndex].reviewedAt = new Date();
+
+    if (status === "Approved") {
+      const days = application.extensionRequests[reqIndex].requestedDays;
+      // Update extended deadline. Default base is project deadline or current extendedDeadline
+      const baseDate = application.extendedDeadline || application.projectId?.deadline || new Date();
+      const newDeadline = new Date(baseDate);
+      newDeadline.setDate(newDeadline.getDate() + days);
+      application.extendedDeadline = newDeadline;
+    }
+
+    await application.save();
+
+    // Trigger real-time alert via WebSocket if student is connected
+    const studentSocket = global.wsClients.get(application.studentEmail);
+    if (studentSocket && studentSocket.readyState === ws.OPEN) {
+      studentSocket.send(
+        JSON.stringify({
+          type: "notification",
+          statusUpdate: true,
+          message: {
+            title: `Deadline Extension ${status}!`,
+            message: status === "Approved"
+              ? `Your extension request was approved. New deadline: ${new Date(application.extendedDeadline).toLocaleDateString()}`
+              : `Your extension request was rejected by the recruiter.`
+          }
+        })
+      );
+    }
+
+    res.status(200).json({ message: `Extension request has been ${status.toLowerCase()}.`, application });
+  } catch (err) {
+    console.error("Review extension error:", err.message);
+    res.status(500).json({ error: "Failed to review deadline extension request." });
   }
 });
 
@@ -889,7 +1279,7 @@ app.post("/api/applications/:applicationId/submit", authenticateToken, async (re
 // =========================================================================
 app.post("/api/applications/:applicationId/complete", authenticateToken, async (req, res) => {
   try {
-    const { feedbackText } = req.body;
+    const { feedbackText, rating, ratingReview } = req.body;
 
     const application = await Application.findById(req.params.applicationId).populate("projectId");
     if (!application) {
@@ -902,11 +1292,318 @@ app.post("/api/applications/:applicationId/complete", authenticateToken, async (
 
     application.status = "Completed";
     application.feedbackText = feedbackText || "No feedback specified.";
+    if (rating !== undefined && rating !== null) {
+      application.rating = parseInt(rating);
+    }
+    if (ratingReview !== undefined && ratingReview !== null) {
+      application.ratingReview = ratingReview;
+    }
     await application.save();
+
+    // Auto-update student targetSkills based on project requiredSkills (Item 4)
+    try {
+      const User = require("./models/User");
+      const student = await User.findOne({ email: application.studentEmail });
+      if (student) {
+        let existingSkills = student.targetSkills 
+          ? student.targetSkills.split(",").map(s => s.trim().toLowerCase()) 
+          : [];
+        let newSkills = application.projectId.requiredSkills || [];
+        newSkills.forEach(ns => {
+          let clean = ns.trim().toLowerCase();
+          if (clean && !existingSkills.includes(clean)) {
+            existingSkills.push(clean);
+          }
+        });
+        student.targetSkills = existingSkills
+          .map(s => s.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" "))
+          .join(", ");
+        await student.save();
+      }
+    } catch (tagErr) {
+      console.error("Failed to auto-assign verified skill tags:", tagErr.message);
+    }
+
+    // Push live real-time notification alert if student is online
+    try {
+      const receiverSocket = global.wsClients.get(application.studentEmail);
+      const ws = require("ws");
+      if (receiverSocket && receiverSocket.readyState === ws.OPEN) {
+        receiverSocket.send(
+          JSON.stringify({
+            type: "notification",
+            statusUpdate: true,
+            message: {
+              id: application._id,
+              title: "🏆 Gig Completed!",
+              message: `Your work for "${application.projectId.title}" has been reviewed, approved, and marked completed.`,
+              type: "success"
+            }
+          })
+        );
+      }
+    } catch (wsErr) {
+      console.error("Failed to push real-time task complete socket alert:", wsErr.message);
+    }
 
     res.status(200).json({ message: "Work approved and marked as Completed.", application });
   } catch (err) {
     res.status(500).json({ error: "Failed to approve solution node." });
+  }
+});
+
+// =========================================================================
+// 🔄 ROUTE: Request revision for a task submission
+// =========================================================================
+app.post("/api/applications/:applicationId/revision", authenticateToken, async (req, res) => {
+  try {
+    const { feedbackText } = req.body;
+    if (!feedbackText) {
+      return res.status(400).json({ error: "Revision feedback explanation is required." });
+    }
+
+    const application = await Application.findById(req.params.applicationId).populate("projectId");
+    if (!application) {
+      return res.status(404).json({ error: "Application not found." });
+    }
+
+    if (req.user.email !== application.projectId.companyId) {
+      return res.status(403).json({ error: "Unauthorized status revision request." });
+    }
+
+    application.status = "Revision Requested";
+    application.feedbackText = feedbackText;
+    await application.save();
+
+    // Push live WS alert
+    try {
+      const receiverSocket = global.wsClients.get(application.studentEmail);
+      const ws = require("ws");
+      if (receiverSocket && receiverSocket.readyState === ws.OPEN) {
+        receiverSocket.send(
+          JSON.stringify({
+            type: "notification",
+            statusUpdate: true,
+            message: {
+              id: application._id,
+              title: "🔄 Revision Requested",
+              message: `Recruiter requested revision for "${application.projectId.title}".`,
+              type: "warning"
+            }
+          })
+        );
+      }
+    } catch (wsErr) {
+      console.error("Failed to push revision request socket alert:", wsErr.message);
+    }
+
+    res.status(200).json({ message: "Revision requested successfully.", application });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to request task revision." });
+  }
+});
+
+// =========================================================================
+// ⚠️ ROUTE: Flag and Dispute task submission
+// =========================================================================
+app.post("/api/applications/:applicationId/dispute", authenticateToken, async (req, res) => {
+  try {
+    const { feedbackText } = req.body;
+    if (!feedbackText) {
+      return res.status(400).json({ error: "Dispute explanation feedback is required." });
+    }
+
+    const application = await Application.findById(req.params.applicationId).populate("projectId");
+    if (!application) {
+      return res.status(404).json({ error: "Application not found." });
+    }
+
+    if (req.user.email !== application.projectId.companyId) {
+      return res.status(403).json({ error: "Unauthorized status modification request." });
+    }
+
+    application.status = "Disputed";
+    application.feedbackText = feedbackText;
+    await application.save();
+
+    // Push live real-time notification warning alert if student is online
+    try {
+      const receiverSocket = global.wsClients.get(application.studentEmail);
+      const ws = require("ws");
+      if (receiverSocket && receiverSocket.readyState === ws.OPEN) {
+        receiverSocket.send(
+          JSON.stringify({
+            type: "notification",
+            statusUpdate: true,
+            message: {
+              id: application._id,
+              title: "⚠️ Submission Disputed!",
+              message: `Your solution for "${application.projectId.title}" was flagged by the recruiter. Check dashboard feedback.`,
+              type: "danger"
+            }
+          })
+        );
+      }
+    } catch (wsErr) {
+      console.error("Failed to push real-time dispute socket alert:", wsErr.message);
+    }
+
+    res.status(200).json({ message: "Task solution disputed successfully.", application });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to dispute solution node." });
+  }
+});
+
+// =========================================================================
+// 👑 ADMIN ROUTES: Control Panel Management endpoints
+// =========================================================================
+app.get("/api/admin/metrics", authenticateToken, async (req, res) => {
+  if (req.user.userRole !== "admin") {
+    return res.status(403).json({ error: "Access denied. Admins only." });
+  }
+
+  try {
+    const User = require("./models/User");
+    const Project = require("./models/Project");
+    const Application = require("./models/Application");
+
+    const totalStudents = await User.countDocuments({ userRole: "student" });
+    const totalCompanies = await User.countDocuments({ userRole: "company" });
+    const totalProjects = await Project.countDocuments();
+    
+    // Escrow metrics
+    const applications = await Application.find().populate("projectId");
+    const lockedEscrow = applications
+      .filter(app => ["Approved", "Submitted"].includes(app.status))
+      .reduce((sum, app) => sum + (app.projectId?.budget || 0), 0);
+      
+    const completedEscrow = applications
+      .filter(app => app.status === "Completed")
+      .reduce((sum, app) => sum + (app.projectId?.budget || 0), 0);
+
+    const disputedEscrow = applications
+      .filter(app => app.status === "Disputed")
+      .reduce((sum, app) => sum + (app.projectId?.budget || 0), 0);
+
+    res.status(200).json({
+      totalStudents,
+      totalCompanies,
+      totalProjects,
+      lockedEscrow,
+      completedEscrow,
+      disputedEscrow
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load admin statistics." });
+  }
+});
+
+app.get("/api/admin/disputes", authenticateToken, async (req, res) => {
+  if (req.user.userRole !== "admin") {
+    return res.status(403).json({ error: "Access denied. Admins only." });
+  }
+
+  try {
+    const Application = require("./models/Application");
+    const disputes = await Application.find({ status: "Disputed" }).populate("projectId");
+    res.status(200).json(disputes);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch disputed items." });
+  }
+});
+
+app.post("/api/admin/disputes/:applicationId/resolve", authenticateToken, async (req, res) => {
+  if (req.user.userRole !== "admin") {
+    return res.status(403).json({ error: "Access denied. Admins only." });
+  }
+
+  const { decision } = req.body; // 'release' (Complete) or 'refund' (Reject)
+  if (!["release", "refund"].includes(decision)) {
+    return res.status(400).json({ error: "Invalid dispute resolution decision." });
+  }
+
+  try {
+    const Application = require("./models/Application");
+    const application = await Application.findById(req.params.applicationId).populate("projectId");
+    if (!application) {
+      return res.status(404).json({ error: "Application not found." });
+    }
+
+    application.status = decision === "release" ? "Completed" : "Rejected";
+    application.feedbackText = `Dispute resolved by Admin: ${decision === "release" ? "Escrow funds released to student." : "Escrow funds refunded to recruiter."}`;
+    await application.save();
+
+    // Push live real-time notification alert to both recruiter and student if online
+    const sendNotification = (email, title, message, type) => {
+      try {
+        const receiverSocket = global.wsClients.get(email);
+        const ws = require("ws");
+        if (receiverSocket && receiverSocket.readyState === ws.OPEN) {
+          receiverSocket.send(
+            JSON.stringify({
+              type: "notification",
+              statusUpdate: true,
+              message: { id: application._id, title, message, type }
+            })
+          );
+        }
+      } catch (wsErr) {
+        console.error("Failed to push real-time dispute resolution socket alert:", wsErr.message);
+      }
+    };
+
+    sendNotification(
+      application.studentEmail,
+      "⚖️ Dispute Resolved!",
+      `The dispute for "${application.projectId.title}" was resolved. Decision: ${decision === "release" ? "Escrow funds released!" : "Funds refunded to company."}`,
+      decision === "release" ? "success" : "danger"
+    );
+
+    sendNotification(
+      application.projectId.companyId,
+      "⚖️ Dispute Resolved!",
+      `The dispute for "${application.projectId.title}" was resolved. Decision: ${decision === "release" ? "Funds released to student." : "Funds refunded to your balance."}`,
+      decision === "release" ? "info" : "success"
+    );
+
+    res.status(200).json({ message: "Dispute resolved successfully.", application });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to resolve dispute." });
+  }
+});
+
+app.get("/api/admin/companies", authenticateToken, async (req, res) => {
+  if (req.user.userRole !== "admin") {
+    return res.status(403).json({ error: "Access denied. Admins only." });
+  }
+
+  try {
+    const User = require("./models/User");
+    const companies = await User.find({ userRole: "company" }, "fullName email companyName mobile isVerified createdAt");
+    res.status(200).json(companies);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load corporate registrations." });
+  }
+});
+
+app.post("/api/admin/companies/:companyEmail/verify", authenticateToken, async (req, res) => {
+  if (req.user.userRole !== "admin") {
+    return res.status(403).json({ error: "Access denied. Admins only." });
+  }
+
+  try {
+    const User = require("./models/User");
+    const updatedCompany = await User.findOneAndUpdate(
+      { email: req.params.companyEmail, userRole: "company" },
+      { isVerified: true },
+      { new: true }
+    );
+    if (!updatedCompany) {
+      return res.status(404).json({ error: "Company not found." });
+    }
+    res.status(200).json({ message: "Company verified successfully.", company: updatedCompany });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to verify corporate credentials." });
   }
 });
 
@@ -1107,9 +1804,6 @@ ${textToAnalyze}`;
   }
 });
 
-// =========================================================================
-// 🔎 ROUTE: Get a User's profile details (excluding password)
-// =========================================================================
 app.get("/api/auth/user/:email", authenticateToken, async (req, res) => {
   try {
     const user = await User.findOne({ email: req.params.email }, "-password");
@@ -1117,17 +1811,75 @@ app.get("/api/auth/user/:email", authenticateToken, async (req, res) => {
       return res.status(404).json({ error: "Student profile not found." });
     }
 
-    // Fix 5: Only return full profile if it's the user's own email
-    if (req.user.email !== req.params.email) {
-      return res.status(200).json({
-        fullName: user.fullName,
-        userRole: user.userRole
-      });
+    // Only restrict if it's private, NOT the owner, and NOT a company/admin recruiter
+    if (user.isProfilePrivate && req.user.email !== req.params.email && req.user.userRole !== "company" && req.user.userRole !== "admin") {
+      return res.status(403).json({ error: "This profile has been marked private by the student." });
     }
 
-    res.status(200).json(user);
+    const userObj = user.toObject();
+    let isEndorsed = false;
+    if (user.collegeName) {
+      const collegeAdmin = await User.findOne({ userRole: "college", collegeName: user.collegeName });
+      if (collegeAdmin && collegeAdmin.collegeEndorsedStudents) {
+        isEndorsed = collegeAdmin.collegeEndorsedStudents.includes(user.email);
+      }
+    }
+    userObj.isEndorsed = isEndorsed;
+
+    res.status(200).json(userObj);
   } catch (err) {
     res.status(500).json({ error: "Failed to read profile details." });
+  }
+});
+
+app.get("/api/auth/student/vanity/:username", authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findOne({ vanityUsername: req.params.username }, "-password");
+    if (!user) {
+      return res.status(404).json({ error: "Student profile username not found." });
+    }
+    if (user.isProfilePrivate && req.user.email !== user.email && req.user.userRole !== "company" && req.user.userRole !== "admin") {
+      return res.status(403).json({ error: "This profile has been marked private by the student." });
+    }
+
+    const userObj = user.toObject();
+    let isEndorsed = false;
+    if (user.collegeName) {
+      const collegeAdmin = await User.findOne({ userRole: "college", collegeName: user.collegeName });
+      if (collegeAdmin && collegeAdmin.collegeEndorsedStudents) {
+        isEndorsed = collegeAdmin.collegeEndorsedStudents.includes(user.email);
+      }
+    }
+    userObj.isEndorsed = isEndorsed;
+
+    res.status(200).json(userObj);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to read vanity profile." });
+  }
+});
+
+app.post("/api/profile/vouch", authenticateToken, async (req, res) => {
+  try {
+    const { studentEmail, skills, comment } = req.body;
+    if (!studentEmail || !skills || !comment) {
+      return res.status(400).json({ error: "Required vouch payload parameters missing." });
+    }
+    const student = await User.findOne({ email: studentEmail });
+    if (!student) {
+      return res.status(404).json({ error: "Recipient student user not found." });
+    }
+    if (req.user.email === studentEmail) {
+      return res.status(400).json({ error: "You cannot vouch for your own profile." });
+    }
+    student.softSkillsVouches.push({
+      vouchedBy: req.user.email,
+      skills,
+      comment
+    });
+    await student.save();
+    res.status(200).json({ message: "Vouch endorsement submitted successfully!", student });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to submit vouch endorsement." });
   }
 });
 
@@ -1140,11 +1892,29 @@ app.put("/api/profile/student/:email", authenticateToken, async (req, res) => {
     if (req.user.email !== email) {
       return res.status(403).json({ error: "Unauthorized profile update request." });
     }
-    const { fullName, collegeName, enrollmentNumber, mobile, targetSkills, projectType, resumeUrl } = req.body;
+    const { 
+      fullName, collegeName, enrollmentNumber, mobile, targetSkills, 
+      projectType, resumeUrl, githubUrl, linkedinUrl, portfolioUrl, bio,
+      isProfilePrivate, major, currentSemester, vanityUsername, videoPitchUrl,
+      extracurriculars, availabilitySlots, preferredTechStack
+    } = req.body;
+    
+    // Check vanity uniqueness if modified
+    if (vanityUsername) {
+      const existing = await User.findOne({ vanityUsername, email: { $ne: email } });
+      if (existing) {
+        return res.status(400).json({ error: "Vanity URL handle is already taken." });
+      }
+    }
     
     const user = await User.findOneAndUpdate(
       { email },
-      { fullName, collegeName, enrollmentNumber, mobile, targetSkills, projectType, resumeUrl },
+      { 
+        fullName, collegeName, enrollmentNumber, mobile, targetSkills, 
+        projectType, resumeUrl, githubUrl, linkedinUrl, portfolioUrl, bio,
+        isProfilePrivate, major, currentSemester, vanityUsername, videoPitchUrl,
+        extracurriculars, availabilitySlots, preferredTechStack
+      },
       { new: true }
     );
     
@@ -1277,9 +2047,560 @@ app.get("/api/chat/partners/:email", authenticateToken, async (req, res) => {
 
     // Fetch user details for each partner email
     const partners = await User.find({ email: { $in: uniqueEmails } }, "fullName email companyName userRole");
-    res.status(200).json(partners);
+    
+    const partnersWithUnread = await Promise.all(
+      partners.map(async (partner) => {
+        const unreadCount = await Message.countDocuments({
+          sender: partner.email,
+          receiver: email,
+          read: false
+        });
+        return {
+          _id: partner._id,
+          fullName: partner.fullName,
+          email: partner.email,
+          companyName: partner.companyName,
+          userRole: partner.userRole,
+          unreadCount
+        };
+      })
+    );
+    
+    res.status(200).json(partnersWithUnread);
   } catch (err) {
-    res.status(500).json({ error: "Failed to gather chat partners." });
+    res.status(500).json({ error: "Failed to load recent chat partners." });
+  }
+});
+
+// =========================================================================
+// 🔒 ROUTE: Mark all messages from a specific partner as read
+// =========================================================================
+app.post("/api/chat/read", authenticateToken, async (req, res) => {
+  try {
+    const { sender } = req.body;
+    if (!sender) {
+      return res.status(400).json({ error: "Sender email is required." });
+    }
+    const Message = require("./models/Message");
+    await Message.updateMany(
+      { sender, receiver: req.user.email, read: false },
+      { $set: { read: true } }
+    );
+    res.status(200).json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to mark messages as read." });
+  }
+});
+
+// =========================================================================
+// 📊 ROUTE: Company Dashboard KPI Stats Aggregation (Phase 10)
+// =========================================================================
+app.get("/api/dashboard/company-stats/:email", authenticateToken, async (req, res) => {
+  try {
+    const companyEmail = req.params.email;
+    if (req.user.email !== companyEmail) {
+      return res.status(403).json({ error: "Unauthorized stats access." });
+    }
+
+    const projects = await Project.find({ companyId: companyEmail });
+    const projectIds = projects.map(p => p._id);
+    const applications = await Application.find({ projectId: { $in: projectIds } }).populate("projectId");
+
+    const totalProjects = projects.length;
+    const totalApplications = applications.length;
+    const submittedCount = applications.filter(a => a.status === "Submitted").length;
+    const completedCount = applications.filter(a => a.status === "Completed").length;
+    const pendingCount = applications.filter(a => a.status === "Pending").length;
+    const approvedCount = applications.filter(a => a.status === "Approved").length;
+    const rejectedCount = applications.filter(a => a.status === "Rejected").length;
+    const revisionCount = applications.filter(a => a.status === "Revision Requested").length;
+
+    const totalBudget = projects.reduce((sum, p) => sum + (p.budget || 0), 0);
+    const ratedApps = applications.filter(a => a.rating && a.rating > 0);
+    const avgRating = ratedApps.length > 0
+      ? (ratedApps.reduce((sum, a) => sum + a.rating, 0) / ratedApps.length).toFixed(1)
+      : "0.0";
+
+    // Top 3 performers
+    const completedApps = applications.filter(a => a.status === "Completed" && a.rating > 0);
+    completedApps.sort((a, b) => b.rating - a.rating);
+    const topPerformers = completedApps.slice(0, 3).map(a => ({
+      studentEmail: a.studentEmail,
+      studentName: a.studentName,
+      rating: a.rating,
+      projectTitle: a.projectId?.title || "Unknown"
+    }));
+
+    res.status(200).json({
+      totalProjects,
+      totalApplications,
+      submittedCount,
+      completedCount,
+      pendingCount,
+      approvedCount,
+      rejectedCount,
+      revisionCount,
+      totalBudget,
+      avgRating,
+      topPerformers
+    });
+  } catch (err) {
+    console.error("Company stats aggregation error:", err.message);
+    res.status(500).json({ error: "Failed to aggregate company dashboard stats." });
+  }
+});
+
+// =========================================================================
+// 🕑 ROUTE: Recent Activity Feed (Phase 10)
+// =========================================================================
+app.get("/api/dashboard/recent-activity/:email", authenticateToken, async (req, res) => {
+  try {
+    const companyEmail = req.params.email;
+    if (req.user.email !== companyEmail) {
+      return res.status(403).json({ error: "Unauthorized activity access." });
+    }
+
+    const projects = await Project.find({ companyId: companyEmail });
+    const projectIds = projects.map(p => p._id);
+    const recentApps = await Application.find({ projectId: { $in: projectIds } })
+      .populate("projectId")
+      .sort({ updatedAt: -1 })
+      .limit(10);
+
+    const feed = recentApps.map(a => ({
+      id: a._id,
+      studentName: a.studentName,
+      studentEmail: a.studentEmail,
+      projectTitle: a.projectId?.title || "Unknown",
+      status: a.status,
+      updatedAt: a.updatedAt || a.createdAt,
+      feedbackText: a.feedbackText || null,
+      rating: a.rating || null
+    }));
+
+    res.status(200).json(feed);
+  } catch (err) {
+    console.error("Recent activity feed error:", err.message);
+    res.status(500).json({ error: "Failed to load recent activity." });
+  }
+});
+
+// =========================================================================
+// ⚙️ ROUTE: Update Company Profile Settings (Phase 10)
+// =========================================================================
+app.put("/api/auth/company-profile", authenticateToken, async (req, res) => {
+  try {
+    const { companyBio, companyLogoUrl, companyWebsite, companyLinkedin, industryVertical, teamSize, defaultComplexity, autoApproveApplications } = req.body;
+
+    const user = await User.findOne({ email: req.user.email });
+    if (!user) {
+      return res.status(404).json({ error: "User account not found." });
+    }
+    if (user.userRole !== "company") {
+      return res.status(403).json({ error: "Only company accounts can update company profiles." });
+    }
+
+    if (companyBio !== undefined) user.companyBio = companyBio;
+    if (companyLogoUrl !== undefined) user.companyLogoUrl = companyLogoUrl;
+    if (companyWebsite !== undefined) user.companyWebsite = companyWebsite;
+    if (companyLinkedin !== undefined) user.companyLinkedin = companyLinkedin;
+    if (industryVertical !== undefined) user.industryVertical = industryVertical;
+    if (teamSize !== undefined) user.teamSize = teamSize;
+    if (defaultComplexity !== undefined) user.defaultComplexity = defaultComplexity;
+    if (autoApproveApplications !== undefined) user.autoApproveApplications = autoApproveApplications;
+
+    await user.save();
+    res.status(200).json({ message: "Company profile updated successfully.", user });
+  } catch (err) {
+    console.error("Company profile update error:", err.message);
+    res.status(500).json({ error: "Failed to update company profile." });
+  }
+});
+
+// =========================================================================
+// 🏛️ ROUTE: Get College Students Roster & Calculate Scores (Phase 11)
+// =========================================================================
+app.get("/api/college/students/:collegeName", authenticateToken, async (req, res) => {
+  try {
+    const { collegeName } = req.params;
+    const collegeUser = await User.findOne({ email: req.user.email });
+    if (!collegeUser || collegeUser.userRole !== "college") {
+      return res.status(403).json({ error: "Unauthorized access: College role required." });
+    }
+
+    const students = await User.find({ userRole: "student", collegeName });
+    const studentsWithScores = await Promise.all(students.map(async (student) => {
+      const studentApps = await Application.find({ studentEmail: student.email });
+      const completedTasks = studentApps.filter(a => a.status === "Completed");
+      const ratedTasks = completedTasks.filter(a => a.rating > 0);
+      const avgRating = ratedTasks.length > 0
+        ? (ratedTasks.reduce((sum, a) => sum + a.rating, 0) / ratedTasks.length)
+        : 0;
+
+      // Completeness fields matching student profile
+      const completenessFields = [
+        student.fullName, student.mobile, student.collegeName,
+        student.enrollmentNumber, student.targetSkills, student.bio || student.companyBio, // fallback bio
+        student.githubUrl, student.linkedinUrl, student.portfolioUrl
+      ];
+      const profileCompleteness = completenessFields.filter(Boolean).length / 9;
+
+      const readinessScore = Math.min(
+        1000,
+        Math.round(200 + (completedTasks.length * 150) + (avgRating * 80) + (profileCompleteness * 100))
+      );
+
+      return {
+        fullName: student.fullName,
+        email: student.email,
+        enrollmentNumber: student.enrollmentNumber,
+        currentSemester: student.currentSemester || "N/A",
+        major: student.major || "N/A",
+        targetSkills: student.targetSkills || "",
+        completedTasksCount: completedTasks.length,
+        avgRating: avgRating.toFixed(1),
+        readinessScore,
+        isEndorsed: collegeUser.collegeEndorsedStudents.includes(student.email)
+      };
+    }));
+
+    res.status(200).json(studentsWithScores);
+  } catch (err) {
+    console.error("Failed to load college students roster:", err.message);
+    res.status(500).json({ error: "Failed to load college students roster." });
+  }
+});
+
+// =========================================================================
+// 🏛️ ROUTE: Endorse Student by Professor (Phase 11)
+// =========================================================================
+app.post("/api/college/endorse", authenticateToken, async (req, res) => {
+  try {
+    const { studentEmail, endorse } = req.body;
+    const collegeUser = await User.findOne({ email: req.user.email });
+    if (!collegeUser || collegeUser.userRole !== "college") {
+      return res.status(403).json({ error: "College administrator role required." });
+    }
+
+    if (endorse) {
+      if (!collegeUser.collegeEndorsedStudents.includes(studentEmail)) {
+        collegeUser.collegeEndorsedStudents.push(studentEmail);
+      }
+    } else {
+      collegeUser.collegeEndorsedStudents = collegeUser.collegeEndorsedStudents.filter(e => e !== studentEmail);
+    }
+
+    await collegeUser.save();
+    res.status(200).json({ message: "Student endorsement updated.", collegeEndorsedStudents: collegeUser.collegeEndorsedStudents });
+  } catch (err) {
+    console.error("Endorsement error:", err.message);
+    res.status(500).json({ error: "Failed to update student endorsement." });
+  }
+});
+
+// =========================================================================
+// 🏛️ ROUTE: Get Recruiter Companies with College Statuses (Phase 11)
+// =========================================================================
+app.get("/api/college/companies", authenticateToken, async (req, res) => {
+  try {
+    const collegeUser = await User.findOne({ email: req.user.email });
+    if (!collegeUser || collegeUser.userRole !== "college") {
+      return res.status(403).json({ error: "College administrator role required." });
+    }
+
+    const companies = await User.find({ userRole: "company" });
+    const formattedCompanies = companies.map(c => {
+      let status = "Pending";
+      if (collegeUser.collegeApprovedCompanies.includes(c.email)) {
+        status = "Approved";
+      } else if (collegeUser.collegeBlockedCompanies.includes(c.email)) {
+        status = "Blocked";
+      }
+      return {
+        companyName: c.companyName || c.fullName,
+        email: c.email,
+        mobile: c.mobile,
+        industryVertical: c.industryVertical || "Other",
+        teamSize: c.teamSize || "1-10",
+        status
+      };
+    });
+
+    res.status(200).json(formattedCompanies);
+  } catch (err) {
+    console.error("Failed to load companies for college:", err.message);
+    res.status(500).json({ error: "Failed to load companies." });
+  }
+});
+
+// =========================================================================
+// 🏛️ ROUTE: Toggle Company Approval (Phase 11)
+// =========================================================================
+app.post("/api/college/toggle-company", authenticateToken, async (req, res) => {
+  try {
+    const { companyEmail, status } = req.body; // status: 'Approved' | 'Blocked' | 'Pending'
+    const collegeUser = await User.findOne({ email: req.user.email });
+    if (!collegeUser || collegeUser.userRole !== "college") {
+      return res.status(403).json({ error: "College administrator role required." });
+    }
+
+    // Clean up existing lists
+    collegeUser.collegeApprovedCompanies = collegeUser.collegeApprovedCompanies.filter(e => e !== companyEmail);
+    collegeUser.collegeBlockedCompanies = collegeUser.collegeBlockedCompanies.filter(e => e !== companyEmail);
+
+    if (status === "Approved") {
+      collegeUser.collegeApprovedCompanies.push(companyEmail);
+    } else if (status === "Blocked") {
+      collegeUser.collegeBlockedCompanies.push(companyEmail);
+    }
+
+    await collegeUser.save();
+    res.status(200).json({ message: "Company recruitment permissions updated." });
+  } catch (err) {
+    console.error("Toggle company error:", err.message);
+    res.status(500).json({ error: "Failed to toggle company permissions." });
+  }
+});
+
+// =========================================================================
+// 🏛️ ROUTE: Bulk Student Importer Simulator (Phase 11)
+// =========================================================================
+app.post("/api/college/bulk-import", authenticateToken, async (req, res) => {
+  try {
+    const { students } = req.body; // array: [{ fullName, email, enrollmentNumber }]
+    const collegeUser = await User.findOne({ email: req.user.email });
+    if (!collegeUser || collegeUser.userRole !== "college") {
+      return res.status(403).json({ error: "College administrator role required." });
+    }
+
+    let importedCount = 0;
+    let duplicateCount = 0;
+    let invalidDomainCount = 0;
+
+    for (const student of students) {
+      const emailLower = student.email.trim().toLowerCase();
+      if (!emailLower.endsWith(".edu") && !emailLower.endsWith(".edu.in")) {
+        invalidDomainCount++;
+        continue;
+      }
+
+      const existingUser = await User.findOne({ email: emailLower });
+      if (existingUser) {
+        duplicateCount++;
+        continue;
+      }
+
+      // Seed student user
+      const defaultPassword = "password123";
+      const newUser = new User({
+        fullName: student.fullName.trim(),
+        email: emailLower,
+        password: defaultPassword,
+        collegeName: collegeUser.collegeName,
+        enrollmentNumber: student.enrollmentNumber.trim(),
+        userRole: "student",
+        hasCompletedProfile: true // set true to bypass onboarding preferences
+      });
+
+      await newUser.save();
+      importedCount++;
+    }
+
+    res.status(200).json({
+      message: `Bulk onboarding process completed.`,
+      importedCount,
+      duplicateCount,
+      invalidDomainCount
+    });
+  } catch (err) {
+    console.error("Bulk import error:", err.message);
+    res.status(500).json({ error: "Failed to complete bulk student onboarding." });
+  }
+});
+
+// =========================================================================
+// 🧠 ROUTE: Suggested Recommended Matches for Student (Phase 13)
+// =========================================================================
+app.get("/api/projects/recommended", authenticateToken, async (req, res) => {
+  try {
+    const studentUser = await User.findOne({ email: req.user.email });
+    if (!studentUser || studentUser.userRole !== "student") {
+      return res.status(403).json({ error: "Student profile context required." });
+    }
+
+    // Load college blocking constraints
+    let blockedCompanies = [];
+    if (studentUser.collegeName) {
+      const collegeUser = await User.findOne({ userRole: "college", collegeName: studentUser.collegeName });
+      if (collegeUser) {
+        blockedCompanies = collegeUser.collegeBlockedCompanies || [];
+      }
+    }
+
+    const projects = await Project.find({ companyId: { $nin: blockedCompanies } });
+    
+    // Parse student skills
+    const studentSkills = new Set(
+      (studentUser.preferredTechStack || [])
+        .concat((studentUser.targetSkills || "").split(","))
+        .map(s => s.trim().toLowerCase())
+        .filter(Boolean)
+    );
+
+    const scoredProjects = projects.map(p => {
+      const projectSkills = (p.requiredSkills || []).map(s => s.trim().toLowerCase());
+      if (projectSkills.length === 0) {
+        return { project: p, score: 30 }; // default baseline score
+      }
+
+      let matches = 0;
+      projectSkills.forEach(s => {
+        if (studentSkills.has(s)) matches++;
+      });
+
+      const score = Math.round((matches / projectSkills.length) * 100);
+      return { project: p, score };
+    });
+
+    // Sort by match score descending
+    scoredProjects.sort((a, b) => b.score - a.score);
+
+    res.status(200).json(scoredProjects);
+  } catch (err) {
+    console.error("Recommended match list query error:", err.message);
+    res.status(500).json({ error: "Failed to query recommended gig matches." });
+  }
+});
+
+// =========================================================================
+// 💼 ROUTE: Recruiter Extend Placement Offer (Phase 13)
+// =========================================================================
+app.post("/api/applications/:applicationId/offer-placement", authenticateToken, async (req, res) => {
+  try {
+    const { offerText } = req.body;
+    const recruiterUser = await User.findOne({ email: req.user.email });
+    if (!recruiterUser || recruiterUser.userRole !== "company") {
+      return res.status(403).json({ error: "Corporate recruiter session context required." });
+    }
+
+    const application = await Application.findById(req.params.applicationId);
+    if (!application) {
+      return res.status(404).json({ error: "Application record not found." });
+    }
+
+    const studentUser = await User.findOne({ email: application.studentEmail });
+    if (!studentUser) {
+      return res.status(404).json({ error: "Target student account not found." });
+    }
+
+    // Append to student's offers
+    studentUser.companyOffers.push({
+      companyEmail: recruiterUser.email,
+      companyName: recruiterUser.companyName || recruiterUser.fullName,
+      offerText: offerText || "We would love to extend a placement offer to join our corporate tech team!",
+      status: "Pending",
+      offeredAt: new Date()
+    });
+
+    studentUser.placementStatus = "Offered";
+    await studentUser.save();
+
+    // Trigger real-time alert via WebSocket
+    const studentSocket = global.wsClients.get(studentUser.email);
+    if (studentSocket && studentSocket.readyState === ws.OPEN) {
+      studentSocket.send(
+        JSON.stringify({
+          type: "notification",
+          statusUpdate: true,
+          message: {
+            title: "💼 Career Offer Extended!",
+            message: `Congratulations! ${recruiterUser.companyName || "A company recruiter"} has extended a job placement offer.`
+          }
+        })
+      );
+    }
+
+    res.status(200).json({ message: "Placement offer extended successfully.", studentUser });
+  } catch (err) {
+    console.error("Offer extension error:", err.message);
+    res.status(500).json({ error: "Failed to extend placement job offer." });
+  }
+});
+
+// =========================================================================
+// 💼 ROUTE: Student Resolve Placement Offer (Phase 13)
+// =========================================================================
+app.post("/api/applications/:applicationId/resolve-offer", authenticateToken, async (req, res) => {
+  try {
+    const { offerId, status } = req.body; // status: 'Accepted' | 'Rejected'
+    if (!offerId || !status) {
+      return res.status(400).json({ error: "Offer ID and resolution status are required." });
+    }
+
+    const studentUser = await User.findOne({ email: req.user.email });
+    if (!studentUser || studentUser.userRole !== "student") {
+      return res.status(403).json({ error: "Student authorization context required." });
+    }
+
+    const offerIndex = studentUser.companyOffers.findIndex(o => o._id.toString() === offerId);
+    if (offerIndex === -1) {
+      return res.status(404).json({ error: "Placement offer not found." });
+    }
+
+    studentUser.companyOffers[offerIndex].status = status;
+
+    if (status === "Accepted") {
+      studentUser.placementStatus = "Placed";
+      // Auto reject all other pending offers
+      studentUser.companyOffers.forEach((o, i) => {
+        if (i !== offerIndex && o.status === "Pending") {
+          o.status = "Rejected";
+        }
+      });
+    } else {
+      // If student rejects, and has no other pending/accepted offers, revert to Not Placed
+      const hasPending = studentUser.companyOffers.some(o => o.status === "Pending");
+      const hasAccepted = studentUser.companyOffers.some(o => o.status === "Accepted");
+      if (hasAccepted) {
+        studentUser.placementStatus = "Placed";
+      } else if (hasPending) {
+        studentUser.placementStatus = "Offered";
+      } else {
+        studentUser.placementStatus = "Not Placed";
+      }
+    }
+
+    await studentUser.save();
+    res.status(200).json({ message: `Offer has been ${status.toLowerCase()}.`, studentUser });
+  } catch (err) {
+    console.error("Resolve offer error:", err.message);
+    res.status(500).json({ error: "Failed to resolve placement offer." });
+  }
+});
+
+app.post("/api/applications/:applicationId/update-pipeline", authenticateToken, async (req, res) => {
+  try {
+    const { status } = req.body; // Applied, Shortlisted, Interviewing, Offered, Placed
+    if (!status) {
+      return res.status(400).json({ error: "Target pipeline status required." });
+    }
+
+    const application = await Application.findById(req.params.applicationId);
+    if (!application) {
+      return res.status(404).json({ error: "Application not found." });
+    }
+
+    // Set matching application status
+    if (status === "Offered") {
+      application.status = "Approved"; // Keep consistent with application states
+    }
+    
+    application.pipelineStage = status; // new field for visual Kanban tracking
+    await application.save();
+
+    res.status(200).json({ message: "Placement pipeline stage updated.", application });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update pipeline stage." });
   }
 });
 
@@ -1293,7 +2614,7 @@ const server = app.listen(PORT, () => {
 const ws = require("ws");
 const wss = new ws.Server({ server });
 
-const clients = new Map(); // Key: userEmail, Value: socket instance
+
 
 wss.on("connection", (socket) => {
   let userEmail = null;
@@ -1318,7 +2639,7 @@ wss.on("connection", (socket) => {
           }
 
           userEmail = decoded.email;
-          clients.set(userEmail, socket);
+          global.wsClients.set(userEmail, socket);
           console.log(`💬 WebSocket connection authenticated for: ${userEmail}`);
           socket.send(JSON.stringify({ type: "status", status: "connected" }));
         });
@@ -1350,13 +2671,30 @@ wss.on("connection", (socket) => {
         };
 
         // Send to receiver if online
-        const receiverSocket = clients.get(receiver);
+        const receiverSocket = global.wsClients.get(receiver);
         if (receiverSocket && receiverSocket.readyState === ws.OPEN) {
           receiverSocket.send(JSON.stringify(payload));
         }
 
         // Echo back to sender
         socket.send(JSON.stringify(payload));
+      }
+
+      if (data.type === "typing") {
+        const { sender, receiver, isTyping } = data;
+        if (!sender || !receiver) return;
+        if (sender !== userEmail) return;
+
+        const receiverSocket = global.wsClients.get(receiver);
+        if (receiverSocket && receiverSocket.readyState === ws.OPEN) {
+          receiverSocket.send(
+            JSON.stringify({
+              type: "typing",
+              sender,
+              isTyping
+            })
+          );
+        }
       }
     } catch (err) {
       console.error("❌ WebSocket message error:", err.message);
@@ -1365,7 +2703,7 @@ wss.on("connection", (socket) => {
 
   socket.on("close", () => {
     if (userEmail) {
-      clients.delete(userEmail);
+      global.wsClients.delete(userEmail);
       console.log(`🔌 WebSocket connection closed for: ${userEmail}`);
     }
   });

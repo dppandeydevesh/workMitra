@@ -12,7 +12,10 @@ export default function Preferences() {
     bio: "",
     skills: [],
     experience: "beginner",
-    interests: []
+    interests: [],
+    githubUrl: "",
+    linkedinUrl: "",
+    portfolioUrl: ""
   });
 
   useEffect(() => {
@@ -22,7 +25,10 @@ export default function Preferences() {
       setPreferences(prev => ({
         ...prev,
         name: parsedUser.fullName || "",
-        skills: parsedUser.targetSkills ? parsedUser.targetSkills.split(",").map(s => s.trim()) : []
+        skills: parsedUser.targetSkills ? parsedUser.targetSkills.split(",").map(s => s.trim()) : [],
+        githubUrl: parsedUser.githubUrl || "",
+        linkedinUrl: parsedUser.linkedinUrl || "",
+        portfolioUrl: parsedUser.portfolioUrl || ""
       }));
     }
   }, []);
@@ -74,7 +80,10 @@ export default function Preferences() {
           enrollmentNumber: parsedUser.enrollmentNumber,
           mobile: parsedUser.mobile,
           targetSkills: preferences.skills.join(","),
-          projectType: preferences.experience === "beginner" ? "Micro Tasks" : "Freelance"
+          projectType: preferences.experience === "beginner" ? "Micro Tasks" : "Freelance",
+          githubUrl: preferences.githubUrl,
+          linkedinUrl: preferences.linkedinUrl,
+          portfolioUrl: preferences.portfolioUrl
         })
       });
 
@@ -99,6 +108,9 @@ export default function Preferences() {
         parsedUser.fullName = preferences.name || parsedUser.fullName;
         parsedUser.hasCompletedProfile = true;
         parsedUser.targetSkills = preferences.skills.join(", ");
+        parsedUser.githubUrl = preferences.githubUrl;
+        parsedUser.linkedinUrl = preferences.linkedinUrl;
+        parsedUser.portfolioUrl = preferences.portfolioUrl;
         localStorage.setItem("user", JSON.stringify(parsedUser));
 
         console.log("User Preferences Locked:", preferences);
@@ -142,6 +154,46 @@ export default function Preferences() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               required
             />
+          </div>
+
+          {/* Showcase Portfolio Links */}
+          <div className="mb-6 bg-slate-50 p-5 rounded-2xl border border-slate-100 space-y-4">
+            <h3 className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+              <span>🔗</span> Portfolio & Professional Links (Optional)
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">GitHub Profile</label>
+                <input
+                  type="url"
+                  value={preferences.githubUrl}
+                  onChange={(e) => setPreferences({...preferences, githubUrl: e.target.value})}
+                  placeholder="https://github.com/username"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">LinkedIn Profile</label>
+                <input
+                  type="url"
+                  value={preferences.linkedinUrl}
+                  onChange={(e) => setPreferences({...preferences, linkedinUrl: e.target.value})}
+                  placeholder="https://linkedin.com/in/username"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Portfolio or Website</label>
+                <input
+                  type="url"
+                  value={preferences.portfolioUrl}
+                  onChange={(e) => setPreferences({...preferences, portfolioUrl: e.target.value})}
+                  placeholder="https://username.dev"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+            </div>
           </div>
 
           {/* Bio / About */}

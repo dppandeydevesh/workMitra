@@ -58,6 +58,19 @@ export default function AnalyticsDashboard() {
   const totalBudgetInvested = projects.reduce((sum, p) => sum + (p.budget || 0), 0);
   const averageBudget = totalProjectsCount > 0 ? Math.round(totalBudgetInvested / totalProjectsCount) : 0;
 
+  // 1.1 Escrow calculations
+  const lockedEscrow = applications
+    .filter(app => ["Approved", "Submitted"].includes(app.status))
+    .reduce((sum, app) => sum + (app.projectId?.budget || 0), 0);
+
+  const releasedPayouts = applications
+    .filter(app => app.status === "Completed")
+    .reduce((sum, app) => sum + (app.projectId?.budget || 0), 0);
+
+  const disputedEscrow = applications
+    .filter(app => app.status === "Disputed")
+    .reduce((sum, app) => sum + (app.projectId?.budget || 0), 0);
+
   // 2. Status Breakdown counts
   const statusCounts = applications.reduce(
     (acc, app) => {
@@ -96,31 +109,6 @@ export default function AnalyticsDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 font-sans">
-      {/* Navbar */}
-      <nav className="bg-white shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <img src="/logo.png" alt="workMitra Logo" className="h-10 object-contain cursor-pointer" onClick={() => navigate("/company-dashboard")} />
-            </div>
-            <div className="flex items-center space-x-4">
-              <button className="text-gray-700 hover:text-indigo-600 font-bold flex items-center gap-1 text-xs md:text-sm" onClick={() => navigate("/company-dashboard")}>
-                <span>🏠</span>
-                <span className="hidden sm:inline">Dashboard</span>
-              </button>
-              <button className="text-gray-700 hover:text-indigo-600 font-bold flex items-center gap-1 text-xs md:text-sm" onClick={() => navigate("/company-preferences")}>
-                <span>👤</span>
-                <span className="hidden sm:inline">Profile</span>
-              </button>
-              <button className="text-gray-700 hover:text-red-600 font-bold flex items-center gap-1 text-xs md:text-sm" onClick={() => { localStorage.clear(); navigate("/login"); }}>
-                <span>🚪</span>
-                <span className="hidden sm:inline">Logout</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
       {/* Main Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
@@ -188,6 +176,36 @@ export default function AnalyticsDashboard() {
                 </div>
               </div>
 
+              {/* 🔒 Escrow Protection Ledgers */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-50/50 p-6 rounded-2xl border border-gray-100 shadow-inner">
+                <div className="flex items-center gap-4">
+                  <div className="text-3xl bg-blue-100 p-3 rounded-2xl text-blue-700">🔒</div>
+                  <div>
+                    <span className="text-[10px] font-black text-blue-700 uppercase tracking-wider block">Locked in Escrow Protection</span>
+                    <span className="text-2xl font-black text-gray-800 block mt-0.5">₹{lockedEscrow.toLocaleString()}</span>
+                    <p className="text-[11px] text-gray-400 mt-0.5">Funds safely registered for approved/submitted tasks.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="text-3xl bg-emerald-100 p-3 rounded-2xl text-emerald-700">💸</div>
+                  <div>
+                    <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider block">Total Payouts Released</span>
+                    <span className="text-2xl font-black text-gray-800 block mt-0.5">₹{releasedPayouts.toLocaleString()}</span>
+                    <p className="text-[11px] text-gray-400 mt-0.5">Direct compensation disbursed to student developers.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="text-3xl bg-rose-100 p-3 rounded-2xl text-rose-700">⚠️</div>
+                  <div>
+                    <span className="text-[10px] font-black text-rose-700 uppercase tracking-wider block">Escrow locked under Dispute</span>
+                    <span className="text-2xl font-black text-gray-800 block mt-0.5">₹{disputedEscrow.toLocaleString()}</span>
+                    <p className="text-[11px] text-gray-400 mt-0.5">Disputed funds currently on hold.</p>
+                  </div>
+                </div>
+              </div>
+
               {/* 📊 Visual Graph Widget Panels */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Panel 1: Application Status Breakdown */}
@@ -196,66 +214,128 @@ export default function AnalyticsDashboard() {
                     <h3 className="text-base font-bold text-gray-800 mb-1">Application Lifecycle</h3>
                     <p className="text-xs text-gray-400 mb-6">Status distribution of student applications.</p>
 
-                    <div className="space-y-4">
-                      {/* Completed */}
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-xs font-bold text-gray-700">
-                          <span>✓ Verified Solutions (Completed)</span>
-                          <span>{statusCounts.Completed}</span>
-                        </div>
-                        <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                          <div 
-                            className="bg-green-500 h-full rounded-full transition-all duration-500"
-                            style={{ width: `${totalApplicationsCount > 0 ? (statusCounts.Completed / totalApplicationsCount) * 100 : 0}%` }}
-                          />
-                        </div>
-                      </div>
+                    {totalApplicationsCount === 0 ? (
+                      <p className="text-xs text-gray-400 italic text-center py-16">No applications received yet</p>
+                    ) : (
+                      <div className="flex flex-col items-center">
+                        {/* SVG Donut */}
+                        <div className="relative w-40 h-40 flex items-center justify-center mb-6">
+                          <svg viewBox="0 0 36 36" className="w-full h-full transform -rotate-90">
+                            <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#f3f4f6" strokeWidth="3" />
+                            
+                            {/* Completed ring segment */}
+                            {statusCounts.Completed > 0 && (
+                              <circle
+                                cx="18"
+                                cy="18"
+                                r="15.9155"
+                                fill="transparent"
+                                stroke="#10b981"
+                                strokeWidth="3.5"
+                                strokeDasharray={`${(statusCounts.Completed / totalApplicationsCount) * 100} ${100 - ((statusCounts.Completed / totalApplicationsCount) * 100)}`}
+                                strokeDashoffset="100"
+                                className="transition-all duration-1000 ease-out"
+                              />
+                            )}
 
-                      {/* Approved */}
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-xs font-bold text-gray-700">
-                          <span>🔵 Approved Gigs (In Progress)</span>
-                          <span>{statusCounts.Approved}</span>
-                        </div>
-                        <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                          <div 
-                            className="bg-blue-500 h-full rounded-full transition-all duration-500"
-                            style={{ width: `${totalApplicationsCount > 0 ? (statusCounts.Approved / totalApplicationsCount) * 100 : 0}%` }}
-                          />
-                        </div>
-                      </div>
+                            {/* Approved ring segment */}
+                            {statusCounts.Approved > 0 && (
+                              <circle
+                                cx="18"
+                                cy="18"
+                                r="15.9155"
+                                fill="transparent"
+                                stroke="#3b82f6"
+                                strokeWidth="3.5"
+                                strokeDasharray={`${(statusCounts.Approved / totalApplicationsCount) * 100} ${100 - ((statusCounts.Approved / totalApplicationsCount) * 100)}`}
+                                strokeDashoffset={100 - ((statusCounts.Completed / totalApplicationsCount) * 100)}
+                                className="transition-all duration-1000 ease-out"
+                              />
+                            )}
 
-                      {/* Submitted */}
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-xs font-bold text-gray-700">
-                          <span>🟡 Submissions under Audit</span>
-                          <span>{statusCounts.Submitted}</span>
-                        </div>
-                        <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                          <div 
-                            className="bg-amber-400 h-full rounded-full transition-all duration-500"
-                            style={{ width: `${totalApplicationsCount > 0 ? (statusCounts.Submitted / totalApplicationsCount) * 100 : 0}%` }}
-                          />
-                        </div>
-                      </div>
+                            {/* Submitted ring segment */}
+                            {statusCounts.Submitted > 0 && (
+                              <circle
+                                cx="18"
+                                cy="18"
+                                r="15.9155"
+                                fill="transparent"
+                                stroke="#f59e0b"
+                                strokeWidth="3.5"
+                                strokeDasharray={`${(statusCounts.Submitted / totalApplicationsCount) * 100} ${100 - ((statusCounts.Submitted / totalApplicationsCount) * 100)}`}
+                                strokeDashoffset={100 - (((statusCounts.Completed + statusCounts.Approved) / totalApplicationsCount) * 100)}
+                                className="transition-all duration-1000 ease-out"
+                              />
+                            )}
 
-                      {/* Pending */}
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-xs font-bold text-gray-700">
-                          <span>📭 New Applicants (Pending)</span>
-                          <span>{statusCounts.Pending}</span>
+                            {/* Pending ring segment */}
+                            {statusCounts.Pending > 0 && (
+                              <circle
+                                cx="18"
+                                cy="18"
+                                r="15.9155"
+                                fill="transparent"
+                                stroke="#9ca3af"
+                                strokeWidth="3.5"
+                                strokeDasharray={`${(statusCounts.Pending / totalApplicationsCount) * 100} ${100 - ((statusCounts.Pending / totalApplicationsCount) * 100)}`}
+                                strokeDashoffset={100 - (((statusCounts.Completed + statusCounts.Approved + statusCounts.Submitted) / totalApplicationsCount) * 100)}
+                                className="transition-all duration-1000 ease-out"
+                              />
+                            )}
+
+                            {/* Rejected ring segment */}
+                            {statusCounts.Rejected > 0 && (
+                              <circle
+                                cx="18"
+                                cy="18"
+                                r="15.9155"
+                                fill="transparent"
+                                stroke="#ef4444"
+                                strokeWidth="3.5"
+                                strokeDasharray={`${(statusCounts.Rejected / totalApplicationsCount) * 100} ${100 - ((statusCounts.Rejected / totalApplicationsCount) * 100)}`}
+                                strokeDashoffset={100 - (((statusCounts.Completed + statusCounts.Approved + statusCounts.Submitted + statusCounts.Pending) / totalApplicationsCount) * 100)}
+                                className="transition-all duration-1000 ease-out"
+                              />
+                            )}
+                          </svg>
+
+                          {/* Inner center text overlay */}
+                          <div className="absolute flex flex-col items-center justify-center">
+                            <span className="text-xl font-black text-gray-800">{totalApplicationsCount}</span>
+                            <span className="text-[9px] uppercase font-bold text-gray-400">Total</span>
+                          </div>
                         </div>
-                        <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                          <div 
-                            className="bg-gray-400 h-full rounded-full transition-all duration-500"
-                            style={{ width: `${totalApplicationsCount > 0 ? (statusCounts.Pending / totalApplicationsCount) * 100 : 0}%` }}
-                          />
+
+                        {/* Color Coded Legends */}
+                        <div className="w-full grid grid-cols-2 gap-x-4 gap-y-2.5 text-[11px] font-bold text-gray-600 mt-2">
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-2.5 h-2.5 bg-[#10b981] rounded-full inline-block"></span>
+                            <span>Completed: {statusCounts.Completed}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-2.5 h-2.5 bg-[#3b82f6] rounded-full inline-block"></span>
+                            <span>Approved: {statusCounts.Approved}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-2.5 h-2.5 bg-[#f59e0b] rounded-full inline-block"></span>
+                            <span>Audit: {statusCounts.Submitted}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-2.5 h-2.5 bg-[#9ca3af] rounded-full inline-block"></span>
+                            <span>Pending: {statusCounts.Pending}</span>
+                          </div>
+                          {statusCounts.Rejected > 0 && (
+                            <div className="flex items-center gap-1.5 col-span-2 justify-center mt-1 border-t pt-2 border-dashed border-gray-100">
+                              <span className="w-2.5 h-2.5 bg-[#ef4444] rounded-full inline-block"></span>
+                              <span>Rejected Solutions: {statusCounts.Rejected}</span>
+                            </div>
+                          )}
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                   <div className="border-t pt-4 mt-6 text-center text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                    Total Interactions: {totalApplicationsCount}
+                    Metrics Loop Complete
                   </div>
                 </div>
 

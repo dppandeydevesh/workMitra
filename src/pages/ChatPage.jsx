@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
+import { useWebSocket } from "../components/WebSocketContext";
 
 export default function ChatPage() {
   const { recipientEmail } = useParams();
@@ -14,16 +15,14 @@ export default function ChatPage() {
   const [activePartner, setActivePartner] = useState(null);
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
-  const [wsConnected, setWsConnected] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [showMobileChat, setShowMobileChat] = useState(!!recipientEmail);
+  const [isPartnerTyping, setIsPartnerTyping] = useState(false);
 
-  const socketRef = useRef(null);
+  const { wsConnected, addListener, sendMessage } = useWebSocket();
   const messagesEndRef = useRef(null);
-  const reconnectAttemptsRef = useRef(0);
-  const reconnectTimeoutRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
   const activePartnerRef = useRef(activePartner);
-  const MAX_RECONNECT_ATTEMPTS = 5;
 
   // Keep activePartnerRef updated with current activePartner state
   useEffect(() => {
@@ -41,7 +40,10 @@ export default function ChatPage() {
   const fetchPartners = async () => {
     if (!loggedInUser) return;
     try {
-      const res = await fetch(`${API_BASE_URL}/api/chat/partners/${loggedInUser.email}`);
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_BASE_URL}/api/chat/partners/${loggedInUser.email}`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
       if (res.ok) {
         const data = await res.json();
         setPartners(data);
@@ -51,7 +53,9 @@ export default function ChatPage() {
         if (recipientEmail && recipientEmail !== loggedInUser.email) {
           const partnerExists = data.some(p => p.email === recipientEmail);
           if (!partnerExists) {
-            const userRes = await fetch(`${API_BASE_URL}/api/auth/user/${recipientEmail}`);
+            const userRes = await fetch(`${API_BASE_URL}/api/auth/user/${recipientEmail}`, {
+              headers: { "Authorization": `Bearer ${token}` }
+            });
             if (userRes.ok) {
               const userData = await userRes.json();
               setPartners(prev => [userData, ...prev]);
@@ -83,12 +87,37 @@ export default function ChatPage() {
       if (!loggedInUser || !activePartner) return;
       setLoadingHistory(true);
       try {
+        const token = localStorage.getItem("token");
+        
+        // 1. Mark existing partner messages as read
+        await fetch(`${API_BASE_URL}/api/chat/read`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ sender: activePartner.email })
+        });
+        
+        // 2. Refresh partners list to clear local unread counts immediately
+        const partnerRes = await fetch(`${API_BASE_URL}/api/chat/partners/${loggedInUser.email}`, {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (partnerRes.ok) {
+          const updatedPartners = await partnerRes.json();
+          setPartners(updatedPartners);
+        }
+
+        // 3. Fetch conversation logs
         const res = await fetch(
-          `${API_BASE_URL}/api/chat/history/${loggedInUser.email}/${activePartner.email}`
+          `${API_BASE_URL}/api/chat/history/${loggedInUser.email}/${activePartner.email}`, {
+            headers: { "Authorization": `Bearer ${token}` }
+          }
         );
         if (res.ok) {
           const data = await res.json();
           setMessages(data);
+          setIsPartnerTyping(false); // Reset typing status on channel swap
         }
       } catch (err) {
         console.error("Error loading chat history:", err);
@@ -103,88 +132,91 @@ export default function ChatPage() {
   useEffect(() => {
     if (!loggedInUser) return;
 
-    const connectWebSocket = () => {
-      // Resolve ws/wss protocol dynamically based on API_BASE_URL
-      const getWsUrl = () => {
-        const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-        if (API_BASE_URL) {
-          const wsProtocol = API_BASE_URL.startsWith("https") ? "wss:" : "ws:";
-          const host = API_BASE_URL.replace(/^https?:\/\//, "");
-          return `${wsProtocol}//${host}`;
+    const handleIncomingData = (data) => {
+      if (data.type === "typing") {
+        const currentActivePartner = activePartnerRef.current;
+        if (data.sender === currentActivePartner?.email) {
+          setIsPartnerTyping(data.isTyping);
         }
-        return `${protocol}//${window.location.host}`;
-      };
+        return;
+      }
 
-      const wsUrl = getWsUrl();
-      const wsSocket = new WebSocket(wsUrl);
-      socketRef.current = wsSocket;
-
-      wsSocket.onopen = () => {
-        console.log("WebSocket connected!");
-        reconnectAttemptsRef.current = 0; // reset reconnect attempts
-        wsSocket.send(
-          JSON.stringify({
-            type: "auth",
-            token: localStorage.getItem("token")
-          })
-        );
-      };
-
-      wsSocket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-
-        if (data.type === "status" && data.status === "connected") {
-          setWsConnected(true);
-          return;
-        }
-
-        if (data.type === "message") {
-          const currentActivePartner = activePartnerRef.current;
-          // If message relates to current active partner, append to messages
-          if (
-            (data.sender === currentActivePartner?.email && data.receiver === loggedInUser.email) ||
-            (data.sender === loggedInUser.email && data.receiver === currentActivePartner?.email)
-          ) {
-            setMessages((prev) => [...prev, data]);
-          }
+      if (data.type === "message") {
+        const currentActivePartner = activePartnerRef.current;
+        // If message relates to current active partner, append to messages
+        if (
+          (data.sender === currentActivePartner?.email && data.receiver === loggedInUser.email) ||
+          (data.sender === loggedInUser.email && data.receiver === currentActivePartner?.email)
+        ) {
+          setMessages((prev) => [...prev, data]);
           
-          // Refresh partner list to bubble up recent messages/partners
-          fetchPartners();
+          // Mark incoming active partner messages as read immediately
+          if (data.sender === currentActivePartner?.email) {
+            fetch(`${API_BASE_URL}/api/chat/read`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
+              },
+              body: JSON.stringify({ sender: data.sender })
+            }).catch(err => console.error("Failed to mark message as read:", err));
+          }
         }
-      };
-
-      wsSocket.onclose = () => {
-        setWsConnected(false);
-        console.log("WebSocket connection disconnected.");
-
-        // Reconnection logic with exponential backoff
-        if (reconnectAttemptsRef.current < MAX_RECONNECT_ATTEMPTS) {
-          const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current), 30000);
-          console.log(`Attempting reconnect in ${delay}ms...`);
-          reconnectTimeoutRef.current = setTimeout(() => {
-            reconnectAttemptsRef.current++;
-            connectWebSocket();
-          }, delay);
-        }
-      };
+        
+        // Refresh partner list to bubble up recent messages/partners and update badge counts
+        fetchPartners();
+      }
     };
 
-    connectWebSocket();
-
-    return () => {
-      if (socketRef.current) socketRef.current.close();
-      if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
-    };
-  }, [loggedInUser]);
+    const unsubscribe = addListener(handleIncomingData);
+    return () => unsubscribe();
+  }, [loggedInUser, addListener]);
 
   // Scroll to bottom on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loadingHistory]);
 
+  const handleInputChange = (e) => {
+    setMessageInput(e.target.value);
+
+    // Send typing notification to active contact
+    if (wsConnected && activePartner) {
+      sendMessage({
+        type: "typing",
+        sender: loggedInUser.email,
+        receiver: activePartner.email,
+        isTyping: true
+      });
+
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = setTimeout(() => {
+        if (wsConnected && activePartner) {
+          sendMessage({
+            type: "typing",
+            sender: loggedInUser.email,
+            receiver: activePartner.email,
+            isTyping: false
+          });
+        }
+      }, 2000);
+    }
+  };
+
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (!messageInput.trim() || !activePartner || !socketRef.current) return;
+    if (!messageInput.trim() || !activePartner) return;
+
+    // Reset typing status on send
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    if (wsConnected) {
+      sendMessage({
+        type: "typing",
+        sender: loggedInUser.email,
+        receiver: activePartner.email,
+        isTyping: false
+      });
+    }
 
     const payload = {
       type: "chat",
@@ -193,7 +225,7 @@ export default function ChatPage() {
       text: messageInput.trim()
     };
 
-    socketRef.current.send(JSON.stringify(payload));
+    sendMessage(payload);
     setMessageInput("");
   };
 
@@ -261,6 +293,11 @@ export default function ChatPage() {
                         {partner.userRole === "company" ? "Recruiter" : "Student"}
                       </p>
                     </div>
+                    {partner.unreadCount > 0 && (
+                      <span className="bg-red-500 text-white text-[9px] font-black w-5 h-5 flex items-center justify-center rounded-full shadow-sm">
+                        {partner.unreadCount}
+                      </span>
+                    )}
                   </button>
                 );
               })
@@ -297,7 +334,13 @@ export default function ChatPage() {
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <span className={`w-2 h-2 rounded-full ${wsConnected ? "bg-green-500 animate-pulse" : "bg-gray-300"}`} />
                       <span className="text-[10px] text-gray-400">
-                        {wsConnected ? "Real-time Gateway Online" : "Connecting..."}
+                        {isPartnerTyping ? (
+                          <span className="text-pink-600 font-extrabold animate-pulse">typing...</span>
+                        ) : wsConnected ? (
+                          "Real-time Gateway Online"
+                        ) : (
+                          "Connecting..."
+                        )}
                       </span>
                     </div>
                   </div>
@@ -353,7 +396,7 @@ export default function ChatPage() {
                 <input
                   type="text"
                   value={messageInput}
-                  onChange={(e) => setMessageInput(e.target.value)}
+                  onChange={handleInputChange}
                   placeholder="Type a message..."
                   className="flex-1 bg-white border border-purple-100 text-xs px-4 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-400"
                   required

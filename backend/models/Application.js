@@ -26,6 +26,14 @@ const applicationSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  githubRepoUrl: {
+    type: String,
+    default: null
+  },
+  liveDeploymentUrl: {
+    type: String,
+    default: null
+  },
   submittedAt: {
     type: Date,
     default: null
@@ -34,9 +42,61 @@ const applicationSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  matchScore: {
+    type: Number,
+    default: null
+  },
+  aiRationale: {
+    type: String,
+    default: null
+  },
+  plagiarismScore: {
+    type: Number,
+    default: 0
+  },
+  lintWarnings: {
+    type: [String],
+    default: []
+  },
+  rating: {
+    type: Number,
+    default: null
+  },
+  ratingReview: {
+    type: String,
+    default: null
+  },
   appliedAt: { 
     type: Date, 
     default: Date.now 
+  },
+  
+  // 📥 Phase 12: Work Environment, Submissions & Extensions
+  submissionVersions: [{
+    submissionLink: { type: String },
+    githubRepoUrl: { type: String },
+    liveDeploymentUrl: { type: String },
+    submissionText: { type: String },
+    aiDeclaration: {
+      usedAi: { type: Boolean, default: false },
+      aiPercentage: { type: Number, default: 0 },
+      toolsUsed: { type: String, default: "" }
+    },
+    selfAssessment: { type: mongoose.Schema.Types.Mixed, default: {} },
+    submittedAt: { type: Date, default: Date.now }
+  }],
+  
+  extensionRequests: [{
+    requestedDays: { type: Number, required: true },
+    reason: { type: String, required: true },
+    status: { type: String, default: "Pending" }, // Pending | Approved | Rejected
+    requestedAt: { type: Date, default: Date.now },
+    reviewedAt: { type: Date, default: null }
+  }],
+  
+  extendedDeadline: {
+    type: Date,
+    default: null
   }
 });
 

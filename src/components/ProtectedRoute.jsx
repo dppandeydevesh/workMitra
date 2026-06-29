@@ -29,9 +29,12 @@ export default function ProtectedRoute({ children, allowedRoles }) {
 
   // If role checks are enabled
   if (allowedRoles && !allowedRoles.includes(user.userRole)) {
-    // Redirect students to student dashboard, companies to company dashboard
     if (user.userRole === "company") {
       return <Navigate to="/company-dashboard" replace />;
+    } else if (user.userRole === "college") {
+      return <Navigate to="/college-dashboard" replace />;
+    } else if (user.userRole === "admin") {
+      return <Navigate to="/admin-dashboard" replace />;
     } else {
       return <Navigate to="/dashboard" replace />;
     }
@@ -39,7 +42,7 @@ export default function ProtectedRoute({ children, allowedRoles }) {
 
   // Enforce profile onboarding completion
   const currentPath = window.location.pathname;
-  if (!user.hasCompletedProfile && currentPath !== "/preferences" && currentPath !== "/company-preferences") {
+  if (user.userRole !== "college" && user.userRole !== "admin" && !user.hasCompletedProfile && currentPath !== "/preferences" && currentPath !== "/company-preferences") {
     if (user.userRole === "company") {
       return <Navigate to="/company-preferences" replace />;
     } else {

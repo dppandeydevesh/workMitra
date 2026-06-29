@@ -1,9 +1,21 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
+import { useToast } from "../components/Toast";
 
 export default function MyProjects() {
   const navigate = useNavigate();
+  const toast = useToast();
+
+  const alert = (msg) => {
+    if (msg.toLowerCase().includes("success") || msg.toLowerCase().includes("completed") || msg.toLowerCase().includes("approved") || msg.toLowerCase().includes("updated")) {
+      toast.success(msg);
+    } else if (msg.toLowerCase().includes("fail") || msg.toLowerCase().includes("error") || msg.toLowerCase().includes("invalid")) {
+      toast.error(msg);
+    } else {
+      toast.info(msg);
+    }
+  };
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [applicants, setApplicants] = useState([]);
@@ -13,6 +25,8 @@ export default function MyProjects() {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [activeAppToReview, setActiveAppToReview] = useState(null);
   const [feedbackText, setFeedbackText] = useState("");
+  const [rating, setRating] = useState(5);
+  const [ratingReview, setRatingReview] = useState("");
 
   // Edit Project States
   const [showEditModal, setShowEditModal] = useState(false);
@@ -107,6 +121,14 @@ export default function MyProjects() {
     }
   };
 
+  const handleOpenReviewModal = (app) => {
+    setActiveAppToReview(app);
+    setFeedbackText(app.feedbackText || "");
+    setRating(app.rating || 5);
+    setRatingReview(app.ratingReview || "");
+    setShowReviewModal(true);
+  };
+
   const handleCompleteTask = async (e) => {
     e.preventDefault();
     if (!activeAppToReview) return;
@@ -115,7 +137,7 @@ export default function MyProjects() {
       const response = await fetch(`${API_BASE_URL}/api/applications/${activeAppToReview.applicationId}/complete`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ feedbackText })
+        body: JSON.stringify({ feedbackText, rating, ratingReview })
       });
       const data = await response.json();
       if (response.ok) {
@@ -317,6 +339,31 @@ export default function MyProjects() {
                               ) : (
                                 <span className="text-[9px] text-gray-400 italic block mt-0.5">No resume provided</span>
                               )}
+
+                              {/* Social/Portfolio Links Grid */}
+                              <div className="flex items-center gap-2 mt-1 text-[9px]">
+                                {app.githubUrl && (
+                                  <a href={app.githubUrl} target="_blank" rel="noreferrer" className="text-gray-600 hover:text-purple-600 font-bold" title="GitHub">
+                                    <span>💻 GitHub</span>
+                                  </a>
+                                )}
+                                {app.linkedinUrl && (
+                                  <a href={app.linkedinUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-purple-600 font-bold" title="LinkedIn">
+                                    <span>👔 LinkedIn</span>
+                                  </a>
+                                )}
+                                {app.portfolioUrl && (
+                                  <a href={app.portfolioUrl} target="_blank" rel="noreferrer" className="text-green-600 hover:text-purple-600 font-bold" title="Portfolio">
+                                    <span>🌐 Web</span>
+                                  </a>
+                                )}
+                              </div>
+
+                              {app.aiRationale && (
+                                <p className="text-[9px] text-purple-600 font-semibold leading-normal max-w-[150px] truncate mt-1" title={app.aiRationale}>
+                                  🤖 {app.aiRationale}
+                                </p>
+                              )}
                             </td>
                             <td className="p-3 max-w-[180px] truncate">{app.skills}</td>
                             <td className="p-3 text-center">
@@ -350,7 +397,7 @@ export default function MyProjects() {
                                 <span className="text-[11px] text-blue-600 font-semibold">Working</span>
                               )}
                               {app.status === "Submitted" && (
-                                <button onClick={() => { setActiveAppToReview(app); setShowReviewModal(true); }} className="text-[10px] font-bold bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1 rounded transition shadow-sm">
+                                <button onClick={() => handleOpenReviewModal(app)} className="text-[10px] font-bold bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1 rounded transition shadow-sm">
                                   Review Work
                                 </button>
                               )}
@@ -405,10 +452,41 @@ export default function MyProjects() {
                         placeholder="Write feedback for the student (e.g. Excellent job, clean code, etc.). This will show on their profile."
                         value={feedbackText}
                         onChange={(e) => setFeedbackText(e.target.value)}
-                        rows={3}
-                        className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                        rows={2}
+                        className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
                         required
                       />
+                    </div>
+
+                    {/* Public Star Rating and Review */}
+                    <div className="border-t pt-2 space-y-2">
+                      <div>
+                        <label className="block text-[9px] font-extrabold text-purple-950 uppercase tracking-wider mb-0.5">Candidate Rating</label>
+                        <div className="flex items-center gap-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() => setRating(star)}
+                              className={`text-xl transition-all outline-none ${star <= rating ? "text-amber-400 scale-105" : "text-gray-200"}`}
+                            >
+                              ★
+                            </button>
+                          ))}
+                          <span className="text-[9px] text-gray-400 font-extrabold ml-1.5">({rating} / 5)</span>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[9px] font-extrabold text-purple-950 uppercase tracking-wider mb-0.5">Performance Review Notes</label>
+                        <textarea
+                          placeholder="Provide a public rating review statement for the candidate..."
+                          value={ratingReview}
+                          onChange={(e) => setRatingReview(e.target.value)}
+                          rows={1}
+                          className="w-full bg-gray-50 border border-gray-200 text-xs px-3 py-1.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
+                        />
+                      </div>
                     </div>
                     <div className="flex justify-end space-x-3 pt-2">
                       <button

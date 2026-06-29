@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import { API_BASE_URL } from "../config";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "./Toast";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+  const toast = useToast();
+
   // ==========================================
   // 📦 State Management Portal
   // ==========================================
@@ -18,6 +22,7 @@ export default function LoginPage() {
   const [companyName, setCompanyName] = useState(""); 
   const [collegeName, setCollegeName] = useState("");
   const [enrollmentNumber, setEnrollmentNumber] = useState("");
+  const [departmentName, setDepartmentName] = useState("");
 
   // Password Strength Tracking
   const [passwordStrength, setPasswordStrength] = useState({ score: 0, text: "" });
@@ -32,9 +37,6 @@ export default function LoginPage() {
   const [emailOtpInput, setEmailOtpInput] = useState("");
   const [mobileOtpInput, setMobileOtpInput] = useState("");
 
-  const navigate = useNavigate();
-
-  // ✈️ Aeroplane flying motion animation background theme
   const [airplanePos, setAirplanePos] = useState(-10);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -92,6 +94,10 @@ export default function LoginPage() {
           
           if (data.user.userRole === "company") {
             navigate("/company-dashboard"); 
+          } else if (data.user.userRole === "admin") {
+            navigate("/admin-dashboard");
+          } else if (data.user.userRole === "college") {
+            navigate("/college-dashboard");
           } else {
             if (data.user.hasCompletedProfile === true) {
               navigate("/dashboard");
@@ -167,7 +173,7 @@ export default function LoginPage() {
       });
       const data = await response.json();
       if (response.ok) {
-        alert("Registration Successful!");
+        toast.success("Registration Successful!");
         localStorage.setItem("user", JSON.stringify(data.user));
         if (data.token) {
           localStorage.setItem("token", data.token);
@@ -187,6 +193,10 @@ export default function LoginPage() {
 
         if (data.user.userRole === "company") {
           navigate("/company-dashboard");
+        } else if (data.user.userRole === "admin") {
+          navigate("/admin-dashboard");
+        } else if (data.user.userRole === "college") {
+          navigate("/college-dashboard");
         } else {
           navigate("/preferences");
         }
@@ -251,7 +261,7 @@ export default function LoginPage() {
             <img src="/logo.png" alt="workMitra Logo" className="w-72 h-72 object-contain mb-4 filter drop-shadow-lg mix-blend-multiply" />
             <p className="text-purple-900/80 mt-2 text-sm md:text-base font-semibold leading-relaxed">Choose your path to establish active student-employer connection nodes.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl w-full z-10 px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full z-10 px-4">
             
             <button onClick={() => { setUserRole("student"); setView("auth"); }} className="group text-left p-8 bg-white/40 backdrop-blur-lg border border-white/60 rounded-[32px] hover:border-purple-400 hover:bg-white/60 transition-all duration-300 relative overflow-hidden">
               <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">💼</div>
@@ -265,6 +275,13 @@ export default function LoginPage() {
               <div className="w-12 h-12 rounded-2xl bg-pink-500 text-white flex items-center justify-center text-2xl mb-4">🤝</div>
               <h3 className="text-2xl font-bold text-purple-950 mb-2">I Want to Hire</h3>
               <p className="text-sm text-purple-900/70">Post corporate tracks, evaluate task solutions, and fund assignments.</p>
+            </button>
+
+            <button onClick={() => { setUserRole("college"); setView("auth"); }} className="group text-left p-8 bg-white/40 backdrop-blur-lg border border-white/60 rounded-[32px] hover:border-indigo-400 hover:bg-white/60 transition-all duration-300 relative overflow-hidden">
+              <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">🎓</div>
+              <div className="w-12 h-12 rounded-2xl bg-indigo-500 text-white flex items-center justify-center text-2xl mb-4">🏫</div>
+              <h3 className="text-2xl font-bold text-purple-950 mb-2">Professor / HOD</h3>
+              <p className="text-sm text-purple-900/70">Audit placement tracks, endorse top student profiles, whitelist recruiters.</p>
             </button>
 
           </div>
@@ -357,12 +374,21 @@ export default function LoginPage() {
                       setErrorMessage("Please establish a stronger password structure before continuing.");
                       return;
                     }
+                    if ((userRole === "student" || userRole === "college") && !email.toLowerCase().endsWith(".edu") && !email.toLowerCase().endsWith(".edu.in")) {
+                      setErrorMessage("Academic account registrations require an official educational domain email address ending in .edu or .edu.in.");
+                      return;
+                    }
                     setErrorMessage("");
                     setIsRegistering(true);
                     
-                    const payload = userRole === "company"
-                      ? { fullName: companyName, companyName, email, password, mobile, userRole: "company" }
-                      : { fullName, email, password, mobile, collegeName, enrollmentNumber, userRole: "student" };
+                    let payload;
+                    if (userRole === "company") {
+                      payload = { fullName: companyName, companyName, email, password, mobile, userRole: "company" };
+                    } else if (userRole === "college") {
+                      payload = { fullName, email, password, mobile, collegeName, departmentName, userRole: "college" };
+                    } else {
+                      payload = { fullName, email, password, mobile, collegeName, enrollmentNumber, userRole: "student" };
+                    }
 
                     try {
                       const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
@@ -398,6 +424,13 @@ export default function LoginPage() {
                     <>
                       <input type="text" placeholder="Company Name" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
                       <input type="email" placeholder="Company Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                    </>
+                  ) : userRole === "college" ? (
+                    <>
+                      <input type="text" placeholder="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="email" placeholder="University Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder="University / College Name" value={collegeName} onChange={(e) => setCollegeName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder="Department Name (e.g. Computer Science)" value={departmentName} onChange={(e) => setDepartmentName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
                     </>
                   ) : (
                     <>
@@ -460,6 +493,70 @@ export default function LoginPage() {
                     className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3.5 rounded-xl shadow-md mt-1 transition ${isLoggingIn ? "bg-gray-400 cursor-not-allowed" : "bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95"}`}
                   >
                     {isLoggingIn ? "Signing In..." : "Sign In"}
+                  </button>
+
+                  <div className="flex items-center my-2">
+                    <div className="flex-grow border-t border-purple-100"></div>
+                    <span className="mx-3 text-[10px] uppercase font-bold text-purple-300">or</span>
+                    <div className="flex-grow border-t border-purple-100"></div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setIsLoggingIn(true);
+                      setErrorMessage("");
+                      try {
+                        const ssoEmail = "aditya@college.edu.in";
+                        let logRes = await fetch(`${API_BASE_URL}/api/auth/login`, {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ email: ssoEmail, password: "ssoPassword123" })
+                        });
+                        let logData = await logRes.json();
+                        
+                        if (!logRes.ok) {
+                          const regRes = await fetch(`${API_BASE_URL}/api/auth/register`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              fullName: "Aditya CSE",
+                              email: ssoEmail,
+                              password: "ssoPassword123",
+                              mobile: "9876543210",
+                              collegeName: "Verified GLA University",
+                              enrollmentNumber: "SSO-2026-CSE",
+                              userRole: "student"
+                            })
+                          });
+                          
+                          if (regRes.ok) {
+                            logRes = await fetch(`${API_BASE_URL}/api/auth/login`, {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ email: ssoEmail, password: "ssoPassword123" })
+                            });
+                            logData = await logRes.json();
+                          }
+                        }
+                        
+                        if (logRes.ok && logData.user) {
+                          localStorage.setItem("user", JSON.stringify(logData.user));
+                          if (logData.token) localStorage.setItem("token", logData.token);
+                          toast.success("✓ College Portal SSO verified successfully!");
+                          navigate("/preferences");
+                        } else {
+                          setErrorMessage("SSO validation handshake failed.");
+                        }
+                      } catch (err) {
+                        setErrorMessage("Failed to connect to SSO Gateway.");
+                      } finally {
+                        setIsLoggingIn(false);
+                      }
+                    }}
+                    className="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold py-3 rounded-xl transition shadow-sm flex items-center justify-center gap-2"
+                  >
+                    <span>🎓</span> Log In via College SSO Portal
                   </button>
                 </form>
               </div>

@@ -1,9 +1,21 @@
 import { useState } from "react";
 import { API_BASE_URL } from "../config";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../components/Toast";
 
 export default function CompanyPreferences() {
   const navigate = useNavigate();
+  const toast = useToast();
+
+  const alert = (msg) => {
+    if (msg.toLowerCase().includes("success") || msg.toLowerCase().includes("completed") || msg.toLowerCase().includes("approved") || msg.toLowerCase().includes("saved")) {
+      toast.success(msg);
+    } else if (msg.toLowerCase().includes("fail") || msg.toLowerCase().includes("error") || msg.toLowerCase().includes("invalid")) {
+      toast.error(msg);
+    } else {
+      toast.info(msg);
+    }
+  };
   const [errorMessage, setErrorMessage] = useState("");
 
   // Section 1: Company Information

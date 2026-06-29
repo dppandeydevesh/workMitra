@@ -92,13 +92,7 @@ export default function AdminDashboard() {
     } catch (err) {
       toast.error("Error communicating with authentication gateway.");
     } finally {
-      fetch(`${API_BASE_URL}/api/admin/metrics`, { headers })
-        .then(res => res.json())
-        .then(data => {
-          setMetrics(data);
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
+      setLoading(false);
     }
   };
 

@@ -378,10 +378,10 @@ export default function ChatPage() {
                               isOutgoing ? "text-purple-100" : "text-gray-400"
                             }`}
                           >
-                            {new Date(msg.timestamp).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit"
-                            })}
+                            {msg.timestamp ? (() => {
+                              const d = new Date(msg.timestamp);
+                              return isNaN(d.getTime()) ? "" : d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+                            })() : ""}
                           </span>
                         </div>
                       </div>

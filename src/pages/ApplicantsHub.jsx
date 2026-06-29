@@ -107,7 +107,10 @@ export default function ApplicantsHub() {
   const fetchCompanyApplications = async (companyEmail) => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/applications/company/${companyEmail}`);
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_BASE_URL}/api/applications/company/${companyEmail}`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
       const data = await res.json();
       if (res.ok) {
         setApplications(data);
@@ -125,9 +128,13 @@ export default function ApplicantsHub() {
   const handleUpdateStatus = async (applicationId, status) => {
     if (!window.confirm(`Are you sure you want to change the status of this application to ${status}?`)) return;
     try {
+      const token = localStorage.getItem("token");
       const res = await fetch(`${API_BASE_URL}/api/applications/${applicationId}/status`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({ status })
       });
       const data = await res.json();
@@ -217,7 +224,7 @@ export default function ApplicantsHub() {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/applications/${activeAppToReview.applicationId}/revision`, {
+      const res = await fetch(`${API_BASE_URL}/api/applications/${activeAppToReview._id}/revision`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -272,9 +279,13 @@ export default function ApplicantsHub() {
     setSubmittingReview(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/applications/${activeAppToReview.applicationId}/complete`, {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_BASE_URL}/api/applications/${activeAppToReview._id}/complete`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({ feedbackText, rating, ratingReview })
       });
       const data = await res.json();
@@ -303,9 +314,9 @@ export default function ApplicantsHub() {
       // 1. Text Search (name, email, skills)
       const query = searchTerm.toLowerCase();
       const matchesSearch =
-        app.studentName.toLowerCase().includes(query) ||
-        app.studentEmail.toLowerCase().includes(query) ||
-        app.skills.toLowerCase().includes(query);
+        (app.studentName || "").toLowerCase().includes(query) ||
+        (app.studentEmail || "").toLowerCase().includes(query) ||
+        (app.skills || "").toLowerCase().includes(query);
 
       // 2. Status Filter
       const matchesStatus = statusFilter === "All" || app.status === statusFilter;
@@ -477,9 +488,9 @@ export default function ApplicantsHub() {
                     <div>
                       <span className="text-[10px] uppercase font-bold text-gray-400 block mb-1">Declared Skills</span>
                       <div className="flex flex-wrap gap-1">
-                        {app.skills.split(",").map((skill, idx) => (
+                        {(app.skills || "").split(",").map(s => s.trim()).filter(Boolean).map((skill, idx) => (
                           <span key={idx} className="bg-gray-50 text-gray-600 text-[10px] font-medium px-2 py-0.5 rounded border border-gray-100">
-                            {skill.trim()}
+                            {skill}
                           </span>
                         ))}
                       </div>

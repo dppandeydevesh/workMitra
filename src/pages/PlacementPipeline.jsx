@@ -204,7 +204,7 @@ export default function PlacementPipeline() {
                             ◀
                           </button>
                           
-                          {currentUser.userRole === "company" && stage !== "Placed" && stage !== "Offered" && (
+                          {currentUser?.userRole === "company" && stage !== "Placed" && stage !== "Offered" && (
                             <button
                               onClick={() => { setSelectedApp(app); setShowOfferModal(true); }}
                               className="text-[9px] bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-extrabold px-2 py-0.5 rounded"

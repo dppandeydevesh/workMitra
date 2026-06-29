@@ -547,7 +547,17 @@ app.get("/api/profile/company", authenticateToken, async (req, res) => {
 // =========================================================================
 app.get("/api/projects/all", authenticateToken, async (req, res) => {
   try {
-    const projects = await Project.find().sort({ createdAt: -1 });
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    
+    let query = Project.find().sort({ createdAt: -1 });
+    
+    if (page && limit) {
+      const skip = (page - 1) * limit;
+      query = query.skip(skip).limit(limit);
+    }
+    
+    const projects = await query;
     res.status(200).json(projects);
   } catch (err) {
     res.status(500).json({ error: "Failed to retrieve projects." });
@@ -1224,14 +1234,25 @@ app.get("/api/chat/history/:user1/:user2", authenticateToken, async (req, res) =
 
     const Message = require("./models/Message");
     
-    const messages = await Message.find({
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    
+    let query = Message.find({
       $or: [
         { sender: user1, receiver: user2 },
         { sender: user2, receiver: user1 }
       ]
-    }).sort({ timestamp: 1 });
+    });
 
-    res.status(200).json(messages);
+    if (page && limit) {
+      const skip = (page - 1) * limit;
+      // Fetch latest messages first, then reverse so they render chronologically
+      const messages = await query.sort({ timestamp: -1 }).skip(skip).limit(limit);
+      res.status(200).json(messages.reverse());
+    } else {
+      const messages = await query.sort({ timestamp: 1 });
+      res.status(200).json(messages);
+    }
   } catch (err) {
     res.status(500).json({ error: "Failed to load chat history." });
   }

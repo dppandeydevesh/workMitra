@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
-
-const API_BASE_URL = "http://localhost:5000";
+import { useToast } from "../components/Toast";
+import { API_BASE_URL } from "../config";
 
 const STAGES = ["Applied", "Shortlisted", "Interviewing", "Offered", "Placed"];
 
 export default function PlacementPipeline() {
   const navigate = useNavigate();
+  const toast = useToast();
   const [currentUser, setCurrentUser] = useState(null);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);

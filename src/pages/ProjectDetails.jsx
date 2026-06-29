@@ -354,6 +354,7 @@ export default function ProjectDetails() {
               )}
             </div>
           </div>
+        </div>
       {/* 🔒 Digital NDA Verification Modal Overlay */}
       {showNdaModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -493,5 +494,6 @@ export default function ProjectDetails() {
         </div>
       )}
     </div>
+  </div>
   );
 }

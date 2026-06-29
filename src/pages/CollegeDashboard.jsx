@@ -197,7 +197,7 @@ export default function CollegeDashboard() {
   const handleLogout = () => {
     localStorage.clear();
     toast.success("Logged out successfully.");
-    navigate("/login");
+    window.location.href = "/login";
   };
 
   if (loading) {

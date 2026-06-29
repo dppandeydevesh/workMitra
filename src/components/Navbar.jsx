@@ -91,11 +91,9 @@ export default function Navbar() {
 
   if (!user) return null;
 
-  const isCompany = user.userRole === "company";
-
   const handleLogout = () => {
     localStorage.clear();
-    navigate("/login");
+    window.location.href = "/login";
   };
 
   const companyLinks = [
@@ -113,7 +111,25 @@ export default function Navbar() {
     { label: "Chat", path: "/chat", icon: "💬" }
   ];
 
-  const activeLinks = isCompany ? companyLinks : studentLinks;
+  const adminLinks = [
+    { label: "Admin Console", path: "/admin-dashboard", icon: "👑" },
+    { label: "Chat", path: "/chat", icon: "💬" }
+  ];
+
+  const collegeLinks = [
+    { label: "College Portal", path: "/college-dashboard", icon: "🎓" },
+    { label: "Career Tracks", path: "/placement-pipeline", icon: "📋" },
+    { label: "Chat", path: "/chat", icon: "💬" }
+  ];
+
+  let activeLinks = studentLinks;
+  if (user.userRole === "company") {
+    activeLinks = companyLinks;
+  } else if (user.userRole === "admin") {
+    activeLinks = adminLinks;
+  } else if (user.userRole === "college") {
+    activeLinks = collegeLinks;
+  }
 
   return (
     <nav className="bg-white/80 backdrop-blur-md shadow-md sticky top-0 z-50 transition-all border-b border-gray-100">
@@ -125,7 +141,12 @@ export default function Navbar() {
               src="/logo.png" 
               alt="workMitra Logo" 
               className="h-9 object-contain cursor-pointer transition hover:scale-105" 
-              onClick={() => navigate(isCompany ? "/company-dashboard" : "/dashboard")} 
+              onClick={() => {
+                if (user.userRole === "company") navigate("/company-dashboard");
+                else if (user.userRole === "admin") navigate("/admin-dashboard");
+                else if (user.userRole === "college") navigate("/college-dashboard");
+                else navigate("/dashboard");
+              }} 
             />
           </div>
 
@@ -150,7 +171,7 @@ export default function Navbar() {
             })}
 
             {/* Notification Bell for Students */}
-            {!isCompany && (
+            {user.userRole === "student" && (
               <div className="relative">
                 <button
                   onClick={() => setNotificationsOpen(!notificationsOpen)}
@@ -208,7 +229,7 @@ export default function Navbar() {
 
           {/* Mobile Menu Buttons */}
           <div className="flex md:hidden items-center gap-2">
-            {!isCompany && (
+            {user.userRole === "student" && (
               <div className="relative">
                 <button
                   onClick={() => setNotificationsOpen(!notificationsOpen)}

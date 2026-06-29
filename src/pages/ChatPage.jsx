@@ -6,8 +6,8 @@ export default function ChatPage() {
   const { recipientEmail } = useParams();
   const navigate = useNavigate();
 
-  // Active logged-in user
-  const loggedInUser = JSON.parse(localStorage.getItem("user") || "null");
+  // Active logged-in user (useState with lazy initializer to avoid parsing on every render)
+  const [loggedInUser] = useState(() => JSON.parse(localStorage.getItem("user") || "null"));
 
   // State Management
   const [partners, setPartners] = useState([]);
@@ -20,6 +20,15 @@ export default function ChatPage() {
 
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const reconnectAttemptsRef = useRef(0);
+  const reconnectTimeoutRef = useRef(null);
+  const activePartnerRef = useRef(activePartner);
+  const MAX_RECONNECT_ATTEMPTS = 5;
+
+  // Keep activePartnerRef updated with current activePartner state
+  useEffect(() => {
+    activePartnerRef.current = activePartner;
+  }, [activePartner]);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -54,7 +63,7 @@ export default function ChatPage() {
             setActivePartner(partnerObj);
             setShowMobileChat(true);
           }
-        } else if (data.length > 0 && !activePartner) {
+        } else if (data.length > 0 && !activePartnerRef.current) {
           // Default to first chat partner if none selected
           setActivePartner(data[0]);
         }
@@ -90,66 +99,83 @@ export default function ChatPage() {
     fetchHistory();
   }, [activePartner]);
 
-  // Initialize WebSocket Connection
+  // Initialize WebSocket Connection (runs once, stabilized connection)
   useEffect(() => {
     if (!loggedInUser) return;
 
-    // Resolve ws/wss protocol dynamically based on API_BASE_URL
-    const getWsUrl = () => {
-      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-      if (API_BASE_URL) {
-        const wsProtocol = API_BASE_URL.startsWith("https") ? "wss:" : "ws:";
-        const host = API_BASE_URL.replace(/^https?:\/\//, "");
-        return `${wsProtocol}//${host}`;
-      }
-      return `${protocol}//${window.location.host}`;
-    };
-
-    const wsUrl = getWsUrl();
-    const wsSocket = new WebSocket(wsUrl);
-    socketRef.current = wsSocket;
-
-    wsSocket.onopen = () => {
-      // Authenticate socket session
-      wsSocket.send(
-        JSON.stringify({
-          type: "auth",
-          email: loggedInUser.email
-        })
-      );
-    };
-
-    wsSocket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-
-      if (data.type === "status" && data.status === "connected") {
-        setWsConnected(true);
-        return;
-      }
-
-      if (data.type === "message") {
-        // If message relates to current active partner, append to messages
-        if (
-          (data.sender === activePartner?.email && data.receiver === loggedInUser.email) ||
-          (data.sender === loggedInUser.email && data.receiver === activePartner?.email)
-        ) {
-          setMessages((prev) => [...prev, data]);
+    const connectWebSocket = () => {
+      // Resolve ws/wss protocol dynamically based on API_BASE_URL
+      const getWsUrl = () => {
+        const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+        if (API_BASE_URL) {
+          const wsProtocol = API_BASE_URL.startsWith("https") ? "wss:" : "ws:";
+          const host = API_BASE_URL.replace(/^https?:\/\//, "");
+          return `${wsProtocol}//${host}`;
         }
-        
-        // Refresh partner list to bubble up recent messages/partners
-        fetchPartners();
-      }
+        return `${protocol}//${window.location.host}`;
+      };
+
+      const wsUrl = getWsUrl();
+      const wsSocket = new WebSocket(wsUrl);
+      socketRef.current = wsSocket;
+
+      wsSocket.onopen = () => {
+        console.log("WebSocket connected!");
+        reconnectAttemptsRef.current = 0; // reset reconnect attempts
+        wsSocket.send(
+          JSON.stringify({
+            type: "auth",
+            token: localStorage.getItem("token")
+          })
+        );
+      };
+
+      wsSocket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        if (data.type === "status" && data.status === "connected") {
+          setWsConnected(true);
+          return;
+        }
+
+        if (data.type === "message") {
+          const currentActivePartner = activePartnerRef.current;
+          // If message relates to current active partner, append to messages
+          if (
+            (data.sender === currentActivePartner?.email && data.receiver === loggedInUser.email) ||
+            (data.sender === loggedInUser.email && data.receiver === currentActivePartner?.email)
+          ) {
+            setMessages((prev) => [...prev, data]);
+          }
+          
+          // Refresh partner list to bubble up recent messages/partners
+          fetchPartners();
+        }
+      };
+
+      wsSocket.onclose = () => {
+        setWsConnected(false);
+        console.log("WebSocket connection disconnected.");
+
+        // Reconnection logic with exponential backoff
+        if (reconnectAttemptsRef.current < MAX_RECONNECT_ATTEMPTS) {
+          const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current), 30000);
+          console.log(`Attempting reconnect in ${delay}ms...`);
+          reconnectTimeoutRef.current = setTimeout(() => {
+            reconnectAttemptsRef.current++;
+            connectWebSocket();
+          }, delay);
+        }
+      };
     };
 
-    wsSocket.onclose = () => {
-      setWsConnected(false);
-      console.log("WebSocket connection disconnected.");
-    };
+    connectWebSocket();
 
     return () => {
-      if (wsSocket) wsSocket.close();
+      if (socketRef.current) socketRef.current.close();
+      if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
     };
-  }, [activePartner, loggedInUser]);
+  }, [loggedInUser]);
 
   // Scroll to bottom on new messages
   useEffect(() => {

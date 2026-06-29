@@ -8,7 +8,10 @@ const mongoSanitize = require('express-mongo-sanitize');
 const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || "workmitra-super-secret-key-123456";
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-only-fallback-not-for-production';
+if (!process.env.JWT_SECRET) {
+  console.warn("⚠️ WARNING: JWT_SECRET environment variable is missing. Using insecure fallback.");
+}
 
 // Models Loading
 const User = require('./models/User');
@@ -17,7 +20,7 @@ const Application = require('./models/Application');
 const CompanyProfile = require('./models/CompanyProfile');
 const PendingUser = require('./models/PendingUser'); // 🔑 न्यू इम्पोर्ट: पेंडिंग यूजर मॉडल
 const multer = require('multer');
-const { PDFParse } = require('pdf-parse');
+const pdfParse = require('pdf-parse');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -112,42 +115,17 @@ const sendSmsOtp = async (toMobile, otp) => {
   }
 };
 
-const smtpLogs = [];
-
-app.get("/api/debug/smtp-logs", (req, res) => {
-  res.json(smtpLogs);
-});
-
-// 📊 DIAGNOSTIC ROUTE: Check collection sizes and database storage stats
-app.get("/api/debug/db-size", async (req, res) => {
-  try {
-    const stats = await mongoose.connection.db.stats();
-    const collections = await mongoose.connection.db.listCollections().toArray();
-    const collectionStats = [];
-    
-    for (const col of collections) {
-      const colStats = await mongoose.connection.db.command({ collStats: col.name });
-      collectionStats.push({
-        name: col.name,
-        count: colStats.count,
-        sizeMB: (colStats.size / (1024 * 1024)).toFixed(2),
-        storageSizeMB: (colStats.storageSize / (1024 * 1024)).toFixed(2),
-        indexSizeMB: (colStats.totalIndexSize / (1024 * 1024)).toFixed(2)
-      });
+// smtpLogs proxy to avoid ReferenceErrors during mail sending and prevent memory leaks (capped at 50 logs)
+const smtpLogs = new Proxy([], {
+  get(target, prop) {
+    if (prop === 'push') {
+      return function(...args) {
+        const res = target.push(...args);
+        if (target.length > 50) target.shift();
+        return res;
+      };
     }
-    
-    res.json({
-      dbStats: {
-        collectionsCount: stats.collections,
-        objectsCount: stats.objects,
-        dataSizeMB: (stats.dataSize / (1024 * 1024)).toFixed(2),
-        storageSizeMB: (stats.storageSize / (1024 * 1024)).toFixed(2),
-        indexSizeMB: (stats.indexSize / (1024 * 1024)).toFixed(2)
-      },
-      collections: collectionStats
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    return target[prop];
   }
 });
 
@@ -284,15 +262,25 @@ app.post("/api/auth/register", registerLimiter, async (req, res) => {
       return res.status(400).json({ error: "Email already registered." });
     }
 
+    // Fix 7: Check for duplicate mobile number
+    if (mobile) {
+      const existingMobile = await User.findOne({ mobile });
+      if (existingMobile) {
+        return res.status(400).json({ error: "Mobile number already registered." });
+      }
+    }
+
     // Generate random 6-digit OTPs
     const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
     const mobileOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Log simulated OTPs to system console
-    console.log(`\n========================================`);
-    console.log(`✉️ Simulated OTP for Email [${email}]: ${emailOtp}`);
-    console.log(`📱 Simulated OTP for Mobile [${mobile}]: ${mobileOtp}`);
-    console.log(`========================================\n`);
+    // Log simulated OTPs to system console (suppressed in production)
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`\n========================================`);
+      console.log(`✉️ Simulated OTP for Email [${email}]: ${emailOtp}`);
+      console.log(`📱 Simulated OTP for Mobile [${mobile}]: ${mobileOtp}`);
+      console.log(`========================================\n`);
+    }
 
     // Deliver actual OTPs if gateway configs exist
     await sendEmailOtp(email, emailOtp);
@@ -308,12 +296,10 @@ app.post("/api/auth/register", registerLimiter, async (req, res) => {
     });
     await pendingUser.save();
 
-    // Always return simulated OTPs to prevent SMTP blockages from halting registration tests
+    // OTPs are stored server-side only — NOT sent to the client
     res.status(200).json({
       message: "OTP sent successfully.",
-      email,
-      emailOtpSimulated: emailOtp,
-      mobileOtpSimulated: mobileOtp
+      email
     });
   } catch (err) {
     res.status(500).json({ error: "Failed to initiate registration." });
@@ -454,7 +440,8 @@ app.post("/api/auth/forgot-password", async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ error: "No account registered with this email." });
+      // Return generic message to prevent user enumeration
+      return res.status(200).json({ message: "If an account exists with this email, a reset link has been sent.", email });
     }
 
     // Generate a simple secure random token hex string
@@ -528,11 +515,30 @@ app.post("/api/profile/company", authenticateToken, async (req, res) => {
     if (req.user.userRole !== "company") {
       return res.status(403).json({ error: "Access denied. Only recruiters can update company profiles." });
     }
-    const newProfile = new CompanyProfile(req.body);
-    await newProfile.save();
-    res.status(201).json({ message: "Company profile created seamlessly!" });
+    const profileData = { ...req.body, companyEmail: req.user.email };
+    const profile = await CompanyProfile.findOneAndUpdate(
+      { companyEmail: req.user.email },
+      profileData,
+      { new: true, upsert: true, runValidators: true }
+    );
+    res.status(201).json({ message: "Company profile saved successfully!", profile });
   } catch (err) {
     res.status(500).json({ error: "Failed to save company profile." });
+  }
+});
+
+// =========================================================================
+// 🏢 Route: Get Company Profile for authenticated user
+// =========================================================================
+app.get("/api/profile/company", authenticateToken, async (req, res) => {
+  try {
+    const profile = await CompanyProfile.findOne({ companyEmail: req.user.email });
+    if (!profile) {
+      return res.status(404).json({ error: "Company profile not found." });
+    }
+    res.status(200).json(profile);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to retrieve company profile." });
   }
 });
 
@@ -573,6 +579,11 @@ app.post("/api/auth/complete-profile", authenticateToken, async (req, res) => {
 // =========================================================================
 app.post("/api/applications/apply", authenticateToken, async (req, res) => {
   try {
+    // Fix 6: Only students can apply to projects
+    if (req.user.userRole !== 'student') {
+      return res.status(403).json({ error: 'Only students can apply to projects' });
+    }
+
     const { projectId, studentEmail, studentName } = req.body;
 
     if (!projectId || !studentEmail || !studentName) {
@@ -955,10 +966,8 @@ app.post("/api/profile/upload-cv", authenticateToken, upload.single("cvFile"), a
       return res.status(403).json({ error: "Unauthorized profile context." });
     }
 
-    // Parse the PDF buffer using PDFParse class
-    const parser = new PDFParse({ data: new Uint8Array(req.file.buffer) });
-    await parser.load();
-    const pdfData = await parser.getText();
+    // Parse the PDF buffer
+    const pdfData = await pdfParse(req.file.buffer);
     const extractedText = pdfData.text;
 
     if (!extractedText || extractedText.trim().length === 0) {
@@ -1038,9 +1047,9 @@ CV Text to analyze:
 ${textToAnalyze}`;
 
     // Send API key inside a custom headers configuration instead of URL query parameter
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
       body: JSON.stringify({
         contents: [{
           parts: [{
@@ -1097,6 +1106,15 @@ app.get("/api/auth/user/:email", authenticateToken, async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "Student profile not found." });
     }
+
+    // Fix 5: Only return full profile if it's the user's own email
+    if (req.user.email !== req.params.email) {
+      return res.status(200).json({
+        fullName: user.fullName,
+        userRole: user.userRole
+      });
+    }
+
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json({ error: "Failed to read profile details." });
@@ -1147,12 +1165,12 @@ app.put("/api/projects/:projectId", authenticateToken, async (req, res) => {
     // Only whitelist safe fields to modify
     const { title, description, budget, requiredSkills, deadline, projectType } = req.body;
     
-    project.title = title || project.title;
-    project.description = description || project.description;
-    project.budget = budget || project.budget;
-    project.requiredSkills = requiredSkills || project.requiredSkills;
-    project.deadline = deadline || project.deadline;
-    project.projectType = projectType || project.projectType;
+    project.title = title !== undefined ? title : project.title;
+    project.description = description !== undefined ? description : project.description;
+    project.budget = budget !== undefined ? budget : project.budget;
+    project.requiredSkills = requiredSkills !== undefined ? requiredSkills : project.requiredSkills;
+    project.deadline = deadline !== undefined ? deadline : project.deadline;
+    project.projectType = projectType !== undefined ? projectType : project.projectType;
 
     await project.save();
     res.status(200).json(project);

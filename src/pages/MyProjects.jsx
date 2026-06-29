@@ -64,6 +64,7 @@ export default function MyProjects() {
   };
 
   const handleAcceptApplicant = async (applicationId) => {
+    if (!window.confirm("Are you sure you want to approve this application?")) return;
     try {
       const response = await fetch(`${API_BASE_URL}/api/applications/${applicationId}/status`, {
         method: "POST",
@@ -85,6 +86,7 @@ export default function MyProjects() {
   };
 
   const handleRejectApplicant = async (applicationId) => {
+    if (!window.confirm("Are you sure you want to reject this application?")) return;
     try {
       const response = await fetch(`${API_BASE_URL}/api/applications/${applicationId}/status`, {
         method: "POST",

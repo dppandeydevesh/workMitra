@@ -53,6 +53,7 @@ export default function ApplicantsHub() {
 
   // Recruiter actions
   const handleUpdateStatus = async (applicationId, status) => {
+    if (!window.confirm(`Are you sure you want to change the status of this application to ${status}?`)) return;
     try {
       const res = await fetch(`${API_BASE_URL}/api/applications/${applicationId}/status`, {
         method: "POST",

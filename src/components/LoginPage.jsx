@@ -26,11 +26,11 @@ export default function LoginPage() {
 
   // OTP Verification States
   const [isRegistering, setIsRegistering] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
   const [isOtpVerifying, setIsOtpVerifying] = useState(false);
   const [emailOtpInput, setEmailOtpInput] = useState("");
   const [mobileOtpInput, setMobileOtpInput] = useState("");
-  const [simulatedEmailOtp, setSimulatedEmailOtp] = useState("");
-  const [simulatedMobileOtp, setSimulatedMobileOtp] = useState("");
 
   const navigate = useNavigate();
 
@@ -73,6 +73,7 @@ export default function LoginPage() {
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
+    setIsLoggingIn(true);
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
@@ -104,6 +105,8 @@ export default function LoginPage() {
       }
     } catch (err) {
       setErrorMessage("Cannot connect to server portal.");
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
@@ -151,6 +154,7 @@ export default function LoginPage() {
   const handleOtpVerifySubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
+    setIsVerifying(true);
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/register-verify`, {
@@ -191,6 +195,8 @@ export default function LoginPage() {
       }
     } catch (err) {
       setErrorMessage("Error communicating with server portal.");
+    } finally {
+      setIsVerifying(false);
     }
   };
 
@@ -302,9 +308,10 @@ export default function LoginPage() {
 
                 <button
                   type="submit"
-                  className="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition hover:opacity-95 mt-2"
+                  disabled={isVerifying}
+                  className={`w-full py-3.5 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition mt-2 ${isVerifying ? "bg-gray-400 cursor-not-allowed" : "bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95"}`}
                 >
-                  Verify and Create Account
+                  {isVerifying ? "Verifying..." : "Verify and Create Account"}
                 </button>
 
                 <div className="pt-2">
@@ -447,7 +454,13 @@ export default function LoginPage() {
                     </button>
                   </div>
 
-                  <button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold uppercase tracking-wider py-3.5 rounded-xl shadow-md mt-1">Sign In</button>
+                  <button
+                    type="submit"
+                    disabled={isLoggingIn}
+                    className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3.5 rounded-xl shadow-md mt-1 transition ${isLoggingIn ? "bg-gray-400 cursor-not-allowed" : "bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95"}`}
+                  >
+                    {isLoggingIn ? "Signing In..." : "Sign In"}
+                  </button>
                 </form>
               </div>
 

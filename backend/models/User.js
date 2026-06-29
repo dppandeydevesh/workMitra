@@ -13,7 +13,7 @@ const UserSchema = new mongoose.Schema({
     projectType: { type: String, default: null },
     collegeName: { type: String, default: null },
     enrollmentNumber: { type: String, default: null },
-    mobile: { type: String, default: null },
+    mobile: { type: String, default: null, unique: true, sparse: true },
     resumeUrl: { type: String, default: null },
     resumeText: { type: String, default: null },
     cvReviewReport: { type: mongoose.Schema.Types.Mixed, default: null },

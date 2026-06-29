@@ -615,24 +615,24 @@ export default function Dashboard() {
           <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
             <button 
               onClick={() => scrollToSection("gigs-section")}
-              className="group text-left bg-blue-50 p-4 sm:p-6 rounded-xl hover:bg-blue-100/70 hover:-translate-y-0.5 transition-all duration-200 shadow-sm border border-blue-100/30"
+              className="group text-left bg-blue-50 p-4 sm:p-6 rounded-xl hover:bg-blue-100/70 hover:-translate-y-0.5 transition-all duration-200 shadow-sm border border-blue-100/30 dark:bg-blue-950/40 dark:hover:bg-blue-950/60 dark:border-blue-900/30"
             >
-              <h3 className="font-bold text-lg text-blue-950 mb-2 group-hover:text-blue-700">My Gigs</h3>
-              <p className="text-gray-600 text-xs">Manage and view your applied gigs</p>
+              <h3 className="font-bold text-lg text-blue-950 mb-2 group-hover:text-blue-700 dark:text-blue-200 dark:group-hover:text-blue-400">My Gigs</h3>
+              <p className="text-gray-600 text-xs dark:text-gray-400">Manage and view your applied gigs</p>
             </button>
             <button 
               onClick={() => scrollToSection("projects-section")}
-              className="group text-left bg-green-50 p-4 sm:p-6 rounded-xl hover:bg-green-100/70 hover:-translate-y-0.5 transition-all duration-200 shadow-sm border border-green-100/30"
+              className="group text-left bg-green-50 p-4 sm:p-6 rounded-xl hover:bg-green-100/70 hover:-translate-y-0.5 transition-all duration-200 shadow-sm border border-green-100/30 dark:bg-emerald-950/40 dark:hover:bg-emerald-950/60 dark:border-emerald-900/30"
             >
-              <h3 className="font-bold text-lg text-green-950 mb-2 group-hover:text-green-700">Orders</h3>
-              <p className="text-gray-600 text-xs">Explore new projects in the marketplace</p>
+              <h3 className="font-bold text-lg text-green-950 mb-2 group-hover:text-green-700 dark:text-emerald-200 dark:group-hover:text-emerald-400">Orders</h3>
+              <p className="text-gray-600 text-xs dark:text-gray-400">Explore new projects in the marketplace</p>
             </button>
             <button 
               onClick={() => navigate("/chat")}
-              className="group text-left bg-purple-50 p-4 sm:p-6 rounded-xl hover:bg-purple-100/70 hover:-translate-y-0.5 transition-all duration-200 shadow-sm border border-purple-100/30"
+              className="group text-left bg-purple-50 p-4 sm:p-6 rounded-xl hover:bg-purple-100/70 hover:-translate-y-0.5 transition-all duration-200 shadow-sm border border-purple-100/30 dark:bg-purple-950/40 dark:hover:bg-purple-950/60 dark:border-purple-900/30"
             >
-              <h3 className="font-bold text-lg text-purple-950 mb-2 group-hover:text-purple-700">Messages</h3>
-              <p className="text-gray-600 text-xs">Chat directly with hiring managers</p>
+              <h3 className="font-bold text-lg text-purple-950 mb-2 group-hover:text-purple-700 dark:text-purple-200 dark:group-hover:text-purple-400">Messages</h3>
+              <p className="text-gray-600 text-xs dark:text-gray-400">Chat directly with hiring managers</p>
             </button>
           </div>
 
@@ -645,7 +645,7 @@ export default function Dashboard() {
               <p className="text-sm text-gray-500 mb-6">Track your job applications and submit tasks for payout verification.</p>
 
               {myApplications.length === 0 ? (
-                <div className="text-center py-8 border border-dashed border-gray-200 rounded-xl text-gray-400 font-medium bg-gray-50/50">
+                <div className="text-center py-8 border border-dashed border-gray-200 rounded-xl text-gray-400 font-medium bg-gray-50/50 dark:bg-slate-900/50 dark:border-slate-800 dark:text-slate-400">
                   📭 You haven't applied to any gigs yet. Explore the marketplace below!
                 </div>
               ) : (

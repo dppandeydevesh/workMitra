@@ -522,11 +522,14 @@ app.post("/api/auth/forgot-password", async (req, res) => {
     // Send the password recovery link via Resend HTTP email delivery
     await sendResetPasswordEmail(user.email, resetLink);
 
-    res.status(200).json({
+    const responsePayload = {
       message: "Reset token generated successfully.",
       email: user.email
-      // resetLink is NOT returned to the client in production!
-    });
+    };
+    if (process.env.NODE_ENV !== "production") {
+      responsePayload.resetLink = resetLink;
+    }
+    res.status(200).json(responsePayload);
   } catch (err) {
     console.error("Forgot Password Error:", err);
     res.status(500).json({ error: `Failed to process forgot password request: ${err.message}` });
@@ -1970,7 +1973,7 @@ app.put("/api/profile/student/:email", authenticateToken, async (req, res) => {
     }
     const { 
       fullName, collegeName, enrollmentNumber, mobile, targetSkills, 
-      projectType, resumeUrl, githubUrl, linkedinUrl, portfolioUrl, bio,
+      projectType, resumeUrl, githubUrl, linkedinUrl, portfolioUrl, bio, interests,
       isProfilePrivate, major, currentSemester, vanityUsername, videoPitchUrl,
       extracurriculars, availabilitySlots, preferredTechStack
     } = req.body;
@@ -1987,7 +1990,7 @@ app.put("/api/profile/student/:email", authenticateToken, async (req, res) => {
       { email },
       { 
         fullName, collegeName, enrollmentNumber, mobile, targetSkills, 
-        projectType, resumeUrl, githubUrl, linkedinUrl, portfolioUrl, bio,
+        projectType, resumeUrl, githubUrl, linkedinUrl, portfolioUrl, bio, interests,
         isProfilePrivate, major, currentSemester, vanityUsername, videoPitchUrl,
         extracurriculars, availabilitySlots, preferredTechStack
       },
@@ -1998,7 +2001,12 @@ app.put("/api/profile/student/:email", authenticateToken, async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
     
-    res.status(200).json({ user });
+    const sanitized = user.toObject();
+    delete sanitized.password;
+    delete sanitized.resetPasswordToken;
+    delete sanitized.resetPasswordExpires;
+
+    res.status(200).json({ user: sanitized });
   } catch (err) {
     res.status(500).json({ error: "Failed to update profile parameters." });
   }

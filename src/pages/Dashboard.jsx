@@ -249,8 +249,12 @@ export default function Dashboard() {
     formData.append("email", currentUser.email);
 
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}/api/profile/upload-cv`, {
         method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
         body: formData
       });
 
@@ -281,9 +285,13 @@ export default function Dashboard() {
     setUpdatingResume(true);
 
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}/api/profile/resume`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({
           email: currentUser.email,
           resumeUrl,
@@ -320,9 +328,13 @@ export default function Dashboard() {
     setLoadingReview(true);
 
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}/api/ai/review-cv`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify({
           email: currentUser.email,
           resumeText

@@ -20,6 +20,8 @@ const UserSchema = new mongoose.Schema({
     githubUrl: { type: String, default: null },
     linkedinUrl: { type: String, default: null },
     portfolioUrl: { type: String, default: null },
+    bio: { type: String, default: "" },
+    interests: { type: [String], default: [] },
     
     // 🏛️ College Profile & Controls (Phase 11)
     departmentName: { type: String, default: null },
@@ -78,7 +80,8 @@ const UserSchema = new mongoose.Schema({
 // Hash password before saving if modified
 UserSchema.pre('save', async function() {
     if (!this.isModified('password')) return;
-    if (this.password && (this.password.startsWith('$2a$') || this.password.startsWith('$2b$'))) return;
+    const bcryptRegex = /^\$2[ayb]\$[0-9]{2}\$[./A-Za-z0-9]{53}$/;
+    if (this.password && bcryptRegex.test(this.password)) return;
     try {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);

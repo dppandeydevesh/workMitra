@@ -388,8 +388,11 @@ export default function LoginPage() {
                       setErrorMessage("Please establish a stronger password structure before continuing.");
                       return;
                     }
-                    if ((userRole === "student" || userRole === "college") && !email.toLowerCase().endsWith(".edu") && !email.toLowerCase().endsWith(".edu.in")) {
-                      setErrorMessage("Academic account registrations require an official educational domain email address ending in .edu or .edu.in.");
+                    const academicDomains = [".edu", ".edu.in", ".ac.in", ".ac.uk", ".edu.au", ".edu.pk", ".edu.bd", ".edu.np", ".edu.lk", ".edu.cn", ".edu.sg", ".edu.my", ".ac.nz", ".ac.jp", ".ac.kr", ".ac.za", ".edu.br", ".edu.mx", ".edu.co", ".edu.ar", ".edu.pe", ".edu.eg", ".edu.ng", ".edu.gh", ".edu.ke", ".edu.et", ".edu.tz", ".ac.ke", ".org.in", ".res.in", ".ernet.in", ".nit.ac.in", ".iitb.ac.in"];
+                    const emailLower = email.toLowerCase();
+                    const isAcademic = academicDomains.some(d => emailLower.endsWith(d));
+                    if ((userRole === "student" || userRole === "college") && !isAcademic) {
+                      setErrorMessage("Academic account registrations require an official educational domain email (e.g. .edu, .edu.in, .ac.in, .ac.uk, etc.).");
                       return;
                     }
                     setErrorMessage("");

@@ -2467,7 +2467,8 @@ app.post("/api/college/bulk-import", authenticateToken, async (req, res) => {
 
     for (const student of students) {
       const emailLower = student.email.trim().toLowerCase();
-      if (!emailLower.endsWith(".edu") && !emailLower.endsWith(".edu.in")) {
+      const academicDomains = [".edu", ".edu.in", ".ac.in", ".ac.uk", ".edu.au", ".edu.pk", ".edu.bd", ".edu.np", ".edu.lk", ".edu.cn", ".edu.sg", ".edu.my", ".ac.nz", ".ac.jp", ".ac.kr", ".ac.za", ".edu.br", ".edu.mx", ".edu.co", ".edu.ar", ".edu.pe", ".edu.eg", ".edu.ng", ".edu.gh", ".edu.ke", ".edu.et", ".edu.tz", ".ac.ke", ".org.in", ".res.in", ".ernet.in"];
+      if (!academicDomains.some(d => emailLower.endsWith(d))) {
         invalidDomainCount++;
         continue;
       }

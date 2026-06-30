@@ -517,7 +517,7 @@ export default function CollegeDashboard() {
                   <p className="font-bold text-indigo-800">📊 Last Import Summary:</p>
                   <p className="text-indigo-900/80">🔹 Students Registered Successfully: <strong className="text-indigo-700">{importStats.imported}</strong></p>
                   <p className="text-indigo-900/80">🔹 Duplicates Skipped: <strong className="text-slate-600">{importStats.duplicate}</strong></p>
-                  <p className="text-indigo-900/80">🔹 Invalid Email Domains (.edu required): <strong className="text-red-600">{importStats.invalid}</strong></p>
+                  <p className="text-indigo-900/80">🔹 Invalid Email Domains (academic domain required): <strong className="text-red-600">{importStats.invalid}</strong></p>
                 </div>
               )}
 

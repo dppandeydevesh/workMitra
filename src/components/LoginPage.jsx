@@ -259,30 +259,32 @@ export default function LoginPage() {
       {view === "landing" && (
         <div className="w-full min-h-screen flex flex-col items-center justify-center relative p-6 z-10 animate-fade-in">
           <div className="text-center max-w-2xl mb-12 z-10 flex flex-col items-center animate-fade-in">
-            <img src="/logo.png" alt="workMitra Logo" className="w-72 h-72 object-contain mb-4 filter drop-shadow-lg mix-blend-multiply" />
-            <p className="text-purple-900/80 mt-2 text-sm md:text-base font-semibold leading-relaxed">Choose your path to establish active student-employer connection nodes.</p>
+            <div className="bg-white dark:bg-slate-800/50 p-6 rounded-[40px] shadow-xl border border-white/20 dark:border-slate-700/50 mb-6 backdrop-blur-xl">
+              <img src="/logo.png" alt="workMitra Logo" className="w-56 h-auto object-contain filter drop-shadow-lg" />
+            </div>
+            <p className="text-purple-900/80 dark:text-purple-200 mt-2 text-sm md:text-base font-semibold leading-relaxed">Choose your path to establish active student-employer connection nodes.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full z-10 px-4">
             
-            <button onClick={() => { setUserRole("student"); setView("auth"); }} className="group text-left p-8 bg-white/40 backdrop-blur-lg border border-white/60 rounded-[32px] hover:border-purple-400 hover:bg-white/60 transition-all duration-300 relative overflow-hidden">
+            <button onClick={() => { setUserRole("student"); setView("auth"); }} className="group text-left p-8 bg-white/40 dark:bg-slate-800/40 backdrop-blur-lg border border-white/60 dark:border-slate-700/50 rounded-[32px] hover:border-purple-400 hover:bg-white/60 dark:hover:bg-slate-800/80 transition-all duration-300 relative overflow-hidden">
               <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">💼</div>
               <div className="w-12 h-12 rounded-2xl bg-purple-50 text-white flex items-center justify-center text-2xl mb-4">🚀</div>
-              <h3 className="text-2xl font-bold text-purple-950 mb-2">I Need a Job</h3>
-              <p className="text-sm text-purple-900/70">Build student profiles, submit skill proofs, and clear tasks.</p>
+              <h3 className="text-2xl font-bold text-purple-950 dark:text-white mb-2">I Need a Job</h3>
+              <p className="text-sm text-purple-900/70 dark:text-purple-200/70">Build student profiles, submit skill proofs, and clear tasks.</p>
             </button>
 
-            <button onClick={() => { setUserRole("company"); setView("auth"); }} className="group text-left p-8 bg-white/40 backdrop-blur-lg border border-white/60 rounded-[32px] hover:border-pink-400 hover:bg-white/60 transition-all duration-300 relative overflow-hidden">
+            <button onClick={() => { setUserRole("company"); setView("auth"); }} className="group text-left p-8 bg-white/40 dark:bg-slate-800/40 backdrop-blur-lg border border-white/60 dark:border-slate-700/50 rounded-[32px] hover:border-pink-400 hover:bg-white/60 dark:hover:bg-slate-800/80 transition-all duration-300 relative overflow-hidden">
               <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">🏢</div>
               <div className="w-12 h-12 rounded-2xl bg-pink-500 text-white flex items-center justify-center text-2xl mb-4">🤝</div>
-              <h3 className="text-2xl font-bold text-purple-950 mb-2">I Want to Hire</h3>
-              <p className="text-sm text-purple-900/70">Post corporate tracks, evaluate task solutions, and fund assignments.</p>
+              <h3 className="text-2xl font-bold text-purple-950 dark:text-white mb-2">I Want to Hire</h3>
+              <p className="text-sm text-purple-900/70 dark:text-purple-200/70">Post corporate tracks, evaluate task solutions, and fund assignments.</p>
             </button>
 
-            <button onClick={() => { setUserRole("college"); setView("auth"); }} className="group text-left p-8 bg-white/40 backdrop-blur-lg border border-white/60 rounded-[32px] hover:border-indigo-400 hover:bg-white/60 transition-all duration-300 relative overflow-hidden">
+            <button onClick={() => { setUserRole("college"); setView("auth"); }} className="group text-left p-8 bg-white/40 dark:bg-slate-800/40 backdrop-blur-lg border border-white/60 dark:border-slate-700/50 rounded-[32px] hover:border-indigo-400 hover:bg-white/60 dark:hover:bg-slate-800/80 transition-all duration-300 relative overflow-hidden">
               <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">🎓</div>
               <div className="w-12 h-12 rounded-2xl bg-indigo-500 text-white flex items-center justify-center text-2xl mb-4">🏫</div>
-              <h3 className="text-2xl font-bold text-purple-950 mb-2">Professor / HOD</h3>
-              <p className="text-sm text-purple-900/70">Audit placement tracks, endorse top student profiles, whitelist recruiters.</p>
+              <h3 className="text-2xl font-bold text-purple-950 dark:text-white mb-2">Professor / HOD</h3>
+              <p className="text-sm text-purple-900/70 dark:text-purple-200/70">Audit placement tracks, endorse top student profiles, whitelist recruiters.</p>
             </button>
 
           </div>

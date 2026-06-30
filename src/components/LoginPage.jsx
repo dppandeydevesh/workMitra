@@ -388,15 +388,11 @@ export default function LoginPage() {
                       setErrorMessage("Please establish a stronger password structure before continuing.");
                       return;
                     }
-                    // Academic TLD patterns (global)
-                    const academicTLDs = [".edu", ".edu.in", ".ac.in", ".ac.uk", ".edu.au", ".edu.pk", ".edu.bd", ".edu.np", ".edu.lk", ".edu.cn", ".edu.sg", ".edu.my", ".ac.nz", ".ac.jp", ".ac.kr", ".ac.za", ".edu.br", ".edu.mx", ".edu.co", ".edu.ar", ".edu.pe", ".edu.eg", ".edu.ng", ".edu.gh", ".edu.ke", ".edu.et", ".edu.tz", ".ac.ke", ".org.in", ".res.in", ".ernet.in", ".ac.id", ".edu.tr", ".edu.sa", ".edu.ph", ".edu.vn", ".ac.th", ".edu.iq", ".edu.jo", ".ac.il", ".edu.ru", ".edu.ua", ".edu.pl", ".edu.es", ".edu.pt", ".ac.be", ".edu.eu"];
-                    // Specific private university domains that use non-standard TLDs
-                    const privateUniversityDomains = ["lpu.co.in", "cumail.in", "christuniversity.in", "manipal.edu", "snu.edu.in", "bennett.edu.in", "jiit.ac.in", "ddn.upes.ac.in", "galgotiasuniversity.edu.in", "lnmiit.ac.in", "thapar.edu", "bml.edu.in", "rframed.in"];
-                    const emailLower = email.toLowerCase();
-                    const domainPart = emailLower.split("@")[1] || "";
-                    const isAcademic = academicTLDs.some(d => emailLower.endsWith(d)) || privateUniversityDomains.some(d => domainPart === d || domainPart.endsWith("." + d));
-                    if ((userRole === "student" || userRole === "college") && !isAcademic) {
-                      setErrorMessage("Academic account registrations require an official educational domain email (e.g. .edu, .edu.in, .ac.in, .ac.uk, etc.).");
+                    // Lightweight client-side check — backend does authoritative swot-node verification
+                    const domainPart = email.toLowerCase().split("@")[1] || "";
+                    const looksAcademic = /\.(edu|ac)\b/.test(domainPart) || /\.(org|res|ernet)\.in$/.test(domainPart);
+                    if ((userRole === "student" || userRole === "college") && !looksAcademic) {
+                      setErrorMessage("Please use your official university email address. The backend will verify your institution automatically.");
                       return;
                     }
                     setErrorMessage("");

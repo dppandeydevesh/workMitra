@@ -286,9 +286,9 @@ export default function MyProjects() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Navigation back home Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-white p-4 sm:p-6 rounded-2xl shadow-sm">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Project Analysis Hub</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-200">Project Analysis Hub</h1>
             <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">Audit historical requirements and evaluate student application match rates.</p>
           </div>
           <button onClick={() => navigate("/company-dashboard")} className="w-full sm:w-auto text-center text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl transition shadow-sm">
@@ -302,20 +302,20 @@ export default function MyProjects() {
           
           {/* Left Column: Historical Deployments List */}
           <div className="lg:col-span-1 space-y-4">
-            <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 px-1">Active Deployments</h3>
+            <h3 className="text-sm font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider mb-2 px-1">Active Deployments</h3>
             
             {loadingProjects ? (
               <div className="text-center py-6 text-xs text-gray-500 font-medium animate-pulse">Syncing nodes...</div>
             ) : projects.length === 0 ? (
-              <div className="bg-white p-6 rounded-xl text-center text-xs text-gray-400 border font-medium">No live projects found.</div>
+              <div className="bg-white dark:bg-slate-900 p-6 rounded-xl text-center text-xs text-gray-400 border font-medium">No live projects found.</div>
             ) : (
               projects.map((proj) => (
                 <div 
                   key={proj._id} 
                   onClick={() => handleInspectApplicants(proj)}
-                  className={`p-5 rounded-xl border bg-white shadow-sm cursor-pointer transition transform hover:-translate-y-0.5 ${selectedProject?._id === proj._id ? "ring-2 ring-blue-500 border-transparent" : "hover:border-blue-300"}`}
+                  className={`p-5 rounded-xl border bg-white dark:bg-slate-900 shadow-sm cursor-pointer transition transform hover:-translate-y-0.5 ${selectedProject?._id === proj._id ? "ring-2 ring-blue-500 border-transparent" : "hover:border-blue-300"}`}
                 >
-                  <h4 className="font-bold text-gray-900 text-sm mb-1">{proj.title}</h4>
+                  <h4 className="font-bold text-gray-900 dark:text-gray-200 text-sm mb-1">{proj.title}</h4>
                   <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed mb-3">{proj.description}</p>
                   <div className="flex justify-between items-center text-[10px] text-gray-400 font-bold uppercase tracking-wide border-t pt-2.5">
                     <span>💼 {proj.workType}</span>
@@ -329,21 +329,21 @@ export default function MyProjects() {
           {/* Right Column: Applicants Table and Match Analytics Display */}
           <div className="lg:col-span-2">
             {!selectedProject ? (
-              <div className="bg-white rounded-2xl border-2 border-dashed p-12 text-center text-gray-400 font-medium h-full flex flex-col justify-center items-center">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl border-2 border-dashed p-12 text-center text-gray-400 font-medium h-full flex flex-col justify-center items-center">
                 <span>📁 Select a deployed project card on the left grid panel to unpack live applicant metrics.</span>
               </div>
             ) : (
-              <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 border border-gray-100 dark:border-slate-800">
                 <div className="border-b pb-4 mb-6">
                   <div className="flex justify-between items-start gap-4">
                     <div>
                       <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wide">Selected Stream</span>
-                      <h2 className="text-xl font-bold text-gray-900 mt-2">{selectedProject.title}</h2>
+                      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-200 mt-2">{selectedProject.title}</h2>
                     </div>
                     <div className="flex gap-2">
                       <button 
                         onClick={() => handleOpenEditModal(selectedProject)}
-                        className="px-2.5 py-1.5 border border-gray-200 text-gray-600 hover:bg-gray-50 rounded-lg text-xs font-bold transition flex items-center gap-1"
+                        className="px-2.5 py-1.5 border border-gray-200 dark:border-slate-800 text-gray-600 hover:bg-gray-50 dark:bg-slate-900 rounded-lg text-xs font-bold transition flex items-center gap-1"
                         title="Edit Project Details"
                       >
                         ✏️ Edit
@@ -377,7 +377,7 @@ export default function MyProjects() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs text-gray-600">
                       <thead>
-                        <tr className="bg-gray-50 uppercase text-[10px] font-bold text-gray-400 border-b tracking-wider">
+                        <tr className="bg-gray-50 dark:bg-slate-900 uppercase text-[10px] font-bold text-gray-400 border-b tracking-wider">
                           <th className="p-3">Student Name</th>
                           <th className="p-3">Skills Inventory</th>
                           <th className="p-3 text-center">Smart Match</th>
@@ -385,11 +385,11 @@ export default function MyProjects() {
                           <th className="p-3 text-right">Actions</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-100 font-medium text-gray-700">
+                      <tbody className="divide-y divide-gray-100 font-medium text-gray-700 dark:text-gray-200">
                         {applicants.map((app) => (
                           <tr key={app.applicationId} className="hover:bg-gray-50/80 transition">
                             <td className="p-3">
-                              <p className="font-bold text-gray-900">{app.studentName}</p>
+                              <p className="font-bold text-gray-900 dark:text-gray-200">{app.studentName}</p>
                               <p className="text-[10px] text-gray-400">{app.studentEmail}</p>
                               {app.resumeUrl ? (
                                 <a href={app.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-600 font-bold hover:underline block mt-0.5">
@@ -426,7 +426,7 @@ export default function MyProjects() {
                             </td>
                             <td className="p-3 max-w-[180px] truncate">{app.skills}</td>
                             <td className="p-3 text-center">
-                              <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${app.matchScore >= 75 ? "bg-green-100 text-green-800" : app.matchScore >= 40 ? "bg-amber-100 text-amber-800" : "bg-gray-100 text-gray-600"}`}>
+                              <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${app.matchScore >= 75 ? "bg-green-100 text-green-800" : app.matchScore >= 40 ? "bg-amber-100 text-amber-800" : "bg-gray-100 dark:bg-slate-800 text-gray-600"}`}>
                                 {app.matchScore}%
                               </span>
                             </td>
@@ -436,7 +436,7 @@ export default function MyProjects() {
                                 app.status === "Submitted" ? "bg-amber-100 text-amber-800" :
                                 app.status === "Approved" ? "bg-blue-100 text-blue-800" :
                                 app.status === "Rejected" ? "bg-red-100 text-red-800" :
-                                "bg-gray-100 text-gray-600"
+                                "bg-gray-100 dark:bg-slate-800 text-gray-600"
                               }`}>
                                 {app.status}
                               </span>
@@ -482,15 +482,15 @@ export default function MyProjects() {
           {/* ========================================================================= */}
           {showReviewModal && activeAppToReview && (
             <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-              <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl p-6 border animate-fade-in text-left">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full shadow-2xl p-6 border animate-fade-in text-left">
                 <div className="flex justify-between items-center border-b pb-3 mb-4">
-                  <h3 className="font-bold text-base text-gray-900">Review Work Submission</h3>
+                  <h3 className="font-bold text-base text-gray-900 dark:text-gray-200">Review Work Submission</h3>
                   <button onClick={() => setShowReviewModal(false)} className="text-gray-400 hover:text-gray-600 text-lg">×</button>
                 </div>
                 <div className="space-y-4">
                   <div>
                     <p className="text-[10px] uppercase font-bold text-gray-400">Candidate</p>
-                    <p className="text-xs font-bold text-gray-900">{activeAppToReview.studentName} ({activeAppToReview.studentEmail})</p>
+                    <p className="text-xs font-bold text-gray-900 dark:text-gray-200">{activeAppToReview.studentName} ({activeAppToReview.studentEmail})</p>
                   </div>
                   <div>
                     <p className="text-[10px] uppercase font-bold text-gray-400">Submission Link</p>
@@ -500,7 +500,7 @@ export default function MyProjects() {
                   </div>
                   <div>
                     <p className="text-[10px] uppercase font-bold text-gray-400">Student Explanation Notes</p>
-                    <p className="text-xs text-gray-700 bg-gray-50 border p-3 rounded-xl whitespace-pre-line leading-relaxed max-h-40 overflow-y-auto">
+                    <p className="text-xs text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-slate-900 border p-3 rounded-xl whitespace-pre-line leading-relaxed max-h-40 overflow-y-auto">
                       {activeAppToReview.submissionText}
                     </p>
                   </div>
@@ -512,7 +512,7 @@ export default function MyProjects() {
                         value={feedbackText}
                         onChange={(e) => setFeedbackText(e.target.value)}
                         rows={2}
-                        className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                        className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
                         required
                       />
                     </div>
@@ -520,7 +520,7 @@ export default function MyProjects() {
                     {/* Public Star Rating and Review */}
                     <div className="border-t pt-2 space-y-2">
                       <div>
-                        <label className="block text-[9px] font-extrabold text-purple-950 uppercase tracking-wider mb-0.5">Candidate Rating</label>
+                        <label className="block text-[9px] font-extrabold text-purple-950 dark:text-purple-200 uppercase tracking-wider mb-0.5">Candidate Rating</label>
                         <div className="flex items-center gap-1">
                           {[1, 2, 3, 4, 5].map((star) => (
                             <button
@@ -537,13 +537,13 @@ export default function MyProjects() {
                       </div>
 
                       <div>
-                        <label className="block text-[9px] font-extrabold text-purple-950 uppercase tracking-wider mb-0.5">Performance Review Notes</label>
+                        <label className="block text-[9px] font-extrabold text-purple-950 dark:text-purple-200 uppercase tracking-wider mb-0.5">Performance Review Notes</label>
                         <textarea
                           placeholder="Provide a public rating review statement for the candidate..."
                           value={ratingReview}
                           onChange={(e) => setRatingReview(e.target.value)}
                           rows={1}
-                          className="w-full bg-gray-50 border border-gray-200 text-xs px-3 py-1.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
+                          className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3 py-1.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
                         />
                       </div>
                     </div>
@@ -551,7 +551,7 @@ export default function MyProjects() {
                       <button
                         type="button"
                         onClick={() => setShowReviewModal(false)}
-                        className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 transition"
+                        className="px-4 py-2 border border-gray-200 dark:border-slate-800 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
                       >
                         Cancel
                       </button>
@@ -574,9 +574,9 @@ export default function MyProjects() {
           {/* ========================================================================= */}
           {showEditModal && selectedProject && (
             <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-              <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl p-6 border animate-fade-in text-left">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full shadow-2xl p-6 border animate-fade-in text-left">
                 <div className="flex justify-between items-center border-b pb-3 mb-4">
-                  <h3 className="font-bold text-base text-gray-900 font-sans">Edit Project Stack details</h3>
+                  <h3 className="font-bold text-base text-gray-900 dark:text-gray-200 font-sans">Edit Project Stack details</h3>
                   <button onClick={() => setShowEditModal(false)} className="text-gray-400 hover:text-gray-600 text-lg">×</button>
                 </div>
                 <form onSubmit={handleSaveEditProject} className="space-y-4">
@@ -586,7 +586,7 @@ export default function MyProjects() {
                       type="text"
                       value={editTitle}
                       onChange={(e) => setEditTitle(e.target.value)}
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                       required
                     />
                   </div>
@@ -597,7 +597,7 @@ export default function MyProjects() {
                       value={editDescription}
                       onChange={(e) => setEditDescription(e.target.value)}
                       rows={3}
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
                       required
                     />
                   </div>
@@ -609,7 +609,7 @@ export default function MyProjects() {
                         type="number"
                         value={editBudget}
                         onChange={(e) => setEditBudget(e.target.value)}
-                        className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required
                       />
                     </div>
@@ -619,7 +619,7 @@ export default function MyProjects() {
                         type="text"
                         value={editDuration}
                         onChange={(e) => setEditDuration(e.target.value)}
-                        className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required
                       />
                     </div>
@@ -632,7 +632,7 @@ export default function MyProjects() {
                         type="text"
                         value={editDeadline}
                         onChange={(e) => setEditDeadline(e.target.value)}
-                        className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                         required
                       />
                     </div>
@@ -643,7 +643,7 @@ export default function MyProjects() {
                         value={editSkills}
                         onChange={(e) => setEditSkills(e.target.value)}
                         placeholder="React, Python, Figma"
-                        className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                       />
                     </div>
                   </div>
@@ -652,7 +652,7 @@ export default function MyProjects() {
                     <button
                       type="button"
                       onClick={() => setShowEditModal(false)}
-                      className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 transition"
+                      className="px-4 py-2 border border-gray-200 dark:border-slate-800 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
                     >
                       Cancel
                     </button>

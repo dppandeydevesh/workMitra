@@ -138,12 +138,12 @@ export default function Preferences() {
         
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Tell us about yourself</h1>
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200">Tell us about yourself</h1>
           <p className="text-gray-500 mt-2">Help us recommend the best jobs for you</p>
         </div>
 
         {/* Form Card */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
           
           {errorMessage && (
             <div className="p-3 bg-red-50 border border-red-200 text-red-700 font-bold rounded-xl text-xs mb-4">
@@ -153,7 +153,7 @@ export default function Preferences() {
 
           {/* Name */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1">What should we call you?</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">What should we call you?</label>
             <input
               type="text"
               value={preferences.name}
@@ -165,7 +165,7 @@ export default function Preferences() {
           </div>
 
           {/* Showcase Portfolio Links */}
-          <div className="mb-6 bg-slate-50 p-5 rounded-2xl border border-slate-100 space-y-4">
+          <div className="mb-6 bg-slate-50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-4">
             <h3 className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
               <span>🔗</span> Portfolio & Professional Links (Optional)
             </h3>
@@ -216,7 +216,7 @@ export default function Preferences() {
 
           {/* Bio / About */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tell us a little about yourself</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Tell us a little about yourself</label>
             <textarea
               value={preferences.bio}
               onChange={(e) => setPreferences({...preferences, bio: e.target.value})}
@@ -228,7 +228,7 @@ export default function Preferences() {
 
           {/* Experience Level */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Your experience level</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Your experience level</label>
             <div className="flex flex-wrap gap-4 sm:gap-6">
               {["beginner", "intermediate", "expert"].map(level => (
                 <label key={level} className="flex items-center gap-2 cursor-pointer">
@@ -239,7 +239,7 @@ export default function Preferences() {
                     onChange={(e) => setPreferences({...preferences, experience: e.target.value})}
                     className="w-4 h-4 text-blue-600"
                   />
-                  <span className="capitalize text-sm text-gray-700 font-medium">{level}</span>
+                  <span className="capitalize text-sm text-gray-700 dark:text-gray-200 font-medium">{level}</span>
                 </label>
               ))}
             </div>
@@ -247,7 +247,7 @@ export default function Preferences() {
 
           {/* Skills */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">What skills do you have? (Select all that apply)</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">What skills do you have? (Select all that apply)</label>
             <div className="flex flex-wrap gap-2">
               {skillsList.map(skill => (
                 <button
@@ -257,7 +257,7 @@ export default function Preferences() {
                   className={`px-3 py-1 rounded-full text-sm transition font-medium ${
                     preferences.skills.includes(skill)
                       ? "bg-blue-600 text-white shadow-sm"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      : "bg-gray-200 text-gray-700 dark:text-gray-200 hover:bg-gray-300"
                   }`}
                 >
                   {skill}
@@ -268,7 +268,7 @@ export default function Preferences() {
 
           {/* Interests */}
           <div className="mb-8">
-            <label className="block text-sm font-medium text-gray-700 mb-2">What are you interested in?</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">What are you interested in?</label>
             <div className="flex flex-wrap gap-2">
               {interestsList.map(interest => (
                 <button
@@ -278,7 +278,7 @@ export default function Preferences() {
                   className={`px-3 py-1 rounded-full text-sm transition font-medium ${
                     preferences.interests.includes(interest)
                       ? "bg-green-600 text-white shadow-sm"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      : "bg-gray-200 text-gray-700 dark:text-gray-200 hover:bg-gray-300"
                   }`}
                 >
                   {interest}

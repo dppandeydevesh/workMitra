@@ -196,17 +196,17 @@ export default function StudentProfile() {
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {loading ? (
-          <div className="text-center py-16 text-gray-500 font-medium bg-white rounded-2xl shadow-xl flex flex-col items-center justify-center space-y-3">
+          <div className="text-center py-16 text-gray-500 font-medium bg-white dark:bg-slate-900 rounded-2xl shadow-xl flex flex-col items-center justify-center space-y-3">
             <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
             <span>📂 Retrieving student portfolio nodes...</span>
           </div>
         ) : errorMessage ? (
-          <div className="bg-white rounded-2xl shadow-xl p-8 text-center space-y-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 text-center space-y-4">
             <div className="text-red-500 text-3xl">⚠️</div>
             <p className="text-red-700 font-bold">{errorMessage}</p>
             <button 
               onClick={() => navigate(-1)} 
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold transition"
+              className="px-4 py-2 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-700 dark:text-gray-200 rounded-xl text-xs font-bold transition"
             >
               ← Go Back
             </button>
@@ -214,7 +214,7 @@ export default function StudentProfile() {
         ) : (
           <div className="space-y-6">
             {/* Header Card */}
-            <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border border-white/60">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border border-white/60 dark:border-slate-800/60">
               <div className="flex items-center gap-4">
                 {profileUser.avatarUrl ? (
                   <img 
@@ -229,7 +229,7 @@ export default function StudentProfile() {
                 )}
                 <div>
                   <div className="flex items-center flex-wrap gap-2">
-                    <h1 className="text-2xl font-black text-gray-800 tracking-tight">{profileUser.fullName}</h1>
+                    <h1 className="text-2xl font-black text-gray-800 dark:text-gray-200 tracking-tight">{profileUser.fullName}</h1>
                     {profileUser.isEndorsed && (
                       <span className="bg-emerald-50 border border-emerald-100 text-emerald-600 text-[9px] font-black px-2 py-0.5 rounded-full select-none">
                         Faculty Endorsed 🎓
@@ -271,8 +271,8 @@ export default function StudentProfile() {
 
             {/* Main Details Grid */}
             {isEditing ? (
-              <form onSubmit={handleSaveProfile} className="bg-white rounded-2xl shadow-xl p-6 md:p-8 space-y-6 border border-white/60">
-                <h3 className="text-lg font-bold text-gray-800 border-b pb-3">Edit Portfolio details</h3>
+              <form onSubmit={handleSaveProfile} className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 space-y-6 border border-white/60 dark:border-slate-800/60">
+                <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 border-b pb-3">Edit Portfolio details</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Full name */}
@@ -282,7 +282,7 @@ export default function StudentProfile() {
                       type="text"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                       required
                     />
                   </div>
@@ -294,7 +294,7 @@ export default function StudentProfile() {
                       type="tel"
                       value={mobile}
                       onChange={(e) => setMobile(e.target.value)}
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                       required
                     />
                   </div>
@@ -306,7 +306,7 @@ export default function StudentProfile() {
                       type="text"
                       value={collegeName}
                       onChange={(e) => setCollegeName(e.target.value)}
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                       required
                     />
                   </div>
@@ -318,7 +318,7 @@ export default function StudentProfile() {
                       type="text"
                       value={enrollmentNumber}
                       onChange={(e) => setEnrollmentNumber(e.target.value)}
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                       required
                     />
                   </div>
@@ -331,7 +331,7 @@ export default function StudentProfile() {
                       value={resumeUrl}
                       onChange={(e) => setResumeUrl(e.target.value)}
                       placeholder="https://drive.google.com/..."
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
 
@@ -341,7 +341,7 @@ export default function StudentProfile() {
                     <select
                       value={projectType}
                       onChange={(e) => setProjectType(e.target.value)}
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     >
                       <option value="Remote Track">Remote Track</option>
                       <option value="On-site Internship">On-site Internship</option>
@@ -358,7 +358,7 @@ export default function StudentProfile() {
                       value={githubUrl}
                       onChange={(e) => setGithubUrl(e.target.value)}
                       placeholder="https://github.com/username"
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
 
@@ -370,7 +370,7 @@ export default function StudentProfile() {
                       value={linkedinUrl}
                       onChange={(e) => setLinkedinUrl(e.target.value)}
                       placeholder="https://linkedin.com/in/username"
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
 
@@ -382,7 +382,7 @@ export default function StudentProfile() {
                       value={portfolioUrl}
                       onChange={(e) => setPortfolioUrl(e.target.value)}
                       placeholder="https://username.dev"
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
 
@@ -394,7 +394,7 @@ export default function StudentProfile() {
                       value={avatarUrl}
                       onChange={(e) => setAvatarUrl(e.target.value)}
                       placeholder="https://example.com/avatar.jpg"
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
 
@@ -406,7 +406,7 @@ export default function StudentProfile() {
                       value={major}
                       onChange={(e) => setMajor(e.target.value)}
                       placeholder="e.g. Computer Science & Engineering"
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
 
@@ -418,7 +418,7 @@ export default function StudentProfile() {
                       value={currentSemester}
                       onChange={(e) => setCurrentSemester(e.target.value)}
                       placeholder="e.g. Semester 6"
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
 
@@ -430,7 +430,7 @@ export default function StudentProfile() {
                       value={vanityUsername}
                       onChange={(e) => setVanityUsername(e.target.value)}
                       placeholder="e.g. aditya-cse"
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
 
@@ -442,7 +442,7 @@ export default function StudentProfile() {
                       value={videoPitchUrl}
                       onChange={(e) => setVideoPitchUrl(e.target.value)}
                       placeholder="https://www.youtube.com/watch?v=... or Loom URL"
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
 
@@ -454,7 +454,7 @@ export default function StudentProfile() {
                       value={preferredTechStack}
                       onChange={(e) => setPreferredTechStack(e.target.value)}
                       placeholder="React, PyTorch, Node.js"
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
 
@@ -481,7 +481,7 @@ export default function StudentProfile() {
                     value={skillsInput}
                     onChange={(e) => setSkillsInput(e.target.value)}
                     placeholder="React, Node.js, Python, UI/UX..."
-                    className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
                 </div>
 
@@ -493,7 +493,7 @@ export default function StudentProfile() {
                     value={extracurriculars}
                     onChange={(e) => setExtracurriculars(e.target.value)}
                     placeholder="Smart India Hackathon Winner 2025, CSE Coding Club Lead"
-                    className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
                 </div>
 
@@ -517,7 +517,7 @@ export default function StudentProfile() {
                           className={`px-3.5 py-2 rounded-xl text-xs font-bold transition border ${
                             isSelected 
                               ? "bg-indigo-600 border-indigo-700 text-white" 
-                              : "bg-gray-50 hover:bg-gray-100 text-gray-500 border-gray-200"
+                              : "bg-gray-50 dark:bg-slate-900 hover:bg-gray-100 text-gray-500 border-gray-200 dark:border-slate-800"
                           }`}
                         >
                           {slot}
@@ -535,7 +535,7 @@ export default function StudentProfile() {
                     onChange={(e) => setBioText(e.target.value)}
                     rows={4}
                     placeholder="Describe your goals, experience summary, and why companies should hire you..."
-                    className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                    className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
                   />
                 </div>
 
@@ -543,7 +543,7 @@ export default function StudentProfile() {
                   <button
                     type="button"
                     onClick={() => setIsEditing(false)}
-                    className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 transition"
+                    className="px-4 py-2 border border-gray-200 dark:border-slate-800 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
                   >
                     Cancel
                   </button>
@@ -560,25 +560,25 @@ export default function StudentProfile() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column: Metadata card */}
                 <div className="lg:col-span-1 space-y-6">
-                  <div className="bg-white rounded-2xl shadow-xl p-6 border border-white/60 space-y-5">
-                    <h3 className="text-sm font-black text-gray-800 uppercase tracking-wider border-b pb-2.5">Student Metadata</h3>
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 border border-white/60 dark:border-slate-800/60 space-y-5">
+                    <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider border-b pb-2.5">Student Metadata</h3>
                     
                     {/* Email */}
                     <div className="text-xs">
                       <span className="text-[10px] uppercase font-bold text-gray-400 block mb-0.5">Primary Email</span>
-                      <span className="font-bold text-gray-700">{profileUser.email}</span>
+                      <span className="font-bold text-gray-700 dark:text-gray-200">{profileUser.email}</span>
                     </div>
 
                     {/* Mobile */}
                     <div className="text-xs">
                       <span className="text-[10px] uppercase font-bold text-gray-400 block mb-0.5">Mobile Contact</span>
-                      <span className="font-bold text-gray-700">{profileUser.mobile || "Not provided"}</span>
+                      <span className="font-bold text-gray-700 dark:text-gray-200">{profileUser.mobile || "Not provided"}</span>
                     </div>
 
                     {/* University */}
                     <div className="text-xs">
                       <span className="text-[10px] uppercase font-bold text-gray-400 block mb-0.5">GLA University Node</span>
-                      <span className="font-bold text-gray-700">{profileUser.collegeName || "Not verified"}</span>
+                      <span className="font-bold text-gray-700 dark:text-gray-200">{profileUser.collegeName || "Not verified"}</span>
                       {profileUser.enrollmentNumber && (
                         <p className="text-[10px] text-indigo-500 font-semibold mt-0.5">ID: {profileUser.enrollmentNumber}</p>
                       )}
@@ -587,7 +587,7 @@ export default function StudentProfile() {
                     {/* Preference */}
                     <div className="text-xs">
                       <span className="text-[10px] uppercase font-bold text-gray-400 block mb-0.5">Track Preference</span>
-                      <span className="font-bold text-gray-700">{profileUser.projectType || "Remote Track"}</span>
+                      <span className="font-bold text-gray-700 dark:text-gray-200">{profileUser.projectType || "Remote Track"}</span>
                     </div>
 
                     {/* Resume */}
@@ -613,7 +613,7 @@ export default function StudentProfile() {
                       {avgRating ? (
                         <div className="flex items-center gap-1 mt-0.5">
                           <span className="text-amber-500 text-lg">★</span>
-                          <span className="font-bold text-gray-800 text-sm">{avgRating} / 5</span>
+                          <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">{avgRating} / 5</span>
                           <span className="text-[10px] text-gray-400 font-medium">({ratingsList.length} reviews)</span>
                         </div>
                       ) : (
@@ -626,7 +626,7 @@ export default function StudentProfile() {
                       <span className="text-[10px] uppercase font-bold text-gray-400 block mb-1">Professional Channels</span>
                       <div className="flex flex-col gap-1.5">
                         {profileUser.githubUrl ? (
-                          <a href={profileUser.githubUrl} target="_blank" rel="noreferrer" className="text-gray-700 hover:text-purple-600 font-semibold flex items-center gap-1.5">
+                          <a href={profileUser.githubUrl} target="_blank" rel="noreferrer" className="text-gray-700 dark:text-gray-200 hover:text-purple-600 font-semibold flex items-center gap-1.5">
                             <span>💻 GitHub:</span> <span className="hover:underline text-[11px] truncate max-w-[130px]">{profileUser.githubUrl.split("/").pop()}</span>
                           </a>
                         ) : (
@@ -699,16 +699,16 @@ export default function StudentProfile() {
                 {/* Right Column: Bio, Skills & AI Critique */}
                 <div className="lg:col-span-2 space-y-6">
                   {/* Bio & Skills Panel */}
-                  <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-white/60 space-y-6">
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 border border-white/60 dark:border-slate-800/60 space-y-6">
                     <div>
-                      <h3 className="text-sm font-black text-gray-800 uppercase tracking-wider border-b pb-2.5 mb-4">Professional Bio</h3>
+                      <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider border-b pb-2.5 mb-4">Professional Bio</h3>
                       <p className="text-sm text-gray-600 leading-relaxed">
                         {profileUser.bio || "No professional bio has been written yet. Edit profile to write a summary."}
                       </p>
                     </div>
 
                     <div>
-                      <h3 className="text-sm font-black text-gray-800 uppercase tracking-wider border-b pb-2.5 mb-4">Target Skills</h3>
+                      <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider border-b pb-2.5 mb-4">Target Skills</h3>
                       <div className="flex flex-wrap gap-1.5">
                         {profileUser.targetSkills ? (
                           profileUser.targetSkills.split(",").map((skill, idx) => (
@@ -728,7 +728,7 @@ export default function StudentProfile() {
                         <h4 className="text-[11px] font-black uppercase text-slate-400 tracking-wider mb-2">Preferred Tech Stack</h4>
                         <div className="flex flex-wrap gap-1.5">
                           {profileUser.preferredTechStack.map((tech, idx) => (
-                            <span key={idx} className="bg-purple-50 text-purple-700 text-xs font-bold px-3 py-1 rounded-xl border border-purple-100">
+                            <span key={idx} className="bg-purple-50 text-purple-700 text-xs font-bold px-3 py-1 rounded-xl border border-purple-100 dark:border-slate-800">
                               #{tech}
                             </span>
                           ))}
@@ -765,8 +765,8 @@ export default function StudentProfile() {
 
                   {/* 🎥 Elevator Pitch Video Player */}
                   {profileUser.videoPitchUrl && (
-                    <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-white/60 space-y-4 print:hidden">
-                      <h3 className="text-sm font-black text-gray-800 uppercase tracking-wider border-b pb-2.5">
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 border border-white/60 dark:border-slate-800/60 space-y-4 print:hidden">
+                      <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider border-b pb-2.5">
                         🎥 60-Second Video Elevator Pitch
                       </h3>
                       <div className="aspect-video w-full rounded-2xl overflow-hidden bg-slate-900 border">
@@ -787,8 +787,8 @@ export default function StudentProfile() {
                   <ActivityHeatmap applications={applications} />
 
                   {/* 📊 Skill Gap Analyzer */}
-                  <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-white/60 space-y-4">
-                    <h3 className="text-sm font-black text-gray-800 uppercase tracking-wider border-b pb-2.5">
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 border border-white/60 dark:border-slate-800/60 space-y-4">
+                    <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider border-b pb-2.5">
                       📊 Tech Stack Skill Gap Analyzer
                     </h3>
                     <p className="text-[10px] text-slate-400">Comparing your targeted tags against current market demand analytics.</p>
@@ -812,9 +812,9 @@ export default function StudentProfile() {
                   </div>
 
                   {/* 🤝 Peer Endorsements Vouch Log */}
-                  <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-white/60 space-y-4">
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 border border-white/60 dark:border-slate-800/60 space-y-4">
                     <div className="flex justify-between items-center border-b pb-2.5">
-                      <h3 className="text-sm font-black text-gray-800 uppercase tracking-wider">
+                      <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider">
                         🤝 Peer Soft Skill Endorsements ({profileUser.softSkillsVouches?.length || 0})
                       </h3>
                       {!isOwner && currentUser?.userRole === "student" && (
@@ -860,7 +860,7 @@ export default function StudentProfile() {
 
                   {/* AI Critique Panel */}
                   <div className="bg-gradient-to-br from-indigo-950 to-slate-900 text-white rounded-2xl shadow-xl p-6 md:p-8 space-y-6">
-                    <div className="flex justify-between items-center border-b border-white/10 pb-4">
+                    <div className="flex justify-between items-center border-b border-white/10 dark:border-slate-800/10 pb-4">
                       <div>
                         <h3 className="text-base font-bold text-white flex items-center gap-1.5">
                           <span>🧠 AI CV critique Report</span>
@@ -875,7 +875,7 @@ export default function StudentProfile() {
                             <p className="text-[9px] uppercase font-bold text-indigo-300">Quality Score</p>
                             <p className="text-2xl font-black text-indigo-400">{profileUser.cvReviewReport.score}/100</p>
                           </div>
-                          <div className="relative w-12 h-12 flex items-center justify-center rounded-full bg-white/10 border-2 border-indigo-400">
+                          <div className="relative w-12 h-12 flex items-center justify-center rounded-full bg-white/10 dark:bg-slate-900/10 border-2 border-indigo-400">
                             <span className="text-[11px] font-black">{profileUser.cvReviewReport.score}%</span>
                           </div>
                         </div>
@@ -907,7 +907,7 @@ export default function StudentProfile() {
                           </div>
                         </div>
 
-                        <div className="bg-white/5 border border-white/10 p-4 rounded-xl">
+                        <div className="bg-white/5 dark:bg-slate-900/5 border border-white/10 dark:border-slate-800/10 p-4 rounded-xl">
                           <h5 className="text-[10px] font-extrabold uppercase text-indigo-300 mb-1">workMitra AI Actionable Recommendations</h5>
                           <p className="text-xs text-slate-200 leading-relaxed italic">
                             "{profileUser.cvReviewReport.recommendations}"
@@ -928,8 +928,8 @@ export default function StudentProfile() {
                   </div>
 
                   {/* Reviews & Recommendations Panel */}
-                  <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-white/60 space-y-4">
-                    <h3 className="text-sm font-black text-gray-800 uppercase tracking-wider border-b pb-2.5">
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 border border-white/60 dark:border-slate-800/60 space-y-4">
+                    <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider border-b pb-2.5">
                       💬 Client Reviews & Feedback ({ratingsList.length})
                     </h3>
 
@@ -947,11 +947,11 @@ export default function StudentProfile() {
                                 {[1, 2, 3, 4, 5].map((star) => (
                                   <span key={star} className={star <= app.rating ? "text-amber-400 text-xs" : "text-gray-200 text-xs"}>★</span>
                                 ))}
-                                <span className="font-extrabold text-gray-700 ml-1">({app.rating}/5)</span>
+                                <span className="font-extrabold text-gray-700 dark:text-gray-200 ml-1">({app.rating}/5)</span>
                               </div>
                             </div>
                             {app.ratingReview && (
-                              <p className="text-xs text-gray-700 leading-relaxed font-semibold mt-1">
+                              <p className="text-xs text-gray-700 dark:text-gray-200 leading-relaxed font-semibold mt-1">
                                 "{app.ratingReview}"
                               </p>
                             )}
@@ -974,7 +974,7 @@ export default function StudentProfile() {
       {/* 🤝 Peer Vouch Submission Form Overlay Modal */}
       {showVouchModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full shadow-2xl p-6 border text-left flex flex-col animate-fade-in select-none">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full shadow-2xl p-6 border text-left flex flex-col animate-fade-in select-none">
             <div className="flex justify-between items-center border-b pb-3 mb-4">
               <h3 className="font-black text-slate-800 text-sm uppercase tracking-wider">Endorse Batchmate Soft Skills</h3>
               <button onClick={() => setShowVouchModal(false)} className="text-slate-400 hover:text-slate-600 text-lg">×</button>
@@ -1045,7 +1045,7 @@ export default function StudentProfile() {
                 <button
                   type="button"
                   onClick={() => setShowVouchModal(false)}
-                  className="px-4 py-2 border rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 transition"
+                  className="px-4 py-2 border rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
                 >
                   Cancel
                 </button>

@@ -217,19 +217,19 @@ export default function LoginPage() {
       {/* 🌌 Background Decorative Flow Elements */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         {/* Soft background glow spheres */}
-        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-white/20 rounded-full blur-[80px]"></div>
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-white/20 dark:bg-slate-900/20 rounded-full blur-[80px]"></div>
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-300/20 rounded-full blur-[100px]"></div>
 
         {/* Floating Ambient Badges */}
         {view === "landing" && (
           <>
-            <div className="hidden md:block absolute top-12 left-12 bg-white/40 backdrop-blur-md border border-purple-300/50 px-6 py-3 rounded-2xl text-purple-900 text-sm font-bold animate-float-slow shadow-sm">
+            <div className="hidden md:block absolute top-12 left-12 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border border-purple-300/50 px-6 py-3 rounded-2xl text-purple-900 dark:text-purple-200 text-sm font-bold animate-float-slow shadow-sm">
               🖥️ Agent Server
             </div>
-            <div className="hidden md:block absolute top-24 right-20 bg-white/50 backdrop-blur-md border border-pink-300/50 px-6 py-4 rounded-3xl text-pink-900 font-extrabold text-base animate-float-fast shadow-sm">
+            <div className="hidden md:block absolute top-24 right-20 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border border-pink-300/50 px-6 py-4 rounded-3xl text-pink-900 font-extrabold text-base animate-float-fast shadow-sm">
               🧠 AI Engine
             </div>
-            <div className="hidden md:block absolute bottom-24 left-16 bg-white/40 backdrop-blur-md border border-blue-300/50 px-5 py-3 rounded-2xl text-blue-900 text-sm font-bold animate-float-slow shadow-sm">
+            <div className="hidden md:block absolute bottom-24 left-16 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border border-blue-300/50 px-5 py-3 rounded-2xl text-blue-900 text-sm font-bold animate-float-slow shadow-sm">
               📦 Media Server
             </div>
           </>
@@ -296,18 +296,18 @@ export default function LoginPage() {
       {/* ========================================================================= */}
       {view === "auth" && (
         <div className="w-full min-h-screen flex flex-col items-center justify-center p-4 relative z-20">
-          <button onClick={() => { setView("landing"); setErrorMessage(""); }} className="absolute top-6 left-6 px-4 py-2 bg-purple-950/10 border border-purple-950/20 rounded-full text-xs font-bold text-purple-950 transition">← Back to Paths</button>
+          <button onClick={() => { setView("landing"); setErrorMessage(""); }} className="absolute top-6 left-6 px-4 py-2 bg-purple-950/10 border border-purple-950/20 rounded-full text-xs font-bold text-purple-950 dark:text-purple-200 transition">← Back to Paths</button>
           
           {errorMessage && <div className="mb-4 px-4 py-2 bg-red-100 text-red-700 text-xs font-bold rounded-xl border border-red-200 z-50 shadow-md">⚠️ {errorMessage}</div>}
           
           {isOtpVerifying ? (
-            <div className="w-full max-w-md bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 border border-white/60 text-center space-y-6 animate-fade-in z-20">
+            <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 border border-white/60 dark:border-slate-800/60 text-center space-y-6 animate-fade-in z-20">
               <div className="flex justify-center">
                 <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain mix-blend-multiply" />
               </div>
               
               <div>
-                <h2 className="text-2xl font-black text-purple-950">Verify Your Account</h2>
+                <h2 className="text-2xl font-black text-purple-950 dark:text-purple-200">Verify Your Account</h2>
                 <p className="text-xs text-gray-400 mt-1">We sent a 6-digit verification code to your registered email address.</p>
               </div>
 
@@ -321,7 +321,7 @@ export default function LoginPage() {
                     value={emailOtpInput}
                     onChange={(e) => setEmailOtpInput(e.target.value)}
                     placeholder="6-digit code"
-                    className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-center tracking-widest font-black"
+                    className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-center tracking-widest font-black"
                     required
                   />
                 </div>
@@ -334,7 +334,7 @@ export default function LoginPage() {
                     value={mobileOtpInput}
                     onChange={(e) => setMobileOtpInput(e.target.value)}
                     placeholder="6-digit code"
-                    className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-center tracking-widest font-black"
+                    className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-center tracking-widest font-black"
                     required
                   />
                 </div>
@@ -360,10 +360,10 @@ export default function LoginPage() {
             </div>
           ) : (
             /* Desktop/Mobile Adaptive Form Container */
-            <div className={`auth-container ${isSignUp ? "active" : ""} w-full max-w-md md:max-w-[768px] min-h-[580px] bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] overflow-hidden relative flex flex-col md:flex-row border border-white/60`}>
+            <div className={`auth-container ${isSignUp ? "active" : ""} w-full max-w-md md:max-w-[768px] min-h-[580px] bg-white dark:bg-slate-900 rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] overflow-hidden relative flex flex-col md:flex-row border border-white/60 dark:border-slate-800/60`}>
               
               {/* MOBILE ONLY NAVIGATION TABS */}
-              <div className="flex md:hidden border-b border-purple-100 w-full">
+              <div className="flex md:hidden border-b border-purple-100 dark:border-slate-800 w-full">
                 <button 
                   onClick={() => { setIsSignUp(false); setErrorMessage(""); }} 
                   className={`flex-1 py-4 text-sm font-bold ${!isSignUp ? "text-purple-600 border-b-2 border-purple-600" : "text-gray-400"}`}
@@ -379,7 +379,7 @@ export default function LoginPage() {
               </div>
 
               {/* 📝 SIGN UP PORTAL PANEL */}
-              <div className={`sign-up-panel flex-col items-center justify-center px-6 md:px-12 text-center text-gray-800 overflow-y-auto py-8 w-full md:w-1/2 md:absolute md:top-0 md:left-0 md:h-full md:flex ${
+              <div className={`sign-up-panel flex-col items-center justify-center px-6 md:px-12 text-center text-gray-800 dark:text-gray-200 overflow-y-auto py-8 w-full md:w-1/2 md:absolute md:top-0 md:left-0 md:h-full md:flex ${
                 isSignUp ? "flex min-h-[500px]" : "hidden"
               }`}>
                 <form 
@@ -434,39 +434,39 @@ export default function LoginPage() {
                   <div className="flex justify-center -mb-2">
                     <img src="/logo.png" alt="workMitra Logo" className="h-16 object-contain" />
                   </div>
-                  <h1 className="text-xl md:text-2xl font-extrabold text-purple-950">Create Account</h1>
+                  <h1 className="text-xl md:text-2xl font-extrabold text-purple-950 dark:text-purple-200">Create Account</h1>
                   <p className="text-xs text-purple-600 font-bold uppercase tracking-wider">Joining as {userRole}</p>
                   
                   {userRole === "company" ? (
                     <>
-                      <input type="text" placeholder="Company Name" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="email" placeholder="Company Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder="Company Name" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="email" placeholder="Company Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
                     </>
                   ) : userRole === "college" ? (
                     <>
-                      <input type="text" placeholder="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="email" placeholder="University Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="text" placeholder="University / College Name" value={collegeName} onChange={(e) => setCollegeName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="text" placeholder="Department Name (e.g. Computer Science)" value={departmentName} onChange={(e) => setDepartmentName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="email" placeholder="University Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder="University / College Name" value={collegeName} onChange={(e) => setCollegeName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder="Department Name (e.g. Computer Science)" value={departmentName} onChange={(e) => setDepartmentName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
                     </>
                   ) : (
                     <>
-                      <input type="text" placeholder="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="email" placeholder="Student Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="text" placeholder="College Name" value={collegeName} onChange={(e) => setCollegeName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="text" placeholder="Enrollment / Roll Number" value={enrollmentNumber} onChange={(e) => setEnrollmentNumber(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="email" placeholder="Student Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder="College Name" value={collegeName} onChange={(e) => setCollegeName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder="Enrollment / Roll Number" value={enrollmentNumber} onChange={(e) => setEnrollmentNumber(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
                     </>
                   )}
                   
-                  <input type="tel" pattern="[0-9]{10}" placeholder="Mobile Number (10 digits)" value={mobile} onChange={(e) => setMobile(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                  <input type="password" placeholder="Password" value={password} onChange={(e) => checkPasswordStrength(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                  <input type="tel" pattern="[0-9]{10}" placeholder="Mobile Number (10 digits)" value={mobile} onChange={(e) => setMobile(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                  <input type="password" placeholder="Password" value={password} onChange={(e) => checkPasswordStrength(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
                   
                   {password && (
                     <div className="w-full text-left text-[11px] font-bold px-1 space-y-1">
                       <p className={passwordStrength.score === 4 ? "text-green-600" : "text-amber-600"}>
                         Strength: {passwordStrength.text}
                       </p>
-                      <div className="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
+                      <div className="w-full bg-gray-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
                         <div 
                           className={`h-full transition-all duration-300 ${passwordStrength.score === 4 ? "bg-green-500" : passwordStrength.score >= 2 ? "bg-amber-400" : "bg-red-400"}`}
                           style={{ width: `${(passwordStrength.score / 4) * 100}%` }}
@@ -491,17 +491,17 @@ export default function LoginPage() {
               </div>
 
               {/* 🔑 SIGN IN PORTAL PANEL */}
-              <div className={`sign-in-panel flex-col items-center justify-center px-6 md:px-12 text-center text-gray-800 py-8 w-full md:w-1/2 md:absolute md:top-0 md:left-0 md:h-full md:flex ${
+              <div className={`sign-in-panel flex-col items-center justify-center px-6 md:px-12 text-center text-gray-800 dark:text-gray-200 py-8 w-full md:w-1/2 md:absolute md:top-0 md:left-0 md:h-full md:flex ${
                 !isSignUp ? "flex min-h-[500px]" : "hidden"
               }`}>
                 <form className="w-full space-y-4" onSubmit={handleLoginSubmit}>
                   <div className="flex justify-center -mb-2">
                     <img src="/logo.png" alt="workMitra Logo" className="h-16 object-contain" />
                   </div>
-                  <h1 className="text-2xl md:text-3xl font-extrabold text-purple-950">Sign In</h1>
+                  <h1 className="text-2xl md:text-3xl font-extrabold text-purple-950 dark:text-purple-200">Sign In</h1>
                   <p className="text-xs text-pink-600 font-bold uppercase tracking-wider">Accessing portal</p>
-                  <input type="email" placeholder={userRole === "company" ? "Company Email" : "Student Email"} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                  <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                  <input type="email" placeholder={userRole === "company" ? "Company Email" : "Student Email"} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                  <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
                   
                   <div className="text-right px-1">
                     <button type="button" onClick={handleForgotPassword} className="text-[11px] text-purple-600 hover:text-pink-600 font-bold transition outline-none">
@@ -523,9 +523,9 @@ export default function LoginPage() {
                   </button>
 
                   <div className="flex items-center my-2">
-                    <div className="flex-grow border-t border-purple-100"></div>
+                    <div className="flex-grow border-t border-purple-100 dark:border-slate-800"></div>
                     <span className="mx-3 text-[10px] uppercase font-bold text-purple-300">or</span>
-                    <div className="flex-grow border-t border-purple-100"></div>
+                    <div className="flex-grow border-t border-purple-100 dark:border-slate-800"></div>
                   </div>
 
 
@@ -538,12 +538,12 @@ export default function LoginPage() {
                   <div className="content-left absolute top-0 h-full w-1/2 flex flex-col items-center justify-center px-10 text-center transform -translate-x-[200%]">
                     <h1 className="text-3xl font-extrabold mb-2">Welcome Back!</h1>
                     <p className="text-xs text-purple-100 max-w-[240px] leading-relaxed mb-6">Enter your credentials to return to your configuration tracks.</p>
-                    <button type="button" onClick={() => { setIsSignUp(false); setErrorMessage(""); }} className="border-2 border-white text-white text-xs font-bold uppercase tracking-wider px-10 py-2.5 rounded-xl bg-transparent hover:bg-white hover:text-purple-950 transition-all active:scale-95">Sign In</button>
+                    <button type="button" onClick={() => { setIsSignUp(false); setErrorMessage(""); }} className="border-2 border-white text-white text-xs font-bold uppercase tracking-wider px-10 py-2.5 rounded-xl bg-transparent hover:bg-white dark:bg-slate-900 hover:text-purple-950 dark:text-purple-200 transition-all active:scale-95">Sign In</button>
                   </div>
                   <div className="content-right absolute top-0 right-0 h-full w-1/2 flex flex-col items-center justify-center px-10 text-center transform translate-x-0">
                     <h1 className="text-3xl font-extrabold mb-2">Hello, Friend!</h1>
                     <p className="text-xs text-purple-100 max-w-[240px] leading-relaxed mb-6">Register your custom tracking details to activate credentials.</p>
-                    <button type="button" onClick={() => { setIsSignUp(true); setErrorMessage(""); }} className="border-2 border-white text-white text-xs font-bold uppercase tracking-wider px-10 py-2.5 rounded-xl bg-transparent hover:bg-white hover:text-purple-950 transition-all active:scale-95">Sign Up</button>
+                    <button type="button" onClick={() => { setIsSignUp(true); setErrorMessage(""); }} className="border-2 border-white text-white text-xs font-bold uppercase tracking-wider px-10 py-2.5 rounded-xl bg-transparent hover:bg-white dark:bg-slate-900 hover:text-purple-950 dark:text-purple-200 transition-all active:scale-95">Sign Up</button>
                   </div>
                 </div>
               </div>
@@ -558,13 +558,13 @@ export default function LoginPage() {
       {/* ========================================================================= */}
       {view === "forgot" && (
         <div className="w-full min-h-screen flex flex-col items-center justify-center p-6 z-10 animate-fade-in">
-          <div className="bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 max-w-md w-full border border-white/60 text-center space-y-6">
+          <div className="bg-white dark:bg-slate-900 rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 max-w-md w-full border border-white/60 dark:border-slate-800/60 text-center space-y-6">
             <div className="flex justify-center">
               <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain mix-blend-multiply" />
             </div>
             
             <div>
-              <h2 className="text-2xl font-black text-purple-950">Reset Password</h2>
+              <h2 className="text-2xl font-black text-purple-950 dark:text-purple-200">Reset Password</h2>
               <p className="text-xs text-gray-400 mt-1">Initialize your credentials node recovery workflow.</p>
             </div>
 
@@ -580,7 +580,7 @@ export default function LoginPage() {
                   ✓ {recoveryMessage}
                 </div>
                 {generatedResetLink && (
-                  <div className="bg-purple-50 border border-purple-100 p-4 rounded-xl text-left space-y-2">
+                  <div className="bg-purple-50 border border-purple-100 dark:border-slate-800 p-4 rounded-xl text-left space-y-2">
                     <span className="text-[10px] font-extrabold text-purple-700 uppercase block tracking-wider">Dev Mode Recovery Link</span>
                     <a 
                       href={generatedResetLink} 
@@ -607,7 +607,7 @@ export default function LoginPage() {
                   placeholder="Enter your registered email address"
                   value={recoveryEmail}
                   onChange={(e) => setRecoveryEmail(e.target.value)}
-                  className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
                   required
                 />
                 

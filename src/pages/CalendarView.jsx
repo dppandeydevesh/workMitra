@@ -88,17 +88,17 @@ export default function CalendarView() {
       <div className="max-w-4xl mx-auto px-4">
         <button
           onClick={() => navigate("/company-dashboard")}
-          className="mb-6 px-4 py-2 bg-white/80 hover:bg-white text-gray-600 rounded-xl text-xs font-bold transition shadow-sm border border-gray-100 flex items-center gap-1.5"
+          className="mb-6 px-4 py-2 bg-white/80 hover:bg-white dark:bg-slate-900 text-gray-600 rounded-xl text-xs font-bold transition shadow-sm border border-gray-100 dark:border-slate-800 flex items-center gap-1.5"
         >
           ← Back to Command Center
         </button>
 
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100/50 overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-gray-100 dark:border-slate-800/50 overflow-hidden">
           {/* Calendar Header */}
           <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-5 flex justify-between items-center">
             <button
               onClick={handlePrevMonth}
-              className="px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white rounded-xl text-xs font-bold transition backdrop-blur-sm"
+              className="px-3 py-1.5 bg-white/20 dark:bg-slate-900/20 hover:bg-white/30 dark:bg-slate-900/30 text-white rounded-xl text-xs font-bold transition backdrop-blur-sm"
             >
               ← Prev
             </button>
@@ -107,7 +107,7 @@ export default function CalendarView() {
             </h2>
             <button
               onClick={handleNextMonth}
-              className="px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white rounded-xl text-xs font-bold transition backdrop-blur-sm"
+              className="px-3 py-1.5 bg-white/20 dark:bg-slate-900/20 hover:bg-white/30 dark:bg-slate-900/30 text-white rounded-xl text-xs font-bold transition backdrop-blur-sm"
             >
               Next →
             </button>
@@ -149,7 +149,7 @@ export default function CalendarView() {
                           ? "bg-indigo-600 text-white shadow-lg scale-105"
                           : isTodayCell
                           ? "bg-indigo-50 text-indigo-700 ring-2 ring-indigo-400 ring-offset-1"
-                          : "bg-gray-50/50 text-gray-700 hover:bg-gray-100"
+                          : "bg-gray-50/50 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:bg-slate-800"
                       }`}
                     >
                       <span className="text-sm font-extrabold">{day}</span>
@@ -159,7 +159,7 @@ export default function CalendarView() {
                             <span
                               key={pIdx}
                               className={`w-1.5 h-1.5 rounded-full ${
-                                isSelected ? "bg-white" : "bg-indigo-500"
+                                isSelected ? "bg-white dark:bg-slate-900" : "bg-indigo-500"
                               }`}
                             />
                           ))}
@@ -183,7 +183,7 @@ export default function CalendarView() {
                       {selectedDayProjects.map((p) => (
                         <div
                           key={p._id}
-                          className="flex justify-between items-center bg-slate-50 border border-slate-100 p-3.5 rounded-xl hover:bg-slate-100/70 transition"
+                          className="flex justify-between items-center bg-slate-50 border border-slate-100 dark:border-slate-800 p-3.5 rounded-xl hover:bg-slate-100/70 transition"
                         >
                           <div>
                             <p className="text-xs font-bold text-slate-800">{p.title}</p>

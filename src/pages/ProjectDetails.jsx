@@ -182,9 +182,9 @@ export default function ProjectDetails() {
   if (errorMessage || !project) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-gray-100 text-center">
+        <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-slate-800 text-center">
           <span className="text-4xl mb-4 block">⚠️</span>
-          <h2 className="text-lg font-bold text-gray-800 mb-2">Failed to load Project</h2>
+          <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">Failed to load Project</h2>
           <p className="text-sm text-gray-500 mb-6">{errorMessage || "The project details could not be found."}</p>
           <button
             onClick={() => navigate("/dashboard")}
@@ -213,13 +213,13 @@ export default function ProjectDetails() {
         {/* Back Link */}
         <button
           onClick={() => navigate("/dashboard")}
-          className="mb-6 px-4 py-2 bg-white/80 hover:bg-white text-gray-600 rounded-xl text-xs font-bold transition shadow-sm border border-gray-100 flex items-center gap-1.5"
+          className="mb-6 px-4 py-2 bg-white/80 hover:bg-white dark:bg-slate-900 text-gray-600 rounded-xl text-xs font-bold transition shadow-sm border border-gray-100 dark:border-slate-800 flex items-center gap-1.5"
         >
           ← Back to Marketplace
         </button>
 
         {/* Project Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-gray-100">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 sm:p-8 border border-gray-100 dark:border-slate-800">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-6 mb-6 gap-4">
             <div>
               <span className="px-2.5 py-1 bg-indigo-50 border border-indigo-100 text-indigo-700 text-[10px] font-black uppercase tracking-wider rounded-lg">
@@ -235,7 +235,7 @@ export default function ProjectDetails() {
                   🎓 {project.targetUniversity} Only
                 </span>
               )}
-              <h1 className="text-2xl sm:text-3xl font-black text-gray-800 tracking-tight mt-2.5">
+              <h1 className="text-2xl sm:text-3xl font-black text-gray-800 dark:text-gray-200 tracking-tight mt-2.5">
                 {project.title}
               </h1>
               <p className="text-xs text-gray-400 mt-1 font-semibold uppercase tracking-wider">
@@ -252,14 +252,14 @@ export default function ProjectDetails() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-gray-50 border border-gray-100/50 p-4 rounded-2xl shadow-inner text-left">
+            <div className="bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-800/50 p-4 rounded-2xl shadow-inner text-left">
               <span className="text-[9px] font-black text-gray-400 uppercase tracking-wider block">Timeline Duration</span>
-              <span className="text-xs font-extrabold text-gray-800 mt-1 block">⏱️ {project.duration || "N/A"}</span>
+              <span className="text-xs font-extrabold text-gray-800 dark:text-gray-200 mt-1 block">⏱️ {project.duration || "N/A"}</span>
             </div>
 
-            <div className="bg-gray-50 border border-gray-100/50 p-4 rounded-2xl shadow-inner text-left">
+            <div className="bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-800/50 p-4 rounded-2xl shadow-inner text-left">
               <span className="text-[9px] font-black text-gray-400 uppercase tracking-wider block">Time Remaining</span>
-              <span className="text-xs font-extrabold text-gray-800 mt-1 block">
+              <span className="text-xs font-extrabold text-gray-800 dark:text-gray-200 mt-1 block">
                 ⏱️ {(() => {
                   const diff = new Date(project.deadline) - new Date();
                   if (diff <= 0) return <span className="text-red-500 font-black">Expired</span>;
@@ -269,21 +269,21 @@ export default function ProjectDetails() {
               </span>
             </div>
 
-            <div className="bg-gray-50 border border-gray-100/50 p-4 rounded-2xl shadow-inner text-left">
+            <div className="bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-800/50 p-4 rounded-2xl shadow-inner text-left">
               <span className="text-[9px] font-black text-gray-400 uppercase tracking-wider block">Student Capacity</span>
-              <span className="text-xs font-extrabold text-gray-800 mt-1 block">👥 {project.studentsNeeded || 1} slots</span>
+              <span className="text-xs font-extrabold text-gray-800 dark:text-gray-200 mt-1 block">👥 {project.studentsNeeded || 1} slots</span>
             </div>
 
-            <div className="bg-gray-50 border border-gray-100/50 p-4 rounded-2xl shadow-inner text-left">
+            <div className="bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-800/50 p-4 rounded-2xl shadow-inner text-left">
               <span className="text-[9px] font-black text-gray-400 uppercase tracking-wider block">Complexity Tier</span>
-              <span className="text-xs font-extrabold text-gray-800 mt-1 block">🏷️ {project.complexity || "Intermediate"}</span>
+              <span className="text-xs font-extrabold text-gray-800 dark:text-gray-200 mt-1 block">🏷️ {project.complexity || "Intermediate"}</span>
             </div>
           </div>
 
           {/* Description */}
           <div className="mb-8">
             <h3 className="text-sm font-black text-gray-400 uppercase tracking-wider mb-3">Gig Details & Context</h3>
-            <p className="text-sm text-gray-600 leading-relaxed bg-slate-50 p-5 rounded-2xl border border-slate-100 whitespace-pre-line">
+            <p className="text-sm text-gray-600 leading-relaxed bg-slate-50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 whitespace-pre-line">
               {project.description}
             </p>
           </div>
@@ -301,7 +301,7 @@ export default function ProjectDetails() {
                       className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition ${
                         matches 
                           ? "bg-indigo-50 border-indigo-200 text-indigo-700 shadow-sm" 
-                          : "bg-gray-50 border-gray-200 text-gray-500"
+                          : "bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-800 text-gray-500"
                       }`}
                     >
                       {skill} {matches && "✓"}
@@ -314,11 +314,11 @@ export default function ProjectDetails() {
             <div className="bg-gradient-to-br from-indigo-50/50 to-blue-50/50 border border-indigo-100/50 p-5 rounded-2xl">
               <h3 className="text-sm font-black text-indigo-900/50 uppercase tracking-wider mb-2.5">AI Skills Match Rating</h3>
               <div className="flex items-center gap-4">
-                <div className="relative w-16 h-16 flex items-center justify-center bg-white rounded-full shadow-sm border border-indigo-100">
+                <div className="relative w-16 h-16 flex items-center justify-center bg-white dark:bg-slate-900 rounded-full shadow-sm border border-indigo-100">
                   <span className="text-sm font-black text-indigo-700">{matchPercentage}%</span>
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-700">
+                  <p className="text-xs font-bold text-gray-700 dark:text-gray-200">
                     You match {matchingSkills.length} out of {requiredSkills.length} required skills.
                   </p>
                   <p className="text-[11px] text-gray-500 mt-1 leading-relaxed">
@@ -355,7 +355,7 @@ export default function ProjectDetails() {
             <div className="flex gap-3">
               <button
                 onClick={() => navigate("/dashboard")}
-                className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold transition"
+                className="px-5 py-2.5 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-700 dark:text-gray-200 rounded-xl text-xs font-bold transition"
               >
                 Cancel
               </button>
@@ -385,7 +385,7 @@ export default function ProjectDetails() {
       {/* 🔒 Digital NDA Verification Modal Overlay */}
       {showNdaModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl p-6 border text-left flex flex-col animate-fade-in select-none">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full shadow-2xl p-6 border text-left flex flex-col animate-fade-in select-none">
             <div className="flex justify-between items-center border-b pb-3 mb-4">
               <h3 className="font-black text-slate-800 text-sm uppercase tracking-wider">🔒 Non-Disclosure Agreement (NDA)</h3>
               <button onClick={() => setShowNdaModal(false)} className="text-slate-400 hover:text-slate-600 text-lg">×</button>
@@ -417,7 +417,7 @@ export default function ProjectDetails() {
               <button
                 type="button"
                 onClick={() => setShowNdaModal(false)}
-                className="px-4 py-2 border rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 transition"
+                className="px-4 py-2 border rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
               >
                 Cancel
               </button>
@@ -446,7 +446,7 @@ export default function ProjectDetails() {
       {/* 📝 Pre-Test MCQ Screening Overlay Modal */}
       {showQuizModal && project.preTestQuestions && project.preTestQuestions.length > 0 && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl p-6 border text-left flex flex-col animate-fade-in select-none">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full shadow-2xl p-6 border text-left flex flex-col animate-fade-in select-none">
             <div className="flex justify-between items-center border-b pb-3 mb-4">
               <h3 className="font-black text-slate-800 text-sm uppercase tracking-wider">📝 Pre-Test Screening Quiz</h3>
               <button onClick={() => setShowQuizModal(false)} className="text-slate-400 hover:text-slate-600 text-lg">×</button>
@@ -471,7 +471,7 @@ export default function ProjectDetails() {
                           className={`text-left text-xs p-2.5 rounded-xl border transition-all ${
                             isSelected 
                               ? "bg-indigo-600 text-white border-indigo-700 font-bold" 
-                              : "bg-white text-slate-600 border-gray-200 hover:bg-slate-50"
+                              : "bg-white dark:bg-slate-900 text-slate-600 border-gray-200 dark:border-slate-800 hover:bg-slate-50"
                           }`}
                         >
                           {opt}
@@ -487,7 +487,7 @@ export default function ProjectDetails() {
               <button
                 type="button"
                 onClick={() => setShowQuizModal(false)}
-                className="px-4 py-2 border rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 transition"
+                className="px-4 py-2 border rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
               >
                 Cancel
               </button>

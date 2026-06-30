@@ -26,10 +26,10 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 font-sans text-gray-800 flex flex-col select-none">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 font-sans text-gray-800 dark:text-gray-200 flex flex-col select-none">
       
       {/* 🚀 Sticky Header */}
-      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 shadow-sm">
+      <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 dark:border-slate-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
           <img 
             src="/logo.png" 
@@ -59,7 +59,7 @@ export default function LandingPage() {
         <span className="px-3.5 py-1.5 bg-indigo-50 border border-indigo-100 text-indigo-700 text-[10px] font-black uppercase tracking-wider rounded-xl animate-pulse">
           ✨ Verified Student Gig Ecosystem
         </span>
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-gray-800 tracking-tight mt-6 leading-tight">
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-gray-800 dark:text-gray-200 tracking-tight mt-6 leading-tight">
           Unlocking Student Talents for <br className="hidden sm:inline" />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Corporate Integrations</span>
         </h1>
@@ -75,7 +75,7 @@ export default function LandingPage() {
           </button>
           <button 
             onClick={() => navigate("/about")} 
-            className="px-6 py-3 bg-white hover:bg-gray-50 text-gray-700 rounded-2xl text-xs sm:text-sm font-bold transition shadow-md border border-gray-100"
+            className="px-6 py-3 bg-white dark:bg-slate-900 hover:bg-gray-50 text-gray-700 dark:text-gray-200 rounded-2xl text-xs sm:text-sm font-bold transition shadow-md border border-gray-100 dark:border-slate-800"
           >
             Explore Support Desk
           </button>
@@ -136,19 +136,19 @@ export default function LandingPage() {
 
 
       {/* 🙋 FAQ Accordion */}
-      <section className="bg-gray-50/60 border-t border-gray-100 py-16 px-4">
+      <section className="bg-gray-50/60 border-t border-gray-100 dark:border-slate-800 py-16 px-4">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-800 tracking-tight mb-8">
+          <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-800 dark:text-gray-200 tracking-tight mb-8">
             Frequently Asked Questions
           </h2>
           <div className="space-y-4">
             {faqs.map((faq, idx) => {
               const isOpen = activeFaq === idx;
               return (
-                <div key={idx} className="bg-white rounded-2xl border border-gray-100 p-4 transition shadow-sm">
+                <div key={idx} className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 p-4 transition shadow-sm">
                   <button 
                     onClick={() => handleFaqToggle(idx)}
-                    className="w-full flex justify-between items-center text-left text-xs sm:text-sm font-bold text-gray-700 focus:outline-none"
+                    className="w-full flex justify-between items-center text-left text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-200 focus:outline-none"
                   >
                     <span>{faq.q}</span>
                     <span className="text-lg text-indigo-500 font-bold">{isOpen ? "−" : "+"}</span>

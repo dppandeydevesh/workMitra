@@ -112,18 +112,18 @@ export default function AnalyticsDashboard() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 font-sans">
       {/* Main Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
           {/* Header */}
           <div className="border-b pb-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-black text-gray-800 tracking-tight flex items-center gap-2">
+              <h1 className="text-3xl font-black text-gray-800 dark:text-gray-200 tracking-tight flex items-center gap-2">
                 <span>📈 Recruiter Analytics Hub</span>
               </h1>
               <p className="text-gray-500 mt-1 text-sm">Monitor corporate track health, budget distributions, student success rates, and skill demands.</p>
             </div>
             <button
               onClick={() => navigate("/company-dashboard")}
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+              className="px-4 py-2 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-700 dark:text-gray-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
             >
               ← Back to Command Center
             </button>
@@ -161,10 +161,10 @@ export default function AnalyticsDashboard() {
                 </div>
 
                 {/* Metric 3 */}
-                <div className="bg-purple-50 border border-purple-100 p-6 rounded-2xl shadow-sm hover:shadow-md transition">
+                <div className="bg-purple-50 border border-purple-100 dark:border-slate-800 p-6 rounded-2xl shadow-sm hover:shadow-md transition">
                   <div className="text-2xl mb-3">🎯</div>
                   <span className="text-[10px] font-extrabold text-purple-700 uppercase tracking-wider block">Conversion Rate</span>
-                  <span className="text-3xl font-black text-purple-950 block mt-1">{conversionPercentage}%</span>
+                  <span className="text-3xl font-black text-purple-950 dark:text-purple-200 block mt-1">{conversionPercentage}%</span>
                   <p className="text-xs text-purple-800/70 mt-1">Approved or completed rates</p>
                 </div>
 
@@ -178,12 +178,12 @@ export default function AnalyticsDashboard() {
               </div>
 
               {/* 🔒 Escrow Protection Ledgers */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-50/50 p-6 rounded-2xl border border-gray-100 shadow-inner">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-50/50 p-6 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-inner">
                 <div className="flex items-center gap-4">
                   <div className="text-3xl bg-blue-100 p-3 rounded-2xl text-blue-700">🔒</div>
                   <div>
                     <span className="text-[10px] font-black text-blue-700 uppercase tracking-wider block">Locked in Escrow Protection</span>
-                    <span className="text-2xl font-black text-gray-800 block mt-0.5">₹{lockedEscrow.toLocaleString()}</span>
+                    <span className="text-2xl font-black text-gray-800 dark:text-gray-200 block mt-0.5">₹{lockedEscrow.toLocaleString()}</span>
                     <p className="text-[11px] text-gray-400 mt-0.5">Funds safely registered for approved/submitted tasks.</p>
                   </div>
                 </div>
@@ -192,7 +192,7 @@ export default function AnalyticsDashboard() {
                   <div className="text-3xl bg-emerald-100 p-3 rounded-2xl text-emerald-700">💸</div>
                   <div>
                     <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider block">Total Payouts Released</span>
-                    <span className="text-2xl font-black text-gray-800 block mt-0.5">₹{releasedPayouts.toLocaleString()}</span>
+                    <span className="text-2xl font-black text-gray-800 dark:text-gray-200 block mt-0.5">₹{releasedPayouts.toLocaleString()}</span>
                     <p className="text-[11px] text-gray-400 mt-0.5">Direct compensation disbursed to student developers.</p>
                   </div>
                 </div>
@@ -201,7 +201,7 @@ export default function AnalyticsDashboard() {
                   <div className="text-3xl bg-rose-100 p-3 rounded-2xl text-rose-700">⚠️</div>
                   <div>
                     <span className="text-[10px] font-black text-rose-700 uppercase tracking-wider block">Escrow locked under Dispute</span>
-                    <span className="text-2xl font-black text-gray-800 block mt-0.5">₹{disputedEscrow.toLocaleString()}</span>
+                    <span className="text-2xl font-black text-gray-800 dark:text-gray-200 block mt-0.5">₹{disputedEscrow.toLocaleString()}</span>
                     <p className="text-[11px] text-gray-400 mt-0.5">Disputed funds currently on hold.</p>
                   </div>
                 </div>
@@ -210,9 +210,9 @@ export default function AnalyticsDashboard() {
               {/* 📊 Visual Graph Widget Panels */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Panel 1: Application Status Breakdown */}
-                <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+                <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
                   <div>
-                    <h3 className="text-base font-bold text-gray-800 mb-1">Application Lifecycle</h3>
+                    <h3 className="text-base font-bold text-gray-800 dark:text-gray-200 mb-1">Application Lifecycle</h3>
                     <p className="text-xs text-gray-400 mb-6">Status distribution of student applications.</p>
 
                     {totalApplicationsCount === 0 ? (
@@ -255,7 +255,7 @@ export default function AnalyticsDashboard() {
                           </ResponsiveContainer>
                           {/* Inner center text overlay */}
                           <div className="absolute flex flex-col items-center justify-center pointer-events-none">
-                            <span className="text-xl font-black text-gray-800">{totalApplicationsCount}</span>
+                            <span className="text-xl font-black text-gray-800 dark:text-gray-200">{totalApplicationsCount}</span>
                             <span className="text-[9px] uppercase font-bold text-gray-400">Total</span>
                           </div>
                         </div>
@@ -279,7 +279,7 @@ export default function AnalyticsDashboard() {
                             <span>Pending: {statusCounts.Pending}</span>
                           </div>
                           {statusCounts.Rejected > 0 && (
-                            <div className="flex items-center gap-1.5 col-span-2 justify-center mt-1 border-t pt-2 border-dashed border-gray-100">
+                            <div className="flex items-center gap-1.5 col-span-2 justify-center mt-1 border-t pt-2 border-dashed border-gray-100 dark:border-slate-800">
                               <span className="w-2.5 h-2.5 bg-[#ef4444] rounded-full inline-block"></span>
                               <span>Rejected Solutions: {statusCounts.Rejected}</span>
                             </div>
@@ -294,9 +294,9 @@ export default function AnalyticsDashboard() {
                 </div>
 
                 {/* Panel 2: Budget Leaderboard */}
-                <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+                <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
                   <div>
-                    <h3 className="text-base font-bold text-gray-800 mb-1">Budget Payout Leaderboard</h3>
+                    <h3 className="text-base font-bold text-gray-800 dark:text-gray-200 mb-1">Budget Payout Leaderboard</h3>
                     <p className="text-xs text-gray-400 mb-6">Top 5 highest funded deployed project stacks.</p>
 
                     {topProjectsLeaderboard.length === 0 ? (
@@ -306,10 +306,10 @@ export default function AnalyticsDashboard() {
                         {topProjectsLeaderboard.map((project, idx) => (
                           <div key={project._id} className="flex justify-between items-center text-xs">
                             <div className="flex items-center gap-2 max-w-[70%]">
-                              <span className="bg-gray-100 text-gray-800 text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full">
+                              <span className="bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-200 text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full">
                                 {idx + 1}
                               </span>
-                              <p className="font-bold text-gray-800 truncate" title={project.title}>
+                              <p className="font-bold text-gray-800 dark:text-gray-200 truncate" title={project.title}>
                                 {project.title}
                               </p>
                             </div>
@@ -327,9 +327,9 @@ export default function AnalyticsDashboard() {
                 </div>
 
                 {/* Panel 3: In-Demand Skills */}
-                <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+                <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
                   <div>
-                    <h3 className="text-base font-bold text-gray-800 mb-1">Skill Demand Index</h3>
+                    <h3 className="text-base font-bold text-gray-800 dark:text-gray-200 mb-1">Skill Demand Index</h3>
                     <p className="text-xs text-gray-400 mb-6">Most requested skills across your deployed projects.</p>
 
                     {topSkillsList.length === 0 ? (

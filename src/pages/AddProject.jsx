@@ -136,18 +136,18 @@ export default function AddProject() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col items-center py-12 px-4 font-sans select-none">
-      <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-100/50">
+      <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-100 dark:border-slate-800/50">
         
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b pb-4 mb-6">
           <div>
-            <h1 className="text-xl sm:text-2xl font-black text-gray-800">Deploy Corporate Micro-Task</h1>
+            <h1 className="text-xl sm:text-2xl font-black text-gray-800 dark:text-gray-200">Deploy Corporate Micro-Task</h1>
             <p className="text-xs text-gray-400 mt-0.5">Wizard step {step} of 6: Configure live requirements and filtering rules.</p>
           </div>
           <button 
             type="button" 
             onClick={() => navigate("/company-dashboard")}
-            className="w-full sm:w-auto text-center text-xs font-bold text-gray-500 hover:text-indigo-600 bg-gray-100 px-3.5 py-2 rounded-xl transition"
+            className="w-full sm:w-auto text-center text-xs font-bold text-gray-500 hover:text-indigo-600 bg-gray-100 dark:bg-slate-800 px-3.5 py-2 rounded-xl transition"
           >
             ← Exit Wizard
           </button>
@@ -165,7 +165,7 @@ export default function AddProject() {
             <div 
               key={num} 
               className={`h-2 flex-grow rounded-full transition-all duration-300 ${
-                num <= step ? "bg-indigo-600" : "bg-gray-100"
+                num <= step ? "bg-indigo-600" : "bg-gray-100 dark:bg-slate-800"
               }`} 
             />
           ))}
@@ -179,23 +179,23 @@ export default function AddProject() {
               
               <div>
                 <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Project Title</label>
-                <input type="text" placeholder="e.g. Deploy Next.js Landing Webpage" value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white transition" required />
+                <input type="text" placeholder="e.g. Deploy Next.js Landing Webpage" value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition" required />
               </div>
 
               <div>
                 <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Deliverables & Objectives Description</label>
-                <textarea rows="4" placeholder="Detail the core task objectives, deliverables list, and milestones required..." value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white transition resize-none" required />
+                <textarea rows="4" placeholder="Detail the core task objectives, deliverables list, and milestones required..." value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition resize-none" required />
               </div>
 
               <div>
                 <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Required Skill Tags (Comma-separated)</label>
-                <input type="text" placeholder="e.g. React, Next.js, TailWind" value={skillsInput} onChange={e => setSkillsInput(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white transition" required />
+                <input type="text" placeholder="e.g. React, Next.js, TailWind" value={skillsInput} onChange={e => setSkillsInput(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition" required />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Complexity Tier</label>
-                  <select value={complexity} onChange={e => setComplexity(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 bg-white">
+                  <select value={complexity} onChange={e => setComplexity(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 bg-white dark:bg-slate-900">
                     <option value="Beginner">Beginner (1st/2nd Yr Credits)</option>
                     <option value="Intermediate">Intermediate (Normal Track)</option>
                     <option value="Advanced">Advanced (High-End R&D)</option>
@@ -203,7 +203,7 @@ export default function AddProject() {
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Corporate Team / Department</label>
-                  <input type="text" value={departmentName} onChange={e => setDepartmentName(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none" required />
+                  <input type="text" value={departmentName} onChange={e => setDepartmentName(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" required />
                 </div>
               </div>
             </div>
@@ -217,22 +217,22 @@ export default function AddProject() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Task Duration</label>
-                  <input type="text" placeholder="e.g. 2 Weeks" value={duration} onChange={e => setDuration(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400" required />
+                  <input type="text" placeholder="e.g. 2 Weeks" value={duration} onChange={e => setDuration(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400" required />
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Submission Deadline</label>
-                  <input type="date" value={deadline} onChange={e => setDeadline(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400" required />
+                  <input type="date" value={deadline} onChange={e => setDeadline(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400" required />
                 </div>
               </div>
 
               <div>
                 <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Students Capacity Needed</label>
-                <input type="number" min="1" value={studentsNeeded} onChange={e => setStudentsNeeded(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none" required />
+                <input type="number" min="1" value={studentsNeeded} onChange={e => setStudentsNeeded(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" required />
               </div>
 
               <div>
                 <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Target University Broadcast (Optional)</label>
-                <input type="text" placeholder="e.g. gla.edu.in (leave empty for all universities)" value={targetUniversity} onChange={e => setTargetUniversity(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none" />
+                <input type="text" placeholder="e.g. gla.edu.in (leave empty for all universities)" value={targetUniversity} onChange={e => setTargetUniversity(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" />
                 <p className="text-[10px] text-gray-400 mt-1">If populated, only students registered under this college email domain can view the task.</p>
               </div>
             </div>
@@ -245,7 +245,7 @@ export default function AddProject() {
 
               <div>
                 <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Guaranteed Stipend (INR)</label>
-                <input type="number" placeholder="e.g. 5000" value={budget} onChange={e => setBudget(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none" required />
+                <input type="number" placeholder="e.g. 5000" value={budget} onChange={e => setBudget(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" required />
               </div>
 
               <div className="flex items-center gap-3 p-4 bg-slate-50 border rounded-2xl">
@@ -270,7 +270,7 @@ export default function AddProject() {
 
               <div>
                 <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Minimum WorkMitra Readiness Score Requirement</label>
-                <input type="number" min="0" max="1000" placeholder="e.g. 400" value={minReadinessScore} onChange={e => setMinReadinessScore(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none" />
+                <input type="number" min="0" max="1000" placeholder="e.g. 400" value={minReadinessScore} onChange={e => setMinReadinessScore(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" />
                 <p className="text-[10px] text-gray-400 mt-1">Prevents applications from students whose calculated WorkMitra portfolio score is below this tier limit.</p>
               </div>
 
@@ -300,26 +300,26 @@ export default function AddProject() {
 
               <div className="border p-4 rounded-2xl bg-slate-50/50 space-y-3">
                 <p className="text-xs font-bold text-indigo-700">Question 1</p>
-                <input type="text" placeholder="Question Text" value={q1Text} onChange={e => setQ1Text(e.target.value)} className="w-full bg-white border p-2.5 rounded-xl text-xs" />
+                <input type="text" placeholder="Question Text" value={q1Text} onChange={e => setQ1Text(e.target.value)} className="w-full bg-white dark:bg-slate-900 border p-2.5 rounded-xl text-xs" />
                 <div className="grid grid-cols-2 gap-2">
-                  <input type="text" placeholder="Option A" value={q1OptA} onChange={e => setQ1OptA(e.target.value)} className="bg-white border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder="Option B" value={q1OptB} onChange={e => setQ1OptB(e.target.value)} className="bg-white border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder="Option C" value={q1OptC} onChange={e => setQ1OptC(e.target.value)} className="bg-white border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder="Option D" value={q1OptD} onChange={e => setQ1OptD(e.target.value)} className="bg-white border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder="Option A" value={q1OptA} onChange={e => setQ1OptA(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder="Option B" value={q1OptB} onChange={e => setQ1OptB(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder="Option C" value={q1OptC} onChange={e => setQ1OptC(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder="Option D" value={q1OptD} onChange={e => setQ1OptD(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
                 </div>
-                <input type="text" placeholder="Exact Correct Option string value" value={q1Correct} onChange={e => setQ1Correct(e.target.value)} className="w-full bg-white border p-2 rounded-xl text-xs" />
+                <input type="text" placeholder="Exact Correct Option string value" value={q1Correct} onChange={e => setQ1Correct(e.target.value)} className="w-full bg-white dark:bg-slate-900 border p-2 rounded-xl text-xs" />
               </div>
 
               <div className="border p-4 rounded-2xl bg-slate-50/50 space-y-3">
                 <p className="text-xs font-bold text-indigo-700">Question 2</p>
-                <input type="text" placeholder="Question Text" value={q2Text} onChange={e => setQ2Text(e.target.value)} className="w-full bg-white border p-2.5 rounded-xl text-xs" />
+                <input type="text" placeholder="Question Text" value={q2Text} onChange={e => setQ2Text(e.target.value)} className="w-full bg-white dark:bg-slate-900 border p-2.5 rounded-xl text-xs" />
                 <div className="grid grid-cols-2 gap-2">
-                  <input type="text" placeholder="Option A" value={q2OptA} onChange={e => setQ2OptA(e.target.value)} className="bg-white border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder="Option B" value={q2OptB} onChange={e => setQ2OptB(e.target.value)} className="bg-white border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder="Option C" value={q2OptC} onChange={e => setQ2OptC(e.target.value)} className="bg-white border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder="Option D" value={q2OptD} onChange={e => setQ2OptD(e.target.value)} className="bg-white border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder="Option A" value={q2OptA} onChange={e => setQ2OptA(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder="Option B" value={q2OptB} onChange={e => setQ2OptB(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder="Option C" value={q2OptC} onChange={e => setQ2OptC(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder="Option D" value={q2OptD} onChange={e => setQ2OptD(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
                 </div>
-                <input type="text" placeholder="Exact Correct Option string value" value={q2Correct} onChange={e => setQ2Correct(e.target.value)} className="w-full bg-white border p-2 rounded-xl text-xs" />
+                <input type="text" placeholder="Exact Correct Option string value" value={q2Correct} onChange={e => setQ2Correct(e.target.value)} className="w-full bg-white dark:bg-slate-900 border p-2 rounded-xl text-xs" />
               </div>
             </div>
           )}
@@ -347,7 +347,7 @@ export default function AddProject() {
 
               <div>
                 <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Publishing Mode State</label>
-                <select value={status} onChange={e => setStatus(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 bg-white">
+                <select value={status} onChange={e => setStatus(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 bg-white dark:bg-slate-900">
                   <option value="Published">Publish Live Immediately</option>
                   <option value="Draft">Save as Draft Template</option>
                 </select>
@@ -361,7 +361,7 @@ export default function AddProject() {
               <button
                 type="button"
                 onClick={handlePrevStep}
-                className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition"
+                className="px-5 py-2.5 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition"
               >
                 ← Previous
               </button>

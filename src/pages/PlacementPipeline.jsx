@@ -133,7 +133,7 @@ export default function PlacementPipeline() {
         </div>
         <button
           onClick={() => navigate(-1)}
-          className="px-3.5 py-1.5 border border-gray-200 text-xs font-bold text-gray-600 rounded-xl hover:bg-gray-50 transition dark:text-slate-400 dark:border-slate-800 dark:hover:bg-slate-900"
+          className="px-3.5 py-1.5 border border-gray-200 text-xs font-bold text-gray-600 rounded-xl hover:bg-gray-50 dark:bg-slate-900 transition dark:text-slate-400 dark:border-slate-800 dark:hover:bg-slate-900"
         >
           ← Back
         </button>
@@ -268,7 +268,7 @@ export default function PlacementPipeline() {
                 <button
                   type="button"
                   onClick={() => setShowOfferModal(false)}
-                  className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 transition dark:border-slate-800 dark:text-slate-400"
+                  className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition dark:border-slate-800 dark:text-slate-400"
                 >
                   Cancel
                 </button>

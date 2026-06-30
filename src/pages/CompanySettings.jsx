@@ -109,14 +109,14 @@ export default function CompanySettings() {
       <div className="max-w-3xl mx-auto px-4">
         <button
           onClick={() => navigate("/company-dashboard")}
-          className="mb-6 px-4 py-2 bg-white/80 hover:bg-white text-gray-600 rounded-xl text-xs font-bold transition shadow-sm border border-gray-100 flex items-center gap-1.5"
+          className="mb-6 px-4 py-2 bg-white/80 hover:bg-white dark:bg-slate-900 text-gray-600 rounded-xl text-xs font-bold transition shadow-sm border border-gray-100 dark:border-slate-800 flex items-center gap-1.5"
         >
           ← Back to Command Center
         </button>
 
-        <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-100/50">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-100 dark:border-slate-800/50">
           <div className="border-b pb-4 mb-6">
-            <h1 className="text-xl sm:text-2xl font-black text-gray-800">⚙️ Company Settings</h1>
+            <h1 className="text-xl sm:text-2xl font-black text-gray-800 dark:text-gray-200">⚙️ Company Settings</h1>
             <p className="text-xs text-gray-400 mt-0.5">Configure your corporate profile metadata visible to students and candidates.</p>
           </div>
 
@@ -126,11 +126,11 @@ export default function CompanySettings() {
               <img
                 src={companyLogoUrl}
                 alt="Company Logo"
-                className="w-16 h-16 rounded-2xl object-cover border-2 border-gray-100 shadow-sm bg-gray-50"
+                className="w-16 h-16 rounded-2xl object-cover border-2 border-gray-100 dark:border-slate-800 shadow-sm bg-gray-50 dark:bg-slate-900"
                 onError={(e) => { e.target.style.display = "none"; }}
               />
               <div>
-                <p className="text-sm font-bold text-gray-800">{companyName || "Your Company"}</p>
+                <p className="text-sm font-bold text-gray-800 dark:text-gray-200">{companyName || "Your Company"}</p>
                 <p className="text-[10px] text-gray-400 uppercase font-extrabold tracking-wider">{industryVertical} • {teamSize} team members</p>
               </div>
             </div>
@@ -147,7 +147,7 @@ export default function CompanySettings() {
                     type="text"
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
-                    className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white transition"
+                    className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition"
                     placeholder="e.g. TechCorp Solutions"
                     disabled
                   />
@@ -159,7 +159,7 @@ export default function CompanySettings() {
                     type="url"
                     value={companyLogoUrl}
                     onChange={(e) => setCompanyLogoUrl(e.target.value)}
-                    className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white transition"
+                    className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition"
                     placeholder="https://example.com/logo.png"
                   />
                 </div>
@@ -173,7 +173,7 @@ export default function CompanySettings() {
                 rows={4}
                 value={companyBio}
                 onChange={(e) => setCompanyBio(e.target.value)}
-                className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white transition resize-none"
+                className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition resize-none"
                 placeholder="Describe your company's mission, culture, and the type of talent you're looking for..."
               />
             </div>
@@ -188,7 +188,7 @@ export default function CompanySettings() {
                     type="url"
                     value={companyWebsite}
                     onChange={(e) => setCompanyWebsite(e.target.value)}
-                    className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white transition"
+                    className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition"
                     placeholder="https://yourcompany.com"
                   />
                 </div>
@@ -198,7 +198,7 @@ export default function CompanySettings() {
                     type="url"
                     value={companyLinkedin}
                     onChange={(e) => setCompanyLinkedin(e.target.value)}
-                    className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white transition"
+                    className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition"
                     placeholder="https://linkedin.com/company/yourcompany"
                   />
                 </div>
@@ -214,7 +214,7 @@ export default function CompanySettings() {
                   <select
                     value={industryVertical}
                     onChange={(e) => setIndustryVertical(e.target.value)}
-                    className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-full bg-gray-50 dark:bg-slate-900 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400"
                   >
                     <option value="Technology">Technology</option>
                     <option value="Finance">Finance</option>
@@ -230,7 +230,7 @@ export default function CompanySettings() {
                   <select
                     value={teamSize}
                     onChange={(e) => setTeamSize(e.target.value)}
-                    className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-full bg-gray-50 dark:bg-slate-900 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400"
                   >
                     <option value="1-10">1-10</option>
                     <option value="11-50">11-50</option>
@@ -244,7 +244,7 @@ export default function CompanySettings() {
                   <select
                     value={defaultComplexity}
                     onChange={(e) => setDefaultComplexity(e.target.value)}
-                    className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-full bg-gray-50 dark:bg-slate-900 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400"
                   >
                     <option value="Beginner">Beginner</option>
                     <option value="Intermediate">Intermediate</option>
@@ -273,7 +273,7 @@ export default function CompanySettings() {
               <button
                 type="button"
                 onClick={() => navigate("/company-dashboard")}
-                className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition"
+                className="px-5 py-2.5 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition"
               >
                 Cancel
               </button>

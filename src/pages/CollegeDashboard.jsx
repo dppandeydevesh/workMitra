@@ -215,7 +215,7 @@ export default function CollegeDashboard() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50/50 font-sans pb-12">
       
       {/* 🏛️ Top Header Banner */}
-      <header className="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-100 shadow-sm">
+      <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-100 dark:border-slate-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <span className="text-2xl">🏛️</span>
@@ -225,7 +225,7 @@ export default function CollegeDashboard() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-xs font-extrabold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
+            <span className="text-xs font-extrabold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800">
               Department: {currentUser?.departmentName || "General"}
             </span>
             <button 
@@ -243,8 +243,8 @@ export default function CollegeDashboard() {
         
         {/* Welcome Card & University Branding */}
         <div className="bg-gradient-to-r from-indigo-700 via-purple-700 to-indigo-600 rounded-3xl shadow-xl p-6 sm:p-8 text-white mb-8 relative overflow-hidden">
-          <div className="absolute -top-10 -right-10 w-44 h-44 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute -bottom-10 -left-10 w-36 h-36 bg-white/5 rounded-full blur-2xl" />
+          <div className="absolute -top-10 -right-10 w-44 h-44 bg-white/5 dark:bg-slate-900/5 rounded-full blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 w-36 h-36 bg-white/5 dark:bg-slate-900/5 rounded-full blur-2xl" />
           <div className="relative z-10">
             <p className="text-indigo-200 text-[10px] font-extrabold uppercase tracking-widest mb-1">Academic Engagement Hub</p>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
@@ -264,7 +264,7 @@ export default function CollegeDashboard() {
             { label: "Faculty Endorsed", value: endorsedCount, icon: "🎓", color: "from-emerald-500 to-emerald-600" },
             { label: "At Risk Students", value: atRiskCount, icon: "⚠️", color: "from-red-500 to-red-600" }
           ].map((kpi, idx) => (
-            <div key={idx} className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 hover:shadow-md transition">
+            <div key={idx} className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 p-4 hover:shadow-md transition">
               <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${kpi.color} flex items-center justify-center text-white text-sm mb-3`}>
                 {kpi.icon}
               </div>
@@ -275,7 +275,7 @@ export default function CollegeDashboard() {
         </div>
 
         {/* Tab Selection Row */}
-        <div className="flex border-b border-slate-200 mb-6 gap-2 overflow-x-auto pb-1">
+        <div className="flex border-b border-slate-200 dark:border-slate-800 mb-6 gap-2 overflow-x-auto pb-1">
           {[
             { id: "roster", label: "Student Roster", icon: "📋" },
             { id: "leaderboard", label: "Department Leaderboard", icon: "🏆" },
@@ -301,7 +301,7 @@ export default function CollegeDashboard() {
         
         {/* 📋 TAB 1: Student Roster & Credit Tracker */}
         {activeTab === "roster" && (
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
             {students.length === 0 ? (
               <div className="text-center py-16 text-slate-400">
                 <span className="text-4xl block mb-3">📭</span>
@@ -312,7 +312,7 @@ export default function CollegeDashboard() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                    <tr className="bg-slate-50 border-b border-slate-100 dark:border-slate-800 text-[10px] font-black text-slate-400 uppercase tracking-wider">
                       <th className="px-6 py-4">Student Details</th>
                       <th className="px-6 py-4">Academic Track</th>
                       <th className="px-6 py-4 text-center">Cleared Tasks</th>
@@ -361,7 +361,7 @@ export default function CollegeDashboard() {
                               className={`px-3 py-1.5 rounded-xl text-[10px] font-bold border transition ${
                                 student.isEndorsed
                                   ? "bg-emerald-50 border-emerald-200 text-emerald-700"
-                                  : "bg-white hover:bg-slate-50 text-slate-500 border-slate-200"
+                                  : "bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-500 border-slate-200 dark:border-slate-800"
                               }`}
                             >
                               🎓 {student.isEndorsed ? "Endorsed" : "Endorse"}
@@ -387,7 +387,7 @@ export default function CollegeDashboard() {
 
         {/* 🏆 TAB 2: Department Leaderboard */}
         {activeTab === "leaderboard" && (
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 p-6">
             <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider mb-4">🏆 Department Rankings</h3>
             {leaderboard.length === 0 ? (
               <p className="text-xs text-slate-400 italic">No department data available.</p>
@@ -396,7 +396,7 @@ export default function CollegeDashboard() {
                 {leaderboard.map((dept, idx) => (
                   <div
                     key={dept.major}
-                    className="flex justify-between items-center bg-slate-50 border border-slate-100 p-4 rounded-2xl hover:bg-slate-100/50 transition"
+                    className="flex justify-between items-center bg-slate-50 border border-slate-100 dark:border-slate-800 p-4 rounded-2xl hover:bg-slate-100/50 transition"
                   >
                     <div className="flex items-center gap-4">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-black text-sm ${
@@ -424,7 +424,7 @@ export default function CollegeDashboard() {
 
         {/* 🛡️ TAB 3: Vetting Recruiters (Approved/Blocked Companies) */}
         {activeTab === "vetting" && (
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
             {companies.length === 0 ? (
               <div className="text-center py-16 text-slate-400">
                 <span className="text-4xl block mb-3">🏢</span>
@@ -434,7 +434,7 @@ export default function CollegeDashboard() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                    <tr className="bg-slate-50 border-b border-slate-100 dark:border-slate-800 text-[10px] font-black text-slate-400 uppercase tracking-wider">
                       <th className="px-6 py-4">Company Name</th>
                       <th className="px-6 py-4">Company Email</th>
                       <th className="px-6 py-4">Industry / Vertical</th>
@@ -460,7 +460,7 @@ export default function CollegeDashboard() {
                               ? "bg-green-50 text-green-600 border-green-100"
                               : c.status === "Blocked"
                               ? "bg-red-50 text-red-600 border-red-100"
-                              : "bg-slate-50 text-slate-500 border-slate-100"
+                              : "bg-slate-50 text-slate-500 border-slate-100 dark:border-slate-800"
                           }`}>
                             {c.status}
                           </span>
@@ -492,7 +492,7 @@ export default function CollegeDashboard() {
 
         {/* ➕ TAB 4: Bulk Student Onboarding Console */}
         {activeTab === "onboarding" && (
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 p-6">
             <div className="mb-5">
               <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">➕ Bulk Student Registrar</h3>
               <p className="text-[11px] text-slate-400 mt-1">
@@ -507,7 +507,7 @@ export default function CollegeDashboard() {
                   rows={8}
                   value={bulkInput}
                   onChange={(e) => setBulkInput(e.target.value)}
-                  className="w-full bg-slate-50/50 border border-slate-200 p-4 rounded-2xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white transition resize-none font-mono"
+                  className="w-full bg-slate-50/50 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition resize-none font-mono"
                   placeholder="Full Name, Email, EnrollmentNumber&#10;Amit Kumar, amit@gla.edu.in, 2015000123&#10;Pooja Sharma, pooja@gla.edu.in, 2015000456"
                 />
               </div>
@@ -537,7 +537,7 @@ export default function CollegeDashboard() {
       {/* 🧾 Student Report Card Modal Overlay */}
       {printStudent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl shadow-2xl border p-6 sm:p-8 max-w-xl w-full border-slate-100 relative animate-scale-up">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border p-6 sm:p-8 max-w-xl w-full border-slate-100 dark:border-slate-800 relative animate-scale-up">
             <button
               onClick={() => setPrintStudent(null)}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-lg font-black"
@@ -574,15 +574,15 @@ export default function CollegeDashboard() {
               </div>
 
               <div className="border-t pt-5 grid grid-cols-3 gap-4 text-center">
-                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100 dark:border-slate-800">
                   <p className="text-[8px] font-black text-slate-400 uppercase tracking-wider">Gigs Cleared</p>
                   <p className="text-lg font-black text-slate-800 mt-0.5">{printStudent.completedTasksCount}</p>
                 </div>
-                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100 dark:border-slate-800">
                   <p className="text-[8px] font-black text-slate-400 uppercase tracking-wider">Avg Rating</p>
                   <p className="text-lg font-black text-slate-800 mt-0.5">{printStudent.avgRating}★</p>
                 </div>
-                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100 dark:border-slate-800">
                   <p className="text-[8px] font-black text-slate-400 uppercase tracking-wider">Readiness Score</p>
                   <p className="text-lg font-black text-indigo-600 mt-0.5">{printStudent.readinessScore}</p>
                 </div>

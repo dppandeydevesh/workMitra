@@ -70,13 +70,13 @@ export default function CompanyDashboard() {
     const map = {
       "Pending": "text-amber-600 bg-amber-50 border-amber-100",
       "Approved": "text-blue-600 bg-blue-50 border-blue-100",
-      "Submitted": "text-purple-600 bg-purple-50 border-purple-100",
+      "Submitted": "text-purple-600 bg-purple-50 border-purple-100 dark:border-slate-800",
       "Completed": "text-green-600 bg-green-50 border-green-100",
       "Rejected": "text-red-600 bg-red-50 border-red-100",
       "Disputed": "text-orange-600 bg-orange-50 border-orange-100",
       "Revision Requested": "text-amber-600 bg-amber-50 border-amber-100"
     };
-    return map[status] || "text-gray-600 bg-gray-50 border-gray-100";
+    return map[status] || "text-gray-600 bg-gray-50 dark:bg-slate-900 border-gray-100 dark:border-slate-800";
   };
 
   const getTimeAgo = (dateStr) => {
@@ -107,8 +107,8 @@ export default function CompanyDashboard() {
 
         {/* Welcome Header */}
         <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 rounded-3xl shadow-xl p-6 sm:p-8 mb-8 text-white relative overflow-hidden">
-          <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/5 rounded-full blur-2xl" />
-          <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white/5 rounded-full blur-xl" />
+          <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/5 dark:bg-slate-900/5 rounded-full blur-2xl" />
+          <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white/5 dark:bg-slate-900/5 rounded-full blur-xl" />
           <div className="relative z-10">
             <p className="text-blue-200 text-[10px] font-extrabold uppercase tracking-widest mb-1">Company Command Center</p>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
@@ -118,13 +118,13 @@ export default function CompanyDashboard() {
               Deploy tasks, review applicant submissions, and manage your talent pipeline from a single unified dashboard.
             </p>
             <div className="flex flex-wrap gap-3 mt-5">
-              <span className="bg-white/15 backdrop-blur-sm px-3 py-1.5 rounded-xl text-[10px] font-extrabold border border-white/20">
+              <span className="bg-white/15 dark:bg-slate-900/15 backdrop-blur-sm px-3 py-1.5 rounded-xl text-[10px] font-extrabold border border-white/20 dark:border-slate-800/20">
                 📁 {stats?.totalProjects || 0} Projects
               </span>
-              <span className="bg-white/15 backdrop-blur-sm px-3 py-1.5 rounded-xl text-[10px] font-extrabold border border-white/20">
+              <span className="bg-white/15 dark:bg-slate-900/15 backdrop-blur-sm px-3 py-1.5 rounded-xl text-[10px] font-extrabold border border-white/20 dark:border-slate-800/20">
                 👥 {stats?.totalApplications || 0} Applications
               </span>
-              <span className="bg-white/15 backdrop-blur-sm px-3 py-1.5 rounded-xl text-[10px] font-extrabold border border-white/20">
+              <span className="bg-white/15 dark:bg-slate-900/15 backdrop-blur-sm px-3 py-1.5 rounded-xl text-[10px] font-extrabold border border-white/20 dark:border-slate-800/20">
                 ⭐ {stats?.avgRating || "0.0"} Avg Rating
               </span>
             </div>
@@ -141,12 +141,12 @@ export default function CompanyDashboard() {
             { label: "Total Budget (₹)", value: `₹${(stats?.totalBudget || 0).toLocaleString()}`, icon: "💰", color: "from-emerald-500 to-emerald-600" },
             { label: "Avg. Rating", value: `${stats?.avgRating || "0.0"} ★`, icon: "⭐", color: "from-pink-500 to-pink-600" }
           ].map((kpi, idx) => (
-            <div key={idx} className="bg-white rounded-2xl shadow-sm border border-gray-100/50 p-4 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 group">
+            <div key={idx} className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 p-4 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 group">
               <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${kpi.color} flex items-center justify-center text-white text-sm mb-3 group-hover:scale-110 transition-transform`}>
                 {kpi.icon}
               </div>
               <p className="text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">{kpi.label}</p>
-              <p className="text-lg font-black text-gray-800 mt-0.5">{kpi.value}</p>
+              <p className="text-lg font-black text-gray-800 dark:text-gray-200 mt-0.5">{kpi.value}</p>
             </div>
           ))}
         </div>
@@ -155,16 +155,16 @@ export default function CompanyDashboard() {
           {/* Left Column: Quick Actions + Top Performers */}
           <div className="lg:col-span-1 space-y-6">
             {/* Quick Actions */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100/50 p-5">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 p-5">
               <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-4">⚡ Quick Actions</h3>
               <div className="space-y-2.5">
                 {[
                   { label: "Deploy New Task", icon: "➕", path: "/add-project", style: "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md" },
                   { label: "My Projects", icon: "📂", path: "/my-projects", style: "bg-blue-50 border border-blue-100 text-blue-700" },
                   { label: "Applicants Hub", icon: "👨‍🎓", path: "/applicants", style: "bg-green-50 border border-green-100 text-green-700" },
-                  { label: "Analytics", icon: "📊", path: "/analytics", style: "bg-purple-50 border border-purple-100 text-purple-700" },
+                  { label: "Analytics", icon: "📊", path: "/analytics", style: "bg-purple-50 border border-purple-100 dark:border-slate-800 text-purple-700" },
                   { label: "Calendar", icon: "📅", path: "/calendar", style: "bg-amber-50 border border-amber-100 text-amber-700" },
-                  { label: "Settings", icon: "⚙️", path: "/company-settings", style: "bg-slate-50 border border-slate-100 text-slate-700" }
+                  { label: "Settings", icon: "⚙️", path: "/company-settings", style: "bg-slate-50 border border-slate-100 dark:border-slate-800 text-slate-700" }
                 ].map((action, idx) => (
                   <button
                     key={idx}
@@ -179,7 +179,7 @@ export default function CompanyDashboard() {
             </div>
 
             {/* Top Performers */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100/50 p-5">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 p-5">
               <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-4">🏆 Top Performers</h3>
               {(!stats?.topPerformers || stats.topPerformers.length === 0) ? (
                 <p className="text-xs text-gray-400 italic">No completed tasks with ratings yet.</p>
@@ -189,7 +189,7 @@ export default function CompanyDashboard() {
                     <div
                       key={idx}
                       onClick={() => navigate(`/student-profile/${perf.studentEmail}`)}
-                      className="flex items-center gap-3 p-3 bg-slate-50/50 border border-slate-100 rounded-xl hover:bg-slate-100/50 transition cursor-pointer"
+                      className="flex items-center gap-3 p-3 bg-slate-50/50 border border-slate-100 dark:border-slate-800 rounded-xl hover:bg-slate-100/50 transition cursor-pointer"
                     >
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-black text-xs ${
                         idx === 0 ? "bg-amber-400" : idx === 1 ? "bg-gray-400" : "bg-amber-700"
@@ -197,7 +197,7 @@ export default function CompanyDashboard() {
                         #{idx + 1}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-bold text-gray-800 truncate">{perf.studentName}</p>
+                        <p className="text-xs font-bold text-gray-800 dark:text-gray-200 truncate">{perf.studentName}</p>
                         <p className="text-[10px] text-gray-400 truncate">{perf.projectTitle}</p>
                       </div>
                       <div className="text-right shrink-0">
@@ -212,7 +212,7 @@ export default function CompanyDashboard() {
 
           {/* Right Column: Recent Activity Feed */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100/50 p-5 sm:p-6">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 p-5 sm:p-6">
               <div className="flex justify-between items-center mb-5">
                 <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider">🕑 Recent Activity</h3>
                 <button
@@ -224,7 +224,7 @@ export default function CompanyDashboard() {
               </div>
 
               {recentActivity.length === 0 ? (
-                <div className="text-center py-12 border-2 border-dashed border-gray-100 rounded-xl text-gray-400">
+                <div className="text-center py-12 border-2 border-dashed border-gray-100 dark:border-slate-800 rounded-xl text-gray-400">
                   <span className="text-3xl block mb-3">📭</span>
                   <p className="text-xs font-medium">No recent application activity yet.</p>
                   <p className="text-[10px] text-gray-300 mt-1">Deploy your first project to start receiving applications!</p>
@@ -234,7 +234,7 @@ export default function CompanyDashboard() {
                   {recentActivity.map((event, idx) => (
                     <div
                       key={idx}
-                      className="flex items-start gap-3 p-3.5 bg-slate-50/30 border border-slate-100/50 rounded-xl hover:bg-slate-50 transition group"
+                      className="flex items-start gap-3 p-3.5 bg-slate-50/30 border border-slate-100 dark:border-slate-800/50 rounded-xl hover:bg-slate-50 transition group"
                     >
                       {/* Status indicator */}
                       <div className="shrink-0 mt-0.5">
@@ -244,7 +244,7 @@ export default function CompanyDashboard() {
                       {/* Event details */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
-                          <p className="text-xs font-bold text-gray-800 truncate">
+                          <p className="text-xs font-bold text-gray-800 dark:text-gray-200 truncate">
                             {event.studentName}
                           </p>
                           <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded border uppercase ${getStatusColor(event.status)}`}>
@@ -276,7 +276,7 @@ export default function CompanyDashboard() {
 
             {/* Pipeline Status Breakdown */}
             {stats && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100/50 p-5 sm:p-6 mt-6">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 p-5 sm:p-6 mt-6">
                 <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-4">📊 Application Pipeline</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
@@ -287,9 +287,9 @@ export default function CompanyDashboard() {
                     { label: "Rejected", count: stats.rejectedCount, color: "bg-red-500" },
                     { label: "In Revision", count: stats.revisionCount, color: "bg-orange-500" }
                   ].map((item, idx) => (
-                    <div key={idx} className="bg-slate-50/50 border border-slate-100 rounded-xl p-3 text-center">
+                    <div key={idx} className="bg-slate-50/50 border border-slate-100 dark:border-slate-800 rounded-xl p-3 text-center">
                       <div className={`w-2 h-2 ${item.color} rounded-full mx-auto mb-2`} />
-                      <p className="text-lg font-black text-gray-800">{item.count}</p>
+                      <p className="text-lg font-black text-gray-800 dark:text-gray-200">{item.count}</p>
                       <p className="text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">{item.label}</p>
                     </div>
                   ))}

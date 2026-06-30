@@ -72,13 +72,13 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 font-sans flex items-center justify-center p-4">
-      <div className="bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 max-w-md w-full border border-white/60 text-center space-y-6">
+      <div className="bg-white dark:bg-slate-900 rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 max-w-md w-full border border-white/60 dark:border-slate-800/60 text-center space-y-6">
         <div className="flex justify-center">
           <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain filter drop-shadow-md mix-blend-multiply" />
         </div>
 
         <div>
-          <h2 className="text-2xl font-black text-purple-950">Choose New Password</h2>
+          <h2 className="text-2xl font-black text-purple-950 dark:text-purple-200">Choose New Password</h2>
           <p className="text-xs text-gray-400 mt-1">Please enter your new portal credentials below.</p>
         </div>
 
@@ -110,7 +110,7 @@ export default function ResetPasswordPage() {
                 placeholder="Enter new password"
                 value={password}
                 onChange={(e) => checkPasswordStrength(e.target.value)}
-                className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
+                className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
                 required
               />
               {password && (
@@ -118,7 +118,7 @@ export default function ResetPasswordPage() {
                   <p className={passwordStrength.score === 4 ? "text-green-600" : "text-amber-600"}>
                     Strength: {passwordStrength.text}
                   </p>
-                  <div className="w-full bg-gray-100 h-1 rounded-full overflow-hidden">
+                  <div className="w-full bg-gray-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
                     <div 
                       className={`h-full transition-all duration-300 ${passwordStrength.score === 4 ? "bg-green-500" : passwordStrength.score >= 2 ? "bg-amber-400" : "bg-red-400"}`}
                       style={{ width: `${(passwordStrength.score / 4) * 100}%` }}
@@ -136,7 +136,7 @@ export default function ResetPasswordPage() {
                 placeholder="Re-enter password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
+                className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
                 required
               />
             </div>

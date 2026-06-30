@@ -45,7 +45,7 @@ export default function ApplicantsHub() {
               <span className={`px-1.5 py-0.5 rounded font-extrabold transition-all uppercase tracking-wider ${
                 isActive ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-sm" :
                 isCompleted ? "bg-purple-100 text-purple-700 font-semibold" :
-                "bg-gray-100 text-gray-400 font-normal"
+                "bg-gray-100 dark:bg-slate-800 text-gray-400 font-normal"
               }`}>
                 {step.label}
               </span>
@@ -338,18 +338,18 @@ export default function ApplicantsHub() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 font-sans">
       {/* Main Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
           {/* Header */}
           <div className="border-b pb-6 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-black text-gray-800 tracking-tight flex items-center gap-2">
+              <h1 className="text-3xl font-black text-gray-800 dark:text-gray-200 tracking-tight flex items-center gap-2">
                 <span>👨‍🎓 Applicants Command Center</span>
               </h1>
               <p className="text-gray-500 mt-1 text-sm">Audit candidate applications, inspect matching scores, review task submissions, and approve talent nodes.</p>
             </div>
             <button
               onClick={() => navigate("/company-dashboard")}
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+              className="px-4 py-2 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-700 dark:text-gray-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
             >
               ← Back to Command Center
             </button>
@@ -362,7 +362,7 @@ export default function ApplicantsHub() {
           )}
 
           {/* Search and Filters panel */}
-          <div className="bg-gray-50/60 border border-gray-100 p-5 rounded-2xl mb-8 grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div className="bg-gray-50/60 border border-gray-100 dark:border-slate-800 p-5 rounded-2xl mb-8 grid grid-cols-1 md:grid-cols-5 gap-4">
             {/* Search Input */}
             <div className="md:col-span-1">
               <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Search Candidate</label>
@@ -371,7 +371,7 @@ export default function ApplicantsHub() {
                 placeholder="Name, email, or skills..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-white border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>
 
@@ -381,7 +381,7 @@ export default function ApplicantsHub() {
               <select
                 value={projectFilter}
                 onChange={(e) => setProjectFilter(e.target.value)}
-                className="w-full bg-white border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
               >
                 <option value="All">All Projects</option>
                 {uniqueProjectTitles.map((title, idx) => (
@@ -396,7 +396,7 @@ export default function ApplicantsHub() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full bg-white border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
               >
                 <option value="All">All Statuses</option>
                 <option value="Pending">Pending</option>
@@ -413,7 +413,7 @@ export default function ApplicantsHub() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full bg-white border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
               >
                 <option value="match">Match Score (Highest first)</option>
                 <option value="date">Application Date (Newest first)</option>
@@ -442,7 +442,7 @@ export default function ApplicantsHub() {
               <span>🔄 Loading candidates from the system registry...</span>
             </div>
           ) : filteredApps.length === 0 ? (
-            <div className="text-center py-16 border-2 border-dashed border-gray-200 rounded-2xl text-gray-400 font-medium bg-gray-50/50">
+            <div className="text-center py-16 border-2 border-dashed border-gray-200 dark:border-slate-800 rounded-2xl text-gray-400 font-medium bg-gray-50/50">
               📭 No candidate applications match your current filter settings.
             </div>
           ) : (
@@ -450,7 +450,7 @@ export default function ApplicantsHub() {
               {filteredApps.map((app) => (
                 <div
                   key={app.applicationId}
-                  className="bg-white rounded-2xl border border-gray-200/80 p-6 shadow-sm hover:shadow-md hover:border-blue-300 transition duration-300 flex flex-col lg:flex-row justify-between gap-6"
+                  className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-800/80 p-6 shadow-sm hover:shadow-md hover:border-blue-300 transition duration-300 flex flex-col lg:flex-row justify-between gap-6"
                 >
                   {/* Left block: student details & project */}
                   <div className="space-y-4 flex-1">
@@ -467,14 +467,14 @@ export default function ApplicantsHub() {
                           onClick={() => {
                             if (!isBlindMode) navigate(`/student-profile/${app.studentEmail}`);
                           }}
-                          className={`text-lg font-bold text-gray-900 ${isBlindMode ? "" : "hover:text-blue-600 cursor-pointer hover:underline"}`}
+                          className={`text-lg font-bold text-gray-900 dark:text-gray-200 ${isBlindMode ? "" : "hover:text-blue-600 cursor-pointer hover:underline"}`}
                         >
                           {isBlindMode ? `Developer #${app.applicationId.slice(-4).toUpperCase()}` : app.studentName}
                         </h4>
                         {!isBlindMode && (
                           <button
                             onClick={() => navigate(`/chat/${app.studentEmail}`)}
-                            className="text-[10px] bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold border border-purple-200/50 px-2.5 py-0.5 rounded-full transition shadow-sm"
+                            className="text-[10px] bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold border border-purple-200 dark:border-slate-800/50 px-2.5 py-0.5 rounded-full transition shadow-sm"
                           >
                             Chat
                           </button>
@@ -489,7 +489,7 @@ export default function ApplicantsHub() {
                       <span className="text-[10px] uppercase font-bold text-gray-400 block mb-1">Declared Skills</span>
                       <div className="flex flex-wrap gap-1">
                         {(app.skills || "").split(",").map(s => s.trim()).filter(Boolean).map((skill, idx) => (
-                          <span key={idx} className="bg-gray-50 text-gray-600 text-[10px] font-medium px-2 py-0.5 rounded border border-gray-100">
+                          <span key={idx} className="bg-gray-50 dark:bg-slate-900 text-gray-600 text-[10px] font-medium px-2 py-0.5 rounded border border-gray-100 dark:border-slate-800">
                             {skill}
                           </span>
                         ))}
@@ -497,8 +497,8 @@ export default function ApplicantsHub() {
                     </div>
 
                     {app.aiRationale && (
-                      <div className="bg-purple-50/40 border border-purple-100/65 p-3 rounded-xl text-left max-w-lg mt-2">
-                        <p className="text-[9px] font-extrabold text-purple-950 flex items-center gap-1 uppercase tracking-wider">
+                      <div className="bg-purple-50/40 border border-purple-100 dark:border-slate-800/65 p-3 rounded-xl text-left max-w-lg mt-2">
+                        <p className="text-[9px] font-extrabold text-purple-950 dark:text-purple-200 flex items-center gap-1 uppercase tracking-wider">
                           <span>🤖</span> AI Matching Insights
                         </p>
                         <p className="text-[10px] text-purple-700 font-semibold leading-relaxed mt-0.5">
@@ -509,7 +509,7 @@ export default function ApplicantsHub() {
                   </div>
 
                   {/* Middle block: Matching Score Gauge */}
-                  <div className="flex flex-row lg:flex-col justify-between lg:justify-center items-center gap-2 border-t lg:border-t-0 lg:border-l lg:border-r border-gray-100 pt-4 lg:pt-0 px-0 lg:px-8 min-w-[120px]">
+                  <div className="flex flex-row lg:flex-col justify-between lg:justify-center items-center gap-2 border-t lg:border-t-0 lg:border-l lg:border-r border-gray-100 dark:border-slate-800 pt-4 lg:pt-0 px-0 lg:px-8 min-w-[120px]">
                     <div className="text-left lg:text-center">
                       <span className="text-[9px] uppercase font-bold text-gray-400 block">Match Score</span>
                       <span className={`text-2xl font-black ${
@@ -521,7 +521,7 @@ export default function ApplicantsHub() {
                       </span>
                     </div>
                     
-                    <div className="w-16 bg-gray-100 h-1.5 rounded-full overflow-hidden">
+                    <div className="w-16 bg-gray-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
                       <div 
                         className={`h-full ${
                           app.matchScore >= 75 ? "bg-green-500" :
@@ -534,7 +534,7 @@ export default function ApplicantsHub() {
                   </div>
 
                   {/* Right block: Action links & buttons */}
-                  <div className="flex flex-col justify-between items-stretch lg:items-end gap-4 border-t lg:border-t-0 border-gray-100 pt-4 lg:pt-0 min-w-[200px]">
+                  <div className="flex flex-col justify-between items-stretch lg:items-end gap-4 border-t lg:border-t-0 border-gray-100 dark:border-slate-800 pt-4 lg:pt-0 min-w-[200px]">
                     <div className="text-left lg:text-right space-y-1.5">
                       <p className="text-[10px] text-gray-400 font-bold">Applied: {new Date(app.appliedAt).toLocaleDateString()}</p>
                       {app.resumeUrl ? (
@@ -682,9 +682,9 @@ export default function ApplicantsHub() {
       {/* Audit Review Overlay Modal */}
       {showReviewModal && activeAppToReview && (
         <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl p-6 border animate-fade-in">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full shadow-2xl p-6 border animate-fade-in">
             <div className="flex justify-between items-center border-b pb-3 mb-4">
-              <h3 className="font-bold text-base text-gray-900">Verify Student Solution: {activeAppToReview.studentName}</h3>
+              <h3 className="font-bold text-base text-gray-900 dark:text-gray-200">Verify Student Solution: {activeAppToReview.studentName}</h3>
               <button onClick={() => { setShowReviewModal(false); setFeedbackText(""); setRating(0); setRatingReview(""); }} className="text-gray-400 hover:text-gray-600 text-lg">×</button>
             </div>
             
@@ -695,7 +695,7 @@ export default function ApplicantsHub() {
                 <select
                   value={selectedVerIdx}
                   onChange={(e) => setSelectedVerIdx(Number(e.target.value))}
-                  className="bg-white border text-xs px-2 py-1 rounded-lg outline-none font-bold cursor-pointer"
+                  className="bg-white dark:bg-slate-900 border text-xs px-2 py-1 rounded-lg outline-none font-bold cursor-pointer"
                 >
                   {activeAppToReview.submissionVersions.map((v, i) => (
                     <option key={i} value={i}>
@@ -714,13 +714,13 @@ export default function ApplicantsHub() {
                 : activeAppToReview;
 
               return (
-                <div className="bg-gray-50 border border-gray-100 p-4 rounded-xl mb-4 space-y-3 text-xs">
-                  <p className="text-gray-700">
-                    <strong className="text-gray-900">Project Gigs:</strong> {activeAppToReview.projectTitle}
+                <div className="bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-800 p-4 rounded-xl mb-4 space-y-3 text-xs">
+                  <p className="text-gray-700 dark:text-gray-200">
+                    <strong className="text-gray-900 dark:text-gray-200">Project Gigs:</strong> {activeAppToReview.projectTitle}
                   </p>
                   <div className="flex justify-between items-center gap-2">
-                    <p className="text-gray-700 truncate flex-1">
-                      <strong className="text-gray-900">Submitted URL:</strong>{" "}
+                    <p className="text-gray-700 dark:text-gray-200 truncate flex-1">
+                      <strong className="text-gray-900 dark:text-gray-200">Submitted URL:</strong>{" "}
                       <a href={currentVer.submissionLink} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline break-all font-bold">
                         {currentVer.submissionLink} ↗
                       </a>
@@ -738,28 +738,28 @@ export default function ApplicantsHub() {
                     </button>
                   </div>
                   {currentVer.githubRepoUrl && (
-                    <p className="text-gray-700">
-                      <strong className="text-gray-900">GitHub Code Repo:</strong>{" "}
+                    <p className="text-gray-700 dark:text-gray-200">
+                      <strong className="text-gray-900 dark:text-gray-200">GitHub Code Repo:</strong>{" "}
                       <a href={currentVer.githubRepoUrl} target="_blank" rel="noreferrer" className="text-purple-600 hover:underline break-all font-bold">
                         {currentVer.githubRepoUrl} ↗
                       </a>
                     </p>
                   )}
                   {currentVer.liveDeploymentUrl && (
-                    <p className="text-gray-700">
-                      <strong className="text-gray-900">Live Preview URL:</strong>{" "}
+                    <p className="text-gray-700 dark:text-gray-200">
+                      <strong className="text-gray-900 dark:text-gray-200">Live Preview URL:</strong>{" "}
                       <a href={currentVer.liveDeploymentUrl} target="_blank" rel="noreferrer" className="text-emerald-600 hover:underline break-all font-bold">
                         {currentVer.liveDeploymentUrl} ↗
                       </a>
                     </p>
                   )}
-                  <p className="text-gray-700 leading-normal">
-                    <strong className="text-gray-900">Solution Description:</strong> {currentVer.submissionText}
+                  <p className="text-gray-700 dark:text-gray-200 leading-normal">
+                    <strong className="text-gray-900 dark:text-gray-200">Solution Description:</strong> {currentVer.submissionText}
                   </p>
 
                   {/* Rubric display */}
                   {currentVer.selfAssessment && (
-                    <div className="bg-white border rounded-xl p-3 space-y-1.5">
+                    <div className="bg-white dark:bg-slate-900 border rounded-xl p-3 space-y-1.5">
                       <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">Student Rubric Self-Ratings:</span>
                       <div className="grid grid-cols-3 gap-2 text-center text-[11px]">
                         <div className="bg-slate-50 p-1.5 rounded-lg">
@@ -798,7 +798,7 @@ export default function ApplicantsHub() {
                     <div className={`p-2.5 rounded-xl border text-[11px] ${
                       activeAppToReview.plagiarismScore > 70
                         ? "bg-red-50 border-red-100 text-red-800 font-extrabold"
-                        : "bg-slate-50 border-slate-200 text-slate-700"
+                        : "bg-slate-50 border-slate-200 dark:border-slate-800 text-slate-700"
                     }`}>
                       <p>
                         ⚠️ Code Similarity Audit: Match score {activeAppToReview.plagiarismScore}%.
@@ -829,7 +829,7 @@ export default function ApplicantsHub() {
 
                   {/* Figma Live Embed preview */}
                   {currentVer.submissionLink && (currentVer.submissionLink.includes("figma.com") || currentVer.submissionLink.includes("figma.fun")) && (
-                    <div className="border rounded-xl overflow-hidden mt-3 shadow-sm bg-white">
+                    <div className="border rounded-xl overflow-hidden mt-3 shadow-sm bg-white dark:bg-slate-900">
                       <p className="text-[9px] uppercase font-bold text-gray-400 bg-slate-100 px-3 py-1.5 border-b select-none">🎨 Figma Interactive Live Preview</p>
                       <iframe
                         src={`https://www.figma.com/embed?embed_host=workmitra&url=${encodeURIComponent(currentVer.submissionLink)}`}
@@ -856,7 +856,7 @@ export default function ApplicantsHub() {
                   value={feedbackText}
                   onChange={(e) => setFeedbackText(e.target.value)}
                   rows={3}
-                  className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                  className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
                   required
                 />
               </div>
@@ -864,7 +864,7 @@ export default function ApplicantsHub() {
               {/* Public Star Rating and Review */}
               <div className="border-t pt-3 space-y-3">
                 <div>
-                  <label className="block text-[10px] font-extrabold text-purple-950 uppercase tracking-wider mb-1">Candidate Rating</label>
+                  <label className="block text-[10px] font-extrabold text-purple-950 dark:text-purple-200 uppercase tracking-wider mb-1">Candidate Rating</label>
                   <div className="flex items-center gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
@@ -881,13 +881,13 @@ export default function ApplicantsHub() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-extrabold text-purple-950 uppercase tracking-wider mb-1">Performance Review Notes</label>
+                  <label className="block text-[10px] font-extrabold text-purple-950 dark:text-purple-200 uppercase tracking-wider mb-1">Performance Review Notes</label>
                   <textarea
                     placeholder="Provide a public rating review statement for the candidate (e.g. Excellent delivery timeline, proactive communication)..."
                     value={ratingReview}
                     onChange={(e) => setRatingReview(e.target.value)}
                     rows={2}
-                    className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
+                    className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
                   />
                 </div>
               </div>
@@ -915,7 +915,7 @@ export default function ApplicantsHub() {
                   <button
                     type="button"
                     onClick={() => { setShowReviewModal(false); setFeedbackText(""); setRating(0); setRatingReview(""); }}
-                    className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 transition"
+                    className="px-4 py-2 border border-gray-200 dark:border-slate-800 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
                   >
                     Cancel
                   </button>

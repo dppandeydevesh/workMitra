@@ -126,7 +126,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-white/80 backdrop-blur-md shadow-md sticky top-0 z-50 transition-all border-b border-gray-100">
+    <nav className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-md sticky top-0 z-50 transition-all border-b border-gray-100 dark:border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -155,7 +155,7 @@ export default function Navbar() {
                   className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ${
                     isActive 
                       ? "bg-indigo-50 text-indigo-700 shadow-sm border border-indigo-100/50" 
-                      : "text-gray-600 hover:text-indigo-600 hover:bg-gray-50"
+                      : "text-gray-600 hover:text-indigo-600 hover:bg-gray-50 dark:bg-slate-900"
                   }`}
                 >
                   <span>{link.icon}</span>
@@ -169,7 +169,7 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setNotificationsOpen(!notificationsOpen)}
-                  className="relative text-gray-500 hover:text-indigo-600 p-2 rounded-full hover:bg-gray-100 transition focus:outline-none"
+                  className="relative text-gray-500 hover:text-indigo-600 p-2 rounded-full hover:bg-gray-100 dark:bg-slate-800 transition focus:outline-none"
                 >
                   <span className="text-lg">🔔</span>
                   {notifications.length > 0 && (
@@ -179,7 +179,7 @@ export default function Navbar() {
 
                 {/* Dropdown */}
                 {notificationsOpen && (
-                  <div className="absolute right-0 top-12 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 w-80 max-h-96 overflow-y-auto z-50 text-left animate-slide-in-up">
+                  <div className="absolute right-0 top-12 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-800 p-4 w-80 max-h-96 overflow-y-auto z-50 text-left animate-slide-in-up">
                     <h4 className="font-extrabold text-[10px] text-gray-400 uppercase tracking-wider mb-3">Notification Logs ({notifications.length})</h4>
                     {notifications.length === 0 ? (
                       <p className="text-xs text-gray-400 italic text-center py-4">No recent status alerts</p>
@@ -205,7 +205,7 @@ export default function Navbar() {
             {/* Language Toggle */}
             <button
               onClick={() => i18n.changeLanguage(i18n.language?.startsWith('en') ? 'hi' : 'en')}
-              className="p-2 text-xs font-bold text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition focus:outline-none"
+              className="p-2 text-xs font-bold text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition focus:outline-none"
             >
               {i18n.language?.startsWith('en') ? 'हिन्दी' : 'EN'}
             </button>
@@ -213,7 +213,7 @@ export default function Navbar() {
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
-              className="p-2 text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition focus:outline-none"
+              className="p-2 text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition focus:outline-none"
               title="Toggle theme mode"
             >
               <span className="text-lg">{theme === "dark" ? "☀️" : "🌙"}</span>
@@ -235,7 +235,7 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setNotificationsOpen(!notificationsOpen)}
-                  className="relative text-gray-500 hover:text-indigo-600 p-2 rounded-full hover:bg-gray-100 transition focus:outline-none"
+                  className="relative text-gray-500 hover:text-indigo-600 p-2 rounded-full hover:bg-gray-100 dark:bg-slate-800 transition focus:outline-none"
                 >
                   <span className="text-lg">🔔</span>
                   {notifications.length > 0 && (
@@ -244,7 +244,7 @@ export default function Navbar() {
                 </button>
                 
                 {notificationsOpen && (
-                  <div className="absolute right-0 top-12 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 w-72 max-h-96 overflow-y-auto z-50 text-left">
+                  <div className="absolute right-0 top-12 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-800 p-4 w-72 max-h-96 overflow-y-auto z-50 text-left">
                     <h4 className="font-extrabold text-[10px] text-gray-400 uppercase tracking-wider mb-3">Notification Logs ({notifications.length})</h4>
                     {notifications.length === 0 ? (
                       <p className="text-xs text-gray-400 italic text-center py-4">No recent status alerts</p>
@@ -270,14 +270,14 @@ export default function Navbar() {
             {/* Language Toggle */}
             <button
               onClick={() => i18n.changeLanguage(i18n.language?.startsWith('en') ? 'hi' : 'en')}
-              className="p-2 text-xs font-bold text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition focus:outline-none"
+              className="p-2 text-xs font-bold text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition focus:outline-none"
             >
               {i18n.language?.startsWith('en') ? 'हिन्दी' : 'EN'}
             </button>
 
             <button
               onClick={toggleTheme}
-              className="p-2 text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition focus:outline-none"
+              className="p-2 text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition focus:outline-none"
               title="Toggle theme mode"
             >
               <span className="text-lg">{theme === "dark" ? "☀️" : "🌙"}</span>
@@ -285,7 +285,7 @@ export default function Navbar() {
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-gray-500 hover:text-indigo-600 p-2 rounded-lg hover:bg-gray-100 transition focus:outline-none"
+              className="text-gray-500 hover:text-indigo-600 p-2 rounded-lg hover:bg-gray-100 dark:bg-slate-800 transition focus:outline-none"
             >
               <span className="text-xl">{mobileMenuOpen ? "✕" : "☰"}</span>
             </button>
@@ -295,7 +295,7 @@ export default function Navbar() {
 
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-4 py-3 space-y-1.5 shadow-inner">
+        <div className="md:hidden bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-slate-800 px-4 py-3 space-y-1.5 shadow-inner">
           {activeLinks.map((link) => {
             const isActive = location.pathname.startsWith(link.path);
             return (
@@ -305,7 +305,7 @@ export default function Navbar() {
                 className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition ${
                   isActive 
                     ? "bg-indigo-50 text-indigo-700 border border-indigo-100/50" 
-                    : "text-gray-600 hover:text-indigo-600 hover:bg-gray-50"
+                    : "text-gray-600 hover:text-indigo-600 hover:bg-gray-50 dark:bg-slate-900"
                 }`}
               >
                 <span>{link.icon}</span>

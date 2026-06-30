@@ -49,7 +49,7 @@ export default function Dashboard() {
               <span className={`px-1.5 py-0.5 rounded font-extrabold transition-all uppercase ${
                 isActive ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-sm" :
                 isCompleted ? "bg-purple-100 text-purple-700 font-semibold" :
-                "bg-gray-100 text-gray-400 font-normal"
+                "bg-gray-100 dark:bg-slate-800 text-gray-400 font-normal"
               }`}>
                 {step.label}
               </span>
@@ -580,10 +580,10 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Dashboard Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-6 mb-6 gap-4">
             <div>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-2 flex items-center flex-wrap gap-2">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-2 flex items-center flex-wrap gap-2">
                 Welcome, {currentUser?.fullName || "Student"}!
                 {currentUser?.isEndorsed && (
                   <span className="bg-emerald-50 border border-emerald-100 text-emerald-600 text-[9px] font-black px-2 py-0.5 rounded-full select-none">
@@ -653,8 +653,8 @@ export default function Dashboard() {
           {/* 🚀 STUDENT ACTIVE GIGS & APPLICATIONS SECTION                              */}
           {/* ========================================================================= */}
           {currentUser && currentUser.userRole !== "company" && (
-            <div id="gigs-section" className="mt-12 pt-8 border-t border-gray-100">
-              <h2 className="text-lg sm:text-2xl font-bold text-gray-800 mb-2">My Gigs & Applications</h2>
+            <div id="gigs-section" className="mt-12 pt-8 border-t border-gray-100 dark:border-slate-800">
+              <h2 className="text-lg sm:text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">My Gigs & Applications</h2>
               <p className="text-sm text-gray-500 mb-6">Track your job applications and submit tasks for payout verification.</p>
 
               {myApplications.length === 0 ? (
@@ -670,7 +670,7 @@ export default function Dashboard() {
                       <div 
                         key={app._id} 
                         onClick={() => navigate(`/project/${project._id}`)}
-                        className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition cursor-pointer"
+                        className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition cursor-pointer"
                       >
                         <div>
                           <div className="flex justify-between items-center mb-3">
@@ -679,7 +679,7 @@ export default function Dashboard() {
                             </span>
                             {renderStepper(app.status)}
                           </div>
-                          <h4 className="text-sm font-bold text-gray-900 mb-1">{project.title}</h4>
+                          <h4 className="text-sm font-bold text-gray-900 dark:text-gray-200 mb-1">{project.title}</h4>
                           <p className="text-xs text-gray-400 mb-2">Company: {project.companyId && project.companyId.email ? project.companyId.email.split("@")[0].toUpperCase() : "COMPANY"}</p>
                           <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed mb-4">{project.description}</p>
                         </div>
@@ -707,7 +707,7 @@ export default function Dashboard() {
                           </div>
 
                           {app.extensionRequests && app.extensionRequests.length > 0 && (
-                            <div className="text-[10px] bg-slate-50 border border-slate-100 p-2 rounded-xl flex justify-between items-center">
+                            <div className="text-[10px] bg-slate-50 border border-slate-100 dark:border-slate-800 p-2 rounded-xl flex justify-between items-center">
                               <span className="text-slate-400 font-bold">Extension status:</span>
                               <span className={`font-black uppercase text-[9px] ${
                                 app.extensionRequests[app.extensionRequests.length - 1].status === "Approved"
@@ -770,11 +770,11 @@ export default function Dashboard() {
           {/* 🧠 workMitra AI CV ANALYZER & CRITIQUE DASHBOARD                          */}
           {/* ========================================================================= */}
           {currentUser && currentUser.userRole !== "company" && (
-            <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-100 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
+            <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-100 dark:border-slate-800 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
               {/* Left Panel: Inputs for CV share link and Raw Text */}
-              <div className="lg:col-span-1 bg-white border border-gray-200 p-4 sm:p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+              <div className="lg:col-span-1 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 p-4 sm:p-6 rounded-2xl shadow-sm flex flex-col justify-between">
                 <div>
-                  <h3 className="text-lg font-bold text-gray-800 mb-1 flex items-center gap-1.5">
+                  <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-1 flex items-center gap-1.5">
                     <span>🧠 AI CV Reviewer</span>
                     <span className="bg-indigo-100 text-indigo-800 text-[8px] font-extrabold px-1.5 py-0.5 rounded uppercase">pro</span>
                   </h3>
@@ -783,7 +783,7 @@ export default function Dashboard() {
                   <form onSubmit={handleUpdateResumeDetails} className="space-y-4">
                     <div>
                       <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Upload CV PDF (Auto-Extract Details)</label>
-                      <div className="relative border-2 border-dashed border-gray-200 rounded-xl p-3 text-center hover:border-indigo-400 transition cursor-pointer bg-gray-50/50">
+                      <div className="relative border-2 border-dashed border-gray-200 dark:border-slate-800 rounded-xl p-3 text-center hover:border-indigo-400 transition cursor-pointer bg-gray-50/50">
                         <input
                           type="file"
                           accept=".pdf"
@@ -799,7 +799,7 @@ export default function Dashboard() {
                         ) : (
                           <div className="space-y-1">
                             <div className="text-base">📄</div>
-                            <div className="text-[10px] font-bold text-gray-700">Drag & Drop or Click to Upload PDF</div>
+                            <div className="text-[10px] font-bold text-gray-700 dark:text-gray-200">Drag & Drop or Click to Upload PDF</div>
                             <div className="text-[9px] text-gray-400">PDF format up to 5MB</div>
                           </div>
                         )}
@@ -849,7 +849,7 @@ export default function Dashboard() {
                 ) : cvReport ? (
                   <div className="space-y-6">
                     {/* Header: Score Ring */}
-                    <div className="flex justify-between items-center border-b border-white/10 pb-4">
+                    <div className="flex justify-between items-center border-b border-white/10 dark:border-slate-800/10 pb-4">
                       <div>
                         <h4 className="text-base font-bold text-white">AI Quality Critique Report</h4>
                         <p className="text-[10px] text-indigo-300 font-medium mt-0.5">Powered by Gemini 1.5 Flash</p>
@@ -859,7 +859,7 @@ export default function Dashboard() {
                           <p className="text-[9px] uppercase font-bold text-indigo-300">Quality Score</p>
                           <p className="text-2xl font-black text-indigo-400">{cvReport.score}/100</p>
                         </div>
-                        <div className="relative w-12 h-12 flex items-center justify-center rounded-full bg-white/10 border-2 border-indigo-400">
+                        <div className="relative w-12 h-12 flex items-center justify-center rounded-full bg-white/10 dark:bg-slate-900/10 border-2 border-indigo-400">
                           <span className="text-[11px] font-black">{cvReport.score}%</span>
                         </div>
                       </div>
@@ -890,7 +890,7 @@ export default function Dashboard() {
                     </div>
 
                     {/* Recommendations Alert Box */}
-                    <div className="bg-white/5 border border-white/10 p-4 rounded-xl">
+                    <div className="bg-white/5 dark:bg-slate-900/5 border border-white/10 dark:border-slate-800/10 p-4 rounded-xl">
                       <h5 className="text-[10px] font-extrabold uppercase text-indigo-300 mb-1">workMitra AI Actionable Recommendations</h5>
                       <p className="text-xs text-slate-200 leading-relaxed italic">
                         "{cvReport.recommendations}"
@@ -898,7 +898,7 @@ export default function Dashboard() {
                     </div>
 
                     {/* Skill Gap Analyzer */}
-                    <div className="bg-white/5 border border-white/10 p-4 rounded-xl text-left">
+                    <div className="bg-white/5 dark:bg-slate-900/5 border border-white/10 dark:border-slate-800/10 p-4 rounded-xl text-left">
                       <h5 className="text-[10px] font-extrabold uppercase text-indigo-300 mb-2 flex items-center gap-1.5 justify-between">
                         <span>🔍 Skill Gap Analyzer</span>
                         <span className="bg-indigo-500/20 text-indigo-300 text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">Live Demands</span>
@@ -960,8 +960,8 @@ export default function Dashboard() {
           {/* ========================================================================= */}
           {/* 🚀 DEPLOYED COMPANY PROJECTS MARKETPLACE BLOCK                            */}
           {/* ========================================================================= */}
-          <div id="projects-section" className="mt-12 pt-8 border-t border-gray-100">
-            <h2 className="text-lg sm:text-2xl font-bold text-gray-800 mb-2">Deployed Company Projects</h2>
+          <div id="projects-section" className="mt-12 pt-8 border-t border-gray-100 dark:border-slate-800">
+            <h2 className="text-lg sm:text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">Deployed Company Projects</h2>
             <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">Explore the latest real-world tasks deployed by verified companies.</p>
 
             {/* AI Top Picks */}
@@ -973,7 +973,7 @@ export default function Dashboard() {
                 {loadingAiPicks ? (
                   <div className="flex space-x-4 overflow-x-auto pb-4 hide-scrollbar">
                     {[1, 2, 3].map(i => (
-                      <div key={i} className="min-w-[280px] sm:min-w-[320px] h-32 bg-gray-100 animate-pulse rounded-2xl border border-gray-200"></div>
+                      <div key={i} className="min-w-[280px] sm:min-w-[320px] h-32 bg-gray-100 dark:bg-slate-800 animate-pulse rounded-2xl border border-gray-200 dark:border-slate-800"></div>
                     ))}
                   </div>
                 ) : aiTopPicks.length > 0 ? (
@@ -982,11 +982,11 @@ export default function Dashboard() {
                       <div 
                         key={project._id}
                         onClick={() => navigate(`/project/${project._id}`)}
-                        className="min-w-[280px] sm:min-w-[320px] bg-white rounded-2xl border border-purple-100 p-5 shadow-[0_0_15px_rgba(168,85,247,0.15)] hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] transition cursor-pointer flex flex-col justify-between"
+                        className="min-w-[280px] sm:min-w-[320px] bg-white dark:bg-slate-900 rounded-2xl border border-purple-100 dark:border-slate-800 p-5 shadow-[0_0_15px_rgba(168,85,247,0.15)] hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] transition cursor-pointer flex flex-col justify-between"
                       >
                         <div>
                           <div className="flex justify-between items-start mb-2">
-                            <h4 className="font-bold text-gray-900 text-sm truncate pr-2">{project.title}</h4>
+                            <h4 className="font-bold text-gray-900 dark:text-gray-200 text-sm truncate pr-2">{project.title}</h4>
                             <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm">
                               Top Match
                             </span>
@@ -1001,7 +1001,7 @@ export default function Dashboard() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-[11px] text-gray-400 bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+                  <div className="text-[11px] text-gray-400 bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-xl p-4 text-center">
                     No AI recommendations available right now. Update your resume and skills!
                   </div>
                 )}
@@ -1009,7 +1009,7 @@ export default function Dashboard() {
             )}
 
             {/* Marketplace Filters Panel */}
-            <div className="bg-gray-50/60 border border-gray-100 p-4 rounded-2xl mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="bg-gray-50/60 border border-gray-100 dark:border-slate-800 p-4 rounded-2xl mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
               <div className="relative">
                 <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">Search Keywords</label>
                 <input
@@ -1019,7 +1019,7 @@ export default function Dashboard() {
                   onChange={(e) => { setSearchTerm(e.target.value); setShowSearchSuggestions(true); }}
                   onFocus={() => setShowSearchSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 250)}
-                  className="w-full bg-white border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
                 {showSearchSuggestions && searchTerm && (
                   <div className="absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-50 max-h-48 overflow-y-auto text-left dark:bg-slate-950 dark:border-slate-800">
@@ -1058,7 +1058,7 @@ export default function Dashboard() {
                 <select
                   value={skillFilter}
                   onChange={(e) => setSkillFilter(e.target.value)}
-                  className="w-full bg-white border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
                   <option value="All">All Skills</option>
                   {uniqueSkillsList.map((skill, idx) => (
@@ -1071,7 +1071,7 @@ export default function Dashboard() {
                 <select
                   value={workTypeFilter}
                   onChange={(e) => setWorkTypeFilter(e.target.value)}
-                  className="w-full bg-white border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
                   <option value="All">All Types</option>
                   <option value="Internship">Internship</option>
@@ -1104,7 +1104,7 @@ export default function Dashboard() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full bg-white border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
                   <option value="latest">Newest</option>
                   <option value="budgetHigh">Highest Budget</option>
@@ -1124,7 +1124,7 @@ export default function Dashboard() {
                 🔄 Fetching live corporate projects from database...
               </div>
             ) : filteredProjects.length === 0 ? (
-              <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 font-medium bg-gray-50/50">
+              <div className="text-center py-12 border-2 border-dashed border-gray-200 dark:border-slate-800 rounded-xl text-gray-400 font-medium bg-gray-50/50">
                 📭 No projects match your current filter settings.
               </div>
             ) : (
@@ -1136,7 +1136,7 @@ export default function Dashboard() {
                     <div 
                       key={project._id}
                       onClick={() => navigate(`/project/${project._id}`)}
-                      className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm flex flex-col justify-between hover:border-blue-400 hover:shadow-md transition-all duration-200 cursor-pointer"
+                      className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 p-4 sm:p-6 shadow-sm flex flex-col justify-between hover:border-blue-400 hover:shadow-md transition-all duration-200 cursor-pointer"
                     >
                       <div>
                         <div className="flex justify-between items-center mb-3">
@@ -1148,12 +1148,12 @@ export default function Dashboard() {
                               🧠 {project.aiRecommendationScore}% Match
                             </span>
                           )}
-                          <span className="bg-gray-100 text-gray-600 text-[11px] font-semibold px-2.5 py-1 rounded-md">
+                          <span className="bg-gray-100 dark:bg-slate-800 text-gray-600 text-[11px] font-semibold px-2.5 py-1 rounded-md">
                             📍 {project.workType || "Internship"}
                           </span>
                         </div>
 
-                        <h4 className="text-base font-bold text-gray-900 mb-2">
+                        <h4 className="text-base font-bold text-gray-900 dark:text-gray-200 mb-2">
                           {project.title}
                         </h4>
                         
@@ -1165,7 +1165,7 @@ export default function Dashboard() {
                       <div className="border-t pt-4 mt-2 space-y-3">
                         <div className="flex flex-wrap gap-1">
                           {project.requiredSkills?.map((skill, index) => (
-                            <span key={index} className="bg-gray-50 text-gray-600 text-[10px] font-medium px-2 py-0.5 rounded border border-gray-100">
+                            <span key={index} className="bg-gray-50 dark:bg-slate-900 text-gray-600 text-[10px] font-medium px-2 py-0.5 rounded border border-gray-100 dark:border-slate-800">
                               {skill}
                             </span>
                           ))}
@@ -1182,7 +1182,7 @@ export default function Dashboard() {
                           {/* Interface State Management */}
                           <div className="flex gap-2 flex-wrap">
                             {currentUser?.userRole === "company" ? (
-                              <button className="bg-gray-100 text-gray-500 font-bold text-xs px-4 py-2 rounded-lg cursor-not-allowed border" disabled>
+                              <button className="bg-gray-100 dark:bg-slate-800 text-gray-500 font-bold text-xs px-4 py-2 rounded-lg cursor-not-allowed border" disabled>
                                 Company View
                               </button>
                             ) : (
@@ -1201,7 +1201,7 @@ export default function Dashboard() {
                             {currentUser?.userRole === "student" && (
                               <button
                                 onClick={(e) => { e.stopPropagation(); navigate(`/chat/${project.companyId.email}`); }}
-                                className="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm"
+                                className="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 dark:border-slate-800 font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm"
                               >
                                 Chat
                               </button>
@@ -1223,8 +1223,8 @@ export default function Dashboard() {
                   disabled={page === 1}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm ${
                     page === 1 
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed" 
-                      : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"
+                      ? "bg-gray-100 dark:bg-slate-800 text-gray-400 cursor-not-allowed" 
+                      : "bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50"
                   }`}
                 >
                   Previous
@@ -1235,8 +1235,8 @@ export default function Dashboard() {
                   disabled={projects.length < limit}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm ${
                     projects.length < limit
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed" 
-                      : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"
+                      ? "bg-gray-100 dark:bg-slate-800 text-gray-400 cursor-not-allowed" 
+                      : "bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50"
                   }`}
                 >
                   Next
@@ -1249,9 +1249,9 @@ export default function Dashboard() {
           {/* ========================================================================= */}
           {showSubmitModal && activeAppToSubmit && (
             <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-              <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl p-6 border overflow-y-auto max-h-[90vh] animate-fade-in text-left">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full shadow-2xl p-6 border overflow-y-auto max-h-[90vh] animate-fade-in text-left">
                 <div className="flex justify-between items-center border-b pb-3 mb-4">
-                  <h3 className="font-black text-sm text-gray-900 uppercase tracking-wider">Submit Work: {activeAppToSubmit.projectId.title}</h3>
+                  <h3 className="font-black text-sm text-gray-900 dark:text-gray-200 uppercase tracking-wider">Submit Work: {activeAppToSubmit.projectId.title}</h3>
                   <button onClick={() => setShowSubmitModal(false)} className="text-gray-400 hover:text-gray-600 text-lg font-black">×</button>
                 </div>
                 <form onSubmit={handleSubmitWork} className="space-y-4">
@@ -1262,7 +1262,7 @@ export default function Dashboard() {
                       placeholder="https://drive.google.com/..."
                       value={submissionLink}
                       onChange={(e) => { setSubmissionLink(e.target.value); saveDraft({ submissionLink: e.target.value }); }}
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                       required
                     />
                   </div>
@@ -1273,7 +1273,7 @@ export default function Dashboard() {
                       placeholder="https://github.com/username/repo"
                       value={githubRepoUrl}
                       onChange={(e) => { setGithubRepoUrl(e.target.value); saveDraft({ githubRepoUrl: e.target.value }); }}
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
                   <div>
@@ -1283,7 +1283,7 @@ export default function Dashboard() {
                       placeholder="https://project.vercel.app"
                       value={liveDeploymentUrl}
                       onChange={(e) => { setLiveDeploymentUrl(e.target.value); saveDraft({ liveDeploymentUrl: e.target.value }); }}
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
                   <div>
@@ -1293,7 +1293,7 @@ export default function Dashboard() {
                       value={submissionText}
                       onChange={(e) => { setSubmissionText(e.target.value); saveDraft({ submissionText: e.target.value }); }}
                       rows={3}
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
                       required
                     />
                   </div>
@@ -1385,7 +1385,7 @@ export default function Dashboard() {
                             placeholder="e.g. Gemini 2.5, GitHub Copilot"
                             value={aiToolsUsed}
                             onChange={(e) => { setAiToolsUsed(e.target.value); saveDraft({ aiToolsUsed: e.target.value }); }}
-                            className="w-full bg-white border border-gray-200 text-xs px-3.5 py-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                            className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-400"
                           />
                         </div>
                       </div>
@@ -1396,7 +1396,7 @@ export default function Dashboard() {
                     <button
                       type="button"
                       onClick={() => setShowSubmitModal(false)}
-                      className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 transition"
+                      className="px-4 py-2 border border-gray-200 dark:border-slate-800 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
                     >
                       Cancel
                     </button>
@@ -1415,9 +1415,9 @@ export default function Dashboard() {
           {/* ⏳ DEADLINE EXTENSION REQUEST MODAL */}
           {showExtensionModal && activeAppToExtend && (
             <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-              <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl p-6 border animate-fade-in text-left">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full shadow-2xl p-6 border animate-fade-in text-left">
                 <div className="flex justify-between items-center border-b pb-3 mb-4">
-                  <h3 className="font-bold text-base text-gray-900">Request Deadline Extension</h3>
+                  <h3 className="font-bold text-base text-gray-900 dark:text-gray-200">Request Deadline Extension</h3>
                   <button onClick={() => setShowExtensionModal(false)} className="text-gray-400 hover:text-gray-600 text-lg">×</button>
                 </div>
                 <form onSubmit={handleRequestExtensionSubmit} className="space-y-4">
@@ -1429,7 +1429,7 @@ export default function Dashboard() {
                       max="7"
                       value={extensionDays}
                       onChange={(e) => setExtensionDays(e.target.value)}
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none"
                       required
                     />
                   </div>
@@ -1440,7 +1440,7 @@ export default function Dashboard() {
                       value={extensionReason}
                       onChange={(e) => setExtensionReason(e.target.value)}
                       rows={4}
-                      className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none resize-none"
+                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none resize-none"
                       required
                     />
                   </div>
@@ -1448,7 +1448,7 @@ export default function Dashboard() {
                     <button
                       type="button"
                       onClick={() => setShowExtensionModal(false)}
-                      className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 transition"
+                      className="px-4 py-2 border border-gray-200 dark:border-slate-800 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
                     >
                       Cancel
                     </button>
@@ -1469,7 +1469,7 @@ export default function Dashboard() {
           {/* 💳 Razorpay Gateway Simulation Checkout Modal */}
           {showCheckoutModal && (
             <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in select-none">
-              <div className="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-gray-100 flex flex-col text-left">
+              <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-gray-100 dark:border-slate-800 flex flex-col text-left">
                 
                 {/* Razorpay branding header bar */}
                 <div className="bg-slate-900 text-white px-6 py-4 flex justify-between items-center">
@@ -1490,7 +1490,7 @@ export default function Dashboard() {
                   <div className="p-6 space-y-4">
                     <div className="text-center">
                       <span className="text-3xl">🛡️</span>
-                      <h3 className="text-base font-black text-gray-800 mt-2">Unlock Student Premium Pass</h3>
+                      <h3 className="text-base font-black text-gray-800 dark:text-gray-200 mt-2">Unlock Student Premium Pass</h3>
                       <p className="text-xs text-gray-400 mt-1">Unlock premium AI match resume scores and priority applications.</p>
                     </div>
                     
@@ -1499,7 +1499,7 @@ export default function Dashboard() {
                         <span className="text-[10px] font-black text-indigo-700 uppercase">Premium Plan</span>
                         <span className="text-xs font-semibold text-gray-600 block mt-0.5">30-Days Unlimited Access</span>
                       </div>
-                      <span className="text-xl font-black text-gray-800">₹39</span>
+                      <span className="text-xl font-black text-gray-800 dark:text-gray-200">₹39</span>
                     </div>
 
                     <div className="space-y-2.5">
@@ -1508,7 +1508,7 @@ export default function Dashboard() {
                         type="text"
                         placeholder="Mobile number (10-digits)"
                         defaultValue={currentUser?.mobile || ""}
-                        className="w-full bg-gray-50 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                       />
                     </div>
 
@@ -1526,8 +1526,8 @@ export default function Dashboard() {
                   <div className="p-6 space-y-4">
                     <div>
                       <h4 className="text-xs font-extrabold text-gray-400 uppercase mb-2">Simulate UPI Payout</h4>
-                      <div className="border border-gray-100 p-3 rounded-xl flex items-center justify-between text-xs bg-slate-50">
-                        <span className="font-bold text-gray-700">UPI ID:</span>
+                      <div className="border border-gray-100 dark:border-slate-800 p-3 rounded-xl flex items-center justify-between text-xs bg-slate-50">
+                        <span className="font-bold text-gray-700 dark:text-gray-200">UPI ID:</span>
                         <span className="text-gray-500 font-semibold">{currentUser?.email || "student"}@paymitra</span>
                       </div>
                     </div>
@@ -1558,7 +1558,7 @@ export default function Dashboard() {
                   <div className="p-6 text-center space-y-4">
                     <span className="text-4xl bg-emerald-100 p-3 rounded-full text-emerald-600 inline-block">✓</span>
                     <div>
-                      <h3 className="text-base font-black text-gray-800">Payment Successful!</h3>
+                      <h3 className="text-base font-black text-gray-800 dark:text-gray-200">Payment Successful!</h3>
                       <p className="text-xs text-gray-400 mt-1">Transaction Ref: TXN_SIM_{Math.floor(Math.random()*10000000)}</p>
                     </div>
 

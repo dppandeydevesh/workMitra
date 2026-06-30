@@ -117,7 +117,7 @@ export default function CompanyPreferences() {
 
   return (
     <div className="min-h-screen w-full bg-[#edf2f9] flex flex-col items-center py-12 px-4 select-none font-sans">
-      <div className="w-full max-w-3xl bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-8 border border-gray-100 space-y-8">
+      <div className="w-full max-w-3xl bg-white dark:bg-slate-900 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-8 border border-gray-100 dark:border-slate-800 space-y-8">
         
         <div className="text-center">
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Company Requirements Form</h1>
@@ -129,19 +129,19 @@ export default function CompanyPreferences() {
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Section 1: Company Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-bold text-purple-950 border-b pb-2">Section 1: Company Information</h3>
+            <h3 className="text-lg font-bold text-purple-950 dark:text-purple-200 border-b pb-2">Section 1: Company Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input type="text" placeholder="Company Name (e.g. Google)" value={companyName} onChange={e => setCompanyName(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white" required />
-              <input type="text" placeholder="Company Website (e.g. google.com)" value={website} onChange={e => setWebsite(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white" required />
-              <input type="text" placeholder="Industry / Working Area (e.g. Software)" value={industry} onChange={e => setIndustry(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white" required />
-              <input type="text" placeholder="Company Size (e.g. 1000+ Employees)" value={companySize} onChange={e => setCompanySize(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white" required />
+              <input type="text" placeholder="Company Name (e.g. Google)" value={companyName} onChange={e => setCompanyName(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-slate-900" required />
+              <input type="text" placeholder="Company Website (e.g. google.com)" value={website} onChange={e => setWebsite(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-slate-900" required />
+              <input type="text" placeholder="Industry / Working Area (e.g. Software)" value={industry} onChange={e => setIndustry(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-slate-900" required />
+              <input type="text" placeholder="Company Size (e.g. 1000+ Employees)" value={companySize} onChange={e => setCompanySize(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-slate-900" required />
             </div>
-            <input type="text" placeholder="Location (e.g. Bangalore)" value={location} onChange={e => setLocation(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white" required />
+            <input type="text" placeholder="Location (e.g. Bangalore)" value={location} onChange={e => setLocation(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-slate-900" required />
           </div>
 
           {/* Section 2: Hiring Requirements */}
           <div className="space-y-3">
-            <h3 className="text-lg font-bold text-purple-950 border-b pb-2">Section 2: What type of students do you need?</h3>
+            <h3 className="text-lg font-bold text-purple-950 dark:text-purple-200 border-b pb-2">Section 2: What type of students do you need?</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {rolesOptions.map(role => (
                 <label key={role} className="flex items-center gap-2 text-sm text-slate-700 font-medium cursor-pointer">
@@ -154,12 +154,12 @@ export default function CompanyPreferences() {
 
           {/* Section 3: Skills Required */}
           <div className="space-y-3">
-            <h3 className="text-lg font-bold text-purple-950 border-b pb-2">Section 3: Skills Required</h3>
+            <h3 className="text-lg font-bold text-purple-950 dark:text-purple-200 border-b pb-2">Section 3: Skills Required</h3>
             <div className="flex flex-wrap gap-2">
               {skillsOptions.map(skill => {
                 const active = requiredSkills.includes(skill);
                 return (
-                  <button key={skill} type="button" onClick={() => handleSkillToggle(skill)} className={`text-xs px-4 py-2 rounded-full border transition font-medium ${active ? "bg-purple-600 border-purple-600 text-white shadow-md shadow-purple-100" : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100"}`}>
+                  <button key={skill} type="button" onClick={() => handleSkillToggle(skill)} className={`text-xs px-4 py-2 rounded-full border transition font-medium ${active ? "bg-purple-600 border-purple-600 text-white shadow-md shadow-purple-100" : "bg-slate-50 border-slate-200 dark:border-slate-800 text-slate-600 hover:bg-slate-100"}`}>
                     {skill}
                   </button>
                 );
@@ -169,10 +169,10 @@ export default function CompanyPreferences() {
 
           {/* Section 4: Project Details */}
           <div className="space-y-4">
-            <h3 className="text-lg font-bold text-purple-950 border-b pb-2">Section 4: Project Details</h3>
-            <input type="text" placeholder="Project Title (e.g. AI Chatbot Development)" value={projectTitle} onChange={e => setProjectTitle(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white" required />
-            <textarea rows="3" placeholder="Project Description (e.g. Need students to build chatbot for customer support...)" value={projectDescription} onChange={e => setProjectDescription(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white resize-none" required />
-            <input type="text" placeholder="Project Duration (e.g. 3 Months)" value={projectDuration} onChange={e => setProjectDuration(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white" required />
+            <h3 className="text-lg font-bold text-purple-950 dark:text-purple-200 border-b pb-2">Section 4: Project Details</h3>
+            <input type="text" placeholder="Project Title (e.g. AI Chatbot Development)" value={projectTitle} onChange={e => setProjectTitle(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-slate-900" required />
+            <textarea rows="3" placeholder="Project Description (e.g. Need students to build chatbot for customer support...)" value={projectDescription} onChange={e => setProjectDescription(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-slate-900 resize-none" required />
+            <input type="text" placeholder="Project Duration (e.g. 3 Months)" value={projectDuration} onChange={e => setProjectDuration(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-slate-900" required />
           </div>
 
           {/* Section 5, 7, 8: Radio Metrics Options */}
@@ -210,7 +210,7 @@ export default function CompanyPreferences() {
 
           {/* Section 6: Budget */}
           <div className="space-y-3">
-            <h3 className="text-lg font-bold text-purple-950 border-b pb-2">Section 6: Budget Range (INR)</h3>
+            <h3 className="text-lg font-bold text-purple-950 dark:text-purple-200 border-b pb-2">Section 6: Budget Range (INR)</h3>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <input type="number" placeholder="Min Budget (e.g. 10000)" value={budgetMin} onChange={e => setBudgetMin(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500" required />
               <input type="number" placeholder="Max Budget (e.g. 50000)" value={budgetMax} onChange={e => setBudgetMax(e.target.value)} className="bg-slate-50 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500" required />

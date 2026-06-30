@@ -7,15 +7,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const alert = (msg) => {
-    if (msg.toLowerCase().includes("success") || msg.toLowerCase().includes("completed") || msg.toLowerCase().includes("approved") || msg.toLowerCase().includes("extracted")) {
-      toast.success(msg);
-    } else if (msg.toLowerCase().includes("fail") || msg.toLowerCase().includes("error") || msg.toLowerCase().includes("invalid")) {
-      toast.error(msg);
-    } else {
-      toast.info(msg);
-    }
-  };
+
 
   const renderStepper = (status) => {
     const steps = [
@@ -239,7 +231,7 @@ export default function Dashboard() {
     if (!file) return;
 
     if (file.type !== "application/pdf") {
-      alert("Only PDF formats are supported for automatic CV text extraction.");
+      toast.error("Only PDF formats are supported for automatic CV text extraction.");
       return;
     }
 
@@ -261,7 +253,7 @@ export default function Dashboard() {
       const data = await response.json();
       if (response.ok) {
         setResumeText(data.resumeText);
-        alert("CV PDF uploaded and text extracted successfully! You can now review the extracted details or click 'Review CV' to run the AI critique.");
+        toast.success("CV PDF uploaded and text extracted successfully! You can now review the extracted details or click 'Review CV' to run the AI critique.");
         
         const updatedUser = {
           ...currentUser,
@@ -270,10 +262,10 @@ export default function Dashboard() {
         setCurrentUser(updatedUser);
         localStorage.setItem("user", JSON.stringify(updatedUser));
       } else {
-        alert(data.error || "Failed to upload and parse CV PDF.");
+        toast.error(data.error || "Failed to upload and parse CV PDF.");
       }
     } catch (err) {
-      alert("Error communicating with server upload gateway.");
+      toast.error("Error communicating with server upload gateway.");
     } finally {
       setUploadingCV(false);
       e.target.value = null; // Clear the input so the same file can be uploaded again if needed
@@ -302,7 +294,7 @@ export default function Dashboard() {
 
       const data = await response.json();
       if (response.ok) {
-        alert("Resume details updated successfully!");
+        toast.success("Resume details updated successfully!");
         const updatedUser = {
           ...currentUser,
           resumeUrl: data.user.resumeUrl,
@@ -311,10 +303,10 @@ export default function Dashboard() {
         setCurrentUser(updatedUser);
         localStorage.setItem("user", JSON.stringify(updatedUser));
       } else {
-        alert(data.error || "Failed to update resume.");
+        toast.error(data.error || "Failed to update resume.");
       }
     } catch (err) {
-      alert("Error connecting to server gateway.");
+      toast.error("Error connecting to server gateway.");
     } finally {
       setUpdatingResume(false);
     }
@@ -323,7 +315,7 @@ export default function Dashboard() {
   const handleReviewCVWithAI = async () => {
     if (!currentUser) return;
     if (!resumeText || resumeText.trim().length === 0) {
-      alert("Please paste your CV text details first!");
+      toast.info("Please paste your CV text details first!");
       return;
     }
     setLoadingReview(true);
@@ -353,10 +345,10 @@ export default function Dashboard() {
         setCurrentUser(updatedUser);
         localStorage.setItem("user", JSON.stringify(updatedUser));
       } else {
-        alert(data.error || "Failed to review CV.");
+        toast.error(data.error || "Failed to review CV.");
       }
     } catch (err) {
-      alert("Error communicating with AI engine.");
+      toast.error("Error communicating with AI engine.");
     } finally {
       setLoadingReview(false);
     }
@@ -472,7 +464,7 @@ export default function Dashboard() {
   // ==========================================
   const handleApplyProject = async (projectId) => {
     if (!currentUser) {
-      alert("Please log in to apply for projects!");
+      toast.info("Please log in to apply for projects!");
       return;
     }
 
@@ -494,14 +486,14 @@ export default function Dashboard() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Application submitted successfully! Recruiter has been notified.");
+        toast.success("Application submitted successfully! Recruiter has been notified.");
         // Update local state grid immediately to display "Applied" status without full reload
         setAppliedProjectIds(prev => [...prev, projectId.toString()]);
       } else {
-        alert(data.error || "Application routing failed.");
+        toast.error(data.error || "Application routing failed.");
       }
     } catch (err) {
-      alert("Error sending tracking network application.");
+      toast.error("Error sending tracking network application.");
     }
   };
 
@@ -655,7 +647,11 @@ export default function Dashboard() {
                     const project = app.projectId;
                     if (!project) return null;
                     return (
-                      <div key={app._id} className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+                      <div 
+                        key={app._id} 
+                        onClick={() => navigate(`/project/${project._id}`)}
+                        className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition cursor-pointer"
+                      >
                         <div>
                           <div className="flex justify-between items-center mb-3">
                             <span className="bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase">
@@ -709,7 +705,7 @@ export default function Dashboard() {
                             <div>
                               {app.status === "Approved" && (
                                 <button
-                                  onClick={() => { setActiveAppToExtend(app); setShowExtensionModal(true); }}
+                                  onClick={(e) => { e.stopPropagation(); setActiveAppToExtend(app); setShowExtensionModal(true); }}
                                   className="text-[10px] text-indigo-600 font-extrabold hover:underline"
                                 >
                                   Request Extension 🕒
@@ -719,7 +715,7 @@ export default function Dashboard() {
                             
                             {(app.status === "Approved" || app.status === "Revision Requested") && (
                               <button
-                                onClick={() => { setActiveAppToSubmit(app); setShowSubmitModal(true); }}
+                                onClick={(e) => { e.stopPropagation(); setActiveAppToSubmit(app); setShowSubmitModal(true); }}
                                 className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-1.5 rounded-lg transition shadow-sm animate-fade-in"
                               >
                                 {app.status === "Approved" ? "Submit Work" : "Submit V2 Revision"}
@@ -1074,8 +1070,9 @@ export default function Dashboard() {
                   const isAlreadyApplied = appliedProjectIds.includes(project._id.toString());
                   return (
                     <div 
-                      key={project._id} 
-                      className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm flex flex-col justify-between hover:border-blue-400 hover:shadow-md transition-all duration-200"
+                      key={project._id}
+                      onClick={() => navigate(`/project/${project._id}`)}
+                      className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm flex flex-col justify-between hover:border-blue-400 hover:shadow-md transition-all duration-200 cursor-pointer"
                     >
                       <div>
                         <div className="flex justify-between items-center mb-3">
@@ -1126,7 +1123,7 @@ export default function Dashboard() {
                               </button>
                             ) : (
                               <button 
-                                onClick={() => navigate(`/project/${project._id}`)}
+                                onClick={(e) => { e.stopPropagation(); navigate(`/project/${project._id}`); }}
                                 className={`font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm ${
                                   isAlreadyApplied 
                                     ? "bg-emerald-100 text-emerald-700 border border-emerald-200 hover:bg-emerald-200/50" 
@@ -1139,7 +1136,7 @@ export default function Dashboard() {
 
                             {currentUser?.userRole === "student" && (
                               <button
-                                onClick={() => navigate(`/chat/${project.companyId}`)}
+                                onClick={(e) => { e.stopPropagation(); navigate(`/chat/${project.companyId}`); }}
                                 className="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm"
                               >
                                 Chat

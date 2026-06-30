@@ -7,15 +7,7 @@ export default function CompanyPreferences() {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const alert = (msg) => {
-    if (msg.toLowerCase().includes("success") || msg.toLowerCase().includes("completed") || msg.toLowerCase().includes("approved") || msg.toLowerCase().includes("saved")) {
-      toast.success(msg);
-    } else if (msg.toLowerCase().includes("fail") || msg.toLowerCase().includes("error") || msg.toLowerCase().includes("invalid")) {
-      toast.error(msg);
-    } else {
-      toast.info(msg);
-    }
-  };
+
   const [errorMessage, setErrorMessage] = useState("");
 
   // Section 1: Company Information
@@ -113,7 +105,7 @@ export default function CompanyPreferences() {
           localStorage.setItem("user", JSON.stringify(parsedUser));
         }
 
-        alert("Company profile requirements saved successfully!");
+        toast.success("Company profile requirements saved successfully!");
         navigate("/company-dashboard");
       } else {
         setErrorMessage(data.error || "Failed to preserve requirements.");

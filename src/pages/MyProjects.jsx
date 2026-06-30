@@ -7,15 +7,7 @@ export default function MyProjects() {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const alert = (msg) => {
-    if (msg.toLowerCase().includes("success") || msg.toLowerCase().includes("completed") || msg.toLowerCase().includes("approved") || msg.toLowerCase().includes("updated")) {
-      toast.success(msg);
-    } else if (msg.toLowerCase().includes("fail") || msg.toLowerCase().includes("error") || msg.toLowerCase().includes("invalid")) {
-      toast.error(msg);
-    } else {
-      toast.info(msg);
-    }
-  };
+
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [applicants, setApplicants] = useState([]);
@@ -77,7 +69,7 @@ export default function MyProjects() {
       const data = await response.json();
       if (response.ok) setApplicants(data);
     } catch (err) {
-      alert("Error building analytics pipeline array maps.");
+      toast.error("Error building analytics pipeline array maps.");
     } finally {
       setLoadingApplicants(false);
     }
@@ -97,15 +89,15 @@ export default function MyProjects() {
       });
       const data = await response.json();
       if (response.ok) {
-        alert("Candidate accepted successfully!");
+        toast.success("Candidate accepted successfully!");
         if (selectedProject) {
           handleInspectApplicants(selectedProject);
         }
       } else {
-        alert(data.error || "Failed to accept candidate.");
+        toast.error(data.error || "Failed to accept candidate.");
       }
     } catch (err) {
-      alert("Error sending status payload.");
+      toast.error("Error sending status payload.");
     }
   };
 
@@ -123,15 +115,15 @@ export default function MyProjects() {
       });
       const data = await response.json();
       if (response.ok) {
-        alert("Candidate rejected successfully.");
+        toast.success("Candidate rejected successfully.");
         if (selectedProject) {
           handleInspectApplicants(selectedProject);
         }
       } else {
-        alert(data.error || "Failed to reject candidate.");
+        toast.error(data.error || "Failed to reject candidate.");
       }
     } catch (err) {
-      alert("Error sending status payload.");
+      toast.error("Error sending status payload.");
     }
   };
 
@@ -159,17 +151,17 @@ export default function MyProjects() {
       });
       const data = await response.json();
       if (response.ok) {
-        alert("Task approved and marked as Completed!");
+        toast.success("Task approved and marked as Completed!");
         setShowReviewModal(false);
         setFeedbackText("");
         if (selectedProject) {
           handleInspectApplicants(selectedProject);
         }
       } else {
-        alert(data.error || "Failed to complete task.");
+        toast.error(data.error || "Failed to complete task.");
       }
     } catch (err) {
-      alert("Error sending completion payload.");
+      toast.error("Error sending completion payload.");
     }
   };
 
@@ -182,7 +174,7 @@ export default function MyProjects() {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (response.ok) {
-        alert("Project stack deleted successfully.");
+        toast.success("Project stack deleted successfully.");
         setSelectedProject(null);
         // Refresh project list
         const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
@@ -194,10 +186,10 @@ export default function MyProjects() {
           if (res.ok) setProjects(data);
         }
       } else {
-        alert("Failed to delete project stack.");
+        toast.error("Failed to delete project stack.");
       }
     } catch (err) {
-      alert("Error sending delete payload.");
+      toast.error("Error sending delete payload.");
     }
   };
 
@@ -237,7 +229,7 @@ export default function MyProjects() {
       });
       const data = await response.json();
       if (response.ok) {
-        alert("Project updated successfully!");
+        toast.success("Project updated successfully!");
         setSelectedProject(data);
         setShowEditModal(false);
         // Refresh project list
@@ -250,10 +242,10 @@ export default function MyProjects() {
           if (res.ok) setProjects(projectsData);
         }
       } else {
-        alert("Failed to update project.");
+        toast.error("Failed to update project.");
       }
     } catch (err) {
-      alert("Error saving project details.");
+      toast.error("Error saving project details.");
     } finally {
       setSubmittingEdit(false);
     }

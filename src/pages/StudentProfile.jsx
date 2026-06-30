@@ -9,15 +9,7 @@ export default function StudentProfile() {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const alert = (msg) => {
-    if (msg.toLowerCase().includes("success") || msg.toLowerCase().includes("completed") || msg.toLowerCase().includes("approved") || msg.toLowerCase().includes("updated")) {
-      toast.success(msg);
-    } else if (msg.toLowerCase().includes("fail") || msg.toLowerCase().includes("error") || msg.toLowerCase().includes("invalid")) {
-      toast.error(msg);
-    } else {
-      toast.info(msg);
-    }
-  };
+
 
   const [profileUser, setProfileUser] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
@@ -153,7 +145,7 @@ export default function StudentProfile() {
       });
       const data = await res.json();
       if (res.ok) {
-        alert("Portfolio details updated successfully!");
+        toast.success("Portfolio details updated successfully!");
         setProfileUser(data.user);
         setIsEditing(false);
         // If this is the logged-in student, update their cached context in localStorage

@@ -377,9 +377,9 @@ export default function LoginPage() {
               </div>
 
               {/* 📝 SIGN UP PORTAL PANEL */}
-              <div className={`sign-up-panel flex flex-col items-center justify-center px-6 md:px-12 text-center text-gray-800 overflow-y-auto py-8 ${
-                isSignUp ? "w-full min-h-[500px] flex" : "hidden md:flex opacity-0 pointer-events-none z-1"
-              } md:absolute md:top-0 md:left-0 md:h-full md:w-1/2`}>
+              <div className={`sign-up-panel flex-col items-center justify-center px-6 md:px-12 text-center text-gray-800 overflow-y-auto py-8 w-full md:w-1/2 md:absolute md:top-0 md:left-0 md:h-full md:flex ${
+                isSignUp ? "flex min-h-[500px]" : "hidden"
+              }`}>
                 <form 
                   className="w-full space-y-3" 
                   onSubmit={async (e) => {
@@ -476,17 +476,22 @@ export default function LoginPage() {
                   <button 
                     type="submit" 
                     disabled={passwordStrength.score < 4 || isRegistering}
-                    className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3 rounded-xl shadow-md mt-1 transition ${passwordStrength.score === 4 && !isRegistering ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95 cursor-pointer" : "bg-gray-300 cursor-not-allowed"}`}
+                    className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3 rounded-xl shadow-md mt-1 transition flex justify-center items-center ${passwordStrength.score === 4 && !isRegistering ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95 cursor-pointer" : "bg-gray-400 cursor-not-allowed"}`}
                   >
-                    {isRegistering ? "Registering..." : "Sign Up"}
+                    {isRegistering ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        Registering...
+                      </>
+                    ) : "Sign Up"}
                   </button>
                 </form>
               </div>
 
               {/* 🔑 SIGN IN PORTAL PANEL */}
-              <div className={`sign-in-panel flex flex-col items-center justify-center px-6 md:px-12 text-center text-gray-800 py-8 ${
-                !isSignUp ? "w-full min-h-[500px] flex" : "hidden md:flex absolute top-0 left-0 h-full w-1/2"
-              } md:absolute md:top-0 md:left-0 md:h-full md:w-1/2`}>
+              <div className={`sign-in-panel flex-col items-center justify-center px-6 md:px-12 text-center text-gray-800 py-8 w-full md:w-1/2 md:absolute md:top-0 md:left-0 md:h-full md:flex ${
+                !isSignUp ? "flex min-h-[500px]" : "hidden"
+              }`}>
                 <form className="w-full space-y-4" onSubmit={handleLoginSubmit}>
                   <div className="flex justify-center -mb-2">
                     <img src="/logo.png" alt="workMitra Logo" className="h-16 object-contain" />
@@ -505,9 +510,14 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={isLoggingIn}
-                    className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3.5 rounded-xl shadow-md mt-1 transition ${isLoggingIn ? "bg-gray-400 cursor-not-allowed" : "bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95"}`}
+                    className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3.5 rounded-xl shadow-md mt-1 transition flex justify-center items-center ${isLoggingIn ? "bg-gray-400 cursor-not-allowed" : "bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95"}`}
                   >
-                    {isLoggingIn ? "Signing In..." : "Sign In"}
+                    {isLoggingIn ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        Signing In...
+                      </>
+                    ) : "Sign In"}
                   </button>
 
                   <div className="flex items-center my-2">

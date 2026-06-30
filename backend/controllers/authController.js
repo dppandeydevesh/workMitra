@@ -250,10 +250,10 @@ const register = async (req, res) => {
 
 const verifyOtp = async (req, res) => {
   try {
-    const { email, emailOtp, mobileOtp } = req.body;
+    const { email, emailOtp } = req.body;
 
-    if (!email || !emailOtp || !mobileOtp) {
-      return res.status(400).json({ error: "Email, Email OTP, and Mobile OTP are required." });
+    if (!email || !emailOtp) {
+      return res.status(400).json({ error: "Email and Email OTP are required." });
     }
 
     const pending = await PendingUser.findOne({ email });
@@ -263,10 +263,6 @@ const verifyOtp = async (req, res) => {
 
     if (pending.emailOtp !== emailOtp) {
       return res.status(400).json({ error: "Invalid Email verification code." });
-    }
-
-    if (pending.mobileOtp !== mobileOtp) {
-      return res.status(400).json({ error: "Invalid Mobile verification code." });
     }
 
     const { fullName, companyName, password, userRole, mobile, collegeName, enrollmentNumber } = pending.registrationData;

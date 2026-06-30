@@ -35,7 +35,6 @@ export default function LoginPage() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isOtpVerifying, setIsOtpVerifying] = useState(false);
   const [emailOtpInput, setEmailOtpInput] = useState("");
-  const [mobileOtpInput, setMobileOtpInput] = useState("");
 
   const [airplanePos, setAirplanePos] = useState(-10);
   useEffect(() => {
@@ -168,8 +167,7 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
-          emailOtp: emailOtpInput,
-          mobileOtp: mobileOtpInput
+          emailOtp: emailOtpInput
         })
       });
       const data = await response.json();
@@ -326,18 +324,6 @@ export default function LoginPage() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-left text-[9px] font-bold text-gray-400 uppercase mb-1.5 px-1">Mobile Verification Code</label>
-                  <input
-                    type="text"
-                    maxLength="6"
-                    value={mobileOtpInput}
-                    onChange={(e) => setMobileOtpInput(e.target.value)}
-                    placeholder="6-digit code"
-                    className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-center tracking-widest font-black"
-                    required
-                  />
-                </div>
 
                 <button
                   type="submit"
@@ -420,7 +406,6 @@ export default function LoginPage() {
                         setIsOtpVerifying(true);
                         setErrorMessage("");
                         setEmailOtpInput("");
-                        setMobileOtpInput("");
                       } else {
                         setErrorMessage(data.error || "Registration system error.");
                       }

@@ -12,10 +12,6 @@ export default function LandingPage() {
       a: "Our system uses the advanced Gemini 2.5 Flash API to parse student resume documents and grade them directly against the project specifications and required skills set by corporate clients. The grading includes an actionable percentage score and match rationale."
     },
     {
-      q: "What are the fees associated with subscriptions?",
-      a: "Students unlock unlimited applications and AI CV critique reviews for ₹39/month. Recruiter plans start from ₹149/month for Standard and ₹299/month for Premium, unlocking advanced gig analytics and prioritised listing grids."
-    },
-    {
       q: "How do payouts work for completed gigs?",
       a: "When a recruiter deploys a gig, the budget is safely registered. Once the student submits their solution, the recruiter reviews the submission, gives a star rating, writes a performance review, and marks it Completed, which immediately triggers the payment release."
     },
@@ -138,77 +134,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 💸 Subscription Pricing Grid */}
-      <section className="py-16 sm:py-24 px-4 max-w-6xl mx-auto w-full">
-        <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-800 tracking-tight mb-4">
-          Transparent, Affordable Pricing
-        </h2>
-        <p className="text-center text-gray-500 text-xs sm:text-sm max-w-lg mx-auto mb-12">
-          No hidden fees or commission cuts. Choose your membership tier to access gig databases.
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Plan 1 */}
-          <div className="bg-white border border-gray-100 p-6 sm:p-8 rounded-3xl shadow-sm hover:shadow-md transition">
-            <span className="text-[10px] font-black text-indigo-500 uppercase tracking-wider block">Student Pass</span>
-            <span className="text-3xl font-black text-gray-800 block mt-2">₹39<span className="text-xs text-gray-400 font-normal">/month</span></span>
-            <p className="text-xs text-gray-400 mt-2">Perfect for college developers finding freelance gigs.</p>
-            <div className="border-t my-6 pt-6 space-y-3 text-xs text-gray-600">
-              <p>✓ Unlimited job applications</p>
-              <p>✓ Free AI CV Critique grading</p>
-              <p>✓ Real-time messaging channels</p>
-              <p>✓ Secured escrow payouts</p>
-            </div>
-            <button 
-              onClick={() => navigate("/login")}
-              className="w-full py-2.5 bg-gray-100 hover:bg-indigo-600 hover:text-white text-gray-700 rounded-xl text-xs font-bold transition"
-            >
-              Get Started
-            </button>
-          </div>
-
-          {/* Plan 2 */}
-          <div className="bg-white border-2 border-indigo-500 p-6 sm:p-8 rounded-3xl shadow-md relative">
-            <span className="absolute -top-3.5 left-1/2 transform -translate-x-1/2 px-3 py-1 bg-indigo-500 text-white text-[9px] font-black uppercase tracking-wider rounded-full shadow">
-              Most Popular
-            </span>
-            <span className="text-[10px] font-black text-indigo-500 uppercase tracking-wider block">Startup Standard</span>
-            <span className="text-3xl font-black text-gray-800 block mt-2">₹149<span className="text-xs text-gray-400 font-normal">/month</span></span>
-            <p className="text-xs text-gray-400 mt-2">Ideal for corporate recruiters deploying standard tasks.</p>
-            <div className="border-t my-6 pt-6 space-y-3 text-xs text-gray-600">
-              <p>✓ Deploy up to 10 active projects</p>
-              <p>✓ AI Candidate Match Grading</p>
-              <p>✓ Direct chat messaging logs</p>
-              <p>✓ Rating and reviews manager</p>
-            </div>
-            <button 
-              onClick={() => navigate("/login")}
-              className="w-full py-2.5 bg-indigo-500 text-white rounded-xl text-xs font-bold transition shadow"
-            >
-              Select Standard
-            </button>
-          </div>
-
-          {/* Plan 3 */}
-          <div className="bg-white border border-gray-100 p-6 sm:p-8 rounded-3xl shadow-sm hover:shadow-md transition">
-            <span className="text-[10px] font-black text-indigo-500 uppercase tracking-wider block">Enterprise Premium</span>
-            <span className="text-3xl font-black text-gray-800 block mt-2">₹299<span className="text-xs text-gray-400 font-normal">/month</span></span>
-            <p className="text-xs text-gray-400 mt-2">Built for companies requiring fast developer matching.</p>
-            <div className="border-t my-6 pt-6 space-y-3 text-xs text-gray-600">
-              <p>✓ Unlimited active project posts</p>
-              <p>✓ Priority AI Matching Grades</p>
-              <p>✓ Escrow safety guarantees</p>
-              <p>✓ 24/7 Support Desk ticket response</p>
-            </div>
-            <button 
-              onClick={() => navigate("/login")}
-              className="w-full py-2.5 bg-gray-100 hover:bg-indigo-600 hover:text-white text-gray-700 rounded-xl text-xs font-bold transition"
-            >
-              Select Premium
-            </button>
-          </div>
-        </div>
-      </section>
 
       {/* 🙋 FAQ Accordion */}
       <section className="bg-gray-50/60 border-t border-gray-100 py-16 px-4">

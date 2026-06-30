@@ -10,9 +10,10 @@ const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
 const swot = require('swot-node');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-only-fallback-not-for-production';
-if (!process.env.JWT_SECRET) {
-  console.warn("⚠️ WARNING: JWT_SECRET environment variable is missing. Using insecure fallback.");
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error("🚨 FATAL ERROR: JWT_SECRET environment variable is missing. Server cannot start securely.");
+  process.exit(1);
 }
 
 global.wsClients = new Map(); // Global registry for WebSocket client sockets
@@ -34,16 +35,12 @@ app.use(helmet());
 app.use(mongoSanitize());
 
 // Middleware Setup
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:3000",
-  "https://workmitra.me",
-  "https://www.workmitra.me",
-  process.env.FRONTEND_URL
-].filter(Boolean);
+const allowedOrigins = process.env.CORS_ORIGINS 
+  ? process.env.CORS_ORIGINS.split(',').map(o => o.trim())
+  : [];
 
 app.use(cors({
-    origin: allowedOrigins,
+    origin: allowedOrigins.length > 0 ? allowedOrigins : false, // Block CORS if not explicitly configured
     credentials: true
 }));
 
@@ -72,8 +69,14 @@ const authenticateToken = (req, res, next) => {
 const seedAdmin = async () => {
   try {
     const User = require("./models/User");
-    const adminEmail = process.env.ADMIN_EMAIL || "admin@workmitra.com";
-    const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    
+    if (!adminEmail || !adminPassword) {
+      console.error("🚨 FATAL ERROR: ADMIN_EMAIL and ADMIN_PASSWORD environment variables are required.");
+      process.exit(1);
+    }
+    
     const existingAdmin = await User.findOne({ email: adminEmail });
     if (!existingAdmin) {
       const newAdmin = new User({
@@ -527,8 +530,12 @@ app.post("/api/auth/forgot-password", async (req, res) => {
     user.resetPasswordExpires = Date.now() + 3600000; // 1 Hour lifespan
     await user.save();
 
-    // Use environment variable frontend URL or fallback
-    const frontendUrl = process.env.NODE_ENV === "production" ? "https://workmitra.me" : "http://localhost:5173";
+    // Use strict environment variable for frontend URL to ensure correct domain across all environments
+    const frontendUrl = process.env.FRONTEND_URL;
+    if (!frontendUrl) {
+      console.error("🚨 Configuration Error: FRONTEND_URL environment variable is missing.");
+      return res.status(500).json({ error: "Server configuration error. Cannot generate reset link." });
+    }
     const resetLink = `${frontendUrl}/reset-password/${token}`;
 
     // Send the password recovery link via Resend HTTP email delivery

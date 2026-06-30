@@ -516,77 +516,7 @@ export default function LoginPage() {
                     <div className="flex-grow border-t border-purple-100"></div>
                   </div>
 
-                  {import.meta.env.DEV && (
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        setIsLoggingIn(true);
-                        setErrorMessage("");
-                        try {
-                          const ssoEmail = "aditya@college.edu.in";
-                          let logRes = await fetch(`${API_BASE_URL}/api/auth/login`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ email: ssoEmail, password: "ssoPassword123" })
-                          });
-                          let logData = await logRes.json();
-                          
-                          if (!logRes.ok) {
-                            // Register first if not found
-                            const regRes = await fetch(`${API_BASE_URL}/api/auth/register`, {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({
-                                fullName: "Aditya CSE",
-                                email: ssoEmail,
-                                password: "ssoPassword123",
-                                mobile: "9876543210",
-                                collegeName: "Verified GLA University",
-                                enrollmentNumber: "SSO-2026-CSE",
-                                userRole: "student"
-                              })
-                            });
-                            
-                            // For sandbox verification
-                            if (regRes.ok) {
-                              const pendingRes = await fetch(`${API_BASE_URL}/api/auth/register-verify`, {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                  email: ssoEmail,
-                                  emailOtp: "123456", // dummy if skipped, but backend expects both
-                                  mobileOtp: "123456"
-                                })
-                              });
-                              
-                              logRes = await fetch(`${API_BASE_URL}/api/auth/login`, {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ email: ssoEmail, password: "ssoPassword123" })
-                              });
-                              logData = await logRes.json();
-                            }
-                          }
-                          
-                          if (logRes.ok && logData.user) {
-                            localStorage.setItem("user", JSON.stringify(logData.user));
-                            if (logData.token) localStorage.setItem("token", logData.token);
-                            toast.success("✓ College Portal SSO verified successfully!");
-                            navigate("/preferences");
-                          } else {
-                            setErrorMessage("SSO validation handshake failed.");
-                          }
-                        } catch (err) {
-                          setErrorMessage("Failed to connect to SSO Gateway.");
-                        } finally {
-                          setIsLoggingIn(false);
-                        }
-                      }}
-                      className="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold py-3 rounded-xl transition shadow-sm flex items-center justify-center gap-2"
-                    >
-                      <span>🎓</span> Log In via College SSO Portal [Dev Mode]
-                    </button>
-                  )}
+
                 </form>
               </div>
 

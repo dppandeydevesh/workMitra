@@ -28,6 +28,23 @@ const multer = require('multer');
 const pdfParse = require('pdf-parse');
 
 const app = express();
+
+// Security Middlewares
+app.use(helmet());
+app.use(mongoSanitize());
+
+// Middleware Setup
+const allowedOrigins = process.env.CORS_ORIGINS 
+  ? process.env.CORS_ORIGINS.split(',').map(o => o.trim())
+  : [];
+
+app.use(cors({
+    origin: allowedOrigins.length > 0 ? allowedOrigins : false, // Block CORS if not explicitly configured
+    credentials: true
+}));
+
+// Request body size limit
+app.use(express.json({ limit: '1mb' }));
 const authRoutes = require('./routes/authRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const authenticateToken = require('./middleware/authMiddleware');
@@ -192,22 +209,7 @@ app.use('/api/projects', projectRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-// Security Middlewares
-app.use(helmet());
-app.use(mongoSanitize());
 
-// Middleware Setup
-const allowedOrigins = process.env.CORS_ORIGINS 
-  ? process.env.CORS_ORIGINS.split(',').map(o => o.trim())
-  : [];
-
-app.use(cors({
-    origin: allowedOrigins.length > 0 ? allowedOrigins : false, // Block CORS if not explicitly configured
-    credentials: true
-}));
-
-// Request body size limit
-app.use(express.json({ limit: '1mb' }));
 
 // Auth Token Verification Middleware
 // Seed default admin account

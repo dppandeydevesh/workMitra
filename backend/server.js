@@ -79,12 +79,14 @@ const seedAdmin = async () => {
     
     const existingAdmin = await User.findOne({ email: adminEmail });
     if (!existingAdmin) {
+      // Generate a random 10-digit mobile number to avoid unique index collisions with older mock admins
+      const randomMobile = Math.floor(1000000000 + Math.random() * 9000000000).toString();
       const newAdmin = new User({
         fullName: "Super Admin",
         email: adminEmail,
         password: adminPassword,
         userRole: "admin",
-        mobile: "9999999999",
+        mobile: randomMobile,
         hasCompletedProfile: true,
         isVerified: true
       });

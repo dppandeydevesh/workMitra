@@ -110,7 +110,7 @@ export default function LoginPage() {
         setErrorMessage(data.error || "Invalid sign-in credentials.");
       }
     } catch (err) {
-      setErrorMessage("Cannot connect to server portal.");
+      setErrorMessage(`Network or parsing error: ${err.message}`);
     } finally {
       setIsLoggingIn(false);
     }
@@ -151,7 +151,7 @@ export default function LoginPage() {
         setErrorMessage(data.error || "Failed to generate recovery link.");
       }
     } catch (err) {
-      setErrorMessage("Error connecting to server gateway.");
+      setErrorMessage(`OTP verification error: ${err.message}`);
     } finally {
       setSendingRecovery(false);
     }
@@ -425,7 +425,7 @@ export default function LoginPage() {
                         setErrorMessage(data.error || "Registration system error.");
                       }
                     } catch (err) {
-                      setErrorMessage("Unable to submit registration payload.");
+                      setErrorMessage(`Registration error: ${err.message}`);
                     } finally {
                       setIsRegistering(false);
                     }

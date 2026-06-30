@@ -45,8 +45,10 @@ const AIAssistant = () => {
         },
         body: JSON.stringify({
           message: userMessage.text,
+          history: messages,
           context: {
-            path: window.location.pathname
+            path: window.location.pathname,
+            name: JSON.parse(localStorage.getItem('user'))?.fullName || 'User'
           }
         })
       });

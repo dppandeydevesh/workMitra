@@ -423,6 +423,7 @@ export default function ProjectDetails() {
               </button>
               <button
                 type="button"
+                disabled={applying}
                 onClick={() => {
                   if (!ndaAccepted) {
                     toast.error("Please accept the NDA constraints before submitting.");
@@ -431,9 +432,11 @@ export default function ProjectDetails() {
                   setShowNdaModal(false);
                   handleApply();
                 }}
-                className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black transition shadow"
+                className={`px-5 py-2.5 rounded-xl text-xs font-black transition shadow ${
+                  applying ? "bg-indigo-400 cursor-not-allowed text-white" : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                }`}
               >
-                Complete Application
+                {applying ? "Submitting..." : "Complete Application"}
               </button>
             </div>
           </div>
@@ -490,6 +493,7 @@ export default function ProjectDetails() {
               </button>
               <button
                 type="button"
+                disabled={applying}
                 onClick={() => {
                   let allCorrect = true;
                   project.preTestQuestions.forEach((q, qIdx) => {
@@ -512,9 +516,11 @@ export default function ProjectDetails() {
                   setShowQuizModal(false);
                   handleApply();
                 }}
-                className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black transition shadow"
+                className={`px-5 py-2.5 rounded-xl text-xs font-black transition shadow ${
+                  applying ? "bg-indigo-400 cursor-not-allowed text-white" : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                }`}
               >
-                Submit Answers
+                {applying ? "Submitting..." : "Submit Answers"}
               </button>
             </div>
           </div>

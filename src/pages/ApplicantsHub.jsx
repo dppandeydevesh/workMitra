@@ -330,7 +330,7 @@ export default function ApplicantsHub() {
       if (sortBy === "match") {
         return b.matchScore - a.matchScore;
       } else {
-        return new Date(b.appliedAt) - new Date(a.appliedAt);
+        return new Date(b.appliedAt || 0) - new Date(a.appliedAt || 0);
       }
     });
 
@@ -685,7 +685,7 @@ export default function ApplicantsHub() {
           <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl p-6 border animate-fade-in">
             <div className="flex justify-between items-center border-b pb-3 mb-4">
               <h3 className="font-bold text-base text-gray-900">Verify Student Solution: {activeAppToReview.studentName}</h3>
-              <button onClick={() => setShowReviewModal(false)} className="text-gray-400 hover:text-gray-600 text-lg">×</button>
+              <button onClick={() => { setShowReviewModal(false); setFeedbackText(""); setRating(0); setRatingReview(""); }} className="text-gray-400 hover:text-gray-600 text-lg">×</button>
             </div>
             
             {/* Version History Selector */}
@@ -914,7 +914,7 @@ export default function ApplicantsHub() {
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={() => setShowReviewModal(false)}
+                    onClick={() => { setShowReviewModal(false); setFeedbackText(""); setRating(0); setRatingReview(""); }}
                     className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 transition"
                   >
                     Cancel

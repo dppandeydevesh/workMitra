@@ -37,8 +37,6 @@ export default function Navbar() {
     return () => unsubscribe();
   }, [addListener]);
 
-    return () => unsubscribe();
-  }, [addListener]);
 
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem("user") || "null");
@@ -209,7 +207,7 @@ export default function Navbar() {
               onClick={() => i18n.changeLanguage(i18n.language?.startsWith('en') ? 'hi' : 'en')}
               className="p-2 text-xs font-bold text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition focus:outline-none"
             >
-              {i18n.language?.startsWith('en') ? 'EN' : 'HI'}
+              {i18n.language?.startsWith('en') ? 'हिन्दी' : 'EN'}
             </button>
 
             {/* Theme Toggle Button */}
@@ -274,15 +272,15 @@ export default function Navbar() {
               onClick={() => i18n.changeLanguage(i18n.language?.startsWith('en') ? 'hi' : 'en')}
               className="p-2 text-xs font-bold text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition focus:outline-none"
             >
-              {i18n.language?.startsWith('en') ? 'EN' : 'HI'}
+              {i18n.language?.startsWith('en') ? 'हिन्दी' : 'EN'}
             </button>
 
             <button
-              onClick={() => setIsDarkMode(!isDarkMode)}
+              onClick={toggleTheme}
               className="p-2 text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition focus:outline-none"
               title="Toggle theme mode"
             >
-              <span className="text-lg">{isDarkMode ? "☀️" : "🌙"}</span>
+              <span className="text-lg">{theme === "dark" ? "☀️" : "🌙"}</span>
             </button>
 
             <button

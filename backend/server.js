@@ -129,9 +129,7 @@ app.post("/api/ai/chat", authenticateToken, async (req, res) => {
   try {
     const { message, history, context } = req.body;
     
-    // Fetch user from DB to get their fullName
-    const user = await User.findOne({ email: req.user.email });
-    const name = user ? user.fullName : "User";
+    const name = context?.name || "User";
     const role = req.user.userRole || "user";
     const path = context?.path || "unknown";
 
@@ -443,6 +441,7 @@ app.get("/api/applications/student/:email", authenticateToken, async (req, res) 
 
 // =========================================================================
 // 👨‍🎓 ROUTE: Fetch Applicants for a specific Project with Skill Matching
+
 // =========================================================================
 // 🏢 ROUTE: Fetch all applications for a specific company's projects
 // =========================================================================
@@ -453,11 +452,9 @@ app.get("/api/applications/company/:email", authenticateToken, async (req, res) 
       return res.status(403).json({ error: "Unauthorized access to company applications." });
     }
 
-    // Find all projects posted by this company
     const companyProjects = await Project.find({ companyId: email });
     const projectIds = companyProjects.map(p => p._id);
 
-    // Find all applications for these projects
     const applications = await Application.find({ projectId: { $in: projectIds } })
       .populate("projectId")
       .sort({ appliedAt: -1 });
@@ -466,47 +463,50 @@ app.get("/api/applications/company/:email", authenticateToken, async (req, res) 
       return res.status(200).json([]);
     }
 
-    const enrichedApps = await Promise.all(
-      applications.map(async (app) => {
-        const studentUser = await User.findOne({ email: app.studentEmail });
-        const currentProject = app.projectId;
-        
-        let matchPercentage = app.matchScore !== null && app.matchScore !== undefined ? app.matchScore : 0;
-        if (app.matchScore === null || app.matchScore === undefined) {
-          if (currentProject && currentProject.requiredSkills && studentUser && studentUser.targetSkills) {
-            const targetSkills = currentProject.requiredSkills.map(s => s.toLowerCase());
-            const studentSkillsArray = studentUser.targetSkills
-              .split(",")
-              .map(s => s.trim().toLowerCase());
-            const intersections = studentSkillsArray.filter(skill => targetSkills.includes(skill));
-            matchPercentage = Math.round((intersections.length / targetSkills.length) * 100);
-          }
-        }
+    const studentEmails = [...new Set(applications.map(app => app.studentEmail))];
+    const students = await User.find({ email: { $in: studentEmails } });
+    const studentMap = {};
+    students.forEach(s => { studentMap[s.email] = s; });
 
-        return {
-          applicationId: app._id,
-          projectId: currentProject?._id || null,
-          projectTitle: currentProject?.title || "Unknown Project",
-          studentName: app.studentName,
-          studentEmail: app.studentEmail,
-          status: app.status,
-          appliedAt: app.appliedAt,
-          skills: studentUser?.targetSkills || "Not specified",
-          resumeUrl: studentUser?.resumeUrl || null,
-          githubUrl: studentUser?.githubUrl || null,
-          linkedinUrl: studentUser?.linkedinUrl || null,
-          portfolioUrl: studentUser?.portfolioUrl || null,
-          matchScore: matchPercentage,
-          aiRationale: app.aiRationale || "Calculated using skill matches.",
-          submissionText: app.submissionText || null,
-          submissionLink: app.submissionLink || null,
-          submittedAt: app.submittedAt || null,
-          feedbackText: app.feedbackText || null,
-          rating: app.rating || null,
-          ratingReview: app.ratingReview || null
-        };
-      })
-    );
+    const enrichedApps = applications.map((app) => {
+      const studentUser = studentMap[app.studentEmail];
+      const currentProject = app.projectId;
+      
+      let matchPercentage = app.matchScore !== null && app.matchScore !== undefined ? app.matchScore : 0;
+      if (app.matchScore === null || app.matchScore === undefined) {
+        if (currentProject && currentProject.requiredSkills && studentUser && studentUser.targetSkills) {
+          const targetSkills = currentProject.requiredSkills.map(s => s.toLowerCase());
+          const studentSkillsArray = studentUser.targetSkills
+            .split(",")
+            .map(s => s.trim().toLowerCase());
+          const intersections = studentSkillsArray.filter(skill => targetSkills.includes(skill));
+          matchPercentage = Math.round((intersections.length / targetSkills.length) * 100);
+        }
+      }
+
+      return {
+        applicationId: app._id,
+        projectId: currentProject?._id || null,
+        projectTitle: currentProject?.title || "Unknown Project",
+        studentName: app.studentName,
+        studentEmail: app.studentEmail,
+        status: app.status,
+        appliedAt: app.appliedAt,
+        skills: studentUser?.targetSkills || "Not specified",
+        resumeUrl: studentUser?.resumeUrl || null,
+        githubUrl: studentUser?.githubUrl || null,
+        linkedinUrl: studentUser?.linkedinUrl || null,
+        portfolioUrl: studentUser?.portfolioUrl || null,
+        matchScore: matchPercentage,
+        aiRationale: app.aiRationale || "Calculated using skill matches.",
+        submissionText: app.submissionText || null,
+        submissionLink: app.submissionLink || null,
+        submittedAt: app.submittedAt || null,
+        feedbackText: app.feedbackText || null,
+        rating: app.rating || null,
+        ratingReview: app.ratingReview || null
+      };
+    });
 
     res.status(200).json(enrichedApps);
   } catch (err) {

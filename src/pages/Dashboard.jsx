@@ -554,9 +554,9 @@ export default function Dashboard() {
   const filteredProjects = projects.filter((project) => {
     const query = searchTerm.toLowerCase();
     const matchesSearch = 
-      project.title.toLowerCase().includes(query) ||
+      project.title?.toLowerCase().includes(query) ||
       (project.companyId && project.companyId.email && project.companyId.email.toLowerCase().includes(query)) ||
-      project.description.toLowerCase().includes(query);
+      project.description?.toLowerCase().includes(query);
       
     const matchesSkill = skillFilter === "All" || (project.requiredSkills && project.requiredSkills.includes(skillFilter));
     const matchesWorkType = workTypeFilter === "All" || project.workType === workTypeFilter;

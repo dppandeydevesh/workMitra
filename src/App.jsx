@@ -26,6 +26,7 @@ import CompanySettings from "./pages/CompanySettings";
 import CollegeDashboard from "./pages/CollegeDashboard";
 import PlacementPipeline from "./pages/PlacementPipeline";
 import { ThemeProvider } from "./components/ThemeContext";
+import AIAssistant from "./components/AIAssistant";
 
 const PublicRoute = ({ children }) => {
   const savedUser = localStorage.getItem("user");
@@ -50,6 +51,7 @@ const ProtectedLayout = ({ allowedRoles, children }) => {
     <ProtectedRoute allowedRoles={allowedRoles}>
       <Navbar />
       {children}
+      <AIAssistant />
     </ProtectedRoute>
   );
 };

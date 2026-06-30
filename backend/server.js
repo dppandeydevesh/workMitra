@@ -122,6 +122,74 @@ Return ONLY a valid JSON array of strings (the 3 project IDs). No markdown, no e
   }
 });
 
+// =========================================================================
+// 🤖 ROUTE: AI Assistant Chat
+// =========================================================================
+app.post("/api/ai/chat", authenticateToken, async (req, res) => {
+  try {
+    const { message, history, context } = req.body;
+    
+    // Fetch user from DB to get their fullName
+    const user = await User.findOne({ email: req.user.email });
+    const name = user ? user.fullName : "User";
+    const role = req.user.userRole || "user";
+    const path = context?.path || "unknown";
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: "Gemini API key is missing." });
+    }
+
+    const systemPrompt = `You are Mitra AI, a helpful, enthusiastic, and highly knowledgeable assistant for the workMitra platform. The user's name is ${name}. They are a ${role}. They are currently on the page: ${path}. Use this context to answer their query...`;
+
+    // Construct history for Gemini API
+    const contents = [];
+    if (history && Array.isArray(history)) {
+      history.forEach(msg => {
+        const msgRole = msg.role === 'ai' || msg.role === 'model' ? 'model' : 'user';
+        const msgText = msg.text || msg.message || "";
+        if (msgText) {
+          contents.push({ role: msgRole, parts: [{ text: msgText }] });
+        }
+      });
+    }
+
+    if (message) {
+      contents.push({ role: "user", parts: [{ text: message }] });
+    }
+
+    const requestBody = {
+      systemInstruction: {
+        parts: [{ text: systemPrompt }]
+      },
+      contents: contents,
+      generationConfig: {
+        temperature: 0.7
+      }
+    };
+
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+      body: JSON.stringify(requestBody)
+    });
+
+    if (!response.ok) {
+      const errData = await response.text();
+      console.error("Gemini API error:", errData);
+      throw new Error("Failed to fetch from Gemini");
+    }
+
+    const data = await response.json();
+    const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm sorry, I couldn't generate a response.";
+
+    res.status(200).json({ text: responseText });
+  } catch (err) {
+    console.error("AI Chat error:", err.message);
+    res.status(500).json({ error: "Failed to process AI chat request." });
+  }
+});
+
 app.use('/api/projects', projectRoutes);
 
 const PORT = process.env.PORT || 5000;

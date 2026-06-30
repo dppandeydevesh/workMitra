@@ -159,7 +159,7 @@ export default function Preferences() {
               value={preferences.name}
               onChange={(e) => setPreferences({...preferences, name: e.target.value})}
               placeholder="Your name"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-slate-700 bg-transparent dark:bg-slate-900 dark:text-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               required
             />
           </div>
@@ -178,7 +178,7 @@ export default function Preferences() {
                   value={preferences.githubUrl}
                   onChange={(e) => setPreferences({...preferences, githubUrl: e.target.value})}
                   placeholder="https://github.com/username"
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 dark:border-slate-700 bg-transparent dark:bg-slate-900 dark:text-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />
               </div>
               <div>
@@ -188,7 +188,7 @@ export default function Preferences() {
                   value={preferences.linkedinUrl}
                   onChange={(e) => setPreferences({...preferences, linkedinUrl: e.target.value})}
                   placeholder="https://linkedin.com/in/username"
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 dark:border-slate-700 bg-transparent dark:bg-slate-900 dark:text-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />
               </div>
               <div>
@@ -198,7 +198,7 @@ export default function Preferences() {
                   value={preferences.portfolioUrl}
                   onChange={(e) => setPreferences({...preferences, portfolioUrl: e.target.value})}
                   placeholder="https://username.dev"
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 dark:border-slate-700 bg-transparent dark:bg-slate-900 dark:text-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />
               </div>
               <div>
@@ -208,7 +208,7 @@ export default function Preferences() {
                   value={preferences.avatarUrl}
                   onChange={(e) => setPreferences({...preferences, avatarUrl: e.target.value})}
                   placeholder="https://example.com/avatar.jpg"
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 dark:border-slate-700 bg-transparent dark:bg-slate-900 dark:text-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />
               </div>
             </div>
@@ -222,7 +222,7 @@ export default function Preferences() {
               onChange={(e) => setPreferences({...preferences, bio: e.target.value})}
               placeholder="I'm a passionate developer who loves building web applications..."
               rows="3"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-slate-700 bg-transparent dark:bg-slate-900 dark:text-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 

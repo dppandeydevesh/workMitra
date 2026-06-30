@@ -1094,7 +1094,7 @@ export default function Dashboard() {
                   step="1000"
                   value={maxBudgetFilter}
                   onChange={(e) => setMaxBudgetFilter(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600 mt-3"
+                  className="w-full h-2 bg-gray-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600 mt-3"
                 />
               </div>
 
@@ -1313,7 +1313,7 @@ export default function Dashboard() {
                           max="10"
                           value={codeQualityRubric}
                           onChange={(e) => { setCodeQualityRubric(Number(e.target.value)); saveDraft({ codeQualityRubric: Number(e.target.value) }); }}
-                          className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                          className="w-full h-1 bg-gray-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                         />
                       </div>
                       <div>
@@ -1327,7 +1327,7 @@ export default function Dashboard() {
                           max="10"
                           value={correctnessRubric}
                           onChange={(e) => { setCorrectnessRubric(Number(e.target.value)); saveDraft({ correctnessRubric: Number(e.target.value) }); }}
-                          className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                          className="w-full h-1 bg-gray-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                         />
                       </div>
                       <div>
@@ -1341,7 +1341,7 @@ export default function Dashboard() {
                           max="10"
                           value={documentationRubric}
                           onChange={(e) => { setDocumentationRubric(Number(e.target.value)); saveDraft({ documentationRubric: Number(e.target.value) }); }}
-                          className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                          className="w-full h-1 bg-gray-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                         />
                       </div>
                     </div>
@@ -1375,7 +1375,7 @@ export default function Dashboard() {
                             max="100"
                             value={aiPercentage}
                             onChange={(e) => { setAiPercentage(Number(e.target.value)); saveDraft({ aiPercentage: Number(e.target.value) }); }}
-                            className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                            className="w-full h-1 bg-gray-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                           />
                         </div>
                         <div>

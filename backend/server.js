@@ -1850,7 +1850,8 @@ ${textToAnalyze}`;
           }]
         }],
         generationConfig: {
-          responseMimeType: "application/json"
+          responseMimeType: "application/json",
+          temperature: 0 // Set temperature to 0 for deterministic, consistent evaluation scores
         }
       })
     });

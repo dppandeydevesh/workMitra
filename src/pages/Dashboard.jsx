@@ -276,6 +276,7 @@ export default function Dashboard() {
       alert("Error communicating with server upload gateway.");
     } finally {
       setUploadingCV(false);
+      e.target.value = null; // Clear the input so the same file can be uploaded again if needed
     }
   };
 

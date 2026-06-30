@@ -2467,8 +2467,11 @@ app.post("/api/college/bulk-import", authenticateToken, async (req, res) => {
 
     for (const student of students) {
       const emailLower = student.email.trim().toLowerCase();
-      const academicDomains = [".edu", ".edu.in", ".ac.in", ".ac.uk", ".edu.au", ".edu.pk", ".edu.bd", ".edu.np", ".edu.lk", ".edu.cn", ".edu.sg", ".edu.my", ".ac.nz", ".ac.jp", ".ac.kr", ".ac.za", ".edu.br", ".edu.mx", ".edu.co", ".edu.ar", ".edu.pe", ".edu.eg", ".edu.ng", ".edu.gh", ".edu.ke", ".edu.et", ".edu.tz", ".ac.ke", ".org.in", ".res.in", ".ernet.in"];
-      if (!academicDomains.some(d => emailLower.endsWith(d))) {
+      const academicTLDs = [".edu", ".edu.in", ".ac.in", ".ac.uk", ".edu.au", ".edu.pk", ".edu.bd", ".edu.np", ".edu.lk", ".edu.cn", ".edu.sg", ".edu.my", ".ac.nz", ".ac.jp", ".ac.kr", ".ac.za", ".edu.br", ".edu.mx", ".edu.co", ".edu.ar", ".edu.pe", ".edu.eg", ".edu.ng", ".edu.gh", ".edu.ke", ".edu.et", ".edu.tz", ".ac.ke", ".org.in", ".res.in", ".ernet.in", ".ac.id", ".edu.tr", ".edu.sa", ".edu.ph", ".edu.vn", ".ac.th", ".edu.iq", ".edu.jo", ".ac.il", ".edu.ru", ".edu.ua", ".edu.pl", ".edu.es", ".edu.pt", ".ac.be", ".edu.eu"];
+      const privateUniversityDomains = ["lpu.co.in", "cumail.in", "christuniversity.in", "manipal.edu", "snu.edu.in", "bennett.edu.in", "jiit.ac.in", "ddn.upes.ac.in", "galgotiasuniversity.edu.in", "lnmiit.ac.in", "thapar.edu", "bml.edu.in", "rframed.in"];
+      const domainPart = emailLower.split("@")[1] || "";
+      const isAcademic = academicTLDs.some(d => emailLower.endsWith(d)) || privateUniversityDomains.some(d => domainPart === d || domainPart.endsWith("." + d));
+      if (!isAcademic) {
         invalidDomainCount++;
         continue;
       }

@@ -45,7 +45,7 @@ const UserSchema = new mongoose.Schema({
     isProfilePrivate: { type: Boolean, default: false },
     major: { type: String, default: "" },
     currentSemester: { type: String, default: "" },
-    vanityUsername: { type: String, default: null, unique: true, sparse: true },
+    vanityUsername: { type: String, unique: true, sparse: true },
     videoPitchUrl: { type: String, default: "" },
     extracurriculars: { type: [String], default: [] },
     availabilitySlots: { type: [String], default: [] },

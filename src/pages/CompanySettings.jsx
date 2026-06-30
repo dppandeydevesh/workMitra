@@ -95,7 +95,7 @@ export default function CompanySettings() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center text-gray-500 font-medium animate-pulse flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
           <span>Loading company settings...</span>
@@ -105,7 +105,7 @@ export default function CompanySettings() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 font-sans py-8">
+    <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-gradient-to-br from-blue-50 to-indigo-100 font-sans py-8">
       <div className="max-w-3xl mx-auto px-4">
         <button
           onClick={() => navigate("/company-dashboard")}

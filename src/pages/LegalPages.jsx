@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 function LegalLayout({ title, subtitle, children }) {
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 font-sans py-12 px-4 select-none">
+    <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-gradient-to-br from-blue-50 to-indigo-100 font-sans py-12 px-4 select-none">
       <div className="max-w-3xl mx-auto bg-white dark:bg-slate-900 rounded-3xl shadow-xl p-6 sm:p-10 border border-gray-100 dark:border-slate-800">
         {/* Navigation header */}
         <div className="flex justify-between items-center border-b pb-6 mb-8 gap-4">

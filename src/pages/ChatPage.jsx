@@ -235,7 +235,7 @@ export default function ChatPage() {
   if (!loggedInUser) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50 p-4 md:p-8 flex flex-col font-sans">
+    <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50 p-4 md:p-8 flex flex-col font-sans">
       {/* 🧭 TOP HEADER BAR */}
       <div className="max-w-6xl w-full mx-auto flex justify-between items-center mb-6 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md px-5 py-3 sm:px-6 sm:py-4 rounded-3xl border border-white/60 dark:border-slate-800/60 shadow-sm">
         <img 

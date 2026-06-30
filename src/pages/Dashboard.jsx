@@ -120,6 +120,10 @@ export default function Dashboard() {
   const [extensionReason, setExtensionReason] = useState("");
   const [requestingExtension, setRequestingExtension] = useState(false);
 
+  // AI Top Picks states
+  const [aiTopPicks, setAiTopPicks] = useState([]);
+  const [loadingAiPicks, setLoadingAiPicks] = useState(false);
+
   useEffect(() => {
     if (activeAppToSubmit) {
       const draft = JSON.parse(localStorage.getItem(`workmitra_draft_${activeAppToSubmit._id}`) || "{}");
@@ -213,6 +217,20 @@ export default function Dashboard() {
             setAppliedProjectIds(appliedIds);
           }
           await fetchApplications(userObj.email);
+
+          // Fetch AI Recommendations
+          setLoadingAiPicks(true);
+          try {
+            const aiRes = await fetchWithAuth(`${API_BASE_URL}/api/projects/recommendations/${userObj.email}`);
+            if (aiRes.ok) {
+              const aiData = await aiRes.json();
+              setAiTopPicks(aiData);
+            }
+          } catch (e) {
+            console.error("Failed to load AI recommendations:", e);
+          } finally {
+            setLoadingAiPicks(false);
+          }
         }
       } catch (err) {
         setErrorMessage("Cannot connect to server gateway nodes.");
@@ -549,7 +567,11 @@ export default function Dashboard() {
     return matchesSearch && matchesSkill && matchesWorkType && matchesBudget;
   }).sort((a, b) => {
     if (sortBy === "budgetHigh") return (b.budget || 0) - (a.budget || 0);
-    if (sortBy === "budgetLow") return (a.budget || 0) - (b.budget || 0);
+    if (sortBy === "closestDeadline") {
+      const dA = a.deadline ? new Date(a.deadline).getTime() : Infinity;
+      const dB = b.deadline ? new Date(b.deadline).getTime() : Infinity;
+      return dA - dB;
+    }
     if (sortBy === "latest") return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
     return 0;
   });
@@ -942,6 +964,50 @@ export default function Dashboard() {
             <h2 className="text-lg sm:text-2xl font-bold text-gray-800 mb-2">Deployed Company Projects</h2>
             <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">Explore the latest real-world tasks deployed by verified companies.</p>
 
+            {/* AI Top Picks */}
+            {currentUser && currentUser.userRole === "student" && (
+              <div className="mb-8">
+                <h3 className="text-md font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600 mb-4 flex items-center gap-2 drop-shadow-sm">
+                  <span className="text-xl">💡</span> AI Top Picks For You
+                </h3>
+                {loadingAiPicks ? (
+                  <div className="flex space-x-4 overflow-x-auto pb-4 hide-scrollbar">
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className="min-w-[280px] sm:min-w-[320px] h-32 bg-gray-100 animate-pulse rounded-2xl border border-gray-200"></div>
+                    ))}
+                  </div>
+                ) : aiTopPicks.length > 0 ? (
+                  <div className="flex space-x-4 overflow-x-auto pb-4 hide-scrollbar py-2">
+                    {aiTopPicks.map(project => (
+                      <div 
+                        key={project._id}
+                        onClick={() => navigate(`/project/${project._id}`)}
+                        className="min-w-[280px] sm:min-w-[320px] bg-white rounded-2xl border border-purple-100 p-5 shadow-[0_0_15px_rgba(168,85,247,0.15)] hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] transition cursor-pointer flex flex-col justify-between"
+                      >
+                        <div>
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-bold text-gray-900 text-sm truncate pr-2">{project.title}</h4>
+                            <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                              Top Match
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-600 line-clamp-2 mb-3">{project.description}</p>
+                        </div>
+                        <div className="flex justify-between items-center mt-2 border-t pt-3">
+                          <span className="font-bold text-green-600 text-xs">₹{project.budget?.toLocaleString() || 0}</span>
+                          <span className="text-indigo-600 font-bold text-[10px]">View Details ➔</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-[11px] text-gray-400 bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+                    No AI recommendations available right now. Update your resume and skills!
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Marketplace Filters Panel */}
             <div className="bg-gray-50/60 border border-gray-100 p-4 rounded-2xl mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
               <div className="relative">
@@ -1040,9 +1106,9 @@ export default function Dashboard() {
                   onChange={(e) => setSortBy(e.target.value)}
                   className="w-full bg-white border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
-                  <option value="latest">Latest Gigs First</option>
+                  <option value="latest">Newest</option>
                   <option value="budgetHigh">Highest Budget</option>
-                  <option value="budgetLow">Lowest Budget</option>
+                  <option value="closestDeadline">Closest Deadline</option>
                 </select>
               </div>
             </div>

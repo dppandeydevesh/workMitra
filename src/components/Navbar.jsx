@@ -4,6 +4,7 @@ import { API_BASE_URL } from "../config";
 import { useToast } from "./Toast";
 import { useWebSocket } from "./WebSocketContext";
 import { useTheme } from "./ThemeContext";
+import { useTranslation } from "react-i18next";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -11,9 +12,9 @@ export default function Navbar() {
   const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const { theme, toggleTheme } = useTheme();
+  const { t, i18n } = useTranslation();
 
   const toast = useToast();
   const { addListener } = useWebSocket();
@@ -92,29 +93,29 @@ export default function Navbar() {
   };
 
   const companyLinks = [
-    { label: "Dashboard", path: "/company-dashboard", icon: "🏠" },
-    { label: "Post Gig", path: "/add-project", icon: "➕" },
-    { label: "Manage Gigs", path: "/my-projects", icon: "📂" },
-    { label: "Applicants", path: "/applicants", icon: "👨‍🎓" },
-    { label: "Analytics", path: "/analytics", icon: "📈" },
-    { label: "Chat", path: "/chat", icon: "💬" }
+    { label: t("Dashboard"), path: "/company-dashboard", icon: "🏠" },
+    { label: t("Post Gig"), path: "/add-project", icon: "➕" },
+    { label: t("Manage Gigs"), path: "/my-projects", icon: "📂" },
+    { label: t("Applicants"), path: "/applicants", icon: "👨‍🎓" },
+    { label: t("Analytics"), path: "/analytics", icon: "📈" },
+    { label: t("Chat"), path: "/chat", icon: "💬" }
   ];
 
   const studentLinks = [
-    { label: "Marketplace", path: "/dashboard", icon: "🏠" },
-    { label: "Profile", path: `/student-profile/${user.email}`, icon: "👤" },
-    { label: "Chat", path: "/chat", icon: "💬" }
+    { label: t("Marketplace"), path: "/dashboard", icon: "🏠" },
+    { label: t("Profile"), path: `/student-profile/${user.email}`, icon: "👤" },
+    { label: t("Chat"), path: "/chat", icon: "💬" }
   ];
 
   const adminLinks = [
-    { label: "Admin Console", path: "/admin-dashboard", icon: "👑" },
-    { label: "Chat", path: "/chat", icon: "💬" }
+    { label: t("Admin Console"), path: "/admin-dashboard", icon: "👑" },
+    { label: t("Chat"), path: "/chat", icon: "💬" }
   ];
 
   const collegeLinks = [
-    { label: "College Portal", path: "/college-dashboard", icon: "🎓" },
-    { label: "Career Tracks", path: "/placement-pipeline", icon: "📋" },
-    { label: "Chat", path: "/chat", icon: "💬" }
+    { label: t("College Portal"), path: "/college-dashboard", icon: "🎓" },
+    { label: t("Career Tracks"), path: "/placement-pipeline", icon: "📋" },
+    { label: t("Chat"), path: "/chat", icon: "💬" }
   ];
 
   let activeLinks = studentLinks;
@@ -203,6 +204,14 @@ export default function Navbar() {
               </div>
             )}
 
+            {/* Language Toggle */}
+            <button
+              onClick={() => i18n.changeLanguage(i18n.language?.startsWith('en') ? 'hi' : 'en')}
+              className="p-2 text-xs font-bold text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition focus:outline-none"
+            >
+              {i18n.language?.startsWith('en') ? 'EN' : 'HI'}
+            </button>
+
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
@@ -218,7 +227,7 @@ export default function Navbar() {
               className="px-3 py-2 text-gray-600 hover:text-red-600 hover:bg-red-55 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ml-1"
             >
               <span>🚪</span>
-              <span>Logout</span>
+              <span>{t("Logout")}</span>
             </button>
           </div>
 
@@ -259,6 +268,14 @@ export default function Navbar() {
                 )}
               </div>
             )}
+
+            {/* Language Toggle */}
+            <button
+              onClick={() => i18n.changeLanguage(i18n.language?.startsWith('en') ? 'hi' : 'en')}
+              className="p-2 text-xs font-bold text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition focus:outline-none"
+            >
+              {i18n.language?.startsWith('en') ? 'EN' : 'HI'}
+            </button>
 
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
@@ -303,7 +320,7 @@ export default function Navbar() {
             className="w-full text-left px-3 py-2.5 text-gray-600 hover:text-red-600 hover:bg-red-55 rounded-xl text-xs font-bold flex items-center gap-2 transition"
           >
             <span>🚪</span>
-            <span>Logout</span>
+            <span>{t("Logout")}</span>
           </button>
         </div>
       )}

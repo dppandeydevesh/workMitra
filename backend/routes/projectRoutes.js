@@ -11,5 +11,6 @@ router.get('/company/:email', authenticateToken, projectController.getProjectsBy
 router.get('/:projectId/applicants', authenticateToken, projectController.getProjectApplicants);
 router.put('/:projectId', authenticateToken, projectController.updateProject);
 router.delete('/:projectId', authenticateToken, projectController.deleteProject);
+router.put('/archive/:id', authenticateToken, projectController.archiveProject);
 
 module.exports = router;

@@ -143,6 +143,31 @@ export default function ProjectDetails() {
     }
   };
 
+  const handleWithdraw = async () => {
+    if (!window.confirm("Are you sure you want to withdraw your application?")) return;
+    
+    const existingApp = studentApps.find(app => app.projectId?._id === projectId);
+    if (!existingApp) return;
+
+    setApplying(true);
+    try {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/applications/withdraw/${existingApp._id}`, {
+        method: "PUT"
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success("Application withdrawn successfully.");
+        setApplicationStatus("Withdrawn");
+      } else {
+        toast.error(data.error || "Failed to withdraw application.");
+      }
+    } catch (err) {
+      toast.error("Error communicating with server.");
+    } finally {
+      setApplying(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
@@ -342,6 +367,16 @@ export default function ProjectDetails() {
                   className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-black transition shadow disabled:opacity-50"
                 >
                   {applying ? "Submitting application payload..." : "Apply to Gig Now"}
+                </button>
+              )}
+              
+              {(applicationStatus === "Pending" || applicationStatus === "Submitted") && (
+                <button
+                  onClick={handleWithdraw}
+                  disabled={applying}
+                  className="px-6 py-2.5 bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 rounded-xl text-xs font-black transition shadow-sm disabled:opacity-50"
+                >
+                  {applying ? "Withdrawing..." : "Withdraw Application"}
                 </button>
               )}
             </div>

@@ -15,7 +15,8 @@ export default function Preferences() {
     interests: [],
     githubUrl: "",
     linkedinUrl: "",
-    portfolioUrl: ""
+    portfolioUrl: "",
+    avatarUrl: ""
   });
 
   useEffect(() => {
@@ -28,7 +29,8 @@ export default function Preferences() {
         skills: parsedUser.targetSkills ? parsedUser.targetSkills.split(",").map(s => s.trim()) : [],
         githubUrl: parsedUser.githubUrl || "",
         linkedinUrl: parsedUser.linkedinUrl || "",
-        portfolioUrl: parsedUser.portfolioUrl || ""
+        portfolioUrl: parsedUser.portfolioUrl || "",
+        avatarUrl: parsedUser.avatarUrl || ""
       }));
     }
   }, []);
@@ -84,6 +86,7 @@ export default function Preferences() {
           githubUrl: preferences.githubUrl,
           linkedinUrl: preferences.linkedinUrl,
           portfolioUrl: preferences.portfolioUrl,
+          avatarUrl: preferences.avatarUrl,
           bio: preferences.bio,
           interests: preferences.interests
         })
@@ -113,6 +116,7 @@ export default function Preferences() {
         parsedUser.githubUrl = preferences.githubUrl;
         parsedUser.linkedinUrl = preferences.linkedinUrl;
         parsedUser.portfolioUrl = preferences.portfolioUrl;
+        parsedUser.avatarUrl = preferences.avatarUrl;
         parsedUser.bio = preferences.bio;
         parsedUser.interests = preferences.interests;
         localStorage.setItem("user", JSON.stringify(parsedUser));
@@ -166,7 +170,7 @@ export default function Preferences() {
               <span>🔗</span> Portfolio & Professional Links (Optional)
             </h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-gray-600 mb-1">GitHub Profile</label>
                 <input
@@ -194,6 +198,16 @@ export default function Preferences() {
                   value={preferences.portfolioUrl}
                   onChange={(e) => setPreferences({...preferences, portfolioUrl: e.target.value})}
                   placeholder="https://username.dev"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Avatar Image URL</label>
+                <input
+                  type="url"
+                  value={preferences.avatarUrl}
+                  onChange={(e) => setPreferences({...preferences, avatarUrl: e.target.value})}
+                  placeholder="https://example.com/avatar.jpg"
                   className="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />
               </div>

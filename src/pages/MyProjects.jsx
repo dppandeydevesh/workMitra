@@ -193,6 +193,36 @@ export default function MyProjects() {
     }
   };
 
+  const handleArchiveProject = async (projectId) => {
+    if (!window.confirm("Are you sure you want to archive this project?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${API_BASE_URL}/api/projects/archive/${projectId}`, {
+        method: "PUT",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (response.ok) {
+        toast.success("Project archived successfully.");
+        const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
+        if (savedUser.email) {
+          const res = await fetch(`${API_BASE_URL}/api/projects/company/${savedUser.email}`, {
+            headers: { "Authorization": `Bearer ${token}` }
+          });
+          const data = await res.json();
+          if (res.ok) {
+            setProjects(data);
+            const updatedProject = data.find(p => p._id === projectId);
+            setSelectedProject(updatedProject || null);
+          }
+        }
+      } else {
+        toast.error("Failed to archive project.");
+      }
+    } catch (err) {
+      toast.error("Error sending archive payload.");
+    }
+  };
+
   const handleOpenEditModal = (proj) => {
     setEditTitle(proj.title);
     setEditDescription(proj.description);
@@ -318,6 +348,15 @@ export default function MyProjects() {
                       >
                         ✏️ Edit
                       </button>
+                      {selectedProject.status !== "Archived" && (
+                        <button 
+                          onClick={() => handleArchiveProject(selectedProject._id)}
+                          className="px-2.5 py-1.5 border border-amber-200 text-amber-700 hover:bg-amber-50 rounded-lg text-xs font-bold transition flex items-center gap-1"
+                          title="Archive Project"
+                        >
+                          📦 Archive
+                        </button>
+                      )}
                       <button 
                         onClick={() => handleDeleteProject(selectedProject._id)}
                         className="px-2.5 py-1.5 border border-red-100 text-red-600 hover:bg-red-50 rounded-lg text-xs font-bold transition flex items-center gap-1"

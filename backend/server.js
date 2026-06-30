@@ -33,6 +33,95 @@ const projectRoutes = require('./routes/projectRoutes');
 const authenticateToken = require('./middleware/authMiddleware');
 
 app.use('/api/auth', authRoutes);
+
+// =========================================================================
+// 💡 ROUTE: Get AI Top Picks for a student
+// =========================================================================
+app.get("/api/projects/recommendations/:email", authenticateToken, async (req, res) => {
+  try {
+    const { email } = req.params;
+    if (req.user.email !== email) {
+      return res.status(403).json({ error: "Unauthorized access." });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    const userSkills = user.targetSkills || "";
+    
+    // Fetch all Published projects
+    const projects = await Project.find({ status: "Published" });
+    if (!projects || projects.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: "Gemini API key is missing." });
+    }
+
+    const projectsList = projects.map(p => ({
+      id: p._id.toString(),
+      title: p.title,
+      description: p.description,
+      skills: p.requiredSkills?.join(", ") || ""
+    }));
+
+    const prompt = `You are an AI recommendations engine. 
+Here is the user's skill profile:
+Skills/Interests: ${userSkills}
+Resume Summary: ${user.resumeText ? user.resumeText.substring(0, 500) : "N/A"}
+
+Here is a list of active projects available:
+${JSON.stringify(projectsList)}
+
+Select the top 3 project IDs that best match the user's profile.
+Return ONLY a valid JSON array of strings (the 3 project IDs). No markdown, no explanation. Example: ["id1", "id2", "id3"]`;
+
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: "application/json",
+          temperature: 0.2
+        }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch from Gemini");
+    }
+    const data = await response.json();
+    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    
+    let recommendedIds = [];
+    if (aiText) {
+      try {
+        recommendedIds = JSON.parse(aiText.trim());
+      } catch (e) {
+        console.error("Failed to parse Gemini response:", aiText);
+      }
+    }
+
+    if (!Array.isArray(recommendedIds)) {
+      recommendedIds = [];
+    }
+    recommendedIds = recommendedIds.slice(0, 3);
+
+    const recommendedProjects = await Project.find({ _id: { $in: recommendedIds } });
+    const orderedProjects = recommendedIds.map(id => recommendedProjects.find(p => p._id.toString() === id)).filter(Boolean);
+
+    res.status(200).json(orderedProjects);
+  } catch (err) {
+    console.error("AI Recommendations error:", err.message);
+    res.status(500).json({ error: "Failed to fetch AI recommendations." });
+  }
+});
+
 app.use('/api/projects', projectRoutes);
 
 const PORT = process.env.PORT || 5000;
@@ -821,6 +910,30 @@ app.post("/api/applications/:applicationId/revision", authenticateToken, async (
 // =========================================================================
 // ⚠️ ROUTE: Flag and Dispute task submission
 // =========================================================================
+app.put("/api/applications/withdraw/:id", authenticateToken, async (req, res) => {
+  try {
+    const application = await Application.findById(req.params.id);
+    if (!application) {
+      return res.status(404).json({ error: "Application not found." });
+    }
+
+    if (req.user.email !== application.studentEmail) {
+      return res.status(403).json({ error: "Unauthorized. Only the applying student can withdraw." });
+    }
+
+    if (application.status !== "Pending" && application.status !== "Submitted") {
+      return res.status(400).json({ error: "Only Pending or Submitted applications can be withdrawn." });
+    }
+
+    application.status = "Withdrawn";
+    await application.save();
+    res.status(200).json(application);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to withdraw application." });
+  }
+});
+
 app.post("/api/applications/:applicationId/dispute", authenticateToken, async (req, res) => {
   try {
     const { feedbackText } = req.body;

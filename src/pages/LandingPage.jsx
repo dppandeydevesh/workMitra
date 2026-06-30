@@ -90,10 +90,10 @@ export default function LandingPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {/* Student Side */}
-            <div className="bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:from-slate-800 dark:to-slate-900 border border-blue-100/50 dark:border-slate-700 p-6 sm:p-8 rounded-3xl">
+            <div className="bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:bg-slate-800 dark:bg-none border border-blue-100/50 dark:border-slate-700 p-6 sm:p-8 rounded-3xl shadow-sm">
               <span className="text-2xl">🎓</span>
-              <h3 className="text-lg font-black text-blue-900 dark:text-blue-300 mt-3 mb-2">For Students / Creators</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">Build credential records, match skill matrices, and get paid.</p>
+              <h3 className="text-lg font-black text-blue-900 dark:text-white mt-3 mb-2">For Students / Creators</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-300 mb-6 leading-relaxed">Build credential records, match skill matrices, and get paid.</p>
               <div className="space-y-4">
                 <div className="flex items-start gap-3 text-xs">
                   <span className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">1</span>
@@ -111,10 +111,10 @@ export default function LandingPage() {
             </div>
 
             {/* Recruiter Side */}
-            <div className="bg-gradient-to-br from-pink-50/50 to-purple-50/50 dark:from-slate-800 dark:to-slate-900 border border-purple-100/50 dark:border-slate-700 p-6 sm:p-8 rounded-3xl">
+            <div className="bg-gradient-to-br from-pink-50/50 to-purple-50/50 dark:bg-slate-800 dark:bg-none border border-purple-100/50 dark:border-slate-700 p-6 sm:p-8 rounded-3xl shadow-sm">
               <span className="text-2xl">🏢</span>
-              <h3 className="text-lg font-black text-purple-900 dark:text-purple-300 mt-3 mb-2">For Startups / Recruiters</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">Deploy gig requirements, review applicants, and ensure safety.</p>
+              <h3 className="text-lg font-black text-purple-900 dark:text-white mt-3 mb-2">For Startups / Recruiters</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-300 mb-6 leading-relaxed">Deploy gig requirements, review applicants, and ensure safety.</p>
               <div className="space-y-4">
                 <div className="flex items-start gap-3 text-xs">
                   <span className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">1</span>
@@ -136,9 +136,9 @@ export default function LandingPage() {
 
 
       {/* 🙋 FAQ Accordion */}
-      <section className="bg-gray-50/60 border-t border-gray-100 dark:border-slate-800 py-16 px-4">
+      <section className="bg-gray-50/60 dark:bg-slate-900 border-t border-gray-100 dark:border-slate-800 py-16 px-4">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-800 dark:text-gray-200 tracking-tight mb-8">
+          <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-800 dark:text-white tracking-tight mb-8">
             Frequently Asked Questions
           </h2>
           <div className="space-y-4">
@@ -154,7 +154,7 @@ export default function LandingPage() {
                     <span className="text-lg text-indigo-500 font-bold">{isOpen ? "−" : "+"}</span>
                   </button>
                   {isOpen && (
-                    <p className="text-xs text-gray-500 mt-3 leading-relaxed border-t pt-3 border-gray-50">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 leading-relaxed border-t pt-3 border-gray-50 dark:border-slate-800/50">
                       {faq.a}
                     </p>
                   )}

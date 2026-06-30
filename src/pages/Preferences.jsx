@@ -257,7 +257,7 @@ export default function Preferences() {
                   className={`px-3 py-1 rounded-full text-sm transition font-medium ${
                     preferences.skills.includes(skill)
                       ? "bg-blue-600 text-white shadow-sm"
-                      : "bg-gray-200 text-gray-700 dark:text-gray-200 hover:bg-gray-300"
+                      : "bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-slate-700"
                   }`}
                 >
                   {skill}
@@ -278,7 +278,7 @@ export default function Preferences() {
                   className={`px-3 py-1 rounded-full text-sm transition font-medium ${
                     preferences.interests.includes(interest)
                       ? "bg-green-600 text-white shadow-sm"
-                      : "bg-gray-200 text-gray-700 dark:text-gray-200 hover:bg-gray-300"
+                      : "bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-slate-700"
                   }`}
                 >
                   {interest}

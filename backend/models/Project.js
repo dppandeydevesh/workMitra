@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 
 const projectSchema = new mongoose.Schema({
   companyId: { 
-    type: String, 
-    required: true // Tracks which company email posted the project
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true // Tracks which company posted the project
   },
   title: { type: String, required: true },
   description: { type: String, required: true },

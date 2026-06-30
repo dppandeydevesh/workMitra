@@ -222,7 +222,7 @@ export default function ProjectDetails() {
                 {project.title}
               </h1>
               <p className="text-xs text-gray-400 mt-1 font-semibold uppercase tracking-wider">
-                Posted by {project.companyId} • <span className="text-indigo-500">{project.departmentName || "Core Team"}</span>
+                Posted by {project.companyId?.email || project.companyId} • <span className="text-indigo-500">{project.departmentName || "Core Team"}</span>
               </p>
             </div>
 

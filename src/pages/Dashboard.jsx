@@ -539,7 +539,7 @@ export default function Dashboard() {
     const query = searchTerm.toLowerCase();
     const matchesSearch = 
       project.title.toLowerCase().includes(query) ||
-      (project.companyId && project.companyId.toLowerCase().includes(query)) ||
+      (project.companyId && project.companyId.email && project.companyId.email.toLowerCase().includes(query)) ||
       project.description.toLowerCase().includes(query);
       
     const matchesSkill = skillFilter === "All" || (project.requiredSkills && project.requiredSkills.includes(skillFilter));
@@ -660,7 +660,7 @@ export default function Dashboard() {
                             {renderStepper(app.status)}
                           </div>
                           <h4 className="text-sm font-bold text-gray-900 mb-1">{project.title}</h4>
-                          <p className="text-xs text-gray-400 mb-2">Company: {project.companyId ? project.companyId.split("@")[0].toUpperCase() : "COMPANY"}</p>
+                          <p className="text-xs text-gray-400 mb-2">Company: {project.companyId && project.companyId.email ? project.companyId.email.split("@")[0].toUpperCase() : "COMPANY"}</p>
                           <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed mb-4">{project.description}</p>
                         </div>
                         
@@ -1077,7 +1077,7 @@ export default function Dashboard() {
                       <div>
                         <div className="flex justify-between items-center mb-3">
                           <span className="bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-md">
-                            🏢 {project.companyId ? project.companyId.split("@")[0].toUpperCase() : "COMPANY"}
+                            🏢 {project.companyId && project.companyId.email ? project.companyId.email.split("@")[0].toUpperCase() : "COMPANY"}
                           </span>
                           {project.aiRecommendationScore !== undefined && (
                             <span className="bg-indigo-50 text-indigo-700 text-[10px] font-black px-2 py-0.5 rounded-lg border border-indigo-100/50 flex items-center gap-0.5">
@@ -1136,7 +1136,7 @@ export default function Dashboard() {
 
                             {currentUser?.userRole === "student" && (
                               <button
-                                onClick={(e) => { e.stopPropagation(); navigate(`/chat/${project.companyId}`); }}
+                                onClick={(e) => { e.stopPropagation(); navigate(`/chat/${project.companyId.email}`); }}
                                 className="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm"
                               >
                                 Chat

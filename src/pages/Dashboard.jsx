@@ -1009,7 +1009,7 @@ export default function Dashboard() {
             )}
 
             {/* Marketplace Filters Panel */}
-            <div className="bg-gray-50/60 border border-gray-100 dark:border-slate-800 p-4 rounded-2xl mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="bg-gray-50/60 dark:bg-slate-900/60 border border-gray-100 dark:border-slate-800 p-4 rounded-2xl mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
               <div className="relative">
                 <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">Search Keywords</label>
                 <input
@@ -1124,7 +1124,7 @@ export default function Dashboard() {
                 🔄 Fetching live corporate projects from database...
               </div>
             ) : filteredProjects.length === 0 ? (
-              <div className="text-center py-12 border-2 border-dashed border-gray-200 dark:border-slate-800 rounded-xl text-gray-400 font-medium bg-gray-50/50">
+              <div className="text-center py-12 border-2 border-dashed border-gray-200 dark:border-slate-800 rounded-xl text-gray-400 font-medium bg-gray-50/50 dark:bg-slate-900/50">
                 📭 No projects match your current filter settings.
               </div>
             ) : (

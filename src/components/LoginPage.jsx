@@ -303,7 +303,7 @@ export default function LoginPage() {
           {isOtpVerifying ? (
             <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 border border-white/60 dark:border-slate-800/60 text-center space-y-6 animate-fade-in z-20">
               <div className="flex justify-center">
-                <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain mix-blend-multiply" />
+                <img src="/logo.png" alt="workMitra Logo" className="h-14 object-contain bg-white px-3 py-1.5 rounded-xl shadow-sm" />
               </div>
               
               <div>
@@ -432,7 +432,7 @@ export default function LoginPage() {
                   }}
                 >
                   <div className="flex justify-center -mb-2">
-                    <img src="/logo.png" alt="workMitra Logo" className="h-16 object-contain" />
+                    <img src="/logo.png" alt="workMitra Logo" className="h-14 object-contain bg-white px-3 py-1.5 rounded-xl shadow-sm" />
                   </div>
                   <h1 className="text-xl md:text-2xl font-extrabold text-purple-950 dark:text-purple-200">Create Account</h1>
                   <p className="text-xs text-purple-600 font-bold uppercase tracking-wider">Joining as {userRole}</p>
@@ -496,7 +496,7 @@ export default function LoginPage() {
               }`}>
                 <form className="w-full space-y-4" onSubmit={handleLoginSubmit}>
                   <div className="flex justify-center -mb-2">
-                    <img src="/logo.png" alt="workMitra Logo" className="h-16 object-contain" />
+                    <img src="/logo.png" alt="workMitra Logo" className="h-14 object-contain bg-white px-3 py-1.5 rounded-xl shadow-sm" />
                   </div>
                   <h1 className="text-2xl md:text-3xl font-extrabold text-purple-950 dark:text-purple-200">Sign In</h1>
                   <p className="text-xs text-pink-600 font-bold uppercase tracking-wider">Accessing portal</p>
@@ -560,7 +560,7 @@ export default function LoginPage() {
         <div className="w-full min-h-screen flex flex-col items-center justify-center p-6 z-10 animate-fade-in">
           <div className="bg-white dark:bg-slate-900 rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 max-w-md w-full border border-white/60 dark:border-slate-800/60 text-center space-y-6">
             <div className="flex justify-center">
-              <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain mix-blend-multiply" />
+              <img src="/logo.png" alt="workMitra Logo" className="h-14 object-contain bg-white px-3 py-1.5 rounded-xl shadow-sm" />
             </div>
             
             <div>

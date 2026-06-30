@@ -103,6 +103,8 @@ export default function Dashboard() {
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [checkingOutPass, setCheckingOutPass] = useState(false);
   const [checkoutStep, setCheckoutStep] = useState(1);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   // 📥 Phase 12 States & Auto-Save
   const [codeQualityRubric, setCodeQualityRubric] = useState(5);
@@ -167,6 +169,7 @@ export default function Dashboard() {
 
     // 2. Fetch live deployed projects AND student application state concurrently
     const initializeDashboardData = async () => {
+      setLoading(true);
       try {
         if (userObj) {
           const token = localStorage.getItem("token");
@@ -182,8 +185,8 @@ export default function Dashboard() {
         const token = localStorage.getItem("token");
         const isStudent = userObj && userObj.userRole === "student";
         const projectsUrl = isStudent 
-          ? `${API_BASE_URL}/api/projects/recommended` 
-          : `${API_BASE_URL}/api/projects/all`;
+          ? `${API_BASE_URL}/api/projects/recommended?page=${page}&limit=${limit}` 
+          : `${API_BASE_URL}/api/projects/all?page=${page}&limit=${limit}`;
 
         const projectsRes = await fetchWithAuth(projectsUrl);
         const projectsData = await projectsRes.json();
@@ -219,7 +222,7 @@ export default function Dashboard() {
     };
 
     initializeDashboardData();
-  }, []);
+  }, [page, limit]);
 
   const handleUploadCVFile = async (e) => {
     const file = e.target.files[0];
@@ -1143,6 +1146,35 @@ export default function Dashboard() {
                     </div>
                   );
                 })}
+              </div>
+            )}
+
+            {/* Pagination Controls */}
+            {!loading && projects.length > 0 && (
+              <div className="flex justify-center items-center space-x-4 mt-8">
+                <button
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm ${
+                    page === 1 
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed" 
+                      : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  Previous
+                </button>
+                <span className="text-xs font-bold text-gray-600">Page {page}</span>
+                <button
+                  onClick={() => setPage(p => p + 1)}
+                  disabled={projects.length < limit}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm ${
+                    projects.length < limit
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed" 
+                      : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  Next
+                </button>
               </div>
             )}
           </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
+import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 
 export default function AnalyticsDashboard() {
   const navigate = useNavigate();
@@ -218,89 +219,42 @@ export default function AnalyticsDashboard() {
                       <p className="text-xs text-gray-400 italic text-center py-16">No applications received yet</p>
                     ) : (
                       <div className="flex flex-col items-center">
-                        {/* SVG Donut */}
-                        <div className="relative w-40 h-40 flex items-center justify-center mb-6">
-                          <svg viewBox="0 0 36 36" className="w-full h-full transform -rotate-90">
-                            <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#f3f4f6" strokeWidth="3" />
-                            
-                            {/* Completed ring segment */}
-                            {statusCounts.Completed > 0 && (
-                              <circle
-                                cx="18"
-                                cy="18"
-                                r="15.9155"
-                                fill="transparent"
-                                stroke="#10b981"
-                                strokeWidth="3.5"
-                                strokeDasharray={`${(statusCounts.Completed / totalApplicationsCount) * 100} ${100 - ((statusCounts.Completed / totalApplicationsCount) * 100)}`}
-                                strokeDashoffset="100"
-                                className="transition-all duration-1000 ease-out"
-                              />
-                            )}
-
-                            {/* Approved ring segment */}
-                            {statusCounts.Approved > 0 && (
-                              <circle
-                                cx="18"
-                                cy="18"
-                                r="15.9155"
-                                fill="transparent"
-                                stroke="#3b82f6"
-                                strokeWidth="3.5"
-                                strokeDasharray={`${(statusCounts.Approved / totalApplicationsCount) * 100} ${100 - ((statusCounts.Approved / totalApplicationsCount) * 100)}`}
-                                strokeDashoffset={100 - ((statusCounts.Completed / totalApplicationsCount) * 100)}
-                                className="transition-all duration-1000 ease-out"
-                              />
-                            )}
-
-                            {/* Submitted ring segment */}
-                            {statusCounts.Submitted > 0 && (
-                              <circle
-                                cx="18"
-                                cy="18"
-                                r="15.9155"
-                                fill="transparent"
-                                stroke="#f59e0b"
-                                strokeWidth="3.5"
-                                strokeDasharray={`${(statusCounts.Submitted / totalApplicationsCount) * 100} ${100 - ((statusCounts.Submitted / totalApplicationsCount) * 100)}`}
-                                strokeDashoffset={100 - (((statusCounts.Completed + statusCounts.Approved) / totalApplicationsCount) * 100)}
-                                className="transition-all duration-1000 ease-out"
-                              />
-                            )}
-
-                            {/* Pending ring segment */}
-                            {statusCounts.Pending > 0 && (
-                              <circle
-                                cx="18"
-                                cy="18"
-                                r="15.9155"
-                                fill="transparent"
-                                stroke="#9ca3af"
-                                strokeWidth="3.5"
-                                strokeDasharray={`${(statusCounts.Pending / totalApplicationsCount) * 100} ${100 - ((statusCounts.Pending / totalApplicationsCount) * 100)}`}
-                                strokeDashoffset={100 - (((statusCounts.Completed + statusCounts.Approved + statusCounts.Submitted) / totalApplicationsCount) * 100)}
-                                className="transition-all duration-1000 ease-out"
-                              />
-                            )}
-
-                            {/* Rejected ring segment */}
-                            {statusCounts.Rejected > 0 && (
-                              <circle
-                                cx="18"
-                                cy="18"
-                                r="15.9155"
-                                fill="transparent"
-                                stroke="#ef4444"
-                                strokeWidth="3.5"
-                                strokeDasharray={`${(statusCounts.Rejected / totalApplicationsCount) * 100} ${100 - ((statusCounts.Rejected / totalApplicationsCount) * 100)}`}
-                                strokeDashoffset={100 - (((statusCounts.Completed + statusCounts.Approved + statusCounts.Submitted + statusCounts.Pending) / totalApplicationsCount) * 100)}
-                                className="transition-all duration-1000 ease-out"
-                              />
-                            )}
-                          </svg>
-
+                        {/* Recharts Donut */}
+                        <div className="relative w-full h-48 flex items-center justify-center mb-6">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie
+                                data={[
+                                  { name: 'Completed', value: statusCounts.Completed, color: '#10b981' },
+                                  { name: 'Approved', value: statusCounts.Approved, color: '#3b82f6' },
+                                  { name: 'Submitted', value: statusCounts.Submitted, color: '#f59e0b' },
+                                  { name: 'Pending', value: statusCounts.Pending, color: '#9ca3af' },
+                                  { name: 'Rejected', value: statusCounts.Rejected, color: '#ef4444' }
+                                ].filter(entry => entry.value > 0)}
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={60}
+                                outerRadius={80}
+                                dataKey="value"
+                                stroke="none"
+                              >
+                                {
+                                  [
+                                    { name: 'Completed', value: statusCounts.Completed, color: '#10b981' },
+                                    { name: 'Approved', value: statusCounts.Approved, color: '#3b82f6' },
+                                    { name: 'Submitted', value: statusCounts.Submitted, color: '#f59e0b' },
+                                    { name: 'Pending', value: statusCounts.Pending, color: '#9ca3af' },
+                                    { name: 'Rejected', value: statusCounts.Rejected, color: '#ef4444' }
+                                  ].filter(entry => entry.value > 0).map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.color} />
+                                  ))
+                                }
+                              </Pie>
+                              <RechartsTooltip />
+                            </PieChart>
+                          </ResponsiveContainer>
                           {/* Inner center text overlay */}
-                          <div className="absolute flex flex-col items-center justify-center">
+                          <div className="absolute flex flex-col items-center justify-center pointer-events-none">
                             <span className="text-xl font-black text-gray-800">{totalApplicationsCount}</span>
                             <span className="text-[9px] uppercase font-bold text-gray-400">Total</span>
                           </div>
@@ -381,21 +335,16 @@ export default function AnalyticsDashboard() {
                     {topSkillsList.length === 0 ? (
                       <p className="text-xs text-gray-400 italic text-center py-8">No required skills specified yet</p>
                     ) : (
-                      <div className="space-y-4">
-                        {topSkillsList.map(([skill, count]) => (
-                          <div key={skill} className="space-y-1">
-                            <div className="flex justify-between text-xs font-bold text-gray-700">
-                              <span className="bg-gray-50 px-2 py-0.5 rounded border text-[10px] text-gray-600">{skill}</span>
-                              <span className="text-[10px] text-gray-400 uppercase font-black">{count} {count > 1 ? 'Projects' : 'Project'}</span>
-                            </div>
-                            <div className="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
-                              <div 
-                                className="bg-indigo-600 h-full rounded-full transition-all duration-500"
-                                style={{ width: `${(count / totalProjectsCount) * 100}%` }}
-                              />
-                            </div>
-                          </div>
-                        ))}
+                      <div className="w-full h-48">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={topSkillsList.map(([skill, count]) => ({ name: skill, count: count }))} layout="vertical" margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+                            <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                            <XAxis type="number" hide />
+                            <YAxis dataKey="name" type="category" width={80} tick={{fontSize: 10}} axisLine={false} tickLine={false} />
+                            <RechartsTooltip cursor={{fill: '#f3f4f6'}} contentStyle={{fontSize: '12px', borderRadius: '8px'}} />
+                            <Bar dataKey="count" fill="#4f46e5" radius={[0, 4, 4, 0]} barSize={12} />
+                          </BarChart>
+                        </ResponsiveContainer>
                       </div>
                     )}
                   </div>

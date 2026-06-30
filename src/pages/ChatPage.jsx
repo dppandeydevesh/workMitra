@@ -79,6 +79,7 @@ export default function ChatPage() {
 
   useEffect(() => {
     fetchPartners();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipientEmail]);
 
   // Fetch conversation history when active partner changes
@@ -126,6 +127,7 @@ export default function ChatPage() {
       }
     };
     fetchHistory();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePartner]);
 
   // Initialize WebSocket Connection (runs once, stabilized connection)
@@ -170,6 +172,7 @@ export default function ChatPage() {
 
     const unsubscribe = addListener(handleIncomingData);
     return () => unsubscribe();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedInUser, addListener]);
 
   // Scroll to bottom on new messages
@@ -199,7 +202,7 @@ export default function ChatPage() {
             isTyping: false
           });
         }
-      }, 2000);
+      }, 3000);
     }
   };
 
@@ -390,6 +393,12 @@ export default function ChatPage() {
                 )}
                 <div ref={messagesEndRef} />
               </div>
+
+              {isPartnerTyping && (
+                <div className="px-6 py-2 text-xs text-pink-600 italic animate-pulse bg-white/30 border-t border-purple-100">
+                  {activePartner.fullName || activePartner.companyName} is typing...
+                </div>
+              )}
 
               {/* Message Typing and Send Form */}
               <form onSubmit={handleSendMessage} className="p-4 border-t border-purple-100 bg-white/40 flex gap-2">

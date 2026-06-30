@@ -3,6 +3,7 @@ import { API_BASE_URL } from "../config";
 
 const WebSocketContext = createContext(null);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useWebSocket() {
   return useContext(WebSocketContext);
 }
@@ -119,6 +120,7 @@ export function WebSocketProvider({ children }) {
       }
       if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // Expose register/unregister listener helpers
@@ -137,8 +139,10 @@ export function WebSocketProvider({ children }) {
 
   return (
     <WebSocketContext.Provider
+      // eslint-disable-next-line react-hooks/refs
       value={{
         wsConnected,
+        // eslint-disable-next-line react-hooks/refs
         socket: socketRef.current,
         addListener,
         sendMessage,

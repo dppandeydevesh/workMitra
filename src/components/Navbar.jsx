@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 import { useToast } from "./Toast";
 import { useWebSocket } from "./WebSocketContext";
+import { useTheme } from "./ThemeContext";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -10,8 +11,9 @@ export default function Navbar() {
   const [user, setUser] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
-  const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
+  const { theme, toggleTheme } = useTheme();
 
   const toast = useToast();
   const { addListener } = useWebSocket();
@@ -34,15 +36,8 @@ export default function Navbar() {
     return () => unsubscribe();
   }, [addListener]);
 
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [isDarkMode]);
+    return () => unsubscribe();
+  }, [addListener]);
 
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem("user") || "null");
@@ -210,11 +205,11 @@ export default function Navbar() {
 
             {/* Theme Toggle Button */}
             <button
-              onClick={() => setIsDarkMode(!isDarkMode)}
+              onClick={toggleTheme}
               className="p-2 text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition focus:outline-none"
               title="Toggle theme mode"
             >
-              <span className="text-lg">{isDarkMode ? "☀️" : "🌙"}</span>
+              <span className="text-lg">{theme === "dark" ? "☀️" : "🌙"}</span>
             </button>
 
             {/* Logout Button */}

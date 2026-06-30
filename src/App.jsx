@@ -25,6 +25,7 @@ import CalendarView from "./pages/CalendarView";
 import CompanySettings from "./pages/CompanySettings";
 import CollegeDashboard from "./pages/CollegeDashboard";
 import PlacementPipeline from "./pages/PlacementPipeline";
+import { ThemeProvider } from "./components/ThemeContext";
 
 const PublicRoute = ({ children }) => {
   const savedUser = localStorage.getItem("user");
@@ -55,50 +56,54 @@ const ProtectedLayout = ({ allowedRoles, children }) => {
 
 function App() {
   return (
-    <ToastProvider>
-      <WebSocketProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/refund" element={<RefundPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            
-            <Route path="/preferences" element={<ProtectedRoute allowedRoles={["student"]}><Preferences /></ProtectedRoute>} />
-            <Route path="/company-preferences" element={<ProtectedRoute allowedRoles={["company"]}><CompanyPreferences /></ProtectedRoute>} />
-            
-            <Route path="/dashboard" element={<ProtectedLayout allowedRoles={["student"]}><Dashboard /></ProtectedLayout>} />
-            <Route path="/project/:projectId" element={<ProtectedLayout allowedRoles={["student"]}><ProjectDetails /></ProtectedLayout>} />
-            
-            {/* ========================================================================= */}
-            {/* 🚀 NEW CORPORATE MANAGEMENT ROUTES (Phase 1, 2 & 5)                       */}
-            {/* ========================================================================= */}
-            <Route path="/company-dashboard" element={<ProtectedLayout allowedRoles={["company"]}><CompanyDashboard /></ProtectedLayout>} />
-            <Route path="/add-project" element={<ProtectedLayout allowedRoles={["company"]}><AddProject /></ProtectedLayout>} />
-            <Route path="/my-projects" element={<ProtectedLayout allowedRoles={["company"]}><MyProjects /></ProtectedLayout>} />
-            <Route path="/applicants" element={<ProtectedLayout allowedRoles={["company"]}><ApplicantsHub /></ProtectedLayout>} />
-            <Route path="/analytics" element={<ProtectedLayout allowedRoles={["company"]}><AnalyticsDashboard /></ProtectedLayout>} />
-            <Route path="/calendar" element={<ProtectedLayout allowedRoles={["company"]}><CalendarView /></ProtectedLayout>} />
-            <Route path="/company-settings" element={<ProtectedLayout allowedRoles={["company"]}><CompanySettings /></ProtectedLayout>} />
-            <Route path="/placement-pipeline" element={<ProtectedLayout allowedRoles={["company", "college"]}><PlacementPipeline /></ProtectedLayout>} />
-            
-            <Route path="/student-profile/:email" element={<ProtectedLayout><StudentProfile /></ProtectedLayout>} />
-            <Route path="/student/:email" element={<ProtectedLayout><StudentProfile /></ProtectedLayout>} />
-            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-            <Route path="/chat" element={<ProtectedLayout><ChatPage /></ProtectedLayout>} />
-            <Route path="/chat/:recipientEmail" element={<ProtectedLayout><ChatPage /></ProtectedLayout>} />
-            
-            <Route path="/admin-dashboard" element={<ProtectedLayout allowedRoles={["admin"]}><AdminDashboard /></ProtectedLayout>} />
-            <Route path="/college-dashboard" element={<ProtectedLayout allowedRoles={["college"]}><CollegeDashboard /></ProtectedLayout>} />
-            
-            {/* 404 Wildcard Catch-All */}
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </BrowserRouter>
-      </WebSocketProvider>
-    </ToastProvider>
+    <ThemeProvider>
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-200">
+        <ToastProvider>
+          <WebSocketProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+                <Route path="/terms" element={<TermsPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/refund" element={<RefundPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                
+                <Route path="/preferences" element={<ProtectedRoute allowedRoles={["student"]}><Preferences /></ProtectedRoute>} />
+                <Route path="/company-preferences" element={<ProtectedRoute allowedRoles={["company"]}><CompanyPreferences /></ProtectedRoute>} />
+                
+                <Route path="/dashboard" element={<ProtectedLayout allowedRoles={["student"]}><Dashboard /></ProtectedLayout>} />
+                <Route path="/project/:projectId" element={<ProtectedLayout allowedRoles={["student"]}><ProjectDetails /></ProtectedLayout>} />
+                
+                {/* ========================================================================= */}
+                {/* 🚀 NEW CORPORATE MANAGEMENT ROUTES (Phase 1, 2 & 5)                       */}
+                {/* ========================================================================= */}
+                <Route path="/company-dashboard" element={<ProtectedLayout allowedRoles={["company"]}><CompanyDashboard /></ProtectedLayout>} />
+                <Route path="/add-project" element={<ProtectedLayout allowedRoles={["company"]}><AddProject /></ProtectedLayout>} />
+                <Route path="/my-projects" element={<ProtectedLayout allowedRoles={["company"]}><MyProjects /></ProtectedLayout>} />
+                <Route path="/applicants" element={<ProtectedLayout allowedRoles={["company"]}><ApplicantsHub /></ProtectedLayout>} />
+                <Route path="/analytics" element={<ProtectedLayout allowedRoles={["company"]}><AnalyticsDashboard /></ProtectedLayout>} />
+                <Route path="/calendar" element={<ProtectedLayout allowedRoles={["company"]}><CalendarView /></ProtectedLayout>} />
+                <Route path="/company-settings" element={<ProtectedLayout allowedRoles={["company"]}><CompanySettings /></ProtectedLayout>} />
+                <Route path="/placement-pipeline" element={<ProtectedLayout allowedRoles={["company", "college"]}><PlacementPipeline /></ProtectedLayout>} />
+                
+                <Route path="/student-profile/:email" element={<ProtectedLayout><StudentProfile /></ProtectedLayout>} />
+                <Route path="/student/:email" element={<ProtectedLayout><StudentProfile /></ProtectedLayout>} />
+                <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+                <Route path="/chat" element={<ProtectedLayout><ChatPage /></ProtectedLayout>} />
+                <Route path="/chat/:recipientEmail" element={<ProtectedLayout><ChatPage /></ProtectedLayout>} />
+                
+                <Route path="/admin-dashboard" element={<ProtectedLayout allowedRoles={["admin"]}><AdminDashboard /></ProtectedLayout>} />
+                <Route path="/college-dashboard" element={<ProtectedLayout allowedRoles={["college"]}><CollegeDashboard /></ProtectedLayout>} />
+                
+                {/* 404 Wildcard Catch-All */}
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </BrowserRouter>
+          </WebSocketProvider>
+        </ToastProvider>
+      </div>
+    </ThemeProvider>
   );
 }
 

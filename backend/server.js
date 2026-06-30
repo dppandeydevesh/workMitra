@@ -181,14 +181,11 @@ app.post("/api/applications/apply", authenticateToken, async (req, res) => {
       return res.status(403).json({ error: 'Only students can apply to projects' });
     }
 
-    const { projectId, studentEmail, studentName } = req.body;
+    const { projectId } = req.body;
+    const studentEmail = req.user.email;
 
-    if (!projectId || !studentEmail || !studentName) {
+    if (!projectId) {
       return res.status(400).json({ error: "Missing required application parameters." });
-    }
-
-    if (req.user.email !== studentEmail) {
-      return res.status(403).json({ error: "Unauthorized application submitter identity." });
     }
 
     const alreadyApplied = await Application.findOne({ projectId, studentEmail });
@@ -198,6 +195,11 @@ app.post("/api/applications/apply", authenticateToken, async (req, res) => {
 
     const project = await Project.findById(projectId);
     const studentUser = await User.findOne({ email: studentEmail });
+    
+    if (!studentUser) {
+      return res.status(404).json({ error: "Student not found." });
+    }
+    const studentName = studentUser.fullName;
 
     // Compute standard match score fallback
     let matchScore = 0;

@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 import { useToast } from "../components/Toast";
+import { fetchWithAuth } from "../services/apiClient";
 
 export default function ProjectDetails() {
   const { projectId } = useParams();
@@ -22,27 +23,11 @@ export default function ProjectDetails() {
   const [showQuizModal, setShowQuizModal] = useState(false);
   const [quizAnswers, setQuizAnswers] = useState({});
 
-  useEffect(() => {
-    const savedUser = JSON.parse(localStorage.getItem("user") || "null");
-    setCurrentUser(savedUser);
-
-    if (!savedUser) {
-      navigate("/login");
-      return;
-    }
-
-    fetchProjectAndAppState(savedUser.email);
-  }, [projectId]);
-
-  const fetchProjectAndAppState = async (userEmail) => {
+  const fetchProjectAndAppState = useCallback(async (userEmail) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      
       // 1. Fetch project details
-      const projectRes = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
+      const projectRes = await fetchWithAuth(`${API_BASE_URL}/api/projects/${projectId}`);
       const projectData = await projectRes.json();
 
       if (projectRes.ok) {
@@ -52,9 +37,7 @@ export default function ProjectDetails() {
       }
 
       // 2. Fetch student applications to check if applied
-      const appsRes = await fetch(`${API_BASE_URL}/api/applications/student-details/${userEmail}`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
+      const appsRes = await fetchWithAuth(`${API_BASE_URL}/api/applications/student-details/${userEmail}`);
       if (appsRes.ok) {
         const apps = await appsRes.json();
         setStudentApps(apps);
@@ -68,7 +51,19 @@ export default function ProjectDetails() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId]);
+
+  useEffect(() => {
+    const savedUser = JSON.parse(localStorage.getItem("user") || "null");
+    setCurrentUser(savedUser);
+
+    if (!savedUser) {
+      navigate("/login");
+      return;
+    }
+
+    fetchProjectAndAppState(savedUser.email);
+  }, [projectId, fetchProjectAndAppState]);
 
   const handleApply = () => {
     if (!currentUser) return;
@@ -121,17 +116,14 @@ export default function ProjectDetails() {
   const executeApplyAPI = async () => {
     setApplying(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/applications/apply`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/applications/apply`, {
         method: "POST",
         headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           projectId,
-          studentEmail: currentUser.email,
-          studentName: currentUser.fullName || "Student User"
+          companyId: typeof project.companyId === 'object' ? project.companyId._id : project.companyId
         })
       });
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 import { useToast } from "../components/Toast";
+import { fetchWithAuth } from "../services/apiClient";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -169,9 +170,7 @@ export default function Dashboard() {
       try {
         if (userObj) {
           const token = localStorage.getItem("token");
-          const userRes = await fetch(`${API_BASE_URL}/api/auth/user/${userObj.email}`, {
-            headers: { "Authorization": `Bearer ${token}` }
-          });
+          const userRes = await fetchWithAuth(`${API_BASE_URL}/api/auth/user/${userObj.email}`);
           if (userRes.ok) {
             const latestUser = await userRes.json();
             setCurrentUser(latestUser);
@@ -186,9 +185,7 @@ export default function Dashboard() {
           ? `${API_BASE_URL}/api/projects/recommended` 
           : `${API_BASE_URL}/api/projects/all`;
 
-        const projectsRes = await fetch(projectsUrl, {
-          headers: { "Authorization": `Bearer ${token}` }
-        });
+        const projectsRes = await fetchWithAuth(projectsUrl);
         const projectsData = await projectsRes.json();
         
         if (projectsRes.ok) {
@@ -207,9 +204,7 @@ export default function Dashboard() {
 
         // If logged-in user is a student, fetch their tracking list of existing applications
         if (userObj && userObj.userRole !== "company") {
-          const appsRes = await fetch(`${API_BASE_URL}/api/applications/student/${userObj.email}`, {
-            headers: { "Authorization": `Bearer ${token}` }
-          });
+          const appsRes = await fetchWithAuth(`${API_BASE_URL}/api/applications/student/${userObj.email}`);
           if (appsRes.ok) {
             const appliedIds = await appsRes.json();
             setAppliedProjectIds(appliedIds);

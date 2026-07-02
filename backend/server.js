@@ -701,13 +701,7 @@ app.put("/api/profile/student/:email", authenticateToken, async (req, res) => {
   }
 });
 
-// Serve static assets in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../dist')));
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../dist', 'index.html'));
-  });
-}
+
 
 // =========================================================================
 // 🔎 ROUTE: Fetch chat message history between two users
@@ -1089,6 +1083,14 @@ app.post("/api/applications/:applicationId/update-pipeline", authenticateToken, 
     res.status(500).json({ error: "Failed to update pipeline stage." });
   }
 });
+
+// Serve static assets in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../dist')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../dist', 'index.html'));
+  });
+}
 
 const server = app.listen(PORT, () => {
     console.log(`🚀 Server running smoothly on http://localhost:${PORT}`);

@@ -452,20 +452,20 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = {
-  register,
-  verifyOtp,
-  login,
-  forgotPassword,
-  resetPassword
-};
-
-
-exports.logout = (req, res) => {
+const logout = (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict'
   });
   res.status(200).json({ message: 'Logged out successfully' });
+};
+
+module.exports = {
+  register,
+  verifyOtp,
+  login,
+  forgotPassword,
+  resetPassword,
+  logout
 };

@@ -235,37 +235,37 @@ export default function ChatPage() {
   if (!loggedInUser) return null;
 
   return (
-    <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50 p-4 md:p-8 flex flex-col font-sans">
+    <div className="min-h-screen w-full flex flex-col p-4 sm:p-6 lg:p-8 z-0 relative font-sans">
       {/* 🧭 TOP HEADER BAR */}
-      <div className="max-w-6xl w-full mx-auto flex justify-between items-center mb-6 bg-white dark:bg-slate-900/40 dark:bg-slate-900/40 backdrop-blur-md px-5 py-3 sm:px-6 sm:py-4 rounded-3xl border border-white/60 dark:border-slate-800/60 shadow-sm">
+      <div className="max-w-6xl w-full mx-auto glass-panel mb-6 px-5 py-4 flex justify-between items-center z-10">
         <img 
           src="/logo.png" 
           alt="workMitra Logo" 
-          className="h-8 sm:h-9 object-contain cursor-pointer" 
+          className="h-8 sm:h-9 object-contain cursor-pointer transition-transform hover:scale-105" 
           onClick={() => navigate(loggedInUser.userRole === "company" ? "/company-dashboard" : "/dashboard")} 
         />
         <button 
           onClick={() => navigate(loggedInUser.userRole === "company" ? "/company-dashboard" : "/dashboard")}
-          className="text-xs font-bold bg-purple-950/10 hover:bg-purple-950/20 text-purple-950 dark:text-purple-200 px-3.5 py-2 rounded-xl transition"
+          className="text-xs font-bold bg-gray-900/5 hover:bg-gray-900/10 dark:bg-white/10 dark:hover:bg-white/20 text-gray-800 dark:text-gray-100 px-4 py-2 rounded-xl transition-all"
         >
           ← {t("chat.dashboardBack")}
         </button>
       </div>
 
-      <div className="max-w-6xl w-full mx-auto bg-white dark:bg-slate-900/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-[32px] sm:rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.1)] border border-white/80 dark:border-slate-800/80 flex flex-col md:flex-row flex-1 overflow-hidden min-h-[500px] sm:min-h-[600px]">
+      <div className="max-w-6xl w-full mx-auto glass-panel flex flex-col md:flex-row flex-1 overflow-hidden min-h-[500px] sm:min-h-[600px] z-10">
         
         {/* ========================================================================= */}
         {/* 📇 LEFT SIDEBAR: Active Chat Partners List                               */}
         {/* ========================================================================= */}
-        <div className={`w-full md:w-80 border-r border-purple-100 dark:border-slate-800 flex-col bg-white dark:bg-slate-900/40 dark:bg-slate-900/40 ${showMobileChat ? "hidden md:flex" : "flex"}`}>
-          <div className="p-5 sm:p-6 border-b border-purple-100 dark:border-slate-800">
-            <h2 className="text-lg sm:text-xl font-black text-purple-950 dark:text-purple-200">{t("chat.title")}</h2>
-            <p className="text-[11px] sm:text-xs text-gray-400 mt-1">{t("chat.subtitle")}</p>
+        <div className={`w-full md:w-[340px] border-r border-white/20 dark:border-white/10 flex-col bg-white/30 dark:bg-black/20 ${showMobileChat ? "hidden md:flex" : "flex"}`}>
+          <div className="p-5 sm:p-6 border-b border-white/20 dark:border-white/10 backdrop-blur-md">
+            <h2 className="text-xl sm:text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{t("chat.title")}</h2>
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">{t("chat.subtitle")}</p>
           </div>
           
           <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
             {partners.length === 0 ? (
-              <div className="text-center py-12 text-xs text-gray-400">
+              <div className="text-center py-12 text-xs text-gray-500 font-medium">
                 💬 {t("chat.noConversations")}
               </div>
             ) : (
@@ -279,25 +279,27 @@ export default function ChatPage() {
                       setShowMobileChat(true);
                       navigate(`/chat/${partner.email}`);
                     }}
-                    className={`w-full flex items-center gap-3 p-3 rounded-2xl transition text-left ${
+                    className={`w-full flex items-center gap-4 p-3.5 rounded-2xl transition-all duration-300 text-left ${
                       isActive 
-                        ? "bg-gradient-to-r from-purple-600/10 to-pink-600/10 border border-purple-200 dark:border-slate-800/50" 
-                        : "hover:bg-white dark:bg-slate-900/40 dark:bg-slate-900/40 border border-transparent"
+                        ? "bg-white/60 dark:bg-white/10 shadow-sm border border-white/40 dark:border-white/20 scale-[1.02]" 
+                        : "hover:bg-white/40 dark:hover:bg-white/5 border border-transparent"
                     }`}
                   >
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold flex items-center justify-center text-sm shadow-sm">
-                      {partner.fullName ? partner.fullName.charAt(0).toUpperCase() : partner.companyName?.charAt(0).toUpperCase() || "?"}
+                    <div className="relative">
+                      <div className="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold flex items-center justify-center text-lg shadow-md">
+                        {partner.fullName ? partner.fullName.charAt(0).toUpperCase() : partner.companyName?.charAt(0).toUpperCase() || "?"}
+                      </div>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-bold text-purple-950 dark:text-purple-200 truncate">
+                      <h4 className={`text-sm font-bold truncate ${isActive ? "text-gray-900 dark:text-white" : "text-gray-700 dark:text-gray-200"}`}>
                         {partner.fullName || partner.companyName}
                       </h4>
-                      <p className="text-[10px] text-gray-400 uppercase tracking-wider truncate">
+                      <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium truncate mt-0.5 uppercase tracking-wider">
                         {partner.userRole === "company" ? t("chat.recruiter") : t("chat.student")}
                       </p>
                     </div>
                     {partner.unreadCount > 0 && (
-                      <span className="bg-red-500 text-white text-[9px] font-black w-5 h-5 flex items-center justify-center rounded-full shadow-sm">
+                      <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full shadow-md animate-pulse">
                         {partner.unreadCount}
                       </span>
                     )}
@@ -311,36 +313,46 @@ export default function ChatPage() {
         {/* ========================================================================= */}
         {/* 💬 RIGHT CONTAINER: Chat Conversation                                    */}
         {/* ========================================================================= */}
-        <div className={`flex-1 flex-col bg-white dark:bg-slate-900/20 dark:bg-slate-900/20 ${!showMobileChat ? "hidden md:flex" : "flex"}`}>
+        <div className={`flex-1 flex-col bg-white/40 dark:bg-black/30 backdrop-blur-sm relative ${!showMobileChat ? "hidden md:flex" : "flex"}`}>
           {activePartner ? (
             <>
               {/* Top Conversation Status Header */}
-              <div className="p-4 sm:p-6 border-b border-purple-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900/40 dark:bg-slate-900/40">
-                <div className="flex items-center gap-3">
+              <div className="p-4 sm:p-5 border-b border-white/20 dark:border-white/10 flex items-center justify-between bg-white/50 dark:bg-black/40 backdrop-blur-md z-10 sticky top-0">
+                <div className="flex items-center gap-4">
                   <button 
                     onClick={() => {
                       setShowMobileChat(false);
                       navigate("/chat");
                     }} 
-                    className="md:hidden text-purple-600 hover:text-pink-600 font-bold mr-1 text-sm p-1.5 rounded-lg hover:bg-purple-100/30 transition flex items-center justify-center"
+                    className="md:hidden text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 p-2 rounded-xl hover:bg-white/50 dark:hover:bg-white/10 transition-colors"
                     title={t("chat.backToList")}
                   >
                     ◀
                   </button>
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold flex items-center justify-center text-xs sm:text-sm shadow-sm">
-                    {activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || "?"}
+                  <div className="relative">
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold flex items-center justify-center text-sm shadow-md ring-2 ring-white/50 dark:ring-white/10">
+                      {activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || "?"}
+                    </div>
+                    {/* Seamless online status dot */}
+                    <div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-slate-800 ${wsConnected ? "bg-green-500" : "bg-gray-400"}`}></div>
                   </div>
                   <div>
-                    <h3 className="text-xs sm:text-sm font-bold text-purple-950 dark:text-purple-200">
+                    <h3 className="text-sm sm:text-base font-extrabold text-gray-900 dark:text-white leading-tight">
                       {activePartner.fullName || activePartner.companyName}
                     </h3>
                     <div className="flex items-center gap-1.5 mt-0.5">
-                      <span className={`w-2 h-2 rounded-full ${wsConnected ? "bg-green-500 animate-pulse" : "bg-gray-300"}`} />
-                      <span className="text-[10px] text-gray-400">
+                      <span className="text-[11px] font-medium text-gray-600 dark:text-gray-400">
                         {isPartnerTyping ? (
-                          <span className="text-pink-600 font-extrabold animate-pulse">{t("chat.typing")}</span>
+                          <span className="text-indigo-600 dark:text-indigo-400 font-bold flex items-center gap-1">
+                            {t("chat.typing")}
+                            <span className="flex space-x-0.5 ml-1">
+                              <span className="w-1 h-1 bg-indigo-600 dark:bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                              <span className="w-1 h-1 bg-indigo-600 dark:bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                              <span className="w-1 h-1 bg-indigo-600 dark:bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                            </span>
+                          </span>
                         ) : wsConnected ? (
-                          t("chat.gatewayOnline")
+                          <span className="text-green-600 dark:text-green-400 font-medium">{t("chat.gatewayOnline")}</span>
                         ) : (
                           t("chat.connecting")
                         )}
@@ -351,34 +363,48 @@ export default function ChatPage() {
               </div>
 
               {/* Scrollable Message History Area */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
                 {loadingHistory ? (
-                  <div className="text-center text-xs text-gray-400 py-12">
-                    {t("chat.loadingLogs")}
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-xs text-gray-500 font-medium bg-white/50 dark:bg-black/20 px-4 py-2 rounded-full animate-pulse">
+                      {t("chat.loadingLogs")}
+                    </div>
                   </div>
                 ) : messages.length === 0 ? (
-                  <div className="text-center text-xs text-gray-400 py-12">
-                    👋 {t("chat.waveHello")}
+                  <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                    <div className="w-16 h-16 mb-4 text-4xl bg-white/50 dark:bg-black/20 flex items-center justify-center rounded-full shadow-sm animate-float-slow">
+                      👋
+                    </div>
+                    <p className="text-sm font-medium">{t("chat.waveHello")}</p>
                   </div>
                 ) : (
-                  messages.map((msg) => {
+                  messages.map((msg, index) => {
                     const isOutgoing = msg.sender === loggedInUser.email;
+                    const prevMsg = messages[index - 1];
+                    const showAvatar = !isOutgoing && (!prevMsg || prevMsg.sender !== msg.sender);
+                    
                     return (
                       <div
                         key={msg._id || Math.random()}
-                        className={`flex ${isOutgoing ? "justify-end" : "justify-start"}`}
+                        className={`flex ${isOutgoing ? "justify-end" : "justify-start"} items-end gap-2 animate-fade-in`}
                       >
+                        {!isOutgoing && (
+                          <div className={`w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold flex items-center justify-center text-[10px] shadow-sm shrink-0 ${showAvatar ? "opacity-100" : "opacity-0"}`}>
+                            {showAvatar ? (activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || "?") : ""}
+                          </div>
+                        )}
+                        
                         <div
-                          className={`max-w-[70%] px-4 py-3 rounded-2xl shadow-sm text-xs leading-relaxed ${
+                          className={`max-w-[75%] px-4 py-3 shadow-sm text-[13px] leading-relaxed relative group ${
                             isOutgoing
-                              ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-tr-none"
-                              : "bg-white dark:bg-slate-900 text-purple-950 dark:text-purple-200 border border-purple-100 dark:border-slate-800/50 rounded-tl-none"
+                              ? "bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-2xl rounded-br-sm"
+                              : "bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-gray-800 dark:text-gray-100 border border-white/60 dark:border-slate-700/60 rounded-2xl rounded-bl-sm"
                           }`}
                         >
                           <p className="whitespace-pre-wrap">{msg.text}</p>
                           <span
-                            className={`text-[8px] block mt-1 text-right ${
-                              isOutgoing ? "text-purple-100" : "text-gray-400"
+                            className={`text-[9px] block font-medium opacity-0 group-hover:opacity-100 transition-opacity absolute ${
+                              isOutgoing ? "-left-12 bottom-2 text-gray-500" : "-right-12 bottom-2 text-gray-500"
                             }`}
                           >
                             {msg.timestamp ? (() => {
@@ -391,38 +417,55 @@ export default function ChatPage() {
                     );
                   })
                 )}
-                <div ref={messagesEndRef} />
+                
+                {isPartnerTyping && (
+                  <div className="flex justify-start items-end gap-2 animate-fade-in">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold flex items-center justify-center text-[10px] shadow-sm shrink-0">
+                      {activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || "?"}
+                    </div>
+                    <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-white/60 dark:border-slate-700/60 rounded-2xl rounded-bl-sm px-4 py-3.5 shadow-sm">
+                      <div className="flex space-x-1.5 items-center justify-center h-2">
+                        <div className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                        <div className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} className="h-2" />
               </div>
 
-              {isPartnerTyping && (
-                <div className="px-6 py-2 text-xs text-pink-600 italic animate-pulse bg-white dark:bg-slate-900/30 dark:bg-slate-900/30 border-t border-purple-100 dark:border-slate-800">
-                  {t("chat.partnerTyping", { name: activePartner.fullName || activePartner.companyName })}
-                </div>
-              )}
-
               {/* Message Typing and Send Form */}
-              <form onSubmit={handleSendMessage} className="p-4 border-t border-purple-100 dark:border-slate-800 bg-white dark:bg-slate-900/40 dark:bg-slate-900/40 flex gap-2">
-                <input
-                  type="text"
-                  value={messageInput}
-                  onChange={handleInputChange}
-                  placeholder={t("chat.typeMessagePlaceholder")}
-                  className="flex-1 bg-white dark:bg-slate-900 border border-purple-100 dark:border-slate-800 text-xs px-4 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95 text-white font-bold text-xs uppercase px-6 rounded-2xl shadow-md transition"
-                >
-                  {t("chat.sendButton")}
-                </button>
-              </form>
+              <div className="p-3 sm:p-4 border-t border-white/20 dark:border-white/10 bg-white/50 dark:bg-black/40 backdrop-blur-md z-10">
+                <form onSubmit={handleSendMessage} className="flex gap-2 relative">
+                  <input
+                    type="text"
+                    value={messageInput}
+                    onChange={handleInputChange}
+                    placeholder={t("chat.typeMessagePlaceholder")}
+                    className="flex-1 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border border-white/50 dark:border-slate-700/50 text-sm px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-400/50 transition-all shadow-inner text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm px-5 sm:px-6 rounded-2xl shadow-md transition-transform hover:scale-105 active:scale-95 flex items-center justify-center disabled:opacity-50 disabled:hover:scale-100"
+                    disabled={!messageInput.trim()}
+                  >
+                    <span className="hidden sm:inline mr-1">{t("chat.sendButton")}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                      <path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" />
+                    </svg>
+                  </button>
+                </form>
+              </div>
             </>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
-              <div className="text-5xl mb-4">💬</div>
-              <h3 className="text-lg font-black text-purple-950 dark:text-purple-200">{t("chat.noConversationSelected")}</h3>
-              <p className="text-xs text-gray-400 max-w-xs mt-1">
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-white/20 dark:bg-black/10">
+              <div className="w-24 h-24 mb-6 rounded-full glass-panel flex items-center justify-center text-5xl shadow-xl animate-float-slow">
+                💬
+              </div>
+              <h3 className="text-xl font-black text-gray-900 dark:text-white drop-shadow-sm">{t("chat.noConversationSelected")}</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 max-w-sm mt-3 font-medium">
                 {t("chat.noConversationDesc")}
               </p>
             </div>

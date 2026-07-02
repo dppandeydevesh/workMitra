@@ -108,7 +108,7 @@ UserSchema.index(
     }
 );
 
-userSchema.index({ email: 1 });
-userSchema.index({ userRole: 1 });
-userSchema.index({ vanityUsername: 1 }, { sparse: true });
+UserSchema.index({ email: 1 });
+UserSchema.index({ userRole: 1 });
+UserSchema.index({ vanityUsername: 1 }, { sparse: true });
 module.exports = mongoose.model('User', UserSchema);

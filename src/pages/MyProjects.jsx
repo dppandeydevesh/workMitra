@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 import { useToast } from "../components/Toast";
+import { useTranslation } from "react-i18next";
 
 export default function MyProjects() {
   const navigate = useNavigate();
   const toast = useToast();
-
+  const { t } = useTranslation();
 
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
@@ -35,7 +36,7 @@ export default function MyProjects() {
     const companyEmail = savedUser.email;
 
     if (!companyEmail) {
-      setErrorMessage("Corporate user session context missing.");
+      setErrorMessage(t("myProjects.corporateSessionMissing"));
       setLoadingProjects(false);
       return;
     }
@@ -49,7 +50,7 @@ export default function MyProjects() {
         const data = await response.json();
         if (response.ok) setProjects(data);
       } catch (err) {
-        setErrorMessage("Failed to synchronize projects dashboard registry.");
+        setErrorMessage(t("myProjects.failedSync"));
       } finally {
         setLoadingProjects(false);
       }
@@ -69,14 +70,14 @@ export default function MyProjects() {
       const data = await response.json();
       if (response.ok) setApplicants(data);
     } catch (err) {
-      toast.error("Error building analytics pipeline array maps.");
+      toast.error(t("myProjects.errorAnalytics"));
     } finally {
       setLoadingApplicants(false);
     }
   };
 
   const handleAcceptApplicant = async (applicationId) => {
-    if (!window.confirm("Are you sure you want to approve this application?")) return;
+    if (!window.confirm(t("myProjects.confirmApprove"))) return;
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}/api/applications/${applicationId}/status`, {
@@ -89,20 +90,20 @@ export default function MyProjects() {
       });
       const data = await response.json();
       if (response.ok) {
-        toast.success("Candidate accepted successfully!");
+        toast.success(t("myProjects.candidateAccepted"));
         if (selectedProject) {
           handleInspectApplicants(selectedProject);
         }
       } else {
-        toast.error(data.error || "Failed to accept candidate.");
+        toast.error(data.error || t("myProjects.failedAccept"));
       }
     } catch (err) {
-      toast.error("Error sending status payload.");
+      toast.error(t("myProjects.errorStatusPayload"));
     }
   };
 
   const handleRejectApplicant = async (applicationId) => {
-    if (!window.confirm("Are you sure you want to reject this application?")) return;
+    if (!window.confirm(t("myProjects.confirmReject"))) return;
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}/api/applications/${applicationId}/status`, {
@@ -115,15 +116,15 @@ export default function MyProjects() {
       });
       const data = await response.json();
       if (response.ok) {
-        toast.success("Candidate rejected successfully.");
+        toast.success(t("myProjects.candidateRejected"));
         if (selectedProject) {
           handleInspectApplicants(selectedProject);
         }
       } else {
-        toast.error(data.error || "Failed to reject candidate.");
+        toast.error(data.error || t("myProjects.failedReject"));
       }
     } catch (err) {
-      toast.error("Error sending status payload.");
+      toast.error(t("myProjects.errorStatusPayload"));
     }
   };
 
@@ -151,22 +152,22 @@ export default function MyProjects() {
       });
       const data = await response.json();
       if (response.ok) {
-        toast.success("Task approved and marked as Completed!");
+        toast.success(t("myProjects.taskCompleted"));
         setShowReviewModal(false);
         setFeedbackText("");
         if (selectedProject) {
           handleInspectApplicants(selectedProject);
         }
       } else {
-        toast.error(data.error || "Failed to complete task.");
+        toast.error(data.error || t("myProjects.failedComplete"));
       }
     } catch (err) {
-      toast.error("Error sending completion payload.");
+      toast.error(t("myProjects.errorCompletionPayload"));
     }
   };
 
   const handleDeleteProject = async (projectId) => {
-    if (!window.confirm("Are you absolutely sure you want to delete this project? This will permanently delete all applicant submissions and cannot be undone.")) return;
+    if (!window.confirm(t("myProjects.confirmDelete"))) return;
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
@@ -174,7 +175,7 @@ export default function MyProjects() {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (response.ok) {
-        toast.success("Project stack deleted successfully.");
+        toast.success(t("myProjects.projectDeleted"));
         setSelectedProject(null);
         // Refresh project list
         const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
@@ -186,15 +187,15 @@ export default function MyProjects() {
           if (res.ok) setProjects(data);
         }
       } else {
-        toast.error("Failed to delete project stack.");
+        toast.error(t("myProjects.failedDeleteProject"));
       }
     } catch (err) {
-      toast.error("Error sending delete payload.");
+      toast.error(t("myProjects.errorDeletePayload"));
     }
   };
 
   const handleArchiveProject = async (projectId) => {
-    if (!window.confirm("Are you sure you want to archive this project?")) return;
+    if (!window.confirm(t("myProjects.confirmArchive"))) return;
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE_URL}/api/projects/archive/${projectId}`, {
@@ -202,7 +203,7 @@ export default function MyProjects() {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (response.ok) {
-        toast.success("Project archived successfully.");
+        toast.success(t("myProjects.projectArchived"));
         const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
         if (savedUser.email) {
           const res = await fetch(`${API_BASE_URL}/api/projects/company/${savedUser.email}`, {
@@ -216,10 +217,10 @@ export default function MyProjects() {
           }
         }
       } else {
-        toast.error("Failed to archive project.");
+        toast.error(t("myProjects.failedArchiveProject"));
       }
     } catch (err) {
-      toast.error("Error sending archive payload.");
+      toast.error(t("myProjects.errorArchivePayload"));
     }
   };
 
@@ -259,7 +260,7 @@ export default function MyProjects() {
       });
       const data = await response.json();
       if (response.ok) {
-        toast.success("Project updated successfully!");
+        toast.success(t("myProjects.projectUpdated"));
         setSelectedProject(data);
         setShowEditModal(false);
         // Refresh project list
@@ -272,10 +273,10 @@ export default function MyProjects() {
           if (res.ok) setProjects(projectsData);
         }
       } else {
-        toast.error("Failed to update project.");
+        toast.error(t("myProjects.failedUpdateProject"));
       }
     } catch (err) {
-      toast.error("Error saving project details.");
+      toast.error(t("myProjects.errorSavingProject"));
     } finally {
       setSubmittingEdit(false);
     }
@@ -288,11 +289,11 @@ export default function MyProjects() {
         {/* Navigation back home Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-200">Project Analysis Hub</h1>
-            <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">Audit historical requirements and evaluate student application match rates.</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-200">{t("myProjects.title")}</h1>
+            <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">{t("myProjects.subtitle")}</p>
           </div>
           <button onClick={() => navigate("/company-dashboard")} className="w-full sm:w-auto text-center text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl transition shadow-sm">
-            ← Command Center
+            ← {t("myProjects.backToCommandCenter")}
           </button>
         </div>
 
@@ -302,12 +303,12 @@ export default function MyProjects() {
           
           {/* Left Column: Historical Deployments List */}
           <div className="lg:col-span-1 space-y-4">
-            <h3 className="text-sm font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider mb-2 px-1">Active Deployments</h3>
+            <h3 className="text-sm font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider mb-2 px-1">{t("myProjects.activeDeployments")}</h3>
             
             {loadingProjects ? (
-              <div className="text-center py-6 text-xs text-gray-500 font-medium animate-pulse">Syncing nodes...</div>
+              <div className="text-center py-6 text-xs text-gray-500 font-medium animate-pulse">{t("myProjects.syncingNodes")}</div>
             ) : projects.length === 0 ? (
-              <div className="bg-white dark:bg-slate-900 p-6 rounded-xl text-center text-xs text-gray-400 border font-medium">No live projects found.</div>
+              <div className="bg-white dark:bg-slate-900 p-6 rounded-xl text-center text-xs text-gray-400 border font-medium">{t("myProjects.noLiveProjects")}</div>
             ) : (
               projects.map((proj) => (
                 <div 
@@ -319,7 +320,7 @@ export default function MyProjects() {
                   <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed mb-3">{proj.description}</p>
                   <div className="flex justify-between items-center text-[10px] text-gray-400 font-bold uppercase tracking-wide border-t pt-2.5">
                     <span>💼 {proj.workType}</span>
-                    <span className="text-blue-600">Inspect Applications →</span>
+                    <span className="text-blue-600">{t("myProjects.inspectApplications")} →</span>
                   </div>
                 </div>
               ))
@@ -330,90 +331,90 @@ export default function MyProjects() {
           <div className="lg:col-span-2">
             {!selectedProject ? (
               <div className="bg-white dark:bg-slate-900 rounded-2xl border-2 border-dashed p-12 text-center text-gray-400 font-medium h-full flex flex-col justify-center items-center">
-                <span>📁 Select a deployed project card on the left grid panel to unpack live applicant metrics.</span>
+                <span>📁 {t("myProjects.selectProjectMessage")}</span>
               </div>
             ) : (
               <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 border border-gray-100 dark:border-slate-800">
                 <div className="border-b pb-4 mb-6">
                   <div className="flex justify-between items-start gap-4">
                     <div>
-                      <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wide">Selected Stream</span>
+                      <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wide">{t("myProjects.selectedStream")}</span>
                       <h2 className="text-xl font-bold text-gray-900 dark:text-gray-200 mt-2">{selectedProject.title}</h2>
                     </div>
                     <div className="flex gap-2">
                       <button 
                         onClick={() => handleOpenEditModal(selectedProject)}
-                        className="px-2.5 py-1.5 border border-gray-200 dark:border-slate-800 text-gray-600 hover:bg-gray-50 dark:bg-slate-900 rounded-lg text-xs font-bold transition flex items-center gap-1"
-                        title="Edit Project Details"
+                        className="px-2.5 py-1.5 border border-gray-200 dark:border-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:bg-slate-900 rounded-lg text-xs font-bold transition flex items-center gap-1"
+                        title={t("myProjects.editProjectDetails")}
                       >
-                        ✏️ Edit
+                        ✏️ {t("myProjects.edit")}
                       </button>
                       {selectedProject.status !== "Archived" && (
                         <button 
                           onClick={() => handleArchiveProject(selectedProject._id)}
                           className="px-2.5 py-1.5 border border-amber-200 text-amber-700 hover:bg-amber-50 rounded-lg text-xs font-bold transition flex items-center gap-1"
-                          title="Archive Project"
+                          title={t("myProjects.archiveProject")}
                         >
-                          📦 Archive
+                          📦 {t("myProjects.archive")}
                         </button>
                       )}
                       <button 
                         onClick={() => handleDeleteProject(selectedProject._id)}
                         className="px-2.5 py-1.5 border border-red-100 text-red-600 hover:bg-red-50 rounded-lg text-xs font-bold transition flex items-center gap-1"
-                        title="Delete Project Stack"
+                        title={t("myProjects.deleteProjectStack")}
                       >
-                        🗑️ Delete
+                        🗑️ {t("myProjects.delete")}
                       </button>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1.5">Duration: {selectedProject.duration} | Budget: ₹{selectedProject.budget.toLocaleString()}</p>
+                  <p className="text-xs text-gray-500 mt-1.5">{t("myProjects.duration")}: {selectedProject.duration} | {t("myProjects.budget")}: ₹{selectedProject.budget.toLocaleString()}</p>
                 </div>
 
                 {loadingApplicants ? (
-                  <div className="text-center py-12 text-xs text-gray-500 font-medium animate-pulse">Parsing applicant capability indices...</div>
+                  <div className="text-center py-12 text-xs text-gray-500 font-medium animate-pulse">{t("myProjects.parsingApplicants")}</div>
                 ) : applicants.length === 0 ? (
-                  <div className="text-center py-12 text-xs text-gray-400 font-medium">No students have applied to this project stack yet.</div>
+                  <div className="text-center py-12 text-xs text-gray-400 font-medium">{t("myProjects.noStudentsApplied")}</div>
                 ) : (
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs text-gray-600">
+                    <table className="w-full text-left text-xs text-gray-600 dark:text-gray-300">
                       <thead>
                         <tr className="bg-gray-50 dark:bg-slate-900 uppercase text-[10px] font-bold text-gray-400 border-b tracking-wider">
-                          <th className="p-3">Student Name</th>
-                          <th className="p-3">Skills Inventory</th>
-                          <th className="p-3 text-center">Smart Match</th>
-                          <th className="p-3 text-center">Status</th>
-                          <th className="p-3 text-right">Actions</th>
+                          <th className="p-3">{t("myProjects.studentName")}</th>
+                          <th className="p-3">{t("myProjects.skillsInventory")}</th>
+                          <th className="p-3 text-center">{t("myProjects.smartMatch")}</th>
+                          <th className="p-3 text-center">{t("myProjects.status")}</th>
+                          <th className="p-3 text-right">{t("myProjects.actions")}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100 font-medium text-gray-700 dark:text-gray-200">
                         {applicants.map((app) => (
-                          <tr key={app.applicationId} className="hover:bg-gray-50/80 transition">
+                          <tr key={app.applicationId} className="hover:bg-gray-50 dark:bg-slate-800/80 transition">
                             <td className="p-3">
                               <p className="font-bold text-gray-900 dark:text-gray-200">{app.studentName}</p>
                               <p className="text-[10px] text-gray-400">{app.studentEmail}</p>
                               {app.resumeUrl ? (
                                 <a href={app.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-600 font-bold hover:underline block mt-0.5">
-                                  📄 View Resume ↗
+                                  📄 {t("myProjects.viewResume")} ↗
                                 </a>
                               ) : (
-                                <span className="text-[9px] text-gray-400 italic block mt-0.5">No resume provided</span>
+                                <span className="text-[9px] text-gray-400 italic block mt-0.5">{t("myProjects.noResumeProvided")}</span>
                               )}
 
                               {/* Social/Portfolio Links Grid */}
                               <div className="flex items-center gap-2 mt-1 text-[9px]">
                                 {app.githubUrl && (
-                                  <a href={app.githubUrl} target="_blank" rel="noreferrer" className="text-gray-600 hover:text-purple-600 font-bold" title="GitHub">
-                                    <span>💻 GitHub</span>
+                                  <a href={app.githubUrl} target="_blank" rel="noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 font-bold" title={t("myProjects.github")}>
+                                    <span>💻 {t("myProjects.github")}</span>
                                   </a>
                                 )}
                                 {app.linkedinUrl && (
-                                  <a href={app.linkedinUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-purple-600 font-bold" title="LinkedIn">
-                                    <span>👔 LinkedIn</span>
+                                  <a href={app.linkedinUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-purple-600 font-bold" title={t("myProjects.linkedin")}>
+                                    <span>👔 {t("myProjects.linkedin")}</span>
                                   </a>
                                 )}
                                 {app.portfolioUrl && (
-                                  <a href={app.portfolioUrl} target="_blank" rel="noreferrer" className="text-green-600 hover:text-purple-600 font-bold" title="Portfolio">
-                                    <span>🌐 Web</span>
+                                  <a href={app.portfolioUrl} target="_blank" rel="noreferrer" className="text-green-600 hover:text-purple-600 font-bold" title={t("myProjects.portfolio")}>
+                                    <span>🌐 {t("myProjects.web")}</span>
                                   </a>
                                 )}
                               </div>
@@ -426,7 +427,7 @@ export default function MyProjects() {
                             </td>
                             <td className="p-3 max-w-[180px] truncate">{app.skills}</td>
                             <td className="p-3 text-center">
-                              <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${app.matchScore >= 75 ? "bg-green-100 text-green-800" : app.matchScore >= 40 ? "bg-amber-100 text-amber-800" : "bg-gray-100 dark:bg-slate-800 text-gray-600"}`}>
+                              <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${app.matchScore >= 75 ? "bg-green-100 text-green-800" : app.matchScore >= 40 ? "bg-amber-100 text-amber-800" : "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300"}`}>
                                 {app.matchScore}%
                               </span>
                             </td>
@@ -436,7 +437,7 @@ export default function MyProjects() {
                                 app.status === "Submitted" ? "bg-amber-100 text-amber-800" :
                                 app.status === "Approved" ? "bg-blue-100 text-blue-800" :
                                 app.status === "Rejected" ? "bg-red-100 text-red-800" :
-                                "bg-gray-100 dark:bg-slate-800 text-gray-600"
+                                "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300"
                               }`}>
                                 {app.status}
                               </span>
@@ -445,26 +446,26 @@ export default function MyProjects() {
                               {app.status === "Pending" && (
                                 <>
                                   <button onClick={() => handleAcceptApplicant(app.applicationId)} className="text-[10px] font-bold bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded transition shadow-sm">
-                                    Accept
+                                    {t("myProjects.accept")}
                                   </button>
                                   <button onClick={() => handleRejectApplicant(app.applicationId)} className="text-[10px] font-bold bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded transition shadow-sm">
-                                    Reject
+                                    {t("myProjects.reject")}
                                   </button>
                                 </>
                               )}
                               {app.status === "Approved" && (
-                                <span className="text-[11px] text-blue-600 font-semibold">Working</span>
+                                <span className="text-[11px] text-blue-600 font-semibold">{t("myProjects.working")}</span>
                               )}
                               {app.status === "Submitted" && (
                                 <button onClick={() => handleOpenReviewModal(app)} className="text-[10px] font-bold bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1 rounded transition shadow-sm">
-                                  Review Work
+                                  {t("myProjects.reviewWork")}
                                 </button>
                               )}
                               {app.status === "Completed" && (
-                                <span className="text-[11px] text-green-600 font-bold block">✓ Approved</span>
+                                <span className="text-[11px] text-green-600 font-bold block">✓ {t("myProjects.approved")}</span>
                               )}
                               {app.status === "Rejected" && (
-                                <span className="text-[11px] text-red-600 font-medium">Rejected</span>
+                                <span className="text-[11px] text-red-600 font-medium">{t("myProjects.rejected")}</span>
                               )}
                             </td>
                           </tr>
@@ -484,31 +485,31 @@ export default function MyProjects() {
             <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
               <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full shadow-2xl p-6 border animate-fade-in text-left">
                 <div className="flex justify-between items-center border-b pb-3 mb-4">
-                  <h3 className="font-bold text-base text-gray-900 dark:text-gray-200">Review Work Submission</h3>
-                  <button onClick={() => setShowReviewModal(false)} className="text-gray-400 hover:text-gray-600 text-lg">×</button>
+                  <h3 className="font-bold text-base text-gray-900 dark:text-gray-200">{t("myProjects.reviewWorkSubmission")}</h3>
+                  <button onClick={() => setShowReviewModal(false)} className="text-gray-400 hover:text-gray-600 dark:text-gray-300 text-lg">×</button>
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <p className="text-[10px] uppercase font-bold text-gray-400">Candidate</p>
+                    <p className="text-[10px] uppercase font-bold text-gray-400">{t("myProjects.candidate")}</p>
                     <p className="text-xs font-bold text-gray-900 dark:text-gray-200">{activeAppToReview.studentName} ({activeAppToReview.studentEmail})</p>
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase font-bold text-gray-400">Submission Link</p>
+                    <p className="text-[10px] uppercase font-bold text-gray-400">{t("myProjects.submissionLink")}</p>
                     <a href={activeAppToReview.submissionLink} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 font-bold hover:underline break-all">
                       {activeAppToReview.submissionLink} ↗
                     </a>
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase font-bold text-gray-400">Student Explanation Notes</p>
+                    <p className="text-[10px] uppercase font-bold text-gray-400">{t("myProjects.studentExplanationNotes")}</p>
                     <p className="text-xs text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-slate-900 border p-3 rounded-xl whitespace-pre-line leading-relaxed max-h-40 overflow-y-auto">
                       {activeAppToReview.submissionText}
                     </p>
                   </div>
                   <form onSubmit={handleCompleteTask} className="space-y-3 pt-2">
                     <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Company Feedback / Review Notes</label>
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("myProjects.companyFeedback")}</label>
                       <textarea
-                        placeholder="Write feedback for the student (e.g. Excellent job, clean code, etc.). This will show on their profile."
+                        placeholder={t("myProjects.feedbackPlaceholder")}
                         value={feedbackText}
                         onChange={(e) => setFeedbackText(e.target.value)}
                         rows={2}
@@ -520,7 +521,7 @@ export default function MyProjects() {
                     {/* Public Star Rating and Review */}
                     <div className="border-t pt-2 space-y-2">
                       <div>
-                        <label className="block text-[9px] font-extrabold text-purple-950 dark:text-purple-200 uppercase tracking-wider mb-0.5">Candidate Rating</label>
+                        <label className="block text-[9px] font-extrabold text-purple-950 dark:text-purple-200 uppercase tracking-wider mb-0.5">{t("myProjects.candidateRating")}</label>
                         <div className="flex items-center gap-1">
                           {[1, 2, 3, 4, 5].map((star) => (
                             <button
@@ -537,9 +538,9 @@ export default function MyProjects() {
                       </div>
 
                       <div>
-                        <label className="block text-[9px] font-extrabold text-purple-950 dark:text-purple-200 uppercase tracking-wider mb-0.5">Performance Review Notes</label>
+                        <label className="block text-[9px] font-extrabold text-purple-950 dark:text-purple-200 uppercase tracking-wider mb-0.5">{t("myProjects.performanceReviewNotes")}</label>
                         <textarea
-                          placeholder="Provide a public rating review statement for the candidate..."
+                          placeholder={t("myProjects.ratingReviewPlaceholder")}
                           value={ratingReview}
                           onChange={(e) => setRatingReview(e.target.value)}
                           rows={1}
@@ -553,13 +554,13 @@ export default function MyProjects() {
                         onClick={() => setShowReviewModal(false)}
                         className="px-4 py-2 border border-gray-200 dark:border-slate-800 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
                       >
-                        Cancel
+                        {t("myProjects.cancel")}
                       </button>
                       <button
                         type="submit"
                         className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-bold transition shadow-md"
                       >
-                        Approve & Complete
+                        {t("myProjects.approveAndComplete")}
                       </button>
                     </div>
                   </form>
@@ -576,12 +577,12 @@ export default function MyProjects() {
             <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
               <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full shadow-2xl p-6 border animate-fade-in text-left">
                 <div className="flex justify-between items-center border-b pb-3 mb-4">
-                  <h3 className="font-bold text-base text-gray-900 dark:text-gray-200 font-sans">Edit Project Stack details</h3>
-                  <button onClick={() => setShowEditModal(false)} className="text-gray-400 hover:text-gray-600 text-lg">×</button>
+                  <h3 className="font-bold text-base text-gray-900 dark:text-gray-200 font-sans">{t("myProjects.editProjectTitle")}</h3>
+                  <button onClick={() => setShowEditModal(false)} className="text-gray-400 hover:text-gray-600 dark:text-gray-300 text-lg">×</button>
                 </div>
                 <form onSubmit={handleSaveEditProject} className="space-y-4">
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Project Title</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("myProjects.projectTitleLabel")}</label>
                     <input
                       type="text"
                       value={editTitle}
@@ -592,7 +593,7 @@ export default function MyProjects() {
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Description</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("myProjects.descriptionLabel")}</label>
                     <textarea
                       value={editDescription}
                       onChange={(e) => setEditDescription(e.target.value)}
@@ -604,7 +605,7 @@ export default function MyProjects() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Budget Payout (₹)</label>
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("myProjects.budgetPayoutLabel")}</label>
                       <input
                         type="number"
                         value={editBudget}
@@ -614,7 +615,7 @@ export default function MyProjects() {
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Duration</label>
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("myProjects.durationLabel")}</label>
                       <input
                         type="text"
                         value={editDuration}
@@ -627,7 +628,7 @@ export default function MyProjects() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Deadline Date</label>
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("myProjects.deadlineDateLabel")}</label>
                       <input
                         type="text"
                         value={editDeadline}
@@ -637,12 +638,12 @@ export default function MyProjects() {
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Required Skills (Comma separated)</label>
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("myProjects.requiredSkillsLabel")}</label>
                       <input
                         type="text"
                         value={editSkills}
                         onChange={(e) => setEditSkills(e.target.value)}
-                        placeholder="React, Python, Figma"
+                        placeholder={t("myProjects.skillsPlaceholder")}
                         className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                       />
                     </div>
@@ -654,14 +655,14 @@ export default function MyProjects() {
                       onClick={() => setShowEditModal(false)}
                       className="px-4 py-2 border border-gray-200 dark:border-slate-800 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
                     >
-                      Cancel
+                      {t("myProjects.cancel")}
                     </button>
                     <button
                       type="submit"
                       disabled={submittingEdit}
                       className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-md"
                     >
-                      {submittingEdit ? "Saving..." : "Save Changes"}
+                      {submittingEdit ? t("myProjects.saving") : t("myProjects.saveChanges")}
                     </button>
                   </div>
                 </form>

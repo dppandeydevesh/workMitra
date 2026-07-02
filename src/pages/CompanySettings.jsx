@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../config";
 import { useToast } from "../components/Toast";
 
 export default function CompanySettings() {
   const navigate = useNavigate();
   const toast = useToast();
+  const { t } = useTranslation();
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -24,7 +26,7 @@ export default function CompanySettings() {
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
     if (!savedUser.email || savedUser.userRole !== "company") {
-      toast.error("Corporate session required.");
+      toast.error(t("companySettings.sessionRequired"));
       navigate("/login");
       return;
     }
@@ -51,7 +53,7 @@ export default function CompanySettings() {
         setAutoApproveApplications(data.autoApproveApplications || false);
       }
     } catch (err) {
-      toast.error("Failed to load company profile.");
+      toast.error(t("companySettings.loadProfileFailed"));
     } finally {
       setLoading(false);
     }
@@ -81,13 +83,13 @@ export default function CompanySettings() {
       });
 
       if (res.ok) {
-        toast.success("Company profile updated successfully!");
+        toast.success(t("companySettings.updateSuccess"));
       } else {
         const data = await res.json();
-        toast.error(data.error || "Failed to save profile.");
+        toast.error(data.error || t("companySettings.saveFailed"));
       }
     } catch (err) {
-      toast.error("Network error while saving profile.");
+      toast.error(t("companySettings.networkError"));
     } finally {
       setSaving(false);
     }
@@ -98,7 +100,7 @@ export default function CompanySettings() {
       <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center text-gray-500 font-medium animate-pulse flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <span>Loading company settings...</span>
+          <span>{t("companySettings.loading")}</span>
         </div>
       </div>
     );
@@ -109,15 +111,15 @@ export default function CompanySettings() {
       <div className="max-w-3xl mx-auto px-4">
         <button
           onClick={() => navigate("/company-dashboard")}
-          className="mb-6 px-4 py-2 bg-white/80 hover:bg-white dark:bg-slate-900 text-gray-600 rounded-xl text-xs font-bold transition shadow-sm border border-gray-100 dark:border-slate-800 flex items-center gap-1.5"
+          className="mb-6 px-4 py-2 bg-white dark:bg-slate-900/80 hover:bg-white dark:bg-slate-900 text-gray-600 dark:text-gray-300 rounded-xl text-xs font-bold transition shadow-sm border border-gray-100 dark:border-slate-800 flex items-center gap-1.5"
         >
-          ← Back to Command Center
+          ← {t("companySettings.backButton")}
         </button>
 
         <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-100 dark:border-slate-800/50">
           <div className="border-b pb-4 mb-6">
-            <h1 className="text-xl sm:text-2xl font-black text-gray-800 dark:text-gray-200">⚙️ Company Settings</h1>
-            <p className="text-xs text-gray-400 mt-0.5">Configure your corporate profile metadata visible to students and candidates.</p>
+            <h1 className="text-xl sm:text-2xl font-black text-gray-800 dark:text-gray-200">⚙️ {t("companySettings.title")}</h1>
+            <p className="text-xs text-gray-400 mt-0.5">{t("companySettings.subtitle")}</p>
           </div>
 
           {/* Logo Preview */}
@@ -125,13 +127,13 @@ export default function CompanySettings() {
             <div className="mb-6 flex items-center gap-4">
               <img
                 src={companyLogoUrl}
-                alt="Company Logo"
+                alt={t("companySettings.companyLogoAlt")}
                 className="w-16 h-16 rounded-2xl object-cover border-2 border-gray-100 dark:border-slate-800 shadow-sm bg-gray-50 dark:bg-slate-900"
                 onError={(e) => { e.target.style.display = "none"; }}
               />
               <div>
-                <p className="text-sm font-bold text-gray-800 dark:text-gray-200">{companyName || "Your Company"}</p>
-                <p className="text-[10px] text-gray-400 uppercase font-extrabold tracking-wider">{industryVertical} • {teamSize} team members</p>
+                <p className="text-sm font-bold text-gray-800 dark:text-gray-200">{companyName || t("companySettings.defaultCompanyName")}</p>
+                <p className="text-[10px] text-gray-400 uppercase font-extrabold tracking-wider">{t(`companySettings.industries.${industryVertical}`)} • {t("companySettings.teamMembers", { size: teamSize })}</p>
               </div>
             </div>
           )}
@@ -139,28 +141,28 @@ export default function CompanySettings() {
           <form onSubmit={handleSave} className="space-y-6">
             {/* Identity Section */}
             <div>
-              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-3">Corporate Identity</h3>
+              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-3">{t("companySettings.corporateIdentity")}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Company Name</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("companySettings.companyName")}</label>
                   <input
                     type="text"
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
-                    className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition"
-                    placeholder="e.g. TechCorp Solutions"
+                    className="w-full bg-gray-50 dark:bg-slate-800 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition"
+                    placeholder={t("companySettings.companyNamePlaceholder")}
                     disabled
                   />
-                  <p className="text-[9px] text-gray-300 mt-0.5">Company name is set during registration.</p>
+                  <p className="text-[9px] text-gray-300 mt-0.5">{t("companySettings.companyNameHelp")}</p>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Logo URL</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("companySettings.logoUrl")}</label>
                   <input
                     type="url"
                     value={companyLogoUrl}
                     onChange={(e) => setCompanyLogoUrl(e.target.value)}
-                    className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition"
-                    placeholder="https://example.com/logo.png"
+                    className="w-full bg-gray-50 dark:bg-slate-800 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition"
+                    placeholder={t("companySettings.logoUrlPlaceholder")}
                   />
                 </div>
               </div>
@@ -168,38 +170,38 @@ export default function CompanySettings() {
 
             {/* Bio */}
             <div>
-              <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Company Bio & Mission Statement</label>
+              <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("companySettings.companyBio")}</label>
               <textarea
                 rows={4}
                 value={companyBio}
                 onChange={(e) => setCompanyBio(e.target.value)}
-                className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition resize-none"
-                placeholder="Describe your company's mission, culture, and the type of talent you're looking for..."
+                className="w-full bg-gray-50 dark:bg-slate-800 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition resize-none"
+                placeholder={t("companySettings.companyBioPlaceholder")}
               />
             </div>
 
             {/* Links */}
             <div>
-              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-3">Social & Web Links</h3>
+              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-3">{t("companySettings.socialLinks")}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Website URL</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("companySettings.websiteUrl")}</label>
                   <input
                     type="url"
                     value={companyWebsite}
                     onChange={(e) => setCompanyWebsite(e.target.value)}
-                    className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition"
-                    placeholder="https://yourcompany.com"
+                    className="w-full bg-gray-50 dark:bg-slate-800 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition"
+                    placeholder={t("companySettings.websiteUrlPlaceholder")}
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">LinkedIn URL</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("companySettings.linkedinUrl")}</label>
                   <input
                     type="url"
                     value={companyLinkedin}
                     onChange={(e) => setCompanyLinkedin(e.target.value)}
-                    className="w-full bg-gray-50 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition"
-                    placeholder="https://linkedin.com/company/yourcompany"
+                    className="w-full bg-gray-50 dark:bg-slate-800 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition"
+                    placeholder={t("companySettings.linkedinUrlPlaceholder")}
                   />
                 </div>
               </div>
@@ -207,26 +209,26 @@ export default function CompanySettings() {
 
             {/* Configuration */}
             <div>
-              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-3">Hiring Configuration</h3>
+              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-3">{t("companySettings.hiringConfiguration")}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Industry Vertical</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("companySettings.industryVertical")}</label>
                   <select
                     value={industryVertical}
                     onChange={(e) => setIndustryVertical(e.target.value)}
                     className="w-full bg-gray-50 dark:bg-slate-900 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400"
                   >
-                    <option value="Technology">Technology</option>
-                    <option value="Finance">Finance</option>
-                    <option value="Healthcare">Healthcare</option>
-                    <option value="Education">Education</option>
-                    <option value="E-Commerce">E-Commerce</option>
-                    <option value="Manufacturing">Manufacturing</option>
-                    <option value="Other">Other</option>
+                    <option value="Technology">{t("companySettings.industries.Technology")}</option>
+                    <option value="Finance">{t("companySettings.industries.Finance")}</option>
+                    <option value="Healthcare">{t("companySettings.industries.Healthcare")}</option>
+                    <option value="Education">{t("companySettings.industries.Education")}</option>
+                    <option value="E-Commerce">{t("companySettings.industries.E-Commerce")}</option>
+                    <option value="Manufacturing">{t("companySettings.industries.Manufacturing")}</option>
+                    <option value="Other">{t("companySettings.industries.Other")}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Team Size</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("companySettings.teamSize")}</label>
                   <select
                     value={teamSize}
                     onChange={(e) => setTeamSize(e.target.value)}
@@ -240,22 +242,22 @@ export default function CompanySettings() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Default Task Complexity</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("companySettings.defaultComplexity")}</label>
                   <select
                     value={defaultComplexity}
                     onChange={(e) => setDefaultComplexity(e.target.value)}
                     className="w-full bg-gray-50 dark:bg-slate-900 border p-3 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400"
                   >
-                    <option value="Beginner">Beginner</option>
-                    <option value="Intermediate">Intermediate</option>
-                    <option value="Advanced">Advanced</option>
+                    <option value="Beginner">{t("companySettings.complexities.Beginner")}</option>
+                    <option value="Intermediate">{t("companySettings.complexities.Intermediate")}</option>
+                    <option value="Advanced">{t("companySettings.complexities.Advanced")}</option>
                   </select>
                 </div>
               </div>
             </div>
 
             {/* Auto-Approve Toggle */}
-            <div className="flex items-center gap-3 p-4 bg-slate-50 border rounded-2xl">
+            <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
               <input
                 type="checkbox"
                 id="autoApprove"
@@ -263,8 +265,8 @@ export default function CompanySettings() {
                 onChange={(e) => setAutoApproveApplications(e.target.checked)}
                 className="w-4 h-4 accent-indigo-600 cursor-pointer"
               />
-              <label htmlFor="autoApprove" className="text-xs font-bold text-slate-700 cursor-pointer select-none">
-                ⚡ Auto-approve all incoming student applications (skip manual review step)
+              <label htmlFor="autoApprove" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer select-none">
+                ⚡ {t("companySettings.autoApprove")}
               </label>
             </div>
 
@@ -273,16 +275,16 @@ export default function CompanySettings() {
               <button
                 type="button"
                 onClick={() => navigate("/company-dashboard")}
-                className="px-5 py-2.5 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition"
+                className="px-5 py-2.5 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-600 dark:text-gray-300 rounded-xl text-xs font-bold transition"
               >
-                Cancel
+                {t("companySettings.cancel")}
               </button>
               <button
                 type="submit"
                 disabled={saving}
                 className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl text-xs font-black transition shadow-lg disabled:opacity-50"
               >
-                {saving ? "Saving..." : "Save Settings"}
+                {saving ? t("companySettings.saving") : t("companySettings.saveSettings")}
               </button>
             </div>
           </form>

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../config";
 import { useToast } from "../components/Toast";
 
 export default function AdminDashboard() {
   const toast = useToast();
+  const { t } = useTranslation();
   
   // Dashboard overall status states
   const [metrics, setMetrics] = useState(null);
@@ -33,7 +35,7 @@ export default function AdminDashboard() {
     setSavingConfig(true);
     setTimeout(() => {
       setSavingConfig(false);
-      toast.success("Platform configurations updated successfully!");
+      toast.success(t("admin.toast.config_updated"));
       setSystemLogs(prev => [
         `INF [Config] Commission rate updated to ${commissionRate}%`,
         `INF [Config] Minimum deposit threshold set to ₹${minDeposit}`,
@@ -44,14 +46,14 @@ export default function AdminDashboard() {
 
   const handleBackupDatabase = () => {
     setBackingUp(true);
-    setBackupStatus("Initializing database dump...");
+    setBackupStatus(t("admin.backup.status.initializing"));
     setTimeout(() => {
-      setBackupStatus("Compressing file system structures...");
+      setBackupStatus(t("admin.backup.status.compressing"));
       setTimeout(() => {
         setBackingUp(false);
         const filename = `workmitra-dump-${new Date().toISOString().split('T')[0]}.tar.gz`;
-        setBackupStatus(`✓ Backup created successfully: ${filename}`);
-        toast.success("Platform database backup completed!");
+        setBackupStatus(`✓ ${t("admin.backup.status.success", { filename })}`);
+        toast.success(t("admin.toast.backup_completed"));
         setSystemLogs(prev => [
           `INF [System] Automated backup archive ${filename} created`,
           ...prev
@@ -87,10 +89,10 @@ export default function AdminDashboard() {
         setDisputes(disputesData);
         setCompanies(companiesData);
       } else {
-        toast.error("Failed to load administration dataset.");
+        toast.error(t("admin.toast.load_failed"));
       }
     } catch (err) {
-      toast.error("Error communicating with authentication gateway.");
+      toast.error(t("admin.toast.auth_error"));
     } finally {
       setLoading(false);
     }
@@ -98,7 +100,7 @@ export default function AdminDashboard() {
 
   // Action: Resolve dispute
   const handleResolveDispute = async (applicationId, decision) => {
-    if (!window.confirm(`Are you sure you want to resolve this dispute by choosing ${decision === "release" ? "Release Payout" : "Refund Recruiter"}?`)) return;
+    if (!window.confirm(t("admin.confirm.resolve_dispute", { decision: decision === "release" ? t("admin.action.release_payout") : t("admin.action.refund_recruiter") }))) return;
     
     setResolvingId(applicationId);
     try {
@@ -113,13 +115,13 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (res.ok) {
-        toast.success(`Dispute resolved: ${decision === "release" ? "Payout Released!" : "Budget Refunded!"}`);
+        toast.success(t("admin.toast.dispute_resolved", { status: decision === "release" ? t("admin.toast.payout_released") : t("admin.toast.budget_refunded") }));
         fetchAdminData();
       } else {
-        toast.error(data.error || "Failed to resolve dispute.");
+        toast.error(data.error || t("admin.toast.resolve_failed"));
       }
     } catch (err) {
-      toast.error("Network error during resolution.");
+      toast.error(t("admin.toast.network_error"));
     } finally {
       setResolvingId(null);
     }
@@ -127,7 +129,7 @@ export default function AdminDashboard() {
 
   // Action: Verify Company Recruiter
   const handleVerifyCompany = async (companyEmail) => {
-    if (!window.confirm(`Verify and approve company account credentials for: ${companyEmail}?`)) return;
+    if (!window.confirm(t("admin.confirm.verify_company", { companyEmail }))) return;
     
     setVerifyingEmail(companyEmail);
     try {
@@ -138,13 +140,13 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (res.ok) {
-        toast.success("Corporate credentials approved & verified!");
+        toast.success(t("admin.toast.company_verified"));
         fetchAdminData();
       } else {
-        toast.error(data.error || "Failed to verify startup.");
+        toast.error(data.error || t("admin.toast.verify_failed"));
       }
     } catch (err) {
-      toast.error("Network error during verification.");
+      toast.error(t("admin.toast.verify_network_error"));
     } finally {
       setVerifyingEmail(null);
     }
@@ -155,7 +157,7 @@ export default function AdminDashboard() {
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-xs font-black uppercase text-indigo-600 tracking-widest animate-pulse">Loading Admin Console...</p>
+          <p className="text-xs font-black uppercase text-indigo-600 tracking-widest animate-pulse">{t("admin.loading")}</p>
         </div>
       </div>
     );
@@ -168,14 +170,14 @@ export default function AdminDashboard() {
         {/* Header Title Section */}
         <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-100 dark:border-slate-700/50 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">👑 workMitra Superadmin Console</h1>
-            <p className="text-xs text-slate-400 mt-1">Audit escrow payouts, verify corporate credentials, and resolve workspace disputes.</p>
+            <h1 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tight">👑 {t("admin.title")}</h1>
+            <p className="text-xs text-slate-400 mt-1">{t("admin.description")}</p>
           </div>
           <button
             onClick={fetchAdminData}
             className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-sm"
           >
-            🔄 Sync Platform Data
+            🔄 {t("admin.action.sync_data")}
           </button>
         </div>
 
@@ -183,27 +185,27 @@ export default function AdminDashboard() {
         {metrics && (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border dark:border-slate-700 shadow-sm">
-              <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase">Total Students</span>
+              <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase">{t("admin.kpi.total_students")}</span>
               <span className="text-2xl font-black text-slate-800 dark:text-white block mt-1">{metrics.totalStudents}</span>
             </div>
             <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border dark:border-slate-700 shadow-sm">
-              <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase">Verified Recruiters</span>
+              <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase">{t("admin.kpi.verified_recruiters")}</span>
               <span className="text-2xl font-black text-slate-800 dark:text-white block mt-1">{metrics.totalCompanies}</span>
             </div>
             <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border dark:border-slate-700 shadow-sm">
-              <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase">Total Gig Posts</span>
+              <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase">{t("admin.kpi.total_gigs")}</span>
               <span className="text-2xl font-black text-slate-800 dark:text-white block mt-1">{metrics.totalProjects}</span>
             </div>
             <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border dark:border-slate-700 shadow-sm border-l-4 border-l-blue-500">
-              <span className="text-[10px] font-black text-blue-500 uppercase">Locked Escrow</span>
+              <span className="text-[10px] font-black text-blue-500 uppercase">{t("admin.kpi.locked_escrow")}</span>
               <span className="text-xl font-black text-slate-800 dark:text-white block mt-1">₹{metrics.lockedEscrow.toLocaleString()}</span>
             </div>
             <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border dark:border-slate-700 shadow-sm border-l-4 border-l-emerald-500">
-              <span className="text-[10px] font-black text-emerald-500 uppercase">Completed Payouts</span>
+              <span className="text-[10px] font-black text-emerald-500 uppercase">{t("admin.kpi.completed_payouts")}</span>
               <span className="text-xl font-black text-slate-800 dark:text-white block mt-1">₹{metrics.completedEscrow.toLocaleString()}</span>
             </div>
             <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl border dark:border-slate-700 shadow-sm border-l-4 border-l-rose-500">
-              <span className="text-[10px] font-black text-rose-500 uppercase">Disputed Balance</span>
+              <span className="text-[10px] font-black text-rose-500 uppercase">{t("admin.kpi.disputed_balance")}</span>
               <span className="text-xl font-black text-slate-800 dark:text-white block mt-1">₹{metrics.disputedEscrow.toLocaleString()}</span>
             </div>
           </div>
@@ -212,48 +214,48 @@ export default function AdminDashboard() {
         {/* Disputes Manager Section */}
         <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl border dark:border-slate-700/50 shadow-sm space-y-4">
           <div className="border-b pb-3">
-            <h2 className="text-base font-black text-slate-800 dark:text-white uppercase">⚖️ Escrow Disputes Resolution Desk</h2>
-            <p className="text-[11px] text-slate-400 mt-0.5">Disputed task solutions currently locked. Audit deliverables and disburse or refund capital.</p>
+            <h2 className="text-base font-black text-slate-800 dark:text-white uppercase">⚖️ {t("admin.disputes.title")}</h2>
+            <p className="text-[11px] text-slate-400 mt-0.5">{t("admin.disputes.description")}</p>
           </div>
 
           {disputes.length === 0 ? (
-            <p className="text-xs text-slate-400 dark:text-slate-500 italic py-6 text-center">No active disputes registered.</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 italic py-6 text-center">{t("admin.disputes.empty")}</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="border-b border-slate-100 dark:border-slate-700 text-slate-400 font-bold">
-                    <th className="py-3 px-4">Project / Student</th>
-                    <th className="py-3 px-4">Recruiter / Client</th>
-                    <th className="py-3 px-4">Escrow Value</th>
-                    <th className="py-3 px-4">Dispute Reason</th>
-                    <th className="py-3 px-4 text-right">Actions</th>
+                    <th className="py-3 px-4">{t("admin.disputes.th.project")}</th>
+                    <th className="py-3 px-4">{t("admin.disputes.th.recruiter")}</th>
+                    <th className="py-3 px-4">{t("admin.disputes.th.escrow")}</th>
+                    <th className="py-3 px-4">{t("admin.disputes.th.reason")}</th>
+                    <th className="py-3 px-4 text-right">{t("admin.disputes.th.actions")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50 text-slate-600 dark:text-slate-300">
                   {disputes.map((dispute) => (
-                    <tr key={dispute._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+                    <tr key={dispute._id} className="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-800/40">
                       <td className="py-4 px-4">
-                        <span className="font-bold text-slate-800 dark:text-white block">{dispute.projectId?.title || "Project Title"}</span>
-                        <span className="text-[10px] text-slate-400 block mt-0.5">by {dispute.studentName} ({dispute.studentEmail})</span>
+                        <span className="font-bold text-slate-800 dark:text-white block">{dispute.projectId?.title || t("admin.disputes.fallback.project_title")}</span>
+                        <span className="text-[10px] text-slate-400 block mt-0.5">{t("admin.disputes.by_student", { name: dispute.studentName, email: dispute.studentEmail })}</span>
                       </td>
                       <td className="py-4 px-4 font-semibold">{dispute.projectId?.companyId}</td>
                       <td className="py-4 px-4 font-black text-green-600">₹{dispute.projectId?.budget?.toLocaleString()}</td>
-                      <td className="py-4 px-4 max-w-xs truncate italic">"{dispute.feedbackText || "No feedback specified"}"</td>
+                      <td className="py-4 px-4 max-w-xs truncate italic">"{dispute.feedbackText || t("admin.disputes.fallback.no_feedback")}"</td>
                       <td className="py-4 px-4 text-right space-x-2">
                         <button
                           onClick={() => handleResolveDispute(dispute._id, "release")}
                           disabled={resolvingId === dispute._id}
                           className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[10px] transition disabled:opacity-50"
                         >
-                          Release Payout
+                          {t("admin.action.release_payout")}
                         </button>
                         <button
                           onClick={() => handleResolveDispute(dispute._id, "refund")}
                           disabled={resolvingId === dispute._id}
                           className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-bold text-[10px] transition disabled:opacity-50"
                         >
-                          Refund Recruiter
+                          {t("admin.action.refund_recruiter")}
                         </button>
                       </td>
                     </tr>
@@ -267,40 +269,40 @@ export default function AdminDashboard() {
         {/* Recruiters Verifications Section */}
         <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl border dark:border-slate-700/50 shadow-sm space-y-4">
           <div className="border-b pb-3">
-            <h2 className="text-base font-black text-slate-800 dark:text-white uppercase">🏢 Corporate Startup Audits</h2>
-            <p className="text-[11px] text-slate-400 mt-0.5">Review credentials of registered recruiter startup platforms before allowing project deployments.</p>
+            <h2 className="text-base font-black text-slate-800 dark:text-white uppercase">🏢 {t("admin.companies.title")}</h2>
+            <p className="text-[11px] text-slate-400 mt-0.5">{t("admin.companies.description")}</p>
           </div>
 
           {companies.length === 0 ? (
-            <p className="text-xs text-slate-400 dark:text-slate-500 italic py-6 text-center">No corporate recruiters registered.</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 italic py-6 text-center">{t("admin.companies.empty")}</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="border-b border-slate-100 dark:border-slate-700 text-slate-400 font-bold">
-                    <th className="py-3 px-4">Company Details</th>
-                    <th className="py-3 px-4">Admin Email</th>
-                    <th className="py-3 px-4">Contact Phone</th>
-                    <th className="py-3 px-4">Status</th>
-                    <th className="py-3 px-4 text-right">Actions</th>
+                    <th className="py-3 px-4">{t("admin.companies.th.company")}</th>
+                    <th className="py-3 px-4">{t("admin.companies.th.email")}</th>
+                    <th className="py-3 px-4">{t("admin.companies.th.phone")}</th>
+                    <th className="py-3 px-4">{t("admin.companies.th.status")}</th>
+                    <th className="py-3 px-4 text-right">{t("admin.companies.th.actions")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50 text-slate-600 dark:text-slate-300">
                   {companies.map((company) => (
-                    <tr key={company._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+                    <tr key={company._id} className="hover:bg-slate-50 dark:bg-slate-800/50 dark:hover:bg-slate-800/40">
                       <td className="py-4 px-4 font-bold text-slate-800 dark:text-white">
                         {company.companyName || company.fullName}
                       </td>
                       <td className="py-4 px-4 font-semibold">{company.email}</td>
-                      <td className="py-4 px-4">{company.mobile || "N/A"}</td>
+                      <td className="py-4 px-4">{company.mobile || t("admin.companies.fallback.na")}</td>
                       <td className="py-4 px-4">
                         {company.isVerified ? (
                           <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-md font-bold text-[9px] uppercase tracking-wider">
-                            ✓ Verified
+                            ✓ {t("admin.companies.status.verified")}
                           </span>
                         ) : (
                           <span className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded-md font-bold text-[9px] uppercase tracking-wider animate-pulse">
-                            Pending Review
+                            {t("admin.companies.status.pending")}
                           </span>
                         )}
                       </td>
@@ -311,10 +313,10 @@ export default function AdminDashboard() {
                             disabled={verifyingEmail === company.email}
                             className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-[10px] transition disabled:opacity-50"
                           >
-                            Approve Credentials
+                            {t("admin.action.approve_credentials")}
                           </button>
                         ) : (
-                          <span className="text-[10px] text-slate-400 italic">No Action Required</span>
+                          <span className="text-[10px] text-slate-400 italic">{t("admin.companies.no_action")}</span>
                         )}
                       </td>
                     </tr>
@@ -330,14 +332,14 @@ export default function AdminDashboard() {
           {/* Configuration Form settings */}
           <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl border dark:border-slate-700/50 shadow-sm space-y-4 text-left">
             <div className="border-b pb-3">
-              <h2 className="text-base font-black text-slate-800 dark:text-white uppercase">⚙️ Fee Structures & Settings</h2>
-              <p className="text-[11px] text-slate-400 mt-0.5">Control global fee rates and task deposit parameters.</p>
+              <h2 className="text-base font-black text-slate-800 dark:text-white uppercase">⚙️ {t("admin.config.title")}</h2>
+              <p className="text-[11px] text-slate-400 mt-0.5">{t("admin.config.description")}</p>
             </div>
             
             <form onSubmit={handleSaveConfig} className="space-y-4 text-xs">
               <div>
                 <div className="flex justify-between font-bold text-slate-700 dark:text-slate-300">
-                  <span>Commission Fee:</span>
+                  <span>{t("admin.config.commission_fee")}</span>
                   <span>{commissionRate}%</span>
                 </div>
                 <input
@@ -351,7 +353,7 @@ export default function AdminDashboard() {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">Minimum Stipend Deposit Threshold (₹)</label>
+                <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">{t("admin.config.min_deposit")}</label>
                 <input
                   type="number"
                   min="500"
@@ -359,7 +361,7 @@ export default function AdminDashboard() {
                   step="500"
                   value={minDeposit}
                   onChange={(e) => setMinDeposit(Number(e.target.value))}
-                  className="w-full bg-slate-50 border border-slate-200 dark:bg-slate-900 dark:border-slate-850 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none dark:text-white"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:bg-slate-900 dark:border-slate-850 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none dark:text-white"
                 />
               </div>
 
@@ -368,7 +370,7 @@ export default function AdminDashboard() {
                 disabled={savingConfig}
                 className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-750 text-white rounded-xl font-bold transition shadow-sm"
               >
-                {savingConfig ? "Saving settings..." : "Apply Configurations"}
+                {savingConfig ? t("admin.action.saving_settings") : t("admin.action.apply_config")}
               </button>
             </form>
           </div>
@@ -377,20 +379,20 @@ export default function AdminDashboard() {
           <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl border dark:border-slate-700/50 shadow-sm space-y-4 text-left">
             <div className="border-b pb-3 flex justify-between items-center">
               <div>
-                <h2 className="text-base font-black text-slate-800 dark:text-white uppercase">💾 Database & System logs</h2>
-                <p className="text-[11px] text-slate-400 mt-0.5">Simulate offline platform back-ups and view runtime audit feeds.</p>
+                <h2 className="text-base font-black text-slate-800 dark:text-white uppercase">💾 {t("admin.backup.title")}</h2>
+                <p className="text-[11px] text-slate-400 mt-0.5">{t("admin.backup.description")}</p>
               </div>
               <button
                 onClick={handleBackupDatabase}
                 disabled={backingUp}
-                className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold rounded-xl disabled:opacity-50 dark:bg-white dark:text-slate-950"
+                className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold rounded-xl disabled:opacity-50 dark:bg-white dark:bg-slate-900 dark:text-slate-950"
               >
-                {backingUp ? "Backing up..." : "Backup DB"}
+                {backingUp ? t("admin.action.backing_up") : t("admin.action.backup_db")}
               </button>
             </div>
 
             {backupStatus && (
-              <p className="text-[11px] bg-slate-50 border p-2.5 rounded-xl text-slate-600 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-300 font-extrabold animate-pulse">
+              <p className="text-[11px] bg-slate-50 dark:bg-slate-800 border p-2.5 rounded-xl text-slate-600 dark:text-slate-300 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-300 font-extrabold animate-pulse">
                 {backupStatus}
               </p>
             )}

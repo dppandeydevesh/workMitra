@@ -2,10 +2,12 @@ import { useState } from "react";
 import { API_BASE_URL } from "../config";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../components/Toast";
+import { useTranslation } from "react-i18next";
 
 export default function AddProject() {
   const navigate = useNavigate();
   const toast = useToast();
+  const { t } = useTranslation();
   
   const [step, setStep] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
@@ -46,15 +48,15 @@ export default function AddProject() {
   const handleNextStep = () => {
     // Basic validation
     if (step === 1 && (!title || !description || !skillsInput)) {
-      toast.error("Please fill in the project title, description, and required skills.");
+      toast.error(t("addProject.validationCoreDetails"));
       return;
     }
     if (step === 2 && (!duration || !deadline)) {
-      toast.error("Please configure the duration and deadline fields.");
+      toast.error(t("addProject.validationScheduling"));
       return;
     }
     if (step === 3 && !budget) {
-      toast.error("Please configure the budget/stipend reward.");
+      toast.error(t("addProject.validationRewards"));
       return;
     }
     setStep(prev => prev + 1);
@@ -121,14 +123,14 @@ export default function AddProject() {
       });
 
       if (response.ok) {
-        toast.success(`Micro-task configuration saved as ${status} successfully!`);
+        toast.success(t("addProject.successMessage", { status }));
         navigate("/company-dashboard");
       } else {
         const data = await response.json();
-        setErrorMessage(data.error || "Failed to deploy project payload.");
+        setErrorMessage(data.error || t("addProject.deployFailed"));
       }
     } catch (err) {
-      setErrorMessage("Network connection failure with system gateway backend.");
+      setErrorMessage(t("addProject.networkFailure"));
     } finally {
       setSubmitting(false);
     }
@@ -141,15 +143,15 @@ export default function AddProject() {
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b pb-4 mb-6">
           <div>
-            <h1 className="text-xl sm:text-2xl font-black text-gray-800 dark:text-gray-200">Deploy Corporate Micro-Task</h1>
-            <p className="text-xs text-gray-400 mt-0.5">Wizard step {step} of 6: Configure live requirements and filtering rules.</p>
+            <h1 className="text-xl sm:text-2xl font-black text-gray-800 dark:text-gray-200">{t("addProject.pageTitle")}</h1>
+            <p className="text-xs text-gray-400 mt-0.5">{t("addProject.wizardStepSubtitle", { step })}</p>
           </div>
           <button 
             type="button" 
             onClick={() => navigate("/company-dashboard")}
             className="w-full sm:w-auto text-center text-xs font-bold text-gray-500 hover:text-indigo-600 bg-gray-100 dark:bg-slate-800 px-3.5 py-2 rounded-xl transition"
           >
-            ← Exit Wizard
+            ← {t("addProject.exitWizard")}
           </button>
         </div>
 
@@ -175,34 +177,34 @@ export default function AddProject() {
           {/* STEP 1: Core Details */}
           {step === 1 && (
             <div className="space-y-4 animate-fade-in">
-              <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">Step 1: Task Core Details</h3>
+              <h3 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">{t("addProject.step1Title")}</h3>
               
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Project Title</label>
-                <input type="text" placeholder="e.g. Deploy Next.js Landing Webpage" value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition" required />
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.projectTitleLabel")}</label>
+                <input type="text" placeholder={t("addProject.projectTitlePlaceholder")} value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-800 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition" required />
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Deliverables & Objectives Description</label>
-                <textarea rows="4" placeholder="Detail the core task objectives, deliverables list, and milestones required..." value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition resize-none" required />
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.descriptionLabel")}</label>
+                <textarea rows="4" placeholder={t("addProject.descriptionPlaceholder")} value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-800 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition resize-none" required />
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Required Skill Tags (Comma-separated)</label>
-                <input type="text" placeholder="e.g. React, Next.js, TailWind" value={skillsInput} onChange={e => setSkillsInput(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition" required />
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.skillsLabel")}</label>
+                <input type="text" placeholder={t("addProject.skillsPlaceholder")} value={skillsInput} onChange={e => setSkillsInput(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-800 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition" required />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Complexity Tier</label>
-                  <select value={complexity} onChange={e => setComplexity(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 bg-white dark:bg-slate-900">
-                    <option value="Beginner">Beginner (1st/2nd Yr Credits)</option>
-                    <option value="Intermediate">Intermediate (Normal Track)</option>
-                    <option value="Advanced">Advanced (High-End R&D)</option>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.complexityLabel")}</label>
+                  <select value={complexity} onChange={e => setComplexity(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-800 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 bg-white dark:bg-slate-900">
+                    <option value="Beginner">{t("addProject.complexityBeginner")}</option>
+                    <option value="Intermediate">{t("addProject.complexityIntermediate")}</option>
+                    <option value="Advanced">{t("addProject.complexityAdvanced")}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Corporate Team / Department</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.departmentLabel")}</label>
                   <input type="text" value={departmentName} onChange={e => setDepartmentName(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" required />
                 </div>
               </div>
@@ -212,28 +214,28 @@ export default function AddProject() {
           {/* STEP 2: Scheduling & Target Broadcast */}
           {step === 2 && (
             <div className="space-y-4 animate-fade-in">
-              <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">Step 2: Scheduling & Target Broadcasting</h3>
+              <h3 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">{t("addProject.step2Title")}</h3>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Task Duration</label>
-                  <input type="text" placeholder="e.g. 2 Weeks" value={duration} onChange={e => setDuration(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400" required />
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.durationLabel")}</label>
+                  <input type="text" placeholder={t("addProject.durationPlaceholder")} value={duration} onChange={e => setDuration(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400" required />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Submission Deadline</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.deadlineLabel")}</label>
                   <input type="date" value={deadline} onChange={e => setDeadline(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400" required />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Students Capacity Needed</label>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.capacityLabel")}</label>
                 <input type="number" min="1" value={studentsNeeded} onChange={e => setStudentsNeeded(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" required />
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Target University Broadcast (Optional)</label>
-                <input type="text" placeholder="e.g. gla.edu.in (leave empty for all universities)" value={targetUniversity} onChange={e => setTargetUniversity(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" />
-                <p className="text-[10px] text-gray-400 mt-1">If populated, only students registered under this college email domain can view the task.</p>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.broadcastLabel")}</label>
+                <input type="text" placeholder={t("addProject.broadcastPlaceholder")} value={targetUniversity} onChange={e => setTargetUniversity(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" />
+                <p className="text-[10px] text-gray-400 mt-1">{t("addProject.broadcastHint")}</p>
               </div>
             </div>
           )}
@@ -241,14 +243,14 @@ export default function AddProject() {
           {/* STEP 3: Rewards & Badges */}
           {step === 3 && (
             <div className="space-y-4 animate-fade-in">
-              <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">Step 3: Incentives & Rewards</h3>
+              <h3 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">{t("addProject.step3Title")}</h3>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Guaranteed Stipend (INR)</label>
-                <input type="number" placeholder="e.g. 5000" value={budget} onChange={e => setBudget(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" required />
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.stipendLabel")}</label>
+                <input type="number" placeholder={t("addProject.stipendPlaceholder")} value={budget} onChange={e => setBudget(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" required />
               </div>
 
-              <div className="flex items-center gap-3 p-4 bg-slate-50 border rounded-2xl">
+              <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
                 <input
                   type="checkbox"
                   id="hasPpiBadge"
@@ -256,8 +258,8 @@ export default function AddProject() {
                   onChange={e => setHasPpiBadge(e.target.checked)}
                   className="w-4 h-4 accent-indigo-600 cursor-pointer"
                 />
-                <label htmlFor="hasPpiBadge" className="text-xs font-bold text-slate-700 cursor-pointer select-none">
-                  🚀 Attach "Pre-Placement Interview" (PPI) badge recommendation to this gig!
+                <label htmlFor="hasPpiBadge" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer select-none">
+                  🚀 {t("addProject.ppiBadgeLabel")}
                 </label>
               </div>
             </div>
@@ -266,15 +268,15 @@ export default function AddProject() {
           {/* STEP 4: Prerequisites & NDA */}
           {step === 4 && (
             <div className="space-y-4 animate-fade-in">
-              <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">Step 4: Prerequisites & Legals</h3>
+              <h3 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">{t("addProject.step4Title")}</h3>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Minimum WorkMitra Readiness Score Requirement</label>
-                <input type="number" min="0" max="1000" placeholder="e.g. 400" value={minReadinessScore} onChange={e => setMinReadinessScore(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" />
-                <p className="text-[10px] text-gray-400 mt-1">Prevents applications from students whose calculated WorkMitra portfolio score is below this tier limit.</p>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.minScoreLabel")}</label>
+                <input type="number" min="0" max="1000" placeholder={t("addProject.minScorePlaceholder")} value={minReadinessScore} onChange={e => setMinReadinessScore(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" />
+                <p className="text-[10px] text-gray-400 mt-1">{t("addProject.minScoreHint")}</p>
               </div>
 
-              <div className="flex items-center gap-3 p-4 bg-slate-50 border rounded-2xl">
+              <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
                 <input
                   type="checkbox"
                   id="isNdaRequired"
@@ -282,8 +284,8 @@ export default function AddProject() {
                   onChange={e => setIsNdaRequired(e.target.checked)}
                   className="w-4 h-4 accent-indigo-600 cursor-pointer"
                 />
-                <label htmlFor="isNdaRequired" className="text-xs font-bold text-slate-700 cursor-pointer select-none">
-                  🔒 Enforce Digital Non-Disclosure Agreement (NDA) sign requirement prior to viewing details.
+                <label htmlFor="isNdaRequired" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer select-none">
+                  🔒 {t("addProject.ndaLabel")}
                 </label>
               </div>
             </div>
@@ -293,33 +295,33 @@ export default function AddProject() {
           {step === 5 && (
             <div className="space-y-4 animate-fade-in">
               <div className="flex justify-between items-center">
-                <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">Step 5: Pre-Test MCQ Screening</h3>
-                <span className="text-[9px] bg-slate-100 text-slate-500 font-extrabold px-2 py-0.5 rounded border">Optional</span>
+                <h3 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">{t("addProject.step5Title")}</h3>
+                <span className="text-[9px] bg-slate-100 dark:bg-slate-800 text-slate-500 font-extrabold px-2 py-0.5 rounded border">{t("addProject.optional")}</span>
               </div>
-              <p className="text-[10px] text-slate-400 -mt-2">Filter out low-proficiency candidates using a quick entry-test.</p>
+              <p className="text-[10px] text-slate-400 -mt-2">{t("addProject.mcqHint")}</p>
 
-              <div className="border p-4 rounded-2xl bg-slate-50/50 space-y-3">
-                <p className="text-xs font-bold text-indigo-700">Question 1</p>
-                <input type="text" placeholder="Question Text" value={q1Text} onChange={e => setQ1Text(e.target.value)} className="w-full bg-white dark:bg-slate-900 border p-2.5 rounded-xl text-xs" />
+              <div className="border p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 space-y-3">
+                <p className="text-xs font-bold text-indigo-700">{t("addProject.question1")}</p>
+                <input type="text" placeholder={t("addProject.questionPlaceholder")} value={q1Text} onChange={e => setQ1Text(e.target.value)} className="w-full bg-white dark:bg-slate-900 border p-2.5 rounded-xl text-xs" />
                 <div className="grid grid-cols-2 gap-2">
-                  <input type="text" placeholder="Option A" value={q1OptA} onChange={e => setQ1OptA(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder="Option B" value={q1OptB} onChange={e => setQ1OptB(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder="Option C" value={q1OptC} onChange={e => setQ1OptC(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder="Option D" value={q1OptD} onChange={e => setQ1OptD(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder={t("addProject.optionA")} value={q1OptA} onChange={e => setQ1OptA(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder={t("addProject.optionB")} value={q1OptB} onChange={e => setQ1OptB(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder={t("addProject.optionC")} value={q1OptC} onChange={e => setQ1OptC(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder={t("addProject.optionD")} value={q1OptD} onChange={e => setQ1OptD(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
                 </div>
-                <input type="text" placeholder="Exact Correct Option string value" value={q1Correct} onChange={e => setQ1Correct(e.target.value)} className="w-full bg-white dark:bg-slate-900 border p-2 rounded-xl text-xs" />
+                <input type="text" placeholder={t("addProject.correctOptionPlaceholder")} value={q1Correct} onChange={e => setQ1Correct(e.target.value)} className="w-full bg-white dark:bg-slate-900 border p-2 rounded-xl text-xs" />
               </div>
 
-              <div className="border p-4 rounded-2xl bg-slate-50/50 space-y-3">
-                <p className="text-xs font-bold text-indigo-700">Question 2</p>
-                <input type="text" placeholder="Question Text" value={q2Text} onChange={e => setQ2Text(e.target.value)} className="w-full bg-white dark:bg-slate-900 border p-2.5 rounded-xl text-xs" />
+              <div className="border p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 space-y-3">
+                <p className="text-xs font-bold text-indigo-700">{t("addProject.question2")}</p>
+                <input type="text" placeholder={t("addProject.questionPlaceholder")} value={q2Text} onChange={e => setQ2Text(e.target.value)} className="w-full bg-white dark:bg-slate-900 border p-2.5 rounded-xl text-xs" />
                 <div className="grid grid-cols-2 gap-2">
-                  <input type="text" placeholder="Option A" value={q2OptA} onChange={e => setQ2OptA(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder="Option B" value={q2OptB} onChange={e => setQ2OptB(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder="Option C" value={q2OptC} onChange={e => setQ2OptC(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder="Option D" value={q2OptD} onChange={e => setQ2OptD(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder={t("addProject.optionA")} value={q2OptA} onChange={e => setQ2OptA(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder={t("addProject.optionB")} value={q2OptB} onChange={e => setQ2OptB(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder={t("addProject.optionC")} value={q2OptC} onChange={e => setQ2OptC(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder={t("addProject.optionD")} value={q2OptD} onChange={e => setQ2OptD(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
                 </div>
-                <input type="text" placeholder="Exact Correct Option string value" value={q2Correct} onChange={e => setQ2Correct(e.target.value)} className="w-full bg-white dark:bg-slate-900 border p-2 rounded-xl text-xs" />
+                <input type="text" placeholder={t("addProject.correctOptionPlaceholder")} value={q2Correct} onChange={e => setQ2Correct(e.target.value)} className="w-full bg-white dark:bg-slate-900 border p-2 rounded-xl text-xs" />
               </div>
             </div>
           )}
@@ -327,29 +329,29 @@ export default function AddProject() {
           {/* STEP 6: Confirm & Deploy */}
           {step === 6 && (
             <div className="space-y-4 animate-fade-in">
-              <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">Step 6: Review & Publish</h3>
+              <h3 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">{t("addProject.step6Title")}</h3>
               
               <div className="border border-indigo-100 bg-indigo-50/20 p-5 rounded-2xl space-y-3 text-xs">
                 <div className="flex justify-between border-b pb-2">
-                  <span className="font-extrabold text-slate-800 text-sm">{title || "Untitled Project"}</span>
+                  <span className="font-extrabold text-slate-800 dark:text-slate-200 text-sm">{title || t("addProject.untitledProject")}</span>
                   <span className="font-black text-indigo-700 font-mono">₹{budget || 0}</span>
                 </div>
-                <p className="text-slate-500 leading-relaxed">{description || "No description configured yet."}</p>
-                <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-600 font-semibold pt-1">
-                  <p>🔹 Complexity: {complexity}</p>
-                  <p>🔹 Department: {departmentName}</p>
-                  <p>🔹 Broadcast target: {targetUniversity || "Public (All Universities)"}</p>
-                  <p>🔹 Min Score Req: {minReadinessScore} Score</p>
-                  <p>🔹 Require Digital NDA: {isNdaRequired ? "Yes" : "No"}</p>
-                  <p>🔹 Attaching PPI Badge: {hasPpiBadge ? "Yes" : "No"}</p>
+                <p className="text-slate-500 leading-relaxed">{description || t("addProject.noDescription")}</p>
+                <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-600 dark:text-slate-300 font-semibold pt-1">
+                  <p>🔹 {t("addProject.complexityReview")}: {complexity}</p>
+                  <p>🔹 {t("addProject.departmentReview")}: {departmentName}</p>
+                  <p>🔹 {t("addProject.broadcastReview")}: {targetUniversity || t("addProject.publicAll")}</p>
+                  <p>🔹 {t("addProject.minScoreReview")}: {minReadinessScore} {t("addProject.scoreLabel")}</p>
+                  <p>🔹 {t("addProject.requireNdaReview")}: {isNdaRequired ? t("addProject.yes") : t("addProject.no")}</p>
+                  <p>🔹 {t("addProject.ppiBadgeReview")}: {hasPpiBadge ? t("addProject.yes") : t("addProject.no")}</p>
                 </div>
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Publishing Mode State</label>
-                <select value={status} onChange={e => setStatus(e.target.value)} className="w-full bg-gray-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 bg-white dark:bg-slate-900">
-                  <option value="Published">Publish Live Immediately</option>
-                  <option value="Draft">Save as Draft Template</option>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.publishingMode")}</label>
+                <select value={status} onChange={e => setStatus(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-800 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 bg-white dark:bg-slate-900">
+                  <option value="Published">{t("addProject.publishLive")}</option>
+                  <option value="Draft">{t("addProject.saveDraft")}</option>
                 </select>
               </div>
             </div>
@@ -361,9 +363,9 @@ export default function AddProject() {
               <button
                 type="button"
                 onClick={handlePrevStep}
-                className="px-5 py-2.5 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-600 rounded-xl text-xs font-bold transition"
+                className="px-5 py-2.5 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-600 dark:text-gray-300 rounded-xl text-xs font-bold transition"
               >
-                ← Previous
+                ← {t("addProject.previous")}
               </button>
             ) : (
               <div />
@@ -375,7 +377,7 @@ export default function AddProject() {
                 onClick={handleNextStep}
                 className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black transition shadow"
               >
-                Next Step →
+                {t("addProject.nextStep")} →
               </button>
             ) : (
               <button
@@ -383,7 +385,7 @@ export default function AddProject() {
                 disabled={submitting}
                 className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl text-xs font-black uppercase tracking-wider transition shadow-lg hover:opacity-95"
               >
-                {submitting ? "Deploying..." : `Confirm & Save as ${status}`}
+                {submitting ? t("addProject.deploying") : t("addProject.confirmSave", { status })}
               </button>
             )}
           </div>

@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../config";
 
 export default function ResetPasswordPage() {
   const { token } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -28,9 +30,9 @@ export default function ResetPasswordPage() {
     if (/[0-9]/.test(pass)) score++;
     if (/[^A-Za-z0-9]/.test(pass)) score++;
 
-    let text = "Weak ❌";
-    if (score === 3) text = "Medium ⚠️ (Add special characters/numbers)";
-    if (score === 4) text = "Strong 🔥 Perfect Structure!";
+    let text = t("resetPassword.strengthWeak") + " ❌";
+    if (score === 3) text = t("resetPassword.strengthMedium") + " ⚠️";
+    if (score === 4) text = t("resetPassword.strengthStrong") + " 🔥";
 
     setPasswordStrength({ score, text });
   };
@@ -41,12 +43,12 @@ export default function ResetPasswordPage() {
     setSuccessMessage("");
 
     if (password !== confirmPassword) {
-      setErrorMessage("Passwords do not match.");
+      setErrorMessage(t("resetPassword.errorMismatch"));
       return;
     }
 
     if (passwordStrength.score < 4) {
-      setErrorMessage("Please establish a stronger password structure before continuing.");
+      setErrorMessage(t("resetPassword.errorWeakPassword"));
       return;
     }
 
@@ -59,12 +61,12 @@ export default function ResetPasswordPage() {
       });
       const data = await response.json();
       if (response.ok) {
-        setSuccessMessage("Password reset completed successfully!");
+        setSuccessMessage(t("resetPassword.successMessage"));
       } else {
-        setErrorMessage(data.error || "Failed to reset password.");
+        setErrorMessage(data.error || t("resetPassword.errorFailed"));
       }
     } catch (err) {
-      setErrorMessage("Error connecting to server gateway.");
+      setErrorMessage(t("resetPassword.errorServer"));
     } finally {
       setSubmitting(false);
     }
@@ -78,8 +80,8 @@ export default function ResetPasswordPage() {
         </div>
 
         <div>
-          <h2 className="text-2xl font-black text-purple-950 dark:text-purple-200">Choose New Password</h2>
-          <p className="text-xs text-gray-400 mt-1">Please enter your new portal credentials below.</p>
+          <h2 className="text-2xl font-black text-purple-950 dark:text-purple-200">{t("resetPassword.heading")}</h2>
+          <p className="text-xs text-gray-400 mt-1">{t("resetPassword.subheading")}</p>
         </div>
 
         {errorMessage && (
@@ -97,17 +99,17 @@ export default function ResetPasswordPage() {
               onClick={() => navigate("/login")}
               className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition"
             >
-              Go to Sign In
+              {t("resetPassword.goToSignIn")}
             </button>
           </div>
         ) : (
           <form onSubmit={handleResetSubmit} className="space-y-4">
             {/* New Password */}
             <div>
-              <label className="block text-left text-[9px] font-bold text-gray-400 uppercase mb-1.5 px-1">New Password</label>
+              <label className="block text-left text-[9px] font-bold text-gray-400 uppercase mb-1.5 px-1">{t("resetPassword.newPasswordLabel")}</label>
               <input
                 type="password"
-                placeholder="Enter new password"
+                placeholder={t("resetPassword.newPasswordPlaceholder")}
                 value={password}
                 onChange={(e) => checkPasswordStrength(e.target.value)}
                 className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
@@ -116,7 +118,7 @@ export default function ResetPasswordPage() {
               {password && (
                 <div className="w-full text-left text-[10px] font-bold px-1 space-y-1 mt-1.5">
                   <p className={passwordStrength.score === 4 ? "text-green-600" : "text-amber-600"}>
-                    Strength: {passwordStrength.text}
+                    {t("resetPassword.strengthLabel")}: {passwordStrength.text}
                   </p>
                   <div className="w-full bg-gray-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
                     <div 
@@ -130,10 +132,10 @@ export default function ResetPasswordPage() {
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-left text-[9px] font-bold text-gray-400 uppercase mb-1.5 px-1">Confirm Password</label>
+              <label className="block text-left text-[9px] font-bold text-gray-400 uppercase mb-1.5 px-1">{t("resetPassword.confirmPasswordLabel")}</label>
               <input
                 type="password"
-                placeholder="Re-enter password"
+                placeholder={t("resetPassword.confirmPasswordPlaceholder")}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
@@ -146,7 +148,7 @@ export default function ResetPasswordPage() {
               disabled={submitting || passwordStrength.score < 4}
               className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3.5 rounded-xl shadow-md mt-2 transition ${passwordStrength.score === 4 ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95 cursor-pointer" : "bg-gray-300 cursor-not-allowed"}`}
             >
-              {submitting ? "Updating password..." : "Reset Password"}
+              {submitting ? t("resetPassword.submitting") : t("resetPassword.submitButton")}
             </button>
           </form>
         )}

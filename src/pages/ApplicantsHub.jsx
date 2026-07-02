@@ -2,22 +2,24 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 import { useToast } from "../components/Toast";
+import { useTranslation } from "react-i18next";
 
 export default function ApplicantsHub() {
   const navigate = useNavigate();
   const toast = useToast();
+  const { t } = useTranslation();
   const renderStepper = (status) => {
     const steps = [
-      { label: "Applied", statusVal: "Pending" },
-      { label: "Approved", statusVal: "Approved" },
-      { label: "Submitted", statusVal: "Submitted" },
-      { label: "Completed", statusVal: "Completed" }
+      { label: t("applicantsHub.applied"), statusVal: "Pending" },
+      { label: t("applicantsHub.approved"), statusVal: "Approved" },
+      { label: t("applicantsHub.submitted"), statusVal: "Submitted" },
+      { label: t("applicantsHub.completed"), statusVal: "Completed" }
     ];
 
     if (status === "Rejected") {
       return (
         <span className="bg-red-100 text-red-800 text-[9px] font-bold px-2 py-0.5 rounded border border-red-200 uppercase tracking-wider">
-          Rejected
+          {t("applicantsHub.rejected")}
         </span>
       );
     }
@@ -25,7 +27,7 @@ export default function ApplicantsHub() {
     if (status === "Disputed") {
       return (
         <span className="bg-rose-100 text-rose-800 text-[9px] font-black px-2.5 py-0.5 rounded-lg border border-rose-200 uppercase tracking-wider animate-pulse">
-          ⚠️ Flagged / Disputed
+          ⚠️ {t("applicantsHub.flaggedDisputed")}
         </span>
       );
     }
@@ -96,7 +98,7 @@ export default function ApplicantsHub() {
     setCurrentUser(savedUser);
 
     if (!savedUser.email || savedUser.userRole !== "company") {
-      setErrorMessage("Corporate user session context missing.");
+      setErrorMessage(t("applicantsHub.corporateSessionMissing"));
       setLoading(false);
       return;
     }
@@ -115,10 +117,10 @@ export default function ApplicantsHub() {
       if (res.ok) {
         setApplications(data);
       } else {
-        setErrorMessage(data.error || "Failed to fetch corporate applications.");
+        setErrorMessage(data.error || t("applicantsHub.failedFetchApps"));
       }
     } catch (err) {
-      setErrorMessage("Error connecting to server gateway.");
+      setErrorMessage(t("applicantsHub.errorGateway"));
     } finally {
       setLoading(false);
     }
@@ -126,7 +128,7 @@ export default function ApplicantsHub() {
 
   // Recruiter actions
   const handleUpdateStatus = async (applicationId, status) => {
-    if (!window.confirm(`Are you sure you want to change the status of this application to ${status}?`)) return;
+    if (!window.confirm(t("applicantsHub.confirmStatusChange", { status }))) return;
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${API_BASE_URL}/api/applications/${applicationId}/status`, {
@@ -139,13 +141,13 @@ export default function ApplicantsHub() {
       });
       const data = await res.json();
       if (res.ok) {
-        toast.success(`Candidate application status updated to ${status}!`);
+        toast.success(t("applicantsHub.statusUpdated", { status }));
         if (currentUser) fetchCompanyApplications(currentUser.email);
       } else {
-        toast.error(data.error || "Failed to update status.");
+        toast.error(data.error || t("applicantsHub.failedUpdateStatus"));
       }
     } catch (err) {
-      toast.error("Error sending status payload.");
+      toast.error(t("applicantsHub.errorStatusPayload"));
     }
   };
 
@@ -174,10 +176,10 @@ export default function ApplicantsHub() {
   const handleDisputeApplication = async (e) => {
     e.preventDefault();
     if (!feedbackText.trim()) {
-      toast.error("Please explain your dispute feedback details first.");
+      toast.error(t("applicantsHub.explainDisputeFirst"));
       return;
     }
-    if (!window.confirm("Are you sure you want to flag this submission as Disputed? This will hold the project budget in escrow.")) return;
+    if (!window.confirm(t("applicantsHub.confirmDispute"))) return;
     
     setSubmittingReview(true);
     try {
@@ -192,14 +194,14 @@ export default function ApplicantsHub() {
       });
       const data = await res.json();
       if (res.ok) {
-        toast.success("Dispute registered. Escrow funds hold active.");
+        toast.success(t("applicantsHub.disputeRegistered"));
         setShowReviewModal(false);
         if (currentUser) fetchCompanyApplications(currentUser.email);
       } else {
-        toast.error(data.error || "Failed to submit dispute.");
+        toast.error(data.error || t("applicantsHub.failedSubmitDispute"));
       }
     } catch (err) {
-      toast.error("Error communicating with server gateway.");
+      toast.error(t("applicantsHub.errorCommGateway"));
     } finally {
       setSubmittingReview(false);
     }
@@ -217,7 +219,7 @@ export default function ApplicantsHub() {
     e.preventDefault();
     if (!activeAppToReview) return;
     if (!feedbackText.trim()) {
-      toast.error("Please provide revision feedback explanation notes first.");
+      toast.error(t("applicantsHub.provideRevisionFeedback"));
       return;
     }
     setSubmittingReview(true);
@@ -234,21 +236,21 @@ export default function ApplicantsHub() {
       });
       const data = await res.json();
       if (res.ok) {
-        toast.success("Revision request submitted successfully to the candidate!");
+        toast.success(t("applicantsHub.revisionRequestedSuccess"));
         setShowReviewModal(false);
         if (currentUser) fetchCompanyApplications(currentUser.email);
       } else {
-        toast.error(data.error || "Failed to submit revision request.");
+        toast.error(data.error || t("applicantsHub.failedSubmitRevision"));
       }
     } catch (err) {
-      toast.error("Error submitting revision request.");
+      toast.error(t("applicantsHub.errorSubmitRevision"));
     } finally {
       setSubmittingReview(false);
     }
   };
 
   const handleReviewExtension = async (applicationId, requestId, status) => {
-    if (!window.confirm(`Are you sure you want to ${status.toLowerCase()} this deadline extension request?`)) return;
+    if (!window.confirm(t("applicantsHub.confirmExtension", { status: status.toLowerCase() }))) return;
     
     try {
       const token = localStorage.getItem("token");
@@ -263,13 +265,13 @@ export default function ApplicantsHub() {
 
       const data = await res.json();
       if (res.ok) {
-        toast.success(`Extension request ${status.toLowerCase()} successfully!`);
+        toast.success(t("applicantsHub.extensionSuccess", { status: status.toLowerCase() }));
         if (currentUser) fetchCompanyApplications(currentUser.email);
       } else {
-        toast.error(data.error || "Failed to resolve extension request.");
+        toast.error(data.error || t("applicantsHub.failedResolveExtension"));
       }
     } catch (err) {
-      toast.error("Network error during extension request review.");
+      toast.error(t("applicantsHub.networkErrorExtension"));
     }
   };
 
@@ -290,14 +292,14 @@ export default function ApplicantsHub() {
       });
       const data = await res.json();
       if (res.ok) {
-        toast.success("Task approved and marked as Completed!");
+        toast.success(t("applicantsHub.taskApproved"));
         setShowReviewModal(false);
         if (currentUser) fetchCompanyApplications(currentUser.email);
       } else {
-        toast.error(data.error || "Failed to submit review.");
+        toast.error(data.error || t("applicantsHub.failedSubmitReview"));
       }
     } catch (err) {
-      toast.error("Error submitting task completion.");
+      toast.error(t("applicantsHub.errorSubmitCompletion"));
     } finally {
       setSubmittingReview(false);
     }
@@ -343,15 +345,15 @@ export default function ApplicantsHub() {
           <div className="border-b pb-6 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h1 className="text-3xl font-black text-gray-800 dark:text-gray-200 tracking-tight flex items-center gap-2">
-                <span>👨‍🎓 Applicants Command Center</span>
+                <span>👨‍🎓 {t("applicantsHub.commandCenterTitle")}</span>
               </h1>
-              <p className="text-gray-500 mt-1 text-sm">Audit candidate applications, inspect matching scores, review task submissions, and approve talent nodes.</p>
+              <p className="text-gray-500 mt-1 text-sm">{t("applicantsHub.commandCenterDesc")}</p>
             </div>
             <button
               onClick={() => navigate("/company-dashboard")}
               className="px-4 py-2 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-700 dark:text-gray-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
             >
-              ← Back to Command Center
+              ← {t("applicantsHub.backToCommandCenter")}
             </button>
           </div>
 
@@ -362,13 +364,13 @@ export default function ApplicantsHub() {
           )}
 
           {/* Search and Filters panel */}
-          <div className="bg-gray-50/60 border border-gray-100 dark:border-slate-800 p-5 rounded-2xl mb-8 grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div className="bg-gray-50 dark:bg-slate-800/60 border border-gray-100 dark:border-slate-800 p-5 rounded-2xl mb-8 grid grid-cols-1 md:grid-cols-5 gap-4">
             {/* Search Input */}
             <div className="md:col-span-1">
-              <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Search Candidate</label>
+              <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("applicantsHub.searchCandidate")}</label>
               <input
                 type="text"
-                placeholder="Name, email, or skills..."
+                placeholder={t("applicantsHub.searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -377,13 +379,13 @@ export default function ApplicantsHub() {
 
             {/* Project Filter */}
             <div>
-              <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Filter by Project</label>
+              <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("applicantsHub.filterByProject")}</label>
               <select
                 value={projectFilter}
                 onChange={(e) => setProjectFilter(e.target.value)}
                 className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
               >
-                <option value="All">All Projects</option>
+                <option value="All">{t("applicantsHub.allProjects")}</option>
                 {uniqueProjectTitles.map((title, idx) => (
                   <option key={idx} value={title}>{title}</option>
                 ))}
@@ -392,31 +394,31 @@ export default function ApplicantsHub() {
 
             {/* Status Filter */}
             <div>
-              <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Filter by Status</label>
+              <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("applicantsHub.filterByStatus")}</label>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
               >
-                <option value="All">All Statuses</option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Submitted">Submitted (Review pending)</option>
-                <option value="Completed">Completed (Approved)</option>
-                <option value="Rejected">Rejected</option>
+                <option value="All">{t("applicantsHub.allStatuses")}</option>
+                <option value="Pending">{t("applicantsHub.statusPending")}</option>
+                <option value="Approved">{t("applicantsHub.statusApproved")}</option>
+                <option value="Submitted">{t("applicantsHub.statusSubmitted")}</option>
+                <option value="Completed">{t("applicantsHub.statusCompleted")}</option>
+                <option value="Rejected">{t("applicantsHub.statusRejected")}</option>
               </select>
             </div>
 
             {/* Sort Filter */}
             <div>
-              <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Sort Candidates By</label>
+              <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("applicantsHub.sortCandidatesBy")}</label>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
               >
-                <option value="match">Match Score (Highest first)</option>
-                <option value="date">Application Date (Newest first)</option>
+                <option value="match">{t("applicantsHub.sortMatchScore")}</option>
+                <option value="date">{t("applicantsHub.sortAppDate")}</option>
               </select>
             </div>
 
@@ -430,7 +432,7 @@ export default function ApplicantsHub() {
                 className="w-4 h-4 accent-indigo-600 cursor-pointer"
               />
               <label htmlFor="blindModeToggle" className="text-[9px] font-black text-gray-500 uppercase cursor-pointer select-none">
-                🙈 Blind Review (Anonymize Names)
+                🙈 {t("applicantsHub.blindReview")}
               </label>
             </div>
           </div>
@@ -439,11 +441,11 @@ export default function ApplicantsHub() {
           {loading ? (
             <div className="text-center py-12 text-gray-500 font-medium animate-pulse flex flex-col items-center justify-center space-y-3">
               <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-              <span>🔄 Loading candidates from the system registry...</span>
+              <span>🔄 {t("applicantsHub.loadingCandidates")}</span>
             </div>
           ) : filteredApps.length === 0 ? (
-            <div className="text-center py-16 border-2 border-dashed border-gray-200 dark:border-slate-800 rounded-2xl text-gray-400 font-medium bg-gray-50/50">
-              📭 No candidate applications match your current filter settings.
+            <div className="text-center py-16 border-2 border-dashed border-gray-200 dark:border-slate-800 rounded-2xl text-gray-400 font-medium bg-gray-50 dark:bg-slate-800/50">
+              📭 {t("applicantsHub.noCandidates")}
             </div>
           ) : (
             <div className="space-y-4">
@@ -469,27 +471,25 @@ export default function ApplicantsHub() {
                           }}
                           className={`text-lg font-bold text-gray-900 dark:text-gray-200 ${isBlindMode ? "" : "hover:text-blue-600 cursor-pointer hover:underline"}`}
                         >
-                          {isBlindMode ? `Developer #${app.applicationId.slice(-4).toUpperCase()}` : app.studentName}
+                          {isBlindMode ? t("applicantsHub.developerNumber", { id: app.applicationId.slice(-4).toUpperCase() }) : app.studentName}
                         </h4>
                         {!isBlindMode && (
                           <button
                             onClick={() => navigate(`/chat/${app.studentEmail}`)}
                             className="text-[10px] bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold border border-purple-200 dark:border-slate-800/50 px-2.5 py-0.5 rounded-full transition shadow-sm"
-                          >
-                            Chat
-                          </button>
+                          >{t("applicantsHub.chat")}</button>
                         )}
                       </div>
                       <p className="text-xs text-gray-400 font-medium">
-                        {isBlindMode ? "university-student@college.edu.in" : app.studentEmail}
+                        {isBlindMode ? t("applicantsHub.mockEmail") : app.studentEmail}
                       </p>
                     </div>
 
                     <div>
-                      <span className="text-[10px] uppercase font-bold text-gray-400 block mb-1">Declared Skills</span>
+                      <span className="text-[10px] uppercase font-bold text-gray-400 block mb-1">{t("applicantsHub.declaredSkills")}</span>
                       <div className="flex flex-wrap gap-1">
                         {(app.skills || "").split(",").map(s => s.trim()).filter(Boolean).map((skill, idx) => (
-                          <span key={idx} className="bg-gray-50 dark:bg-slate-900 text-gray-600 text-[10px] font-medium px-2 py-0.5 rounded border border-gray-100 dark:border-slate-800">
+                          <span key={idx} className="bg-gray-50 dark:bg-slate-900 text-gray-600 dark:text-gray-300 text-[10px] font-medium px-2 py-0.5 rounded border border-gray-100 dark:border-slate-800">
                             {skill}
                           </span>
                         ))}
@@ -499,7 +499,7 @@ export default function ApplicantsHub() {
                     {app.aiRationale && (
                       <div className="bg-purple-50/40 border border-purple-100 dark:border-slate-800/65 p-3 rounded-xl text-left max-w-lg mt-2">
                         <p className="text-[9px] font-extrabold text-purple-950 dark:text-purple-200 flex items-center gap-1 uppercase tracking-wider">
-                          <span>🤖</span> AI Matching Insights
+                          <span>🤖</span> {t("applicantsHub.aiMatchingInsights")}
                         </p>
                         <p className="text-[10px] text-purple-700 font-semibold leading-relaxed mt-0.5">
                           {app.aiRationale}
@@ -511,7 +511,7 @@ export default function ApplicantsHub() {
                   {/* Middle block: Matching Score Gauge */}
                   <div className="flex flex-row lg:flex-col justify-between lg:justify-center items-center gap-2 border-t lg:border-t-0 lg:border-l lg:border-r border-gray-100 dark:border-slate-800 pt-4 lg:pt-0 px-0 lg:px-8 min-w-[120px]">
                     <div className="text-left lg:text-center">
-                      <span className="text-[9px] uppercase font-bold text-gray-400 block">Match Score</span>
+                      <span className="text-[9px] uppercase font-bold text-gray-400 block">{t("applicantsHub.matchScore")}</span>
                       <span className={`text-2xl font-black ${
                         app.matchScore >= 75 ? "text-green-600" :
                         app.matchScore >= 50 ? "text-amber-500" :
@@ -536,7 +536,7 @@ export default function ApplicantsHub() {
                   {/* Right block: Action links & buttons */}
                   <div className="flex flex-col justify-between items-stretch lg:items-end gap-4 border-t lg:border-t-0 border-gray-100 dark:border-slate-800 pt-4 lg:pt-0 min-w-[200px]">
                     <div className="text-left lg:text-right space-y-1.5">
-                      <p className="text-[10px] text-gray-400 font-bold">Applied: {new Date(app.appliedAt).toLocaleDateString()}</p>
+                      <p className="text-[10px] text-gray-400 font-bold">{t("applicantsHub.appliedLabel")} {new Date(app.appliedAt).toLocaleDateString()}</p>
                       {app.resumeUrl ? (
                         <a
                           href={app.resumeUrl}
@@ -544,27 +544,27 @@ export default function ApplicantsHub() {
                           rel="noreferrer"
                           className="text-xs font-bold text-blue-600 hover:text-blue-800 transition flex items-center gap-1 hover:underline"
                         >
-                          📄 View Candidate Resume ↗
+                          📄 {t("applicantsHub.viewResume")} ↗
                         </a>
                       ) : (
-                        <span className="text-xs text-gray-400 italic">No resume URL uploaded</span>
+                        <span className="text-xs text-gray-400 italic">{t("applicantsHub.noResume")}</span>
                       )}
 
                       {/* Social/Portfolio Links Grid */}
                       <div className="flex items-center lg:justify-end gap-3 mt-1.5 text-[10px]">
                         {app.githubUrl && (
-                          <a href={app.githubUrl} target="_blank" rel="noreferrer" className="text-gray-600 hover:text-purple-600 font-semibold flex items-center gap-0.5" title="GitHub">
-                            <span>💻</span> <span className="hover:underline">GitHub</span>
+                          <a href={app.githubUrl} target="_blank" rel="noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 font-semibold flex items-center gap-0.5" title={t("applicantsHub.github")}>
+                            <span>💻</span> <span className="hover:underline">{t("applicantsHub.github")}</span>
                           </a>
                         )}
                         {app.linkedinUrl && (
-                          <a href={app.linkedinUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-purple-600 font-semibold flex items-center gap-0.5" title="LinkedIn">
-                            <span>👔</span> <span className="hover:underline">LinkedIn</span>
+                          <a href={app.linkedinUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-purple-600 font-semibold flex items-center gap-0.5" title={t("applicantsHub.linkedin")}>
+                            <span>👔</span> <span className="hover:underline">{t("applicantsHub.linkedin")}</span>
                           </a>
                         )}
                         {app.portfolioUrl && (
-                          <a href={app.portfolioUrl} target="_blank" rel="noreferrer" className="text-green-600 hover:text-purple-600 font-semibold flex items-center gap-0.5" title="Portfolio">
-                            <span>🌐</span> <span className="hover:underline">Portfolio</span>
+                          <a href={app.portfolioUrl} target="_blank" rel="noreferrer" className="text-green-600 hover:text-purple-600 font-semibold flex items-center gap-0.5" title={t("applicantsHub.portfolio")}>
+                            <span>🌐</span> <span className="hover:underline">{t("applicantsHub.portfolio")}</span>
                           </a>
                         )}
                       </div>
@@ -572,26 +572,22 @@ export default function ApplicantsHub() {
  
                     {/* Render pending extension requests if any */}
                     {app.extensionRequests && app.extensionRequests.length > 0 && app.extensionRequests[app.extensionRequests.length - 1].status === "Pending" && (
-                      <div className="mt-3 bg-indigo-50 border border-indigo-100 p-3.5 rounded-2xl text-xs text-slate-800 space-y-2 animate-fade-in w-full text-left">
+                      <div className="mt-3 bg-indigo-50 border border-indigo-100 p-3.5 rounded-2xl text-xs text-slate-800 dark:text-slate-200 space-y-2 animate-fade-in w-full text-left">
                         <div>
-                          <span className="font-extrabold text-indigo-700 block mb-0.5">🕒 Extension Requested</span>
-                          <p className="text-[11px] text-slate-600 leading-normal">
-                            Wants <strong>{app.extensionRequests[app.extensionRequests.length - 1].requestedDays} more days</strong>. Reason: "{app.extensionRequests[app.extensionRequests.length - 1].reason}"
+                          <span className="font-extrabold text-indigo-700 block mb-0.5">🕒 {t("applicantsHub.extensionRequested")}</span>
+                          <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-normal">
+                            {t("applicantsHub.wants")} <strong>{app.extensionRequests[app.extensionRequests.length - 1].requestedDays} {t("applicantsHub.moreDays")}</strong>. {t("applicantsHub.reason")}: "{app.extensionRequests[app.extensionRequests.length - 1].reason}"
                           </p>
                         </div>
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleReviewExtension(app.applicationId, app.extensionRequests[app.extensionRequests.length - 1]._id, "Rejected")}
                             className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-[10px] font-bold rounded-lg transition"
-                          >
-                            Deny
-                          </button>
+                          >{t("applicantsHub.deny")}</button>
                           <button
                             onClick={() => handleReviewExtension(app.applicationId, app.extensionRequests[app.extensionRequests.length - 1]._id, "Approved")}
                             className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold rounded-lg transition shadow-sm"
-                          >
-                            Approve
-                          </button>
+                          >{t("applicantsHub.approve")}</button>
                         </div>
                       </div>
                     )}
@@ -603,26 +599,22 @@ export default function ApplicantsHub() {
                           <button
                             onClick={() => handleUpdateStatus(app.applicationId, "Rejected")}
                             className="flex-1 lg:flex-initial px-3.5 py-2 border border-red-200 text-red-700 hover:bg-red-50 font-bold text-xs rounded-xl transition"
-                          >
-                            Reject
-                          </button>
+                          >{t("applicantsHub.reject")}</button>
                           <button
                             onClick={() => handleUpdateStatus(app.applicationId, "Approved")}
                             className="flex-1 lg:flex-initial px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition shadow-sm"
-                          >
-                            Accept
-                          </button>
+                          >{t("applicantsHub.accept")}</button>
                         </>
                       )}
 
                       {app.status === "Approved" && (
                         <div className="w-full text-left">
                           <span className="text-xs font-bold text-blue-600/80 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 inline-block">
-                            ✓ Approved (Awaiting Submission)
+                            ✓ {t("applicantsHub.approvedAwaiting")}
                           </span>
                           {app.extendedDeadline && (
                             <p className="text-[10px] text-indigo-600 mt-1 font-bold">
-                              🗓️ Extended Deadline: {new Date(app.extendedDeadline).toLocaleDateString()}
+                              🗓️ {t("applicantsHub.extendedDeadline")} {new Date(app.extendedDeadline).toLocaleDateString()}
                             </p>
                           )}
                         </div>
@@ -633,7 +625,7 @@ export default function ApplicantsHub() {
                           onClick={() => handleOpenReviewModal(app)}
                           className="w-full lg:w-auto px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl transition shadow-sm"
                         >
-                          🔍 Audit & Approve Work
+                          🔍 {t("applicantsHub.auditApproveWork")}
                         </button>
                       )}
 
@@ -642,14 +634,14 @@ export default function ApplicantsHub() {
                           onClick={() => handleOpenReviewModal(app)}
                           className="w-full lg:w-auto px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl transition shadow-sm animate-pulse"
                         >
-                          🚨 Plagiarism Alert ({app.plagiarismScore || 0}%)
+                          🚨 {t("applicantsHub.plagiarismAlert", { score: app.plagiarismScore || 0 })}
                         </button>
                       )}
 
                       {app.status === "Completed" && (
                         <div className="text-left lg:text-right">
                           <span className="text-xs font-extrabold text-green-700 bg-green-50 px-3 py-1.5 rounded-lg border border-green-200 block mb-1">
-                            ✓ Task Verified & Completed
+                            ✓ {t("applicantsHub.taskVerified")}
                           </span>
                           {app.feedbackText && (
                             <p className="text-[10px] text-gray-400 italic max-w-[200px] truncate" title={app.feedbackText}>
@@ -661,13 +653,13 @@ export default function ApplicantsHub() {
 
                       {app.status === "Rejected" && (
                         <span className="text-xs font-bold text-red-600/80 bg-red-50 px-3 py-1.5 rounded-lg border border-red-100">
-                          ✕ Rejected
+                          ✕ {t("applicantsHub.rejectedMark")}
                         </span>
                       )}
 
                       {app.status === "Revision Requested" && (
                         <span className="text-xs font-bold text-amber-600/80 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100">
-                          🔄 Revision Requested
+                          🔄 {t("applicantsHub.revisionRequestedStatus")}
                         </span>
                       )}
                     </div>
@@ -684,14 +676,14 @@ export default function ApplicantsHub() {
         <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full shadow-2xl p-6 border animate-fade-in">
             <div className="flex justify-between items-center border-b pb-3 mb-4">
-              <h3 className="font-bold text-base text-gray-900 dark:text-gray-200">Verify Student Solution: {activeAppToReview.studentName}</h3>
-              <button onClick={() => { setShowReviewModal(false); setFeedbackText(""); setRating(0); setRatingReview(""); }} className="text-gray-400 hover:text-gray-600 text-lg">×</button>
+              <h3 className="font-bold text-base text-gray-900 dark:text-gray-200">{t("applicantsHub.verifySolutionTitle")} {activeAppToReview.studentName}</h3>
+              <button onClick={() => { setShowReviewModal(false); setFeedbackText(""); setRating(0); setRatingReview(""); }} className="text-gray-400 hover:text-gray-600 dark:text-gray-300 text-lg">×</button>
             </div>
             
             {/* Version History Selector */}
             {activeAppToReview.submissionVersions && activeAppToReview.submissionVersions.length > 1 && (
               <div className="mb-3 flex items-center justify-between bg-indigo-50/50 border border-indigo-100 p-2.5 rounded-xl text-xs">
-                <span className="text-[10px] font-black text-indigo-700 uppercase tracking-wider">Solution Iterations:</span>
+                <span className="text-[10px] font-black text-indigo-700 uppercase tracking-wider">{t("applicantsHub.solutionIterations")}</span>
                 <select
                   value={selectedVerIdx}
                   onChange={(e) => setSelectedVerIdx(Number(e.target.value))}
@@ -699,7 +691,7 @@ export default function ApplicantsHub() {
                 >
                   {activeAppToReview.submissionVersions.map((v, i) => (
                     <option key={i} value={i}>
-                      Version {i + 1} ({new Date(v.submittedAt).toLocaleDateString()})
+                      {t("applicantsHub.version", { num: i + 1, date: new Date(v.submittedAt).toLocaleDateString() })}
                     </option>
                   ))}
                 </select>
@@ -716,11 +708,11 @@ export default function ApplicantsHub() {
               return (
                 <div className="bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-800 p-4 rounded-xl mb-4 space-y-3 text-xs">
                   <p className="text-gray-700 dark:text-gray-200">
-                    <strong className="text-gray-900 dark:text-gray-200">Project Gigs:</strong> {activeAppToReview.projectTitle}
+                    <strong className="text-gray-900 dark:text-gray-200">{t("applicantsHub.projectGigs")}</strong> {activeAppToReview.projectTitle}
                   </p>
                   <div className="flex justify-between items-center gap-2">
                     <p className="text-gray-700 dark:text-gray-200 truncate flex-1">
-                      <strong className="text-gray-900 dark:text-gray-200">Submitted URL:</strong>{" "}
+                      <strong className="text-gray-900 dark:text-gray-200">{t("applicantsHub.submittedUrl")}</strong>{" "}
                       <a href={currentVer.submissionLink} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline break-all font-bold">
                         {currentVer.submissionLink} ↗
                       </a>
@@ -734,12 +726,12 @@ export default function ApplicantsHub() {
                       }}
                       className="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-[9px] font-bold transition shadow-sm shrink-0"
                     >
-                      🖥️ Audit Code Sandbox
+                      🖥️ {t("applicantsHub.auditSandbox")}
                     </button>
                   </div>
                   {currentVer.githubRepoUrl && (
                     <p className="text-gray-700 dark:text-gray-200">
-                      <strong className="text-gray-900 dark:text-gray-200">GitHub Code Repo:</strong>{" "}
+                      <strong className="text-gray-900 dark:text-gray-200">{t("applicantsHub.githubRepo")}</strong>{" "}
                       <a href={currentVer.githubRepoUrl} target="_blank" rel="noreferrer" className="text-purple-600 hover:underline break-all font-bold">
                         {currentVer.githubRepoUrl} ↗
                       </a>
@@ -747,31 +739,31 @@ export default function ApplicantsHub() {
                   )}
                   {currentVer.liveDeploymentUrl && (
                     <p className="text-gray-700 dark:text-gray-200">
-                      <strong className="text-gray-900 dark:text-gray-200">Live Preview URL:</strong>{" "}
+                      <strong className="text-gray-900 dark:text-gray-200">{t("applicantsHub.livePreview")}</strong>{" "}
                       <a href={currentVer.liveDeploymentUrl} target="_blank" rel="noreferrer" className="text-emerald-600 hover:underline break-all font-bold">
                         {currentVer.liveDeploymentUrl} ↗
                       </a>
                     </p>
                   )}
                   <p className="text-gray-700 dark:text-gray-200 leading-normal">
-                    <strong className="text-gray-900 dark:text-gray-200">Solution Description:</strong> {currentVer.submissionText}
+                    <strong className="text-gray-900 dark:text-gray-200">{t("applicantsHub.solutionDescription")}</strong> {currentVer.submissionText}
                   </p>
 
                   {/* Rubric display */}
                   {currentVer.selfAssessment && (
                     <div className="bg-white dark:bg-slate-900 border rounded-xl p-3 space-y-1.5">
-                      <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">Student Rubric Self-Ratings:</span>
+                      <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">{t("applicantsHub.studentRubric")}</span>
                       <div className="grid grid-cols-3 gap-2 text-center text-[11px]">
-                        <div className="bg-slate-50 p-1.5 rounded-lg">
-                          <p className="text-slate-400 font-bold">Code Quality</p>
+                        <div className="bg-slate-50 dark:bg-slate-800 p-1.5 rounded-lg">
+                          <p className="text-slate-400 font-bold">{t("applicantsHub.codeQuality")}</p>
                           <p className="font-extrabold text-indigo-700 mt-0.5">{currentVer.selfAssessment.codeQuality || "N/A"}/10</p>
                         </div>
-                        <div className="bg-slate-50 p-1.5 rounded-lg">
-                          <p className="text-slate-400 font-bold">Correctness</p>
+                        <div className="bg-slate-50 dark:bg-slate-800 p-1.5 rounded-lg">
+                          <p className="text-slate-400 font-bold">{t("applicantsHub.correctness")}</p>
                           <p className="font-extrabold text-indigo-700 mt-0.5">{currentVer.selfAssessment.correctness || "N/A"}/10</p>
                         </div>
-                        <div className="bg-slate-50 p-1.5 rounded-lg">
-                          <p className="text-slate-400 font-bold">Docs</p>
+                        <div className="bg-slate-50 dark:bg-slate-800 p-1.5 rounded-lg">
+                          <p className="text-slate-400 font-bold">{t("applicantsHub.docs")}</p>
                           <p className="font-extrabold text-indigo-700 mt-0.5">{currentVer.selfAssessment.documentation || "N/A"}/10</p>
                         </div>
                       </div>
@@ -787,8 +779,8 @@ export default function ApplicantsHub() {
                     }`}>
                       <p className="font-bold">
                         {currentVer.aiDeclaration.usedAi
-                          ? `🤖 AI-Coauthored Solution: Estimated ${currentVer.aiDeclaration.aiPercentage}% generated using: ${currentVer.aiDeclaration.toolsUsed}`
-                          : "✓ Pure Human Coauthored: Solution developed fully manually without AI assistant co-authors."}
+                          ? `🤖 ${t("applicantsHub.aiCoauthored", { percentage: currentVer.aiDeclaration.aiPercentage, tools: currentVer.aiDeclaration.toolsUsed })}`
+                          : `✓ ${t("applicantsHub.pureHuman")}`}
                       </p>
                     </div>
                   )}
@@ -798,11 +790,11 @@ export default function ApplicantsHub() {
                     <div className={`p-2.5 rounded-xl border text-[11px] ${
                       activeAppToReview.plagiarismScore > 70
                         ? "bg-red-50 border-red-100 text-red-800 font-extrabold"
-                        : "bg-slate-50 border-slate-200 dark:border-slate-800 text-slate-700"
+                        : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300"
                     }`}>
                       <p>
-                        ⚠️ Code Similarity Audit: Match score {activeAppToReview.plagiarismScore}%.
-                        {activeAppToReview.plagiarismScore > 70 && " WARNING: High match score indicates potential direct copy-pasting code submission plagiarism."}
+                        ⚠️ {t("applicantsHub.codeSimilarityAudit", { score: activeAppToReview.plagiarismScore })}
+                        {activeAppToReview.plagiarismScore > 70 && "{t("applicantsHub.highMatchWarning")}"}
                       </p>
                     </div>
                   )}
@@ -810,7 +802,7 @@ export default function ApplicantsHub() {
                   {/* Automated Linter readout */}
                   {activeAppToReview.lintWarnings && activeAppToReview.lintWarnings.length > 0 && (
                     <div className="bg-amber-50/50 border border-amber-150 text-amber-900 p-2.5 rounded-xl text-[11px] text-left">
-                      <p className="font-extrabold mb-1">⚠️ Syntax Lint Advisories:</p>
+                      <p className="font-extrabold mb-1">⚠️ {t("applicantsHub.syntaxLintAdvisories")}</p>
                       <ul className="list-disc pl-4 space-y-0.5">
                         {activeAppToReview.lintWarnings.map((w, idx) => (
                           <li key={idx}>{w}</li>
@@ -822,27 +814,27 @@ export default function ApplicantsHub() {
                   {/* AI Auditor Feedback readout */}
                   {activeAppToReview.matchScore !== null && activeAppToReview.matchScore !== undefined && (
                     <div className="bg-indigo-50 border border-indigo-100 p-2.5 rounded-xl text-[11px] text-indigo-950 text-left">
-                      <p className="font-extrabold">🤖 AI Code Auditor Report:</p>
-                      <p className="mt-0.5">Grade: <strong>{activeAppToReview.matchScore}/100</strong>. Rationale: "{activeAppToReview.aiRationale || 'No description'}"</p>
+                      <p className="font-extrabold">🤖 {t("applicantsHub.aiAuditorReport")}</p>
+                      <p className="mt-0.5">{t("applicantsHub.grade")}: <strong>{activeAppToReview.matchScore}/100</strong>. {t("applicantsHub.rationale")}: "{activeAppToReview.aiRationale || t('applicantsHub.noDescription')}"</p>
                     </div>
                   )}
 
                   {/* Figma Live Embed preview */}
                   {currentVer.submissionLink && (currentVer.submissionLink.includes("figma.com") || currentVer.submissionLink.includes("figma.fun")) && (
                     <div className="border rounded-xl overflow-hidden mt-3 shadow-sm bg-white dark:bg-slate-900">
-                      <p className="text-[9px] uppercase font-bold text-gray-400 bg-slate-100 px-3 py-1.5 border-b select-none">🎨 Figma Interactive Live Preview</p>
+                      <p className="text-[9px] uppercase font-bold text-gray-400 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 border-b select-none">🎨 {t("applicantsHub.figmaLivePreview")}</p>
                       <iframe
                         src={`https://www.figma.com/embed?embed_host=workmitra&url=${encodeURIComponent(currentVer.submissionLink)}`}
                         width="100%"
                         height="260"
                         allowFullScreen
-                        className="bg-slate-50 border-0"
+                        className="bg-slate-50 dark:bg-slate-800 border-0"
                       />
                     </div>
                   )}
 
                   <p className="text-gray-400 text-[10px] pt-1">
-                    Submitted on: {new Date(currentVer.submittedAt || activeAppToReview.submittedAt).toLocaleString()}
+                    {t("applicantsHub.submittedOn")} {new Date(currentVer.submittedAt || activeAppToReview.submittedAt).toLocaleString()}
                   </p>
                 </div>
               );
@@ -850,9 +842,9 @@ export default function ApplicantsHub() {
 
             <form onSubmit={handleCompleteReview} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Verify Feedback & Payout Review Notes</label>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t("applicantsHub.verifyFeedbackTitle")}</label>
                 <textarea
-                  placeholder="Provide constructive feedback on code structure, features completed, and mark this task verified..."
+                  placeholder={t("applicantsHub.verifyFeedbackPlaceholder")}
                   value={feedbackText}
                   onChange={(e) => setFeedbackText(e.target.value)}
                   rows={3}
@@ -864,7 +856,7 @@ export default function ApplicantsHub() {
               {/* Public Star Rating and Review */}
               <div className="border-t pt-3 space-y-3">
                 <div>
-                  <label className="block text-[10px] font-extrabold text-purple-950 dark:text-purple-200 uppercase tracking-wider mb-1">Candidate Rating</label>
+                  <label className="block text-[10px] font-extrabold text-purple-950 dark:text-purple-200 uppercase tracking-wider mb-1">{t("applicantsHub.candidateRating")}</label>
                   <div className="flex items-center gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
@@ -876,14 +868,14 @@ export default function ApplicantsHub() {
                         ★
                       </button>
                     ))}
-                    <span className="text-[10px] text-gray-400 font-extrabold ml-2">({rating} / 5 stars)</span>
+                    <span className="text-[10px] text-gray-400 font-extrabold ml-2">({rating} / 5 {t("applicantsHub.stars")})</span>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-extrabold text-purple-950 dark:text-purple-200 uppercase tracking-wider mb-1">Performance Review Notes</label>
+                  <label className="block text-[10px] font-extrabold text-purple-950 dark:text-purple-200 uppercase tracking-wider mb-1">{t("applicantsHub.performanceReviewTitle")}</label>
                   <textarea
-                    placeholder="Provide a public rating review statement for the candidate (e.g. Excellent delivery timeline, proactive communication)..."
+                    placeholder={t("applicantsHub.performanceReviewPlaceholder")}
                     value={ratingReview}
                     onChange={(e) => setRatingReview(e.target.value)}
                     rows={2}
@@ -898,17 +890,13 @@ export default function ApplicantsHub() {
                     onClick={handleRequestRevision}
                     disabled={submittingReview}
                     className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition shadow-md disabled:opacity-50"
-                  >
-                    Request Revision
-                  </button>
+                  >{t("applicantsHub.requestRevision")}</button>
                   <button
                     type="button"
                     onClick={handleDisputeApplication}
                     disabled={submittingReview}
                     className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition shadow-md disabled:opacity-50"
-                  >
-                    Flag Dispute
-                  </button>
+                  >{t("applicantsHub.flagDispute")}</button>
                 </div>
                 
                 <div className="flex gap-2">
@@ -916,15 +904,13 @@ export default function ApplicantsHub() {
                     type="button"
                     onClick={() => { setShowReviewModal(false); setFeedbackText(""); setRating(0); setRatingReview(""); }}
                     className="px-4 py-2 border border-gray-200 dark:border-slate-800 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
-                  >
-                    Cancel
-                  </button>
+                  >{t("applicantsHub.cancel")}</button>
                   <button
                     type="submit"
                     disabled={submittingReview}
                     className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-bold transition shadow-md"
                   >
-                    {submittingReview ? "Processing..." : "Verify & Complete Solution"}
+                    {submittingReview ? t("applicantsHub.processing") : t("applicantsHub.verifyAndComplete")}
                   </button>
                 </div>
               </div>
@@ -941,14 +927,14 @@ export default function ApplicantsHub() {
             {/* Header */}
             <div className="bg-slate-900 border-b border-slate-800 px-6 py-4 flex justify-between items-center">
               <div>
-                <h3 className="text-sm font-black uppercase text-indigo-400">Interactive Solution Sandbox</h3>
-                <p className="text-[11px] text-slate-400 mt-0.5">Auditing: {activeAppToReview.projectTitle} (by {activeAppToReview.studentName})</p>
+                <h3 className="text-sm font-black uppercase text-indigo-400">{t("applicantsHub.sandboxTitle")}</h3>
+                <p className="text-[11px] text-slate-400 mt-0.5">{t("applicantsHub.auditing")}: {activeAppToReview.projectTitle} ({t("applicantsHub.by")} {activeAppToReview.studentName})</p>
               </div>
               <button 
                 onClick={() => setShowSandbox(false)}
                 className="text-slate-400 hover:text-white font-extrabold text-sm transition"
               >
-                Close Sandbox ✕
+                {t("applicantsHub.closeSandbox")} ✕
               </button>
             </div>
 
@@ -958,7 +944,7 @@ export default function ApplicantsHub() {
               {/* File tree sidebar explorer */}
               <div className="w-56 bg-slate-900/50 border-r border-slate-800 p-4 space-y-4 overflow-y-auto">
                 <div>
-                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2">Workspace Files</span>
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2">{t("applicantsHub.workspaceFiles")}</span>
                   <div className="space-y-1.5 text-xs">
                     {Object.keys(getMockCodeFiles(activeAppToReview.projectTitle)).map(filename => (
                       <button
@@ -978,11 +964,11 @@ export default function ApplicantsHub() {
                 </div>
 
                 <div className="border-t border-slate-800 pt-4">
-                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2">Checklist Audit</span>
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2">{t("applicantsHub.checklistAudit")}</span>
                   <div className="space-y-2 text-[10px] text-slate-400 font-semibold">
-                    <p className="flex items-center gap-1.5 text-emerald-500 font-bold">✓ Security: Clean</p>
-                    <p className="flex items-center gap-1.5 text-emerald-500 font-bold">✓ Lint: Standard OK</p>
-                    <p className="flex items-center gap-1.5 text-emerald-500 font-bold">✓ Dependencies: Verified</p>
+                    <p className="flex items-center gap-1.5 text-emerald-500 font-bold">✓ {t("applicantsHub.securityClean")}</p>
+                    <p className="flex items-center gap-1.5 text-emerald-500 font-bold">✓ {t("applicantsHub.lintStandardOk")}</p>
+                    <p className="flex items-center gap-1.5 text-emerald-500 font-bold">✓ {t("applicantsHub.dependenciesVerified")}</p>
                   </div>
                 </div>
               </div>
@@ -992,13 +978,13 @@ export default function ApplicantsHub() {
                 
                 {/* File title tab */}
                 <div className="bg-slate-900/30 border-b border-slate-800/60 px-4 py-2 text-[11px] text-indigo-400 font-bold">
-                  Tab: {activeFile}
+                  {t("applicantsHub.tab")}: {activeFile}
                 </div>
 
                 {/* Raw Code output area */}
                 <pre className="flex-1 p-6 overflow-y-auto leading-relaxed text-slate-300 bg-slate-950/50 whitespace-pre-wrap">
                   <code>
-                    {getMockCodeFiles(activeAppToReview.projectTitle)[activeFile] || "// File not found."}
+                    {getMockCodeFiles(activeAppToReview.projectTitle)[activeFile] || "// {t("applicantsHub.fileNotFound")}"}
                   </code>
                 </pre>
               </div>
@@ -1008,28 +994,24 @@ export default function ApplicantsHub() {
             {/* Footer containing quick actions */}
             <div className="bg-slate-900 border-t border-slate-800 px-6 py-4 flex justify-between items-center gap-4">
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                Simulation Escrow Active (🔒 Locked)
+                {t("applicantsHub.escrowActive")} (🔒 {t("applicantsHub.locked")})
               </span>
               <div className="flex gap-2">
                 <button
                   onClick={() => {
                     setShowSandbox(false);
                     // Open dispute form notes
-                    setFeedbackText("Flagged in Sandbox audit: Code review failed due to ");
+                    setFeedbackText(t("applicantsHub.flaggedSandbox"));
                   }}
                   className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition shadow"
-                >
-                  Flag / Dispute
-                </button>
+                >{t("applicantsHub.flagDisputeButton")}</button>
                 <button
                   onClick={() => {
                     setShowSandbox(false);
-                    setFeedbackText("Sandbox code verification check: Passed. All checks completed.");
+                    setFeedbackText(t("applicantsHub.sandboxPassed"));
                   }}
                   className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition shadow"
-                >
-                  Approve Solution
-                </button>
+                >{t("applicantsHub.approveSolution")}</button>
               </div>
             </div>
 

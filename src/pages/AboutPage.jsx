@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../components/Toast";
+import { useTranslation } from "react-i18next";
 
 export default function AboutPage() {
   const navigate = useNavigate();
   const toast = useToast();
+  const { t } = useTranslation();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -14,12 +16,12 @@ export default function AboutPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!name || !email || !message) {
-      toast.error("Please fill in all support details.");
+      toast.error(t("about.toastFillAll"));
       return;
     }
     setSubmitting(true);
     setTimeout(() => {
-      toast.success("Support ticket created! We will mail you shortly.");
+      toast.success(t("about.toastTicketCreated"));
       setName("");
       setEmail("");
       setMessage("");
@@ -41,17 +43,17 @@ export default function AboutPage() {
               onClick={() => navigate("/")} 
             />
             <h1 className="text-2xl sm:text-3xl font-black text-gray-800 dark:text-gray-200 tracking-tight mt-3">
-              About workMitra & Help Center
+              {t("about.pageTitle")}
             </h1>
             <p className="text-xs text-gray-400 mt-1 font-semibold uppercase tracking-wider">
-              Empowering Student Talents & Corporate Integrations
+              {t("about.pageSubtitle")}
             </p>
           </div>
           <button
             onClick={() => navigate("/")}
             className="px-4 py-2 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-700 dark:text-gray-200 rounded-xl text-xs font-bold transition shadow-sm border border-gray-100 dark:border-slate-800/50"
           >
-            ← Back to Home
+            ← {t("about.backToHome")}
           </button>
         </div>
 
@@ -59,38 +61,38 @@ export default function AboutPage() {
           {/* Mission & Identity */}
           <div className="space-y-6">
             <div>
-              <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider mb-2.5">🚀 Our Mission</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                workMitra was founded to solve the structural "Empty Shell" platform disconnect in the freelance marketplace. We bridge verified college student creators and modern startups through automated AI matching tools, secure progress trackers, and direct communication logs.
+              <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider mb-2.5">🚀 {t("about.missionHeading")}</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                {t("about.missionBody")}
               </p>
             </div>
 
             <div>
-              <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider mb-2.5">🎓 How It Empowers Students</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                Students upload their CV documents, receive instant AI critique audits, browse active corporate projects, apply to gigs, and track task verification steps transparently. Approved tasks build public ratings, creating a verified portfolio of real-world freelance success.
+              <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider mb-2.5">🎓 {t("about.studentsHeading")}</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                {t("about.studentsBody")}
               </p>
             </div>
 
             <div>
-              <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider mb-2.5">🏢 Corporate Credibility</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                Companies post gigs, review candidate profiles instantly backed by AI match score evaluations, chat in real-time, approve solution submissions, and write developer ratings—all from a single, streamlined web console.
+              <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider mb-2.5">🏢 {t("about.corporateHeading")}</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                {t("about.corporateBody")}
               </p>
             </div>
           </div>
 
           {/* Interactive Help Desk Form */}
           <div className="bg-gray-55/40 border border-gray-100 dark:border-slate-800 p-6 rounded-2xl shadow-inner">
-            <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider mb-1">📬 Contact Support Desk</h3>
-            <p className="text-xs text-gray-400 mb-4">Have questions about billing, account security, or gig deployments? Message us directly.</p>
+            <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider mb-1">📬 {t("about.contactHeading")}</h3>
+            <p className="text-xs text-gray-400 mb-4">{t("about.contactDescription")}</p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Your Name</label>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("about.nameLabel")}</label>
                 <input
                   type="text"
-                  placeholder="John Doe"
+                  placeholder={t("about.namePlaceholder")}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -98,10 +100,10 @@ export default function AboutPage() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Email Address</label>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("about.emailLabel")}</label>
                 <input
                   type="email"
-                  placeholder="john@college.edu"
+                  placeholder={t("about.emailPlaceholder")}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -109,10 +111,10 @@ export default function AboutPage() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Support Query / Feedback</label>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("about.queryLabel")}</label>
                 <textarea
                   rows="4"
-                  placeholder="Detail your question regarding billing, task statuses, or profile configs..."
+                  placeholder={t("about.queryPlaceholder")}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
@@ -124,7 +126,7 @@ export default function AboutPage() {
                 disabled={submitting}
                 className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-black transition shadow disabled:opacity-50"
               >
-                {submitting ? "Opening Ticket..." : "Submit Support Request"}
+                {submitting ? t("about.submitting") : t("about.submitButton")}
               </button>
             </form>
           </div>
@@ -133,16 +135,16 @@ export default function AboutPage() {
         {/* Corporate Address & Contact Cards */}
         <div className="border-t pt-8 grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs text-gray-500">
           <div>
-            <h4 className="font-extrabold text-gray-800 dark:text-gray-200 uppercase tracking-wider mb-1">🏢 Corporate Office</h4>
-            <p>workMitra Technologies Private Limited</p>
-            <p className="mt-0.5">Freelancer Hub Tower, Sector 62</p>
-            <p>Noida, Uttar Pradesh, India</p>
+            <h4 className="font-extrabold text-gray-800 dark:text-gray-200 uppercase tracking-wider mb-1">🏢 {t("about.officeHeading")}</h4>
+            <p>{t("about.officeName")}</p>
+            <p className="mt-0.5">{t("about.officeAddress")}</p>
+            <p>{t("about.officeCity")}</p>
           </div>
           <div>
-            <h4 className="font-extrabold text-gray-800 dark:text-gray-200 uppercase tracking-wider mb-1">✉️ Direct Assistance</h4>
-            <p>Primary Support: <span className="font-bold text-indigo-600">contact.workmitra@gmail.com</span></p>
-            <p className="mt-0.5">Average Response Duration: &lt; 24 Hours</p>
-            <p>Operating Hours: Mon - Fri, 9:00 AM - 6:00 PM IST</p>
+            <h4 className="font-extrabold text-gray-800 dark:text-gray-200 uppercase tracking-wider mb-1">✉️ {t("about.assistanceHeading")}</h4>
+            <p>{t("about.primarySupport")} <span className="font-bold text-indigo-600">contact.workmitra@gmail.com</span></p>
+            <p className="mt-0.5">{t("about.responseTime")}</p>
+            <p>{t("about.operatingHours")}</p>
           </div>
         </div>
       </div>

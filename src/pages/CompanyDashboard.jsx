@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 import { useToast } from "../components/Toast";
+import { useTranslation } from "react-i18next";
 
 export default function CompanyDashboard() {
   const navigate = useNavigate();
   const toast = useToast();
+  const { t } = useTranslation();
 
   const [currentUser, setCurrentUser] = useState(null);
   const [stats, setStats] = useState(null);
@@ -17,7 +19,7 @@ export default function CompanyDashboard() {
     setCurrentUser(savedUser);
 
     if (!savedUser.email || savedUser.userRole !== "company") {
-      toast.error("Corporate session required.");
+      toast.error(t("companyDashboard.toastCorporateSessionRequired"));
       navigate("/login");
       return;
     }
@@ -76,18 +78,18 @@ export default function CompanyDashboard() {
       "Disputed": "text-orange-600 bg-orange-50 border-orange-100",
       "Revision Requested": "text-amber-600 bg-amber-50 border-amber-100"
     };
-    return map[status] || "text-gray-600 bg-gray-50 dark:bg-slate-900 border-gray-100 dark:border-slate-800";
+    return map[status] || "text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-slate-900 border-gray-100 dark:border-slate-800";
   };
 
   const getTimeAgo = (dateStr) => {
     const diff = Date.now() - new Date(dateStr).getTime();
     const mins = Math.floor(diff / 60000);
-    if (mins < 1) return "Just now";
-    if (mins < 60) return `${mins}m ago`;
+    if (mins < 1) return t("companyDashboard.timeJustNow");
+    if (mins < 60) return t("companyDashboard.timeMinsAgo", { mins });
     const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
+    if (hrs < 24) return t("companyDashboard.timeHrsAgo", { hrs });
     const days = Math.floor(hrs / 24);
-    return `${days}d ago`;
+    return t("companyDashboard.timeDaysAgo", { days });
   };
 
   if (loading) {
@@ -95,7 +97,7 @@ export default function CompanyDashboard() {
       <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center text-gray-500 font-medium animate-pulse flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <span>Synchronizing command center data...</span>
+          <span>{t("companyDashboard.loadingMsg")}</span>
         </div>
       </div>
     );
@@ -107,25 +109,25 @@ export default function CompanyDashboard() {
 
         {/* Welcome Header */}
         <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 rounded-3xl shadow-xl p-6 sm:p-8 mb-8 text-white relative overflow-hidden">
-          <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/5 dark:bg-slate-900/5 rounded-full blur-2xl" />
-          <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white/5 dark:bg-slate-900/5 rounded-full blur-xl" />
+          <div className="absolute -top-10 -right-10 w-40 h-40 bg-white dark:bg-slate-900/5 dark:bg-slate-900/5 rounded-full blur-2xl" />
+          <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white dark:bg-slate-900/5 dark:bg-slate-900/5 rounded-full blur-xl" />
           <div className="relative z-10">
-            <p className="text-blue-200 text-[10px] font-extrabold uppercase tracking-widest mb-1">Company Command Center</p>
+            <p className="text-blue-200 text-[10px] font-extrabold uppercase tracking-widest mb-1">{t("companyDashboard.commandCenter")}</p>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
-              Welcome back, {currentUser?.companyName || currentUser?.fullName || "Recruiter"} 👋
+              {t("companyDashboard.welcomeBack", { name: currentUser?.companyName || currentUser?.fullName || t("companyDashboard.defaultRecruiterName") })} 👋
             </h1>
             <p className="text-blue-100 text-sm mt-1 max-w-xl">
-              Deploy tasks, review applicant submissions, and manage your talent pipeline from a single unified dashboard.
+              {t("companyDashboard.dashboardDescription")}
             </p>
             <div className="flex flex-wrap gap-3 mt-5">
-              <span className="bg-white/15 dark:bg-slate-900/15 backdrop-blur-sm px-3 py-1.5 rounded-xl text-[10px] font-extrabold border border-white/20 dark:border-slate-800/20">
-                📁 {stats?.totalProjects || 0} Projects
+              <span className="bg-white dark:bg-slate-900/15 dark:bg-slate-900/15 backdrop-blur-sm px-3 py-1.5 rounded-xl text-[10px] font-extrabold border border-white/20 dark:border-slate-800/20">
+                📁 {t("companyDashboard.statProjects", { count: stats?.totalProjects || 0 })}
               </span>
-              <span className="bg-white/15 dark:bg-slate-900/15 backdrop-blur-sm px-3 py-1.5 rounded-xl text-[10px] font-extrabold border border-white/20 dark:border-slate-800/20">
-                👥 {stats?.totalApplications || 0} Applications
+              <span className="bg-white dark:bg-slate-900/15 dark:bg-slate-900/15 backdrop-blur-sm px-3 py-1.5 rounded-xl text-[10px] font-extrabold border border-white/20 dark:border-slate-800/20">
+                👥 {t("companyDashboard.statApplications", { count: stats?.totalApplications || 0 })}
               </span>
-              <span className="bg-white/15 dark:bg-slate-900/15 backdrop-blur-sm px-3 py-1.5 rounded-xl text-[10px] font-extrabold border border-white/20 dark:border-slate-800/20">
-                ⭐ {stats?.avgRating || "0.0"} Avg Rating
+              <span className="bg-white dark:bg-slate-900/15 dark:bg-slate-900/15 backdrop-blur-sm px-3 py-1.5 rounded-xl text-[10px] font-extrabold border border-white/20 dark:border-slate-800/20">
+                ⭐ {t("companyDashboard.statAvgRating", { rating: stats?.avgRating || "0.0" })}
               </span>
             </div>
           </div>
@@ -134,12 +136,12 @@ export default function CompanyDashboard() {
         {/* KPI Stats Row */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-8">
           {[
-            { label: "Total Projects", value: stats?.totalProjects || 0, icon: "📁", color: "from-blue-500 to-blue-600" },
-            { label: "Active Applications", value: stats?.totalApplications || 0, icon: "📨", color: "from-purple-500 to-purple-600" },
-            { label: "Under Review", value: stats?.submittedCount || 0, icon: "🔍", color: "from-amber-500 to-amber-600" },
-            { label: "Completed Tasks", value: stats?.completedCount || 0, icon: "✅", color: "from-green-500 to-green-600" },
-            { label: "Total Budget (₹)", value: `₹${(stats?.totalBudget || 0).toLocaleString()}`, icon: "💰", color: "from-emerald-500 to-emerald-600" },
-            { label: "Avg. Rating", value: `${stats?.avgRating || "0.0"} ★`, icon: "⭐", color: "from-pink-500 to-pink-600" }
+            { label: t("companyDashboard.kpiTotalProjects"), value: stats?.totalProjects || 0, icon: "📁", color: "from-blue-500 to-blue-600" },
+            { label: t("companyDashboard.kpiActiveApplications"), value: stats?.totalApplications || 0, icon: "📨", color: "from-purple-500 to-purple-600" },
+            { label: t("companyDashboard.kpiUnderReview"), value: stats?.submittedCount || 0, icon: "🔍", color: "from-amber-500 to-amber-600" },
+            { label: t("companyDashboard.kpiCompletedTasks"), value: stats?.completedCount || 0, icon: "✅", color: "from-green-500 to-green-600" },
+            { label: t("companyDashboard.kpiTotalBudget"), value: `₹${(stats?.totalBudget || 0).toLocaleString()}`, icon: "💰", color: "from-emerald-500 to-emerald-600" },
+            { label: t("companyDashboard.kpiAvgRating"), value: `${stats?.avgRating || "0.0"} ★`, icon: "⭐", color: "from-pink-500 to-pink-600" }
           ].map((kpi, idx) => (
             <div key={idx} className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 p-4 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 group">
               <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${kpi.color} flex items-center justify-center text-white text-sm mb-3 group-hover:scale-110 transition-transform`}>
@@ -156,15 +158,15 @@ export default function CompanyDashboard() {
           <div className="lg:col-span-1 space-y-6">
             {/* Quick Actions */}
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 p-5">
-              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-4">⚡ Quick Actions</h3>
+              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-4">⚡ {t("companyDashboard.quickActions")}</h3>
               <div className="space-y-2.5">
                 {[
-                  { label: "Deploy New Task", icon: "➕", path: "/add-project", style: "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md" },
-                  { label: "My Projects", icon: "📂", path: "/my-projects", style: "bg-blue-50 border border-blue-100 text-blue-700" },
-                  { label: "Applicants Hub", icon: "👨‍🎓", path: "/applicants", style: "bg-green-50 border border-green-100 text-green-700" },
-                  { label: "Analytics", icon: "📊", path: "/analytics", style: "bg-purple-50 border border-purple-100 dark:border-slate-800 text-purple-700" },
-                  { label: "Calendar", icon: "📅", path: "/calendar", style: "bg-amber-50 border border-amber-100 text-amber-700" },
-                  { label: "Settings", icon: "⚙️", path: "/company-settings", style: "bg-slate-50 border border-slate-100 dark:border-slate-800 text-slate-700" }
+                  { label: t("companyDashboard.actionDeploy"), icon: "➕", path: "/add-project", style: "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md" },
+                  { label: t("companyDashboard.actionMyProjects"), icon: "📂", path: "/my-projects", style: "bg-blue-50 border border-blue-100 text-blue-700" },
+                  { label: t("companyDashboard.actionApplicantsHub"), icon: "👨‍🎓", path: "/applicants", style: "bg-green-50 border border-green-100 text-green-700" },
+                  { label: t("companyDashboard.actionAnalytics"), icon: "📊", path: "/analytics", style: "bg-purple-50 border border-purple-100 dark:border-slate-800 text-purple-700" },
+                  { label: t("companyDashboard.actionCalendar"), icon: "📅", path: "/calendar", style: "bg-amber-50 border border-amber-100 text-amber-700" },
+                  { label: t("companyDashboard.actionSettings"), icon: "⚙️", path: "/company-settings", style: "bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-300" }
                 ].map((action, idx) => (
                   <button
                     key={idx}
@@ -180,16 +182,16 @@ export default function CompanyDashboard() {
 
             {/* Top Performers */}
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 p-5">
-              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-4">🏆 Top Performers</h3>
+              <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-4">🏆 {t("companyDashboard.topPerformers")}</h3>
               {(!stats?.topPerformers || stats.topPerformers.length === 0) ? (
-                <p className="text-xs text-gray-400 italic">No completed tasks with ratings yet.</p>
+                <p className="text-xs text-gray-400 italic">{t("companyDashboard.noTopPerformers")}</p>
               ) : (
                 <div className="space-y-3">
                   {stats.topPerformers.map((perf, idx) => (
                     <div
                       key={idx}
                       onClick={() => navigate(`/student-profile/${perf.studentEmail}`)}
-                      className="flex items-center gap-3 p-3 bg-slate-50/50 border border-slate-100 dark:border-slate-800 rounded-xl hover:bg-slate-100/50 transition cursor-pointer"
+                      className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl hover:bg-slate-100 dark:bg-slate-800/50 transition cursor-pointer"
                     >
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-black text-xs ${
                         idx === 0 ? "bg-amber-400" : idx === 1 ? "bg-gray-400" : "bg-amber-700"
@@ -214,27 +216,27 @@ export default function CompanyDashboard() {
           <div className="lg:col-span-2">
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 p-5 sm:p-6">
               <div className="flex justify-between items-center mb-5">
-                <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider">🕑 Recent Activity</h3>
+                <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider">🕑 {t("companyDashboard.recentActivity")}</h3>
                 <button
                   onClick={() => navigate("/applicants")}
                   className="text-[10px] text-indigo-600 font-extrabold hover:underline"
                 >
-                  View All →
+                  {t("companyDashboard.viewAll")} →
                 </button>
               </div>
 
               {recentActivity.length === 0 ? (
                 <div className="text-center py-12 border-2 border-dashed border-gray-100 dark:border-slate-800 rounded-xl text-gray-400">
                   <span className="text-3xl block mb-3">📭</span>
-                  <p className="text-xs font-medium">No recent application activity yet.</p>
-                  <p className="text-[10px] text-gray-300 mt-1">Deploy your first project to start receiving applications!</p>
+                  <p className="text-xs font-medium">{t("companyDashboard.noRecentActivity")}</p>
+                  <p className="text-[10px] text-gray-300 mt-1">{t("companyDashboard.deployFirstProject")}</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {recentActivity.map((event, idx) => (
                     <div
                       key={idx}
-                      className="flex items-start gap-3 p-3.5 bg-slate-50/30 border border-slate-100 dark:border-slate-800/50 rounded-xl hover:bg-slate-50 transition group"
+                      className="flex items-start gap-3 p-3.5 bg-slate-50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800/50 rounded-xl hover:bg-slate-50 dark:bg-slate-800 transition group"
                     >
                       {/* Status indicator */}
                       <div className="shrink-0 mt-0.5">
@@ -277,17 +279,17 @@ export default function CompanyDashboard() {
             {/* Pipeline Status Breakdown */}
             {stats && (
               <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800/50 p-5 sm:p-6 mt-6">
-                <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-4">📊 Application Pipeline</h3>
+                <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-4">📊 {t("companyDashboard.applicationPipeline")}</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
-                    { label: "Pending", count: stats.pendingCount, color: "bg-amber-500" },
-                    { label: "Approved", count: stats.approvedCount, color: "bg-blue-500" },
-                    { label: "Submitted", count: stats.submittedCount, color: "bg-purple-500" },
-                    { label: "Completed", count: stats.completedCount, color: "bg-green-500" },
-                    { label: "Rejected", count: stats.rejectedCount, color: "bg-red-500" },
-                    { label: "In Revision", count: stats.revisionCount, color: "bg-orange-500" }
+                    { label: t("companyDashboard.statusPending"), count: stats.pendingCount, color: "bg-amber-500" },
+                    { label: t("companyDashboard.statusApproved"), count: stats.approvedCount, color: "bg-blue-500" },
+                    { label: t("companyDashboard.statusSubmitted"), count: stats.submittedCount, color: "bg-purple-500" },
+                    { label: t("companyDashboard.statusCompleted"), count: stats.completedCount, color: "bg-green-500" },
+                    { label: t("companyDashboard.statusRejected"), count: stats.rejectedCount, color: "bg-red-500" },
+                    { label: t("companyDashboard.statusInRevision"), count: stats.revisionCount, color: "bg-orange-500" }
                   ].map((item, idx) => (
-                    <div key={idx} className="bg-slate-50/50 border border-slate-100 dark:border-slate-800 rounded-xl p-3 text-center">
+                    <div key={idx} className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl p-3 text-center">
                       <div className={`w-2 h-2 ${item.color} rounded-full mx-auto mb-2`} />
                       <p className="text-lg font-black text-gray-800 dark:text-gray-200">{item.count}</p>
                       <p className="text-[9px] font-extrabold text-gray-400 uppercase tracking-wider">{item.label}</p>

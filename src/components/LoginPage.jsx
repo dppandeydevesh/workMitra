@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import { API_BASE_URL } from "../config";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "./Toast";
+import { useTranslation } from "react-i18next";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const toast = useToast();
+  const { t } = useTranslation();
 
   // ==========================================
   // 📦 State Management Portal
@@ -61,9 +63,9 @@ export default function LoginPage() {
     if (/[0-9]/.test(pass)) score++; 
     if (/[^A-Za-z0-9]/.test(pass)) score++; 
 
-    let text = "Weak ❌";
-    if (score === 3) text = "Medium ⚠️ (Add special characters/numbers)";
-    if (score === 4) text = "Strong 🔥 Perfect Structure!";
+    let text = t("login.passwordStrengthWeak") + " ❌";
+    if (score === 3) text = t("login.passwordStrengthMedium") + " ⚠️ (" + t("login.addSpecialChars") + ")";
+    if (score === 4) text = t("login.passwordStrengthStrong") + " 🔥 " + t("login.perfectStructure");
 
     setPasswordStrength({ score, text });
   };
@@ -106,10 +108,10 @@ export default function LoginPage() {
           }
         }
       } else {
-        setErrorMessage(data.error || "Invalid sign-in credentials.");
+        setErrorMessage(data.error || t("login.invalidSignIn"));
       }
     } catch (err) {
-      setErrorMessage(`Network or parsing error: ${err.message}`);
+      setErrorMessage(t("login.networkError", { message: err.message }));
     } finally {
       setIsLoggingIn(false);
     }
@@ -142,15 +144,15 @@ export default function LoginPage() {
       });
       const data = await response.json();
       if (response.ok) {
-        setRecoveryMessage("Password reset instructions sent successfully!");
+        setRecoveryMessage(t("login.resetInstructionsSent"));
         if (data.resetLink) {
           setGeneratedResetLink(data.resetLink);
         }
       } else {
-        setErrorMessage(data.error || "Failed to generate recovery link.");
+        setErrorMessage(data.error || t("login.failedRecoveryLink"));
       }
     } catch (err) {
-      setErrorMessage(`OTP verification error: ${err.message}`);
+      setErrorMessage(t("login.otpVerificationError", { message: err.message }));
     } finally {
       setSendingRecovery(false);
     }
@@ -172,7 +174,7 @@ export default function LoginPage() {
       });
       const data = await response.json();
       if (response.ok) {
-        toast.success("Registration Successful!");
+        toast.success(t("login.registrationSuccessful"));
         localStorage.setItem("user", JSON.stringify(data.user));
         if (data.token) {
           localStorage.setItem("token", data.token);
@@ -200,10 +202,10 @@ export default function LoginPage() {
           navigate("/preferences");
         }
       } else {
-        setErrorMessage(data.error || "Verification failed.");
+        setErrorMessage(data.error || t("login.verificationFailed"));
       }
     } catch (err) {
-      setErrorMessage("Error communicating with server portal.");
+      setErrorMessage(t("login.serverPortalError"));
     } finally {
       setIsVerifying(false);
     }
@@ -222,13 +224,13 @@ export default function LoginPage() {
         {view === "landing" && (
           <>
             <div className="hidden md:block absolute top-12 left-12 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border border-purple-300/50 px-6 py-3 rounded-2xl text-purple-900 dark:text-purple-200 text-sm font-bold animate-float-slow shadow-sm">
-              🖥️ Agent Server
+              🖥️ {t("login.agentServer")}
             </div>
             <div className="hidden md:block absolute top-24 right-20 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border border-pink-300/50 px-6 py-4 rounded-3xl text-pink-900 font-extrabold text-base animate-float-fast shadow-sm">
-              🧠 AI Engine
+              🧠 {t("login.aiEngine")}
             </div>
             <div className="hidden md:block absolute bottom-24 left-16 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border border-blue-300/50 px-5 py-3 rounded-2xl text-blue-900 text-sm font-bold animate-float-slow shadow-sm">
-              📦 Media Server
+              📦 {t("login.mediaServer")}
             </div>
           </>
         )}
@@ -260,29 +262,29 @@ export default function LoginPage() {
             <div className="bg-white dark:bg-slate-800/50 p-6 rounded-[40px] shadow-xl border border-white/20 dark:border-slate-700/50 mb-6 backdrop-blur-xl">
               <img src="/logo.png" alt="workMitra Logo" className="w-56 h-auto object-contain filter drop-shadow-lg" />
             </div>
-            <p className="text-purple-900/80 dark:text-purple-200 mt-2 text-sm md:text-base font-semibold leading-relaxed">Choose your path to establish active student-employer connection nodes.</p>
+            <p className="text-purple-900/80 dark:text-purple-200 mt-2 text-sm md:text-base font-semibold leading-relaxed">{t("login.choosePathDesc")}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full z-10 px-4">
             
             <button onClick={() => { setUserRole("student"); setView("auth"); }} className="group text-left p-8 bg-white/40 dark:bg-slate-800/40 backdrop-blur-lg border border-white/60 dark:border-slate-700/50 rounded-[32px] hover:border-purple-400 hover:bg-white/60 dark:hover:bg-slate-800/80 transition-all duration-300 relative overflow-hidden">
               <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">💼</div>
               <div className="w-12 h-12 rounded-2xl bg-purple-50 text-white flex items-center justify-center text-2xl mb-4">🚀</div>
-              <h3 className="text-2xl font-bold text-purple-950 dark:text-white mb-2">I Need a Job</h3>
-              <p className="text-sm text-purple-900/70 dark:text-purple-200/70">Build student profiles, submit skill proofs, and clear tasks.</p>
+              <h3 className="text-2xl font-bold text-purple-950 dark:text-white mb-2">{t("login.needJobTitle")}</h3>
+              <p className="text-sm text-purple-900/70 dark:text-purple-200/70">{t("login.needJobDesc")}</p>
             </button>
 
             <button onClick={() => { setUserRole("company"); setView("auth"); }} className="group text-left p-8 bg-white/40 dark:bg-slate-800/40 backdrop-blur-lg border border-white/60 dark:border-slate-700/50 rounded-[32px] hover:border-pink-400 hover:bg-white/60 dark:hover:bg-slate-800/80 transition-all duration-300 relative overflow-hidden">
               <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">🏢</div>
               <div className="w-12 h-12 rounded-2xl bg-pink-500 text-white flex items-center justify-center text-2xl mb-4">🤝</div>
-              <h3 className="text-2xl font-bold text-purple-950 dark:text-white mb-2">I Want to Hire</h3>
-              <p className="text-sm text-purple-900/70 dark:text-purple-200/70">Post corporate tracks, evaluate task solutions, and fund assignments.</p>
+              <h3 className="text-2xl font-bold text-purple-950 dark:text-white mb-2">{t("login.wantToHireTitle")}</h3>
+              <p className="text-sm text-purple-900/70 dark:text-purple-200/70">{t("login.wantToHireDesc")}</p>
             </button>
 
             <button onClick={() => { setUserRole("college"); setView("auth"); }} className="group text-left p-8 bg-white/40 dark:bg-slate-800/40 backdrop-blur-lg border border-white/60 dark:border-slate-700/50 rounded-[32px] hover:border-indigo-400 hover:bg-white/60 dark:hover:bg-slate-800/80 transition-all duration-300 relative overflow-hidden">
               <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">🎓</div>
               <div className="w-12 h-12 rounded-2xl bg-indigo-500 text-white flex items-center justify-center text-2xl mb-4">🏫</div>
-              <h3 className="text-2xl font-bold text-purple-950 dark:text-white mb-2">Professor / HOD</h3>
-              <p className="text-sm text-purple-900/70 dark:text-purple-200/70">Audit placement tracks, endorse top student profiles, whitelist recruiters.</p>
+              <h3 className="text-2xl font-bold text-purple-950 dark:text-white mb-2">{t("login.professorTitle")}</h3>
+              <p className="text-sm text-purple-900/70 dark:text-purple-200/70">{t("login.professorDesc")}</p>
             </button>
 
           </div>
@@ -294,7 +296,7 @@ export default function LoginPage() {
       {/* ========================================================================= */}
       {view === "auth" && (
         <div className="w-full min-h-screen flex flex-col items-center justify-center p-4 relative z-20">
-          <button onClick={() => { setView("landing"); setErrorMessage(""); }} className="absolute top-6 left-6 px-4 py-2 bg-purple-950/10 border border-purple-950/20 rounded-full text-xs font-bold text-purple-950 dark:text-purple-200 transition">← Back to Paths</button>
+          <button onClick={() => { setView("landing"); setErrorMessage(""); }} className="absolute top-6 left-6 px-4 py-2 bg-purple-950/10 border border-purple-950/20 rounded-full text-xs font-bold text-purple-950 dark:text-purple-200 transition">← {t("login.backToPaths")}</button>
           
           {errorMessage && <div className="mb-4 px-4 py-2 bg-red-100 text-red-700 text-xs font-bold rounded-xl border border-red-200 z-50 shadow-md">⚠️ {errorMessage}</div>}
           
@@ -305,20 +307,20 @@ export default function LoginPage() {
               </div>
               
               <div>
-                <h2 className="text-2xl font-black text-purple-950 dark:text-purple-200">Verify Your Account</h2>
-                <p className="text-xs text-gray-400 mt-1">We sent a 6-digit verification code to your registered email address.</p>
+                <h2 className="text-2xl font-black text-purple-950 dark:text-purple-200">{t("login.verifyAccount")}</h2>
+                <p className="text-xs text-gray-400 mt-1">{t("login.verifyAccountDesc")}</p>
               </div>
 
 
               <form onSubmit={handleOtpVerifySubmit} className="space-y-4 text-left">
                 <div>
-                  <label className="block text-left text-[9px] font-bold text-gray-400 uppercase mb-1.5 px-1">Email Verification Code</label>
+                  <label className="block text-left text-[9px] font-bold text-gray-400 uppercase mb-1.5 px-1">{t("login.emailVerificationCode")}</label>
                   <input
                     type="text"
                     maxLength="6"
                     value={emailOtpInput}
                     onChange={(e) => setEmailOtpInput(e.target.value)}
-                    placeholder="6-digit code"
+                    placeholder={t("login.6DigitCode")}
                     className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-center tracking-widest font-black"
                     required
                   />
@@ -330,7 +332,7 @@ export default function LoginPage() {
                   disabled={isVerifying}
                   className={`w-full py-3.5 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition mt-2 ${isVerifying ? "bg-gray-400 cursor-not-allowed" : "bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95"}`}
                 >
-                  {isVerifying ? "Verifying..." : "Verify and Create Account"}
+                  {isVerifying ? t("login.verifying") : t("login.verifyAndCreate")}
                 </button>
 
                 <div className="pt-2">
@@ -339,7 +341,7 @@ export default function LoginPage() {
                     onClick={() => { setIsOtpVerifying(false); setErrorMessage(""); }}
                     className="text-xs text-purple-600 hover:text-pink-600 font-bold transition hover:underline"
                   >
-                    ← Cancel and Edit Registration
+                    ← {t("login.cancelAndEdit")}
                   </button>
                 </div>
               </form>
@@ -354,13 +356,13 @@ export default function LoginPage() {
                   onClick={() => { setIsSignUp(false); setErrorMessage(""); }} 
                   className={`flex-1 py-4 text-sm font-bold ${!isSignUp ? "text-purple-600 border-b-2 border-purple-600" : "text-gray-400"}`}
                 >
-                  Sign In
+                  {t("login.signInTab")}
                 </button>
                 <button 
                   onClick={() => { setIsSignUp(true); setErrorMessage(""); }} 
                   className={`flex-1 py-4 text-sm font-bold ${isSignUp ? "text-purple-600 border-b-2 border-purple-600" : "text-gray-400"}`}
                 >
-                  Sign Up
+                  {t("login.signUpTab")}
                 </button>
               </div>
 
@@ -373,14 +375,14 @@ export default function LoginPage() {
                   onSubmit={async (e) => {
                     e.preventDefault();
                     if (passwordStrength.score < 4) {
-                      setErrorMessage("Please establish a stronger password structure before continuing.");
+                      setErrorMessage(t("login.strongerPasswordRequired"));
                       return;
                     }
                     // Lightweight client-side check — backend does authoritative swot-node verification
                     const domainPart = email.toLowerCase().split("@")[1] || "";
                     const looksAcademic = /\.(edu|ac)\b/.test(domainPart) || /\.(org|res|ernet)\.in$/.test(domainPart);
                     if ((userRole === "student" || userRole === "college") && !looksAcademic) {
-                      setErrorMessage("Please use your official university email address. The backend will verify your institution automatically.");
+                      setErrorMessage(t("login.academicEmailRequired"));
                       return;
                     }
                     setErrorMessage("");
@@ -407,10 +409,10 @@ export default function LoginPage() {
                         setErrorMessage("");
                         setEmailOtpInput("");
                       } else {
-                        setErrorMessage(data.error || "Registration system error.");
+                        setErrorMessage(data.error || t("login.registrationSystemError"));
                       }
                     } catch (err) {
-                      setErrorMessage(`Registration error: ${err.message}`);
+                      setErrorMessage(t("login.registrationError", { message: err.message }));
                     } finally {
                       setIsRegistering(false);
                     }
@@ -419,37 +421,37 @@ export default function LoginPage() {
                   <div className="flex justify-center -mb-2">
                     <img src="/logo.png" alt="workMitra Logo" className="h-14 object-contain bg-white px-3 py-1.5 rounded-xl shadow-sm" />
                   </div>
-                  <h1 className="text-xl md:text-2xl font-extrabold text-purple-950 dark:text-purple-200">Create Account</h1>
-                  <p className="text-xs text-purple-600 font-bold uppercase tracking-wider">Joining as {userRole}</p>
+                  <h1 className="text-xl md:text-2xl font-extrabold text-purple-950 dark:text-purple-200">{t("login.createAccount")}</h1>
+                  <p className="text-xs text-purple-600 font-bold uppercase tracking-wider">{t("login.joiningAs", { role: userRole })}</p>
                   
                   {userRole === "company" ? (
                     <>
-                      <input type="text" placeholder="Company Name" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="email" placeholder="Company Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder={t("login.companyName")} value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="email" placeholder={t("login.companyEmail")} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
                     </>
                   ) : userRole === "college" ? (
                     <>
-                      <input type="text" placeholder="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="email" placeholder="University Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="text" placeholder="University / College Name" value={collegeName} onChange={(e) => setCollegeName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="text" placeholder="Department Name (e.g. Computer Science)" value={departmentName} onChange={(e) => setDepartmentName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder={t("login.fullName")} value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="email" placeholder={t("login.universityEmail")} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder={t("login.universityName")} value={collegeName} onChange={(e) => setCollegeName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder={t("login.departmentName")} value={departmentName} onChange={(e) => setDepartmentName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
                     </>
                   ) : (
                     <>
-                      <input type="text" placeholder="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="email" placeholder="Student Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="text" placeholder="College Name" value={collegeName} onChange={(e) => setCollegeName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="text" placeholder="Enrollment / Roll Number" value={enrollmentNumber} onChange={(e) => setEnrollmentNumber(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder={t("login.fullName")} value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="email" placeholder={t("login.studentEmail")} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder={t("login.collegeName")} value={collegeName} onChange={(e) => setCollegeName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <input type="text" placeholder={t("login.enrollmentNumber")} value={enrollmentNumber} onChange={(e) => setEnrollmentNumber(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
                     </>
                   )}
                   
-                  <input type="tel" pattern="[0-9]{10}" placeholder="Mobile Number (10 digits)" value={mobile} onChange={(e) => setMobile(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                  <input type="password" placeholder="Password" value={password} onChange={(e) => checkPasswordStrength(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                  <input type="tel" pattern="[0-9]{10}" placeholder={t("login.mobileNumber")} value={mobile} onChange={(e) => setMobile(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                  <input type="password" placeholder={t("login.password")} value={password} onChange={(e) => checkPasswordStrength(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
                   
                   {password && (
                     <div className="w-full text-left text-[11px] font-bold px-1 space-y-1">
                       <p className={passwordStrength.score === 4 ? "text-green-600" : "text-amber-600"}>
-                        Strength: {passwordStrength.text}
+                        {t("login.strength")}: {passwordStrength.text}
                       </p>
                       <div className="w-full bg-gray-100 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
                         <div 
@@ -468,9 +470,9 @@ export default function LoginPage() {
                     {isRegistering ? (
                       <>
                         <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                        Registering...
+                        {t("login.registering")}
                       </>
-                    ) : "Sign Up"}
+                    ) : t("login.signUpBtn")}
                   </button>
                 </form>
               </div>
@@ -483,14 +485,14 @@ export default function LoginPage() {
                   <div className="flex justify-center -mb-2">
                     <img src="/logo.png" alt="workMitra Logo" className="h-14 object-contain bg-white px-3 py-1.5 rounded-xl shadow-sm" />
                   </div>
-                  <h1 className="text-2xl md:text-3xl font-extrabold text-purple-950 dark:text-purple-200">Sign In</h1>
-                  <p className="text-xs text-pink-600 font-bold uppercase tracking-wider">Accessing portal</p>
-                  <input type="email" placeholder={userRole === "company" ? "Company Email" : "Student Email"} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                  <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                  <h1 className="text-2xl md:text-3xl font-extrabold text-purple-950 dark:text-purple-200">{t("login.signInTitle")}</h1>
+                  <p className="text-xs text-pink-600 font-bold uppercase tracking-wider">{t("login.accessingPortal")}</p>
+                  <input type="email" placeholder={userRole === "company" ? t("login.companyEmail") : t("login.studentEmail")} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                  <input type="password" placeholder={t("login.password")} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
                   
                   <div className="text-right px-1">
                     <button type="button" onClick={handleForgotPassword} className="text-[11px] text-purple-600 hover:text-pink-600 font-bold transition outline-none">
-                      Forgot Password?
+                      {t("login.forgotPassword")}
                     </button>
                   </div>
 
@@ -502,14 +504,14 @@ export default function LoginPage() {
                     {isLoggingIn ? (
                       <>
                         <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                        Signing In...
+                        {t("login.signingIn")}
                       </>
-                    ) : "Sign In"}
+                    ) : t("login.signInBtn")}
                   </button>
 
                   <div className="flex items-center my-2">
                     <div className="flex-grow border-t border-purple-100 dark:border-slate-800"></div>
-                    <span className="mx-3 text-[10px] uppercase font-bold text-purple-300">or</span>
+                    <span className="mx-3 text-[10px] uppercase font-bold text-purple-300">{t("login.or")}</span>
                     <div className="flex-grow border-t border-purple-100 dark:border-slate-800"></div>
                   </div>
 
@@ -521,14 +523,14 @@ export default function LoginPage() {
               <div className="hidden md:block overlay-panel absolute top-0 left-1/2 w-1/2 h-full overflow-hidden z-30 rounded-l-[150px]">
                 <div className="overlay-content bg-gradient-to-br from-purple-600 via-indigo-600 to-pink-600 text-white relative -left-full h-full w-[200%] transform translate-x-0 flex">
                   <div className="content-left absolute top-0 h-full w-1/2 flex flex-col items-center justify-center px-10 text-center transform -translate-x-[200%]">
-                    <h1 className="text-3xl font-extrabold mb-2">Welcome Back!</h1>
-                    <p className="text-xs text-purple-100 max-w-[240px] leading-relaxed mb-6">Enter your credentials to return to your configuration tracks.</p>
-                    <button type="button" onClick={() => { setIsSignUp(false); setErrorMessage(""); }} className="border-2 border-white text-white text-xs font-bold uppercase tracking-wider px-10 py-2.5 rounded-xl bg-transparent hover:bg-white dark:bg-slate-900 hover:text-purple-950 dark:text-purple-200 transition-all active:scale-95">Sign In</button>
+                    <h1 className="text-3xl font-extrabold mb-2">{t("login.welcomeBack")}</h1>
+                    <p className="text-xs text-purple-100 max-w-[240px] leading-relaxed mb-6">{t("login.enterCredentials")}</p>
+                    <button type="button" onClick={() => { setIsSignUp(false); setErrorMessage(""); }} className="border-2 border-white text-white text-xs font-bold uppercase tracking-wider px-10 py-2.5 rounded-xl bg-transparent hover:bg-white dark:bg-slate-900 hover:text-purple-950 dark:text-purple-200 transition-all active:scale-95">{t("login.signInBtn")}</button>
                   </div>
                   <div className="content-right absolute top-0 right-0 h-full w-1/2 flex flex-col items-center justify-center px-10 text-center transform translate-x-0">
-                    <h1 className="text-3xl font-extrabold mb-2">Hello, Friend!</h1>
-                    <p className="text-xs text-purple-100 max-w-[240px] leading-relaxed mb-6">Register your custom tracking details to activate credentials.</p>
-                    <button type="button" onClick={() => { setIsSignUp(true); setErrorMessage(""); }} className="border-2 border-white text-white text-xs font-bold uppercase tracking-wider px-10 py-2.5 rounded-xl bg-transparent hover:bg-white dark:bg-slate-900 hover:text-purple-950 dark:text-purple-200 transition-all active:scale-95">Sign Up</button>
+                    <h1 className="text-3xl font-extrabold mb-2">{t("login.helloFriend")}</h1>
+                    <p className="text-xs text-purple-100 max-w-[240px] leading-relaxed mb-6">{t("login.registerCustom")}</p>
+                    <button type="button" onClick={() => { setIsSignUp(true); setErrorMessage(""); }} className="border-2 border-white text-white text-xs font-bold uppercase tracking-wider px-10 py-2.5 rounded-xl bg-transparent hover:bg-white dark:bg-slate-900 hover:text-purple-950 dark:text-purple-200 transition-all active:scale-95">{t("login.signUpBtn")}</button>
                   </div>
                 </div>
               </div>
@@ -549,8 +551,8 @@ export default function LoginPage() {
             </div>
             
             <div>
-              <h2 className="text-2xl font-black text-purple-950 dark:text-purple-200">Reset Password</h2>
-              <p className="text-xs text-gray-400 mt-1">Initialize your credentials node recovery workflow.</p>
+              <h2 className="text-2xl font-black text-purple-950 dark:text-purple-200">{t("login.resetPassword")}</h2>
+              <p className="text-xs text-gray-400 mt-1">{t("login.resetPasswordDesc")}</p>
             </div>
 
             {errorMessage && (
@@ -566,7 +568,7 @@ export default function LoginPage() {
                 </div>
                 {generatedResetLink && (
                   <div className="bg-purple-50 border border-purple-100 dark:border-slate-800 p-4 rounded-xl text-left space-y-2">
-                    <span className="text-[10px] font-extrabold text-purple-700 uppercase block tracking-wider">Dev Mode Recovery Link</span>
+                    <span className="text-[10px] font-extrabold text-purple-700 uppercase block tracking-wider">{t("login.devModeRecovery")}</span>
                     <a 
                       href={generatedResetLink} 
                       className="text-xs text-blue-600 hover:text-blue-800 font-bold break-all hover:underline"
@@ -574,7 +576,7 @@ export default function LoginPage() {
                       {generatedResetLink}
                     </a>
                     <p className="text-[9px] text-gray-400 leading-relaxed">
-                      Click the simulated reset link above to open the reset password screen in local sandbox mode.
+                      {t("login.devModeRecoveryDesc")}
                     </p>
                   </div>
                 )}
@@ -582,14 +584,14 @@ export default function LoginPage() {
                   onClick={() => { setView("auth"); setRecoveryEmail(""); }}
                   className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition"
                 >
-                  Return to Sign In
+                  {t("login.returnToSignIn")}
                 </button>
               </div>
             ) : (
               <form onSubmit={handleRecoverySubmit} className="space-y-4">
                 <input
                   type="email"
-                  placeholder="Enter your registered email address"
+                  placeholder={t("login.enterRegisteredEmail")}
                   value={recoveryEmail}
                   onChange={(e) => setRecoveryEmail(e.target.value)}
                   className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
@@ -601,7 +603,7 @@ export default function LoginPage() {
                   disabled={sendingRecovery}
                   className="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition hover:opacity-95"
                 >
-                  {sendingRecovery ? "Initiating recovery..." : "Send Reset Link"}
+                  {sendingRecovery ? t("login.initiatingRecovery") : t("login.sendResetLink")}
                 </button>
 
                 <div className="pt-2">
@@ -610,7 +612,7 @@ export default function LoginPage() {
                     onClick={() => { setView("auth"); setErrorMessage(""); }}
                     className="text-xs text-purple-600 hover:text-pink-600 font-bold transition hover:underline"
                   >
-                    ← Back to Sign In
+                    ← {t("login.backToSignIn")}
                   </button>
                 </div>
               </form>

@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 import { useToast } from "../components/Toast";
+import { useTranslation } from "react-i18next";
 import ActivityHeatmap from "../components/ActivityHeatmap";
 
 export default function StudentProfile() {
   const { email } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
+  const { t } = useTranslation();
 
 
 
@@ -90,7 +92,7 @@ export default function StudentProfile() {
         setPreferredTechStack(data.preferredTechStack ? data.preferredTechStack.join(", ") : "");
         setAvailabilitySlots(data.availabilitySlots || []);
       } else {
-        setErrorMessage(data.error || "Failed to load student profile details.");
+        setErrorMessage(data.error || t("studentProfile.failedToLoadProfile"));
       }
 
       // Load student applications history for ratings & reviews
@@ -102,7 +104,7 @@ export default function StudentProfile() {
         setApplications(appsData);
       }
     } catch (err) {
-      setErrorMessage("Error connecting to server gateway.");
+      setErrorMessage(t("studentProfile.errorConnectingToGateway"));
     } finally {
       setLoading(false);
     }
@@ -148,7 +150,7 @@ export default function StudentProfile() {
       });
       const data = await res.json();
       if (res.ok) {
-        toast.success("Portfolio details updated successfully!");
+        toast.success(t("studentProfile.portfolioUpdated"));
         setProfileUser(data.user);
         setIsEditing(false);
         // If this is the logged-in student, update their cached context in localStorage
@@ -171,10 +173,10 @@ export default function StudentProfile() {
           setCurrentUser(updatedCachedUser);
         }
       } else {
-        setErrorMessage(data.error || "Failed to update profile details.");
+        setErrorMessage(data.error || t("studentProfile.failedToUpdateProfile"));
       }
     } catch (err) {
-      setErrorMessage("Error communicating with server portal.");
+      setErrorMessage(t("studentProfile.errorCommunicatingWithServer"));
     } finally {
       setSaving(false);
     }
@@ -198,7 +200,7 @@ export default function StudentProfile() {
         {loading ? (
           <div className="text-center py-16 text-gray-500 font-medium bg-white dark:bg-slate-900 rounded-2xl shadow-xl flex flex-col items-center justify-center space-y-3">
             <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-            <span>📂 Retrieving student portfolio nodes...</span>
+            <span>📂 {t("studentProfile.retrievingPortfolioNodes")}</span>
           </div>
         ) : errorMessage ? (
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 text-center space-y-4">
@@ -208,7 +210,7 @@ export default function StudentProfile() {
               onClick={() => navigate(-1)} 
               className="px-4 py-2 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-700 dark:text-gray-200 rounded-xl text-xs font-bold transition"
             >
-              ← Go Back
+              ← {t("studentProfile.goBack")}
             </button>
           </div>
         ) : (
@@ -232,11 +234,11 @@ export default function StudentProfile() {
                     <h1 className="text-2xl font-black text-gray-800 dark:text-gray-200 tracking-tight">{profileUser.fullName}</h1>
                     {profileUser.isEndorsed && (
                       <span className="bg-emerald-50 border border-emerald-100 text-emerald-600 text-[9px] font-black px-2 py-0.5 rounded-full select-none">
-                        Faculty Endorsed 🎓
+                        {t("studentProfile.facultyEndorsed")} 🎓
                       </span>
                     )}
                     {profileUser.githubUrl && (
-                      <a href={profileUser.githubUrl} target="_blank" rel="noreferrer" className="text-gray-600 hover:text-black transition ml-1" title="GitHub">
+                      <a href={profileUser.githubUrl} target="_blank" rel="noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-black transition ml-1" title="GitHub">
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" /></svg>
                       </a>
                     )}
@@ -246,7 +248,7 @@ export default function StudentProfile() {
                       </a>
                     )}
                   </div>
-                  <p className="text-xs text-indigo-600 font-extrabold uppercase mt-0.5 tracking-wider">🎓 Verified Student Profile</p>
+                  <p className="text-xs text-indigo-600 font-extrabold uppercase mt-0.5 tracking-wider">🎓 {t("studentProfile.verifiedStudentProfile")}</p>
                 </div>
               </div>
 
@@ -255,7 +257,7 @@ export default function StudentProfile() {
                   onClick={() => setIsEditing(true)}
                   className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-md"
                 >
-                  ✏️ Edit Portfolio
+                  ✏️ {t("studentProfile.editPortfolio")}
                 </button>
               )}
 
@@ -264,7 +266,7 @@ export default function StudentProfile() {
                   onClick={() => navigate(`/chat/${profileUser.email}`)}
                   className="px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95 text-white rounded-xl text-xs font-bold transition shadow-md flex items-center gap-1.5"
                 >
-                  💬 Chat with Student
+                  💬 {t("studentProfile.chatWithStudent")}
                 </button>
               )}
             </div>
@@ -272,12 +274,12 @@ export default function StudentProfile() {
             {/* Main Details Grid */}
             {isEditing ? (
               <form onSubmit={handleSaveProfile} className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 space-y-6 border border-white/60 dark:border-slate-800/60">
-                <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 border-b pb-3">Edit Portfolio details</h3>
+                <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 border-b pb-3">{t("studentProfile.editPortfolioDetails")}</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Full name */}
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Full Name</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.fullName")}</label>
                     <input
                       type="text"
                       value={fullName}
@@ -289,7 +291,7 @@ export default function StudentProfile() {
 
                   {/* Mobile */}
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Mobile Number</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.mobileNumber")}</label>
                     <input
                       type="tel"
                       value={mobile}
@@ -301,7 +303,7 @@ export default function StudentProfile() {
 
                   {/* College name */}
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">College / University Name</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.collegeName")}</label>
                     <input
                       type="text"
                       value={collegeName}
@@ -313,7 +315,7 @@ export default function StudentProfile() {
 
                   {/* Enrollment */}
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Enrollment / Roll Number</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.enrollmentNumber")}</label>
                     <input
                       type="text"
                       value={enrollmentNumber}
@@ -325,7 +327,7 @@ export default function StudentProfile() {
 
                   {/* Resume Url */}
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Resume Share Link (Drive/Dropbox)</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.resumeLink")}</label>
                     <input
                       type="url"
                       value={resumeUrl}
@@ -337,22 +339,22 @@ export default function StudentProfile() {
 
                   {/* Project Type preference */}
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Work Type preference</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.workTypePreference")}</label>
                     <select
                       value={projectType}
                       onChange={(e) => setProjectType(e.target.value)}
                       className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     >
-                      <option value="Remote Track">Remote Track</option>
-                      <option value="On-site Internship">On-site Internship</option>
-                      <option value="Part-time Gig">Part-time Gig</option>
-                      <option value="Hybrid Track">Hybrid Track</option>
+                      <option value="Remote Track">{t("studentProfile.remoteTrack")}</option>
+                      <option value="On-site Internship">{t("studentProfile.onSiteInternship")}</option>
+                      <option value="Part-time Gig">{t("studentProfile.partTimeGig")}</option>
+                      <option value="Hybrid Track">{t("studentProfile.hybridTrack")}</option>
                     </select>
                   </div>
 
                   {/* GitHub Profile URL */}
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">GitHub Profile Link</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.githubLink")}</label>
                     <input
                       type="url"
                       value={githubUrl}
@@ -364,7 +366,7 @@ export default function StudentProfile() {
 
                   {/* LinkedIn Profile URL */}
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">LinkedIn Profile Link</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.linkedinLink")}</label>
                     <input
                       type="url"
                       value={linkedinUrl}
@@ -376,7 +378,7 @@ export default function StudentProfile() {
 
                   {/* Portfolio Website URL */}
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Portfolio or Website Link</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.portfolioLink")}</label>
                     <input
                       type="url"
                       value={portfolioUrl}
@@ -388,7 +390,7 @@ export default function StudentProfile() {
 
                   {/* Avatar URL */}
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Profile Avatar URL</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.avatarUrlLabel")}</label>
                     <input
                       type="url"
                       value={avatarUrl}
@@ -400,60 +402,60 @@ export default function StudentProfile() {
 
                   {/* Major */}
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Academic Major</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.academicMajor")}</label>
                     <input
                       type="text"
                       value={major}
                       onChange={(e) => setMajor(e.target.value)}
-                      placeholder="e.g. Computer Science & Engineering"
+                      placeholder={t("studentProfile.majorPlaceholder")}
                       className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
 
                   {/* Current Semester */}
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Current Semester</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.currentSemesterLabel")}</label>
                     <input
                       type="text"
                       value={currentSemester}
                       onChange={(e) => setCurrentSemester(e.target.value)}
-                      placeholder="e.g. Semester 6"
+                      placeholder={t("studentProfile.semesterPlaceholder")}
                       className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
 
                   {/* Vanity Handle */}
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Custom Vanity Handle</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.vanityHandle")}</label>
                     <input
                       type="text"
                       value={vanityUsername}
                       onChange={(e) => setVanityUsername(e.target.value)}
-                      placeholder="e.g. aditya-cse"
+                      placeholder={t("studentProfile.vanityPlaceholder")}
                       className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
 
                   {/* Elevator Pitch Video Link */}
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Elevator Video Pitch Link</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.videoPitchLink")}</label>
                     <input
                       type="url"
                       value={videoPitchUrl}
                       onChange={(e) => setVideoPitchUrl(e.target.value)}
-                      placeholder="https://www.youtube.com/watch?v=... or Loom URL"
+                      placeholder={t("studentProfile.videoPitchPlaceholder")}
                       className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
 
                   {/* Preferred Tech Stack */}
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Preferred Tech Stack</label>
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.preferredTechStackLabel")}</label>
                     <input
                       type="text"
                       value={preferredTechStack}
                       onChange={(e) => setPreferredTechStack(e.target.value)}
-                      placeholder="React, PyTorch, Node.js"
+                      placeholder={t("studentProfile.techStackPlaceholder")}
                       className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
@@ -467,39 +469,39 @@ export default function StudentProfile() {
                       onChange={(e) => setIsProfilePrivate(e.target.checked)}
                       className="w-4 h-4 accent-indigo-600 cursor-pointer"
                     />
-                    <label htmlFor="isProfilePrivate" className="text-xs font-bold text-slate-700 cursor-pointer">
-                      🔒 Mark Profile Private (Hide from public search pages)
+                    <label htmlFor="isProfilePrivate" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
+                      🔒 {t("studentProfile.markProfilePrivate")}
                     </label>
                   </div>
                 </div>
 
                 {/* Skills input */}
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Skills (Comma-separated)</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.skillsLabel")}</label>
                   <input
                     type="text"
                     value={skillsInput}
                     onChange={(e) => setSkillsInput(e.target.value)}
-                    placeholder="React, Node.js, Python, UI/UX..."
+                    placeholder={t("studentProfile.skillsPlaceholder")}
                     className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
                 </div>
 
                 {/* Extracurricular achievements */}
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Hackathons & Extracurricular Accomplishments (Comma-separated)</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.extracurricularsLabel")}</label>
                   <input
                     type="text"
                     value={extracurriculars}
                     onChange={(e) => setExtracurriculars(e.target.value)}
-                    placeholder="Smart India Hackathon Winner 2025, CSE Coding Club Lead"
+                    placeholder={t("studentProfile.extracurricularsPlaceholder")}
                     className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
                 </div>
 
                 {/* Availability calendar matrices */}
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-2">Internship Weekly Availability Slots</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-2">{t("studentProfile.availabilitySlotsLabel")}</label>
                   <div className="flex gap-2 flex-wrap">
                     {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Weekend"].map((slot) => {
                       const isSelected = availabilitySlots.includes(slot);
@@ -517,7 +519,7 @@ export default function StudentProfile() {
                           className={`px-3.5 py-2 rounded-xl text-xs font-bold transition border ${
                             isSelected 
                               ? "bg-indigo-600 border-indigo-700 text-white" 
-                              : "bg-gray-50 dark:bg-slate-900 hover:bg-gray-100 text-gray-500 border-gray-200 dark:border-slate-800"
+                              : "bg-gray-50 dark:bg-slate-900 hover:bg-gray-100 dark:bg-slate-800 text-gray-500 border-gray-200 dark:border-slate-800"
                           }`}
                         >
                           {slot}
@@ -529,12 +531,12 @@ export default function StudentProfile() {
 
                 {/* Bio text */}
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">Professional Bio</label>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1.5">{t("studentProfile.professionalBio")}</label>
                   <textarea
                     value={bioText}
                     onChange={(e) => setBioText(e.target.value)}
                     rows={4}
-                    placeholder="Describe your goals, experience summary, and why companies should hire you..."
+                    placeholder={t("studentProfile.bioPlaceholder")}
                     className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
                   />
                 </div>
@@ -561,24 +563,24 @@ export default function StudentProfile() {
                 {/* Left Column: Metadata card */}
                 <div className="lg:col-span-1 space-y-6">
                   <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 border border-white/60 dark:border-slate-800/60 space-y-5">
-                    <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider border-b pb-2.5">Student Metadata</h3>
+                    <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider border-b pb-2.5">{t("studentProfile.studentMetadata")}</h3>
                     
                     {/* Email */}
                     <div className="text-xs">
-                      <span className="text-[10px] uppercase font-bold text-gray-400 block mb-0.5">Primary Email</span>
+                      <span className="text-[10px] uppercase font-bold text-gray-400 block mb-0.5">{t("studentProfile.primaryEmail")}</span>
                       <span className="font-bold text-gray-700 dark:text-gray-200">{profileUser.email}</span>
                     </div>
 
                     {/* Mobile */}
                     <div className="text-xs">
-                      <span className="text-[10px] uppercase font-bold text-gray-400 block mb-0.5">Mobile Contact</span>
-                      <span className="font-bold text-gray-700 dark:text-gray-200">{profileUser.mobile || "Not provided"}</span>
+                      <span className="text-[10px] uppercase font-bold text-gray-400 block mb-0.5">{t("studentProfile.mobileContact")}</span>
+                      <span className="font-bold text-gray-700 dark:text-gray-200">{profileUser.mobile || t("studentProfile.notProvided")}</span>
                     </div>
 
                     {/* University */}
                     <div className="text-xs">
-                      <span className="text-[10px] uppercase font-bold text-gray-400 block mb-0.5">GLA University Node</span>
-                      <span className="font-bold text-gray-700 dark:text-gray-200">{profileUser.collegeName || "Not verified"}</span>
+                      <span className="text-[10px] uppercase font-bold text-gray-400 block mb-0.5">{t("studentProfile.universityNode")}</span>
+                      <span className="font-bold text-gray-700 dark:text-gray-200">{profileUser.collegeName || t("studentProfile.notVerified")}</span>
                       {profileUser.enrollmentNumber && (
                         <p className="text-[10px] text-indigo-500 font-semibold mt-0.5">ID: {profileUser.enrollmentNumber}</p>
                       )}
@@ -586,13 +588,13 @@ export default function StudentProfile() {
 
                     {/* Preference */}
                     <div className="text-xs">
-                      <span className="text-[10px] uppercase font-bold text-gray-400 block mb-0.5">Track Preference</span>
-                      <span className="font-bold text-gray-700 dark:text-gray-200">{profileUser.projectType || "Remote Track"}</span>
+                      <span className="text-[10px] uppercase font-bold text-gray-400 block mb-0.5">{t("studentProfile.trackPreference")}</span>
+                      <span className="font-bold text-gray-700 dark:text-gray-200">{profileUser.projectType || t("studentProfile.remoteTrack")}</span>
                     </div>
 
                     {/* Resume */}
                     <div className="text-xs border-t pt-3">
-                      <span className="text-[10px] uppercase font-bold text-gray-400 block mb-1">Resume File</span>
+                      <span className="text-[10px] uppercase font-bold text-gray-400 block mb-1">{t("studentProfile.resumeFile")}</span>
                       {profileUser.resumeUrl ? (
                         <a 
                           href={profileUser.resumeUrl} 
@@ -600,51 +602,51 @@ export default function StudentProfile() {
                           rel="noreferrer" 
                           className="text-blue-600 hover:text-blue-800 font-bold hover:underline flex items-center gap-1"
                         >
-                          📄 Open Resume ↗
+                          📄 {t("studentProfile.openResume")} ↗
                         </a>
                       ) : (
-                        <span className="text-gray-400 italic">No resume file uploaded yet</span>
+                        <span className="text-gray-400 italic">{t("studentProfile.noResumeUploaded")}</span>
                       )}
                     </div>
 
                     {/* Performance Rating */}
                     <div className="text-xs border-t pt-3">
-                      <span className="text-[10px] uppercase font-bold text-gray-400 block mb-0.5">Rating Score</span>
+                      <span className="text-[10px] uppercase font-bold text-gray-400 block mb-0.5">{t("studentProfile.ratingScore")}</span>
                       {avgRating ? (
                         <div className="flex items-center gap-1 mt-0.5">
                           <span className="text-amber-500 text-lg">★</span>
                           <span className="font-bold text-gray-800 dark:text-gray-200 text-sm">{avgRating} / 5</span>
-                          <span className="text-[10px] text-gray-400 font-medium">({ratingsList.length} reviews)</span>
+                          <span className="text-[10px] text-gray-400 font-medium">({t("studentProfile.reviewsCount", { count: ratingsList.length })})</span>
                         </div>
                       ) : (
-                        <span className="text-gray-400 italic">No ratings accumulated yet</span>
+                        <span className="text-gray-400 italic">{t("studentProfile.noRatingsYet")}</span>
                       )}
                     </div>
 
                     {/* Showcase Links */}
                     <div className="text-xs border-t pt-3 space-y-2">
-                      <span className="text-[10px] uppercase font-bold text-gray-400 block mb-1">Professional Channels</span>
+                      <span className="text-[10px] uppercase font-bold text-gray-400 block mb-1">{t("studentProfile.professionalChannels")}</span>
                       <div className="flex flex-col gap-1.5">
                         {profileUser.githubUrl ? (
                           <a href={profileUser.githubUrl} target="_blank" rel="noreferrer" className="text-gray-700 dark:text-gray-200 hover:text-purple-600 font-semibold flex items-center gap-1.5">
-                            <span>💻 GitHub:</span> <span className="hover:underline text-[11px] truncate max-w-[130px]">{profileUser.githubUrl.split("/").pop()}</span>
+                            <span>💻 {t("studentProfile.github")}</span> <span className="hover:underline text-[11px] truncate max-w-[130px]">{profileUser.githubUrl.split("/").pop()}</span>
                           </a>
                         ) : (
-                          <span className="text-gray-400 italic text-[11px]">No GitHub connected</span>
+                          <span className="text-gray-400 italic text-[11px]">{t("studentProfile.noGithubConnected")}</span>
                         )}
                         {profileUser.linkedinUrl ? (
                           <a href={profileUser.linkedinUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-purple-600 font-semibold flex items-center gap-1.5">
-                            <span>👔 LinkedIn:</span> <span className="hover:underline text-[11px] truncate max-w-[130px]">{profileUser.linkedinUrl.split("/").pop()}</span>
+                            <span>👔 {t("studentProfile.linkedin")}</span> <span className="hover:underline text-[11px] truncate max-w-[130px]">{profileUser.linkedinUrl.split("/").pop()}</span>
                           </a>
                         ) : (
-                          <span className="text-gray-400 italic text-[11px]">No LinkedIn connected</span>
+                          <span className="text-gray-400 italic text-[11px]">{t("studentProfile.noLinkedinConnected")}</span>
                         )}
                         {profileUser.portfolioUrl ? (
                           <a href={profileUser.portfolioUrl} target="_blank" rel="noreferrer" className="text-green-600 hover:text-purple-600 font-semibold flex items-center gap-1.5">
-                            <span>🌐 Website:</span> <span className="hover:underline text-[11px] truncate max-w-[130px]">{profileUser.portfolioUrl.replace(/^https?:\/\//, "")}</span>
+                            <span>🌐 {t("studentProfile.website")}</span> <span className="hover:underline text-[11px] truncate max-w-[130px]">{profileUser.portfolioUrl.replace(/^https?:\/\//, "")}</span>
                           </a>
                         ) : (
-                          <span className="text-gray-400 italic text-[11px]">No Website connected</span>
+                          <span className="text-gray-400 italic text-[11px]">{t("studentProfile.noWebsiteConnected")}</span>
                         )}
                       </div>
                     </div>
@@ -652,15 +654,15 @@ export default function StudentProfile() {
                     {/* Academic info */}
                     {(profileUser.major || profileUser.currentSemester) && (
                       <div className="text-xs border-t pt-3">
-                        <span className="text-[10px] uppercase font-bold text-gray-400 block mb-0.5">Academic Track</span>
-                        {profileUser.major && <p className="font-bold text-slate-700">{profileUser.major}</p>}
+                        <span className="text-[10px] uppercase font-bold text-gray-400 block mb-0.5">{t("studentProfile.academicTrack")}</span>
+                        {profileUser.major && <p className="font-bold text-slate-700 dark:text-slate-300">{profileUser.major}</p>}
                         {profileUser.currentSemester && <p className="text-[10px] text-gray-500 font-semibold">{profileUser.currentSemester}</p>}
                       </div>
                     )}
 
                     {/* WorkMitra Readiness Score */}
                     <div className="text-xs border-t pt-3 flex flex-col items-center text-center">
-                      <span className="text-[10px] uppercase font-bold text-slate-400 block mb-2">WorkMitra Readiness Score</span>
+                      <span className="text-[10px] uppercase font-bold text-slate-400 block mb-2">{t("studentProfile.readinessScore")}</span>
                       <div className="relative w-24 h-24 flex items-center justify-center rounded-full border-4 border-indigo-100 bg-indigo-50/20">
                         <div className="text-center">
                           <span className="text-xl font-black text-indigo-700 block">
@@ -681,7 +683,7 @@ export default function StudentProfile() {
                           <span className="text-[8px] font-bold text-indigo-400 uppercase tracking-widest">/ 1000</span>
                         </div>
                       </div>
-                      <p className="text-[9px] text-slate-400 mt-2 font-medium">Algorithmic readiness indicator based on PoW validation.</p>
+                      <p className="text-[9px] text-slate-400 mt-2 font-medium">{t("studentProfile.readinessDescription")}</p>
                     </div>
 
                     {/* Download PDF portfolio */}
@@ -690,7 +692,7 @@ export default function StudentProfile() {
                         onClick={() => window.print()}
                         className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5"
                       >
-                        📄 Download PDF Portfolio
+                        📄 {t("studentProfile.downloadPdf")}
                       </button>
                     </div>
                   </div>
@@ -701,14 +703,14 @@ export default function StudentProfile() {
                   {/* Bio & Skills Panel */}
                   <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 border border-white/60 dark:border-slate-800/60 space-y-6">
                     <div>
-                      <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider border-b pb-2.5 mb-4">Professional Bio</h3>
-                      <p className="text-sm text-gray-600 leading-relaxed">
-                        {profileUser.bio || "No professional bio has been written yet. Edit profile to write a summary."}
+                      <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider border-b pb-2.5 mb-4">{t("studentProfile.professionalBio")}</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                        {profileUser.bio || t("studentProfile.noBioWritten")}
                       </p>
                     </div>
 
                     <div>
-                      <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider border-b pb-2.5 mb-4">Target Skills</h3>
+                      <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider border-b pb-2.5 mb-4">{t("studentProfile.targetSkills")}</h3>
                       <div className="flex flex-wrap gap-1.5">
                         {profileUser.targetSkills ? (
                           profileUser.targetSkills.split(",").map((skill, idx) => (
@@ -717,7 +719,7 @@ export default function StudentProfile() {
                             </span>
                           ))
                         ) : (
-                          <span className="text-xs text-gray-400 italic">No skills listed yet</span>
+                          <span className="text-xs text-gray-400 italic">{t("studentProfile.noSkillsListed")}</span>
                         )}
                       </div>
                     </div>
@@ -725,7 +727,7 @@ export default function StudentProfile() {
                     {/* Preferred Tech Stack */}
                     {profileUser.preferredTechStack && profileUser.preferredTechStack.length > 0 && (
                       <div className="border-t pt-4">
-                        <h4 className="text-[11px] font-black uppercase text-slate-400 tracking-wider mb-2">Preferred Tech Stack</h4>
+                        <h4 className="text-[11px] font-black uppercase text-slate-400 tracking-wider mb-2">{t("studentProfile.preferredTechStackLabel")}</h4>
                         <div className="flex flex-wrap gap-1.5">
                           {profileUser.preferredTechStack.map((tech, idx) => (
                             <span key={idx} className="bg-purple-50 text-purple-700 text-xs font-bold px-3 py-1 rounded-xl border border-purple-100 dark:border-slate-800">
@@ -739,8 +741,8 @@ export default function StudentProfile() {
                     {/* Extracurriculars */}
                     {profileUser.extracurriculars && profileUser.extracurriculars.length > 0 && (
                       <div className="border-t pt-4">
-                        <h4 className="text-[11px] font-black uppercase text-slate-400 tracking-wider mb-2">Hackathons & Extra Activities</h4>
-                        <ul className="list-disc list-inside text-xs text-slate-600 space-y-1">
+                        <h4 className="text-[11px] font-black uppercase text-slate-400 tracking-wider mb-2">{t("studentProfile.hackathonsExtraActivities")}</h4>
+                        <ul className="list-disc list-inside text-xs text-slate-600 dark:text-slate-300 space-y-1">
                           {profileUser.extracurriculars.map((activity, idx) => (
                             <li key={idx} className="font-semibold">{activity}</li>
                           ))}
@@ -751,7 +753,7 @@ export default function StudentProfile() {
                     {/* Availability Timeline matrix */}
                     {profileUser.availabilitySlots && profileUser.availabilitySlots.length > 0 && (
                       <div className="border-t pt-4">
-                        <h4 className="text-[11px] font-black uppercase text-slate-400 tracking-wider mb-2">Weekly Internship Availability</h4>
+                        <h4 className="text-[11px] font-black uppercase text-slate-400 tracking-wider mb-2">{t("studentProfile.weeklyAvailability")}</h4>
                         <div className="flex gap-1.5 flex-wrap">
                           {profileUser.availabilitySlots.map((slot, idx) => (
                             <span key={idx} className="bg-emerald-50 text-emerald-700 text-[10px] font-extrabold px-2.5 py-0.5 rounded-lg border border-emerald-100 uppercase">
@@ -767,7 +769,7 @@ export default function StudentProfile() {
                   {profileUser.videoPitchUrl && (
                     <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 border border-white/60 dark:border-slate-800/60 space-y-4 print:hidden">
                       <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider border-b pb-2.5">
-                        🎥 60-Second Video Elevator Pitch
+                        🎥 {t("studentProfile.elevatorPitchTitle")}
                       </h3>
                       <div className="aspect-video w-full rounded-2xl overflow-hidden bg-slate-900 border">
                         <iframe
@@ -789,24 +791,24 @@ export default function StudentProfile() {
                   {/* 📊 Skill Gap Analyzer */}
                   <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 border border-white/60 dark:border-slate-800/60 space-y-4">
                     <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider border-b pb-2.5">
-                      📊 Tech Stack Skill Gap Analyzer
+                      📊 {t("studentProfile.skillGapAnalyzer")}
                     </h3>
-                    <p className="text-[10px] text-slate-400">Comparing your targeted tags against current market demand analytics.</p>
+                    <p className="text-[10px] text-slate-400">{t("studentProfile.skillGapDescription")}</p>
                     
                     <div className="space-y-3">
                       <div>
-                        <div className="flex justify-between text-xs font-bold text-slate-700 mb-1">
-                          <span>Market Match Score</span>
-                          <span className="text-indigo-600">75% Match</span>
+                        <div className="flex justify-between text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                          <span>{t("studentProfile.marketMatchScore")}</span>
+                          <span className="text-indigo-600">{t("studentProfile.matchPercentage")}</span>
                         </div>
-                        <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
                           <div className="bg-indigo-600 h-2 rounded-full" style={{ width: "75%" }} />
                         </div>
                       </div>
                       
-                      <div className="text-xs space-y-2 pt-2 text-slate-600">
-                        <p className="font-semibold text-emerald-600">✓ In-Demand Skills Met: {profileUser.targetSkills || "None"}</p>
-                        <p className="font-semibold text-amber-600">⚠️ Trending Skills missing: Docker, Next.js, PyTorch</p>
+                      <div className="text-xs space-y-2 pt-2 text-slate-600 dark:text-slate-300">
+                        <p className="font-semibold text-emerald-600">✓ {t("studentProfile.inDemandSkillsMet")} {profileUser.targetSkills || t("studentProfile.none")}</p>
+                        <p className="font-semibold text-amber-600">⚠️ {t("studentProfile.trendingSkillsMissing")}</p>
                       </div>
                     </div>
                   </div>
@@ -815,7 +817,7 @@ export default function StudentProfile() {
                   <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 border border-white/60 dark:border-slate-800/60 space-y-4">
                     <div className="flex justify-between items-center border-b pb-2.5">
                       <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider">
-                        🤝 Peer Soft Skill Endorsements ({profileUser.softSkillsVouches?.length || 0})
+                        🤝 {t("studentProfile.peerEndorsements", { count: profileUser.softSkillsVouches?.length || 0 })}
                       </h3>
                       {!isOwner && currentUser?.userRole === "student" && (
                         <button
@@ -827,19 +829,19 @@ export default function StudentProfile() {
                           }}
                           className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[9px] font-bold transition shadow-sm"
                         >
-                          + Vouch Peer
+                          + {t("studentProfile.vouchPeer")}
                         </button>
                       )}
                     </div>
 
                     {!profileUser.softSkillsVouches || profileUser.softSkillsVouches.length === 0 ? (
-                      <p className="text-xs text-gray-400 italic">No soft skill endorsements vouched by batchmates yet.</p>
+                      <p className="text-xs text-gray-400 italic">{t("studentProfile.noEndorsementsYet")}</p>
                     ) : (
                       <div className="space-y-3.5 max-h-60 overflow-y-auto pr-1">
                         {profileUser.softSkillsVouches.map((vouch, idx) => (
-                          <div key={idx} className="bg-slate-50/50 border p-3 rounded-xl space-y-1.5 text-left">
+                          <div key={idx} className="bg-slate-50 dark:bg-slate-800/50 border p-3 rounded-xl space-y-1.5 text-left">
                             <div className="flex justify-between items-center text-[9px]">
-                              <span className="font-bold text-slate-400">Vouched by batchmate</span>
+                              <span className="font-bold text-slate-400">{t("studentProfile.vouchedByBatchmate")}</span>
                               <span className="text-gray-400 font-semibold">{new Date(vouch.createdAt).toLocaleDateString()}</span>
                             </div>
                             <div className="flex flex-wrap gap-1">
@@ -849,7 +851,7 @@ export default function StudentProfile() {
                                 </span>
                               ))}
                             </div>
-                            <p className="text-xs text-slate-600 leading-relaxed font-semibold italic">
+                            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-semibold italic">
                               "{vouch.comment}"
                             </p>
                           </div>
@@ -863,19 +865,19 @@ export default function StudentProfile() {
                     <div className="flex justify-between items-center border-b border-white/10 dark:border-slate-800/10 pb-4">
                       <div>
                         <h3 className="text-base font-bold text-white flex items-center gap-1.5">
-                          <span>🧠 AI CV critique Report</span>
-                          <span className="bg-indigo-500/20 text-indigo-300 text-[8px] font-extrabold px-1.5 py-0.5 rounded uppercase border border-indigo-400/20">pro</span>
+                          <span>🧠 {t("studentProfile.aiCvCritiqueReport")}</span>
+                          <span className="bg-indigo-500/20 text-indigo-300 text-[8px] font-extrabold px-1.5 py-0.5 rounded uppercase border border-indigo-400/20">{t("studentProfile.pro")}</span>
                         </h3>
-                        <p className="text-[10px] text-indigo-300 font-medium mt-0.5">Verified score from Gemini 2.5 Flash</p>
+                        <p className="text-[10px] text-indigo-300 font-medium mt-0.5">{t("studentProfile.verifiedScore")}</p>
                       </div>
                       
                       {profileUser.cvReviewReport && (
                         <div className="flex items-center space-x-3 text-right">
                           <div>
-                            <p className="text-[9px] uppercase font-bold text-indigo-300">Quality Score</p>
+                            <p className="text-[9px] uppercase font-bold text-indigo-300">{t("studentProfile.qualityScore")}</p>
                             <p className="text-2xl font-black text-indigo-400">{profileUser.cvReviewReport.score}/100</p>
                           </div>
-                          <div className="relative w-12 h-12 flex items-center justify-center rounded-full bg-white/10 dark:bg-slate-900/10 border-2 border-indigo-400">
+                          <div className="relative w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-900/10 dark:bg-slate-900/10 border-2 border-indigo-400">
                             <span className="text-[11px] font-black">{profileUser.cvReviewReport.score}%</span>
                           </div>
                         </div>
@@ -887,7 +889,7 @@ export default function StudentProfile() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
                             <h5 className="text-[11px] font-extrabold uppercase text-green-400 mb-2 flex items-center gap-1.5">
-                              <span>✓ Strengths</span>
+                              <span>✓ {t("studentProfile.strengths")}</span>
                             </h5>
                             <ul className="space-y-1.5 text-xs text-slate-300 list-disc list-inside">
                               {profileUser.cvReviewReport.strengths?.map((str, idx) => (
@@ -897,7 +899,7 @@ export default function StudentProfile() {
                           </div>
                           <div>
                             <h5 className="text-[11px] font-extrabold uppercase text-amber-400 mb-2 flex items-center gap-1.5">
-                              <span>⚠️ Areas of Improvement</span>
+                              <span>⚠️ {t("studentProfile.areasOfImprovement")}</span>
                             </h5>
                             <ul className="space-y-1.5 text-xs text-slate-300 list-disc list-inside">
                               {profileUser.cvReviewReport.improvements?.map((imp, idx) => (
@@ -907,8 +909,8 @@ export default function StudentProfile() {
                           </div>
                         </div>
 
-                        <div className="bg-white/5 dark:bg-slate-900/5 border border-white/10 dark:border-slate-800/10 p-4 rounded-xl">
-                          <h5 className="text-[10px] font-extrabold uppercase text-indigo-300 mb-1">workMitra AI Actionable Recommendations</h5>
+                        <div className="bg-white dark:bg-slate-900/5 dark:bg-slate-900/5 border border-white/10 dark:border-slate-800/10 p-4 rounded-xl">
+                          <h5 className="text-[10px] font-extrabold uppercase text-indigo-300 mb-1">{t("studentProfile.aiRecommendations")}</h5>
                           <p className="text-xs text-slate-200 leading-relaxed italic">
                             "{profileUser.cvReviewReport.recommendations}"
                           </p>
@@ -917,7 +919,7 @@ export default function StudentProfile() {
                     ) : (
                       <div className="text-center py-8 text-indigo-200/50 flex flex-col items-center">
                         <span className="text-3xl mb-2">📄</span>
-                        <h4 className="font-bold text-sm text-indigo-300">No Quality Critique Generated</h4>
+                        <h4 className="font-bold text-sm text-indigo-300">{t("studentProfile.noCritiqueGenerated")}</h4>
                         <p className="text-xs text-indigo-200/60 max-w-xs mt-1 leading-relaxed">
                           {isOwner 
                             ? "Go to your main Dashboard, paste your CV text details, and request an AI CV Review to generate a score!" 
@@ -930,18 +932,18 @@ export default function StudentProfile() {
                   {/* Reviews & Recommendations Panel */}
                   <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 border border-white/60 dark:border-slate-800/60 space-y-4">
                     <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider border-b pb-2.5">
-                      💬 Client Reviews & Feedback ({ratingsList.length})
+                      💬 {t("studentProfile.clientReviews", { count: ratingsList.length })}
                     </h3>
 
                     {ratingsList.length === 0 ? (
-                      <p className="text-xs text-gray-400 italic">No client performance reviews received yet.</p>
+                      <p className="text-xs text-gray-400 italic">{t("studentProfile.noReviewsYet")}</p>
                     ) : (
                       <div className="space-y-4 divide-y divide-gray-100">
                         {ratingsList.map((app) => (
                           <div key={app.applicationId || app._id} className="pt-3 first:pt-0 space-y-1">
                             <div className="flex justify-between items-center text-[10px]">
                               <span className="bg-indigo-50 text-indigo-700 font-extrabold px-2 py-0.5 rounded border border-indigo-100">
-                                📁 {app.projectId?.title || "Completed Gig"}
+                                📁 {app.projectId?.title || t("studentProfile.completedGig")}
                               </span>
                               <div className="flex items-center gap-0.5">
                                 {[1, 2, 3, 4, 5].map((star) => (
@@ -957,7 +959,7 @@ export default function StudentProfile() {
                             )}
                             {app.feedbackText && (
                               <p className="text-[10px] text-gray-400 italic leading-relaxed">
-                                <strong>Feedback:</strong> "{app.feedbackText}"
+                                <strong>{t("studentProfile.feedback")}</strong> "{app.feedbackText}"
                               </p>
                             )}
                           </div>
@@ -976,14 +978,14 @@ export default function StudentProfile() {
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full shadow-2xl p-6 border text-left flex flex-col animate-fade-in select-none">
             <div className="flex justify-between items-center border-b pb-3 mb-4">
-              <h3 className="font-black text-slate-800 text-sm uppercase tracking-wider">Endorse Batchmate Soft Skills</h3>
-              <button onClick={() => setShowVouchModal(false)} className="text-slate-400 hover:text-slate-600 text-lg">×</button>
+              <h3 className="font-black text-slate-800 dark:text-slate-200 text-sm uppercase tracking-wider">{t("studentProfile.endorseBatchmate")}</h3>
+              <button onClick={() => setShowVouchModal(false)} className="text-slate-400 hover:text-slate-600 dark:text-slate-300 text-lg">×</button>
             </div>
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
                 if (!vouchSkills || !vouchComment) {
-                  toast.error("Please fill in vouched skills and feedback notes.");
+                  toast.error(t("studentProfile.fillVouchForm"));
                   return;
                 }
                 setVouching(true);
@@ -1003,14 +1005,14 @@ export default function StudentProfile() {
                   });
                   const data = await res.json();
                   if (res.ok) {
-                    toast.success("Vouch endorsement recorded successfully!");
+                    toast.success(t("studentProfile.vouchRecorded"));
                     setShowVouchModal(false);
                     fetchUserProfile();
                   } else {
-                    toast.error(data.error || "Failed to submit vouch.");
+                    toast.error(data.error || t("studentProfile.failedToSubmitVouch"));
                   }
                 } catch (err) {
-                  toast.error("Connection error during vouch submission.");
+                  toast.error(t("studentProfile.connectionErrorVouch"));
                 } finally {
                   setVouching(false);
                 }
@@ -1018,25 +1020,25 @@ export default function StudentProfile() {
               className="space-y-4"
             >
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Vouched Skills (Comma-separated)</label>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("studentProfile.vouchedSkills")}</label>
                 <input
                   type="text"
-                  placeholder="e.g. Leadership, Teamwork, Git"
+                  placeholder={t("studentProfile.vouchSkillsPlaceholder")}
                   value={vouchSkills}
                   onChange={(e) => setVouchSkills(e.target.value)}
-                  className="w-full bg-slate-50 border text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400"
                   required
                 />
               </div>
               
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Recommendation Statement</label>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("studentProfile.recommendationStatement")}</label>
                 <textarea
-                  placeholder="Explain why you are vouching for this peer's soft skills and work ethic..."
+                  placeholder={t("studentProfile.recommendationPlaceholder")}
                   value={vouchComment}
                   onChange={(e) => setVouchComment(e.target.value)}
                   rows={3}
-                  className="w-full bg-slate-50 border text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
                   required
                 />
               </div>
@@ -1047,14 +1049,14 @@ export default function StudentProfile() {
                   onClick={() => setShowVouchModal(false)}
                   className="px-4 py-2 border rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
                 >
-                  Cancel
+                  {t("studentProfile.cancel")}
                 </button>
                 <button
                   type="submit"
                   disabled={vouching}
                   className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black transition shadow"
                 >
-                  {vouching ? "Submitting..." : "Submit Vouch"}
+                  {vouching ? t("studentProfile.submitting") : t("studentProfile.submitVouch")}
                 </button>
               </div>
             </form>

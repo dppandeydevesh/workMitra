@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../config";
 
 export default function Preferences() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [errorMessage, setErrorMessage] = useState("");
   
   // User preferences state
@@ -60,7 +62,7 @@ export default function Preferences() {
 
     const savedUser = localStorage.getItem("user");
     if (!savedUser) {
-      setErrorMessage("Authentication session context missing.");
+      setErrorMessage(t("preferences.auth_missing_error"));
       return;
     }
 
@@ -94,7 +96,7 @@ export default function Preferences() {
 
       if (!profileResponse.ok) {
         const errData = await profileResponse.json();
-        setErrorMessage(errData.error || "Failed to update profile parameters.");
+        setErrorMessage(errData.error || t("preferences.update_profile_error"));
         return;
       }
 
@@ -125,10 +127,10 @@ export default function Preferences() {
         navigate("/dashboard"); // Sends student to the marketplace grid containing live company tasks
       } else {
         const data = await response.json();
-        setErrorMessage(data.error || "Failed to update profile configurations.");
+        setErrorMessage(data.error || t("preferences.update_config_error"));
       }
     } catch (err) {
-      setErrorMessage("Gateway server communication failure.");
+      setErrorMessage(t("preferences.server_error"));
     }
   };
 
@@ -138,8 +140,8 @@ export default function Preferences() {
         
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200">Tell us about yourself</h1>
-          <p className="text-gray-500 mt-2">Help us recommend the best jobs for you</p>
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200">{t("preferences.title")}</h1>
+          <p className="text-gray-500 mt-2">{t("preferences.subtitle")}</p>
         </div>
 
         {/* Form Card */}
@@ -153,26 +155,26 @@ export default function Preferences() {
 
           {/* Name */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">What should we call you?</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t("preferences.name_label")}</label>
             <input
               type="text"
               value={preferences.name}
               onChange={(e) => setPreferences({...preferences, name: e.target.value})}
-              placeholder="Your name"
+              placeholder={t("preferences.name_placeholder")}
               className="w-full px-4 py-2 border border-gray-300 dark:border-slate-700 bg-transparent dark:bg-slate-900 dark:text-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               required
             />
           </div>
 
           {/* Showcase Portfolio Links */}
-          <div className="mb-6 bg-slate-50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-4">
-            <h3 className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-              <span>🔗</span> Portfolio & Professional Links (Optional)
+          <div className="mb-6 bg-slate-50 dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-4">
+            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+              <span>🔗</span> {t("preferences.portfolio_links_title")}
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">GitHub Profile</label>
+                <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">{t("preferences.github_label")}</label>
                 <input
                   type="url"
                   value={preferences.githubUrl}
@@ -182,7 +184,7 @@ export default function Preferences() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">LinkedIn Profile</label>
+                <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">{t("preferences.linkedin_label")}</label>
                 <input
                   type="url"
                   value={preferences.linkedinUrl}
@@ -192,7 +194,7 @@ export default function Preferences() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">Portfolio or Website</label>
+                <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">{t("preferences.portfolio_label")}</label>
                 <input
                   type="url"
                   value={preferences.portfolioUrl}
@@ -202,7 +204,7 @@ export default function Preferences() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">Avatar Image URL</label>
+                <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">{t("preferences.avatar_label")}</label>
                 <input
                   type="url"
                   value={preferences.avatarUrl}
@@ -216,11 +218,11 @@ export default function Preferences() {
 
           {/* Bio / About */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Tell us a little about yourself</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t("preferences.bio_label")}</label>
             <textarea
               value={preferences.bio}
               onChange={(e) => setPreferences({...preferences, bio: e.target.value})}
-              placeholder="I'm a passionate developer who loves building web applications..."
+              placeholder={t("preferences.bio_placeholder")}
               rows="3"
               className="w-full px-4 py-2 border border-gray-300 dark:border-slate-700 bg-transparent dark:bg-slate-900 dark:text-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
@@ -228,7 +230,7 @@ export default function Preferences() {
 
           {/* Experience Level */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Your experience level</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t("preferences.experience_label")}</label>
             <div className="flex flex-wrap gap-4 sm:gap-6">
               {["beginner", "intermediate", "expert"].map(level => (
                 <label key={level} className="flex items-center gap-2 cursor-pointer">
@@ -239,7 +241,7 @@ export default function Preferences() {
                     onChange={(e) => setPreferences({...preferences, experience: e.target.value})}
                     className="w-4 h-4 text-blue-600"
                   />
-                  <span className="capitalize text-sm text-gray-700 dark:text-gray-200 font-medium">{level}</span>
+                  <span className="capitalize text-sm text-gray-700 dark:text-gray-200 font-medium">{t(`preferences.experience_${level}`)}</span>
                 </label>
               ))}
             </div>
@@ -247,7 +249,7 @@ export default function Preferences() {
 
           {/* Skills */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">What skills do you have? (Select all that apply)</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t("preferences.skills_label")}</label>
             <div className="flex flex-wrap gap-2">
               {skillsList.map(skill => (
                 <button
@@ -257,7 +259,7 @@ export default function Preferences() {
                   className={`px-3 py-1 rounded-full text-sm transition font-medium ${
                     preferences.skills.includes(skill)
                       ? "bg-blue-600 text-white shadow-sm"
-                      : "bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-slate-700"
+                      : "bg-gray-200 text-gray-700 dark:text-gray-300 dark:bg-slate-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-slate-700"
                   }`}
                 >
                   {skill}
@@ -268,7 +270,7 @@ export default function Preferences() {
 
           {/* Interests */}
           <div className="mb-8">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">What are you interested in?</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t("preferences.interests_label")}</label>
             <div className="flex flex-wrap gap-2">
               {interestsList.map(interest => (
                 <button
@@ -278,7 +280,7 @@ export default function Preferences() {
                   className={`px-3 py-1 rounded-full text-sm transition font-medium ${
                     preferences.interests.includes(interest)
                       ? "bg-green-600 text-white shadow-sm"
-                      : "bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-slate-700"
+                      : "bg-gray-200 text-gray-700 dark:text-gray-300 dark:bg-slate-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-slate-700"
                   }`}
                 >
                   {interest}
@@ -294,13 +296,13 @@ export default function Preferences() {
             type="submit"
             className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-medium shadow-md active:scale-[0.99]"
           >
-            Continue to Dashboard →
+            {t("preferences.continue_button")} →
           </button>
         </form>
 
         {/* Quote */}
         <div className="text-center mt-8 text-gray-500 text-sm italic">
-          "The only way to do great work is to love what you do." - Steve Jobs
+          "{t("preferences.quote")}" - {t("preferences.quote_author")}
         </div>
       </div>
     </div>

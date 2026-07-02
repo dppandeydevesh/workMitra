@@ -39,6 +39,9 @@ const UserSchema = new mongoose.Schema({
         offeredAt: { type: Date, default: Date.now }
     }],
 
+    // 💳 Payment / Premium Pass
+    hasPaidPass: { type: Boolean, default: false },
+
     // 🚀 NEW FEATURE: Boolean tracking flag for single-time form onboarding
     hasCompletedProfile: { type: Boolean, default: false },
     isVerified: { type: Boolean, default: false },

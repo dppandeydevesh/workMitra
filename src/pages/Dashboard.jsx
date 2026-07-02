@@ -1461,12 +1461,12 @@ export default function Dashboard() {
           )}
           {/* ========================================================================= */}
 
-          {/* 💳 Razorpay Gateway Simulation Checkout Modal */}
+          {/* 💳 Real Razorpay Gateway Checkout Modal */}
           {showCheckoutModal && (
             <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in select-none">
               <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-gray-100 dark:border-slate-800 flex flex-col text-left">
                 
-                {/* Razorpay branding header bar */}
+                {/* Header bar */}
                 <div className="bg-slate-900 text-white px-6 py-4 flex justify-between items-center">
                   <div className="flex items-center gap-2">
                     <span className="text-blue-500 font-extrabold text-sm tracking-wide">Razorpay</span>
@@ -1480,100 +1480,114 @@ export default function Dashboard() {
                   </button>
                 </div>
 
-                {/* Step 1: Details and plan selection */}
-                {checkoutStep === 1 && (
-                  <div className="p-6 space-y-4">
-                    <div className="text-center">
-                      <span className="text-3xl">🛡️</span>
-                      <h3 className="text-base font-black text-gray-800 dark:text-gray-200 mt-2">{t("dashboard.unlockPremium")}</h3>
-                      <p className="text-xs text-gray-400 mt-1">{t("dashboard.unlockPremiumDesc")}</p>
-                    </div>
-                    
-                    <div className="border border-indigo-100 bg-indigo-50/50 p-4 rounded-2xl flex justify-between items-center">
-                      <div>
-                        <span className="text-[10px] font-black text-indigo-700 uppercase">{t("dashboard.premiumPlan")}</span>
-                        <span className="text-xs font-semibold text-gray-600 dark:text-gray-300 block mt-0.5">{t("dashboard.thirtyDaysAccess")}</span>
-                      </div>
-                      <span className="text-xl font-black text-gray-800 dark:text-gray-200">₹39</span>
-                    </div>
-
-                    <div className="space-y-2.5">
-                      <label className="block text-[9px] font-bold text-gray-400 uppercase">{t("dashboard.enterBillingContact")}</label>
-                      <input
-                        type="text"
-                        placeholder={t("dashboard.mobilePlaceholder")}
-                        defaultValue={currentUser?.mobile || ""}
-                        className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      />
-                    </div>
-
-                    <button
-                      onClick={() => setCheckoutStep(2)}
-                      className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black transition shadow"
-                    >
-                      {t("dashboard.proceedToPayment")}
-                    </button>
+                <div className="p-6 space-y-4">
+                  <div className="text-center">
+                    <span className="text-3xl">🛡️</span>
+                    <h3 className="text-base font-black text-gray-800 dark:text-gray-200 mt-2">{t("dashboard.unlockPremium")}</h3>
+                    <p className="text-xs text-gray-400 mt-1">{t("dashboard.unlockPremiumDesc")}</p>
                   </div>
-                )}
-
-                {/* Step 2: Payment options selector and simulated pin input */}
-                {checkoutStep === 2 && (
-                  <div className="p-6 space-y-4">
+                  
+                  <div className="border border-indigo-100 bg-indigo-50/50 p-4 rounded-2xl flex justify-between items-center">
                     <div>
-                      <h4 className="text-xs font-extrabold text-gray-400 uppercase mb-2">{t("dashboard.simulateUpi")}</h4>
-                      <div className="border border-gray-100 dark:border-slate-800 p-3 rounded-xl flex items-center justify-between text-xs bg-slate-50 dark:bg-slate-800">
-                        <span className="font-bold text-gray-700 dark:text-gray-200">{t("dashboard.upiId")}</span>
-                        <span className="text-gray-500 font-semibold">{currentUser?.email || "student"}@paymitra</span>
-                      </div>
+                      <span className="text-[10px] font-black text-indigo-700 uppercase">{t("dashboard.premiumPlan")}</span>
+                      <span className="text-xs font-semibold text-gray-600 dark:text-gray-300 block mt-0.5">{t("dashboard.thirtyDaysAccess")}</span>
                     </div>
+                    <span className="text-xl font-black text-gray-800 dark:text-gray-200">₹39</span>
+                  </div>
 
-                    <div className="bg-amber-50 border border-amber-200/50 p-3.5 rounded-xl text-[10px] text-amber-800 leading-relaxed font-semibold">
-                      {"⚠️ " + t("dashboard.simulatedWarning")}
-                    </div>
-
-                    <button
-                      onClick={() => {
+                  <button
+                    onClick={async () => {
+                      try {
                         setCheckingOutPass(true);
-                        setTimeout(() => {
-                          setCheckingOutPass(false);
-                          setCheckoutStep(3);
-                          localStorage.setItem("hasPaidPass", "true");
-                        }, 1500);
-                      }}
-                      disabled={checkingOutPass}
-                      className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black transition shadow disabled:opacity-50"
-                    >
-                      {checkingOutPass ? t("dashboard.verifyingTxn") : t("dashboard.simulatePayment")}
-                    </button>
-                  </div>
-                )}
+                        // 1. Create order on backend
+                        const orderRes = await fetch(`${API_BASE_URL}/api/payments/create-order`, {
+                          method: "POST",
+                          credentials: "include",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ planId: "premium" })
+                        });
+                        const order = await orderRes.json();
+                        if (!orderRes.ok) throw new Error(order.error || "Failed to create order");
 
-                {/* Step 3: Transaction Receipt Success Screen */}
-                {checkoutStep === 3 && (
-                  <div className="p-6 text-center space-y-4">
-                    <span className="text-4xl bg-emerald-100 p-3 rounded-full text-emerald-600 inline-block">✓</span>
-                    <div>
-                      <h3 className="text-base font-black text-gray-800 dark:text-gray-200">{t("dashboard.paymentSuccessTitle")}</h3>
-                      <p className="text-xs text-gray-400 mt-1">{t("dashboard.txnRef")} TXN_SIM_{Math.floor(Math.random()*10000000)}</p>
-                    </div>
+                        // 2. Load Razorpay SDK
+                        const loaded = await new Promise((resolve) => {
+                          if (window.Razorpay) return resolve(true);
+                          const script = document.createElement("script");
+                          script.src = "https://checkout.razorpay.com/v1/checkout.js";
+                          script.onload = () => resolve(true);
+                          script.onerror = () => resolve(false);
+                          document.body.appendChild(script);
+                        });
+                        if (!loaded) throw new Error("Razorpay SDK failed to load.");
 
-                    <div className="text-xs text-left bg-slate-50 dark:bg-slate-800 border p-3 rounded-xl space-y-1 text-gray-600 dark:text-gray-300">
-                      <p>• <b>{t("dashboard.merchant")}</b> workMitra Escrow Portal</p>
-                      <p>• <b>{t("dashboard.amountPaid")}</b> ₹39.00</p>
-                      <p>• <b>{t("dashboard.membershipPlanLbl")}</b> {t("dashboard.premiumPassEnabled")}</p>
-                    </div>
+                        // 3. Open Razorpay checkout
+                        const options = {
+                          key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_T8estQxf5h6PD0",
+                          amount: order.amount,
+                          currency: order.currency,
+                          name: "workMitra",
+                          description: "Premium Pass — 30 Days Access",
+                          order_id: order.id,
+                          handler: async function (response) {
+                            // 4. Verify payment on backend
+                            try {
+                              const verifyRes = await fetch(`${API_BASE_URL}/api/payments/verify`, {
+                                method: "POST",
+                                credentials: "include",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                  razorpay_order_id: response.razorpay_order_id,
+                                  razorpay_payment_id: response.razorpay_payment_id,
+                                  razorpay_signature: response.razorpay_signature
+                                })
+                              });
+                              const verifyData = await verifyRes.json();
+                              if (verifyRes.ok) {
+                                // Persist to localStorage from DB response
+                                const updatedUser = { ...currentUser, hasPaidPass: true };
+                                localStorage.setItem("user", JSON.stringify(updatedUser));
+                                localStorage.setItem("hasPaidPass", "true");
+                                setCurrentUser(updatedUser);
+                                setShowCheckoutModal(false);
+                                toast.success("🎉 " + t("dashboard.premiumUnlocked"));
+                              } else {
+                                toast.error(verifyData.error || "Payment verification failed.");
+                              }
+                            } catch (err) {
+                              toast.error("Verification error: " + err.message);
+                            }
+                          },
+                          prefill: {
+                            name: currentUser?.fullName || "Student",
+                            email: currentUser?.email || "",
+                            contact: currentUser?.mobile || ""
+                          },
+                          theme: { color: "#4f46e5" },
+                          modal: {
+                            ondismiss: function () {
+                              setCheckingOutPass(false);
+                            }
+                          }
+                        };
 
-                    <button
-                      onClick={() => {
-                        setShowCheckoutModal(false);
-                        toast.success(t("dashboard.premiumUnlocked"));
-                      }}
-                      className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-black transition"
-                    >
-                      {t("dashboard.completeCheckout")}
-                    </button>
-                  </div>
-                )}
+                        const rzp = new window.Razorpay(options);
+                        rzp.open();
+                      } catch (err) {
+                        toast.error(err.message);
+                      } finally {
+                        setCheckingOutPass(false);
+                      }
+                    }}
+                    disabled={checkingOutPass}
+                    className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black transition shadow disabled:opacity-50"
+                  >
+                    {checkingOutPass ? "Opening Razorpay..." : "Pay ₹39 via Razorpay 🔐"}
+                  </button>
+
+                  <p className="text-[10px] text-center text-gray-400 font-medium">
+                    Secure payment processed by Razorpay. No card details stored on our servers.
+                  </p>
+                </div>
 
               </div>
             </div>

@@ -158,7 +158,7 @@ const register = async (req, res) => {
       return res.status(400).json({ error: "Email, Password, Mobile Number, and User Role are required parameters." });
     }
 
-    if (!["student", "company"].includes(userRole)) {
+    if (!["student", "company", "college", "faculty", "admin"].includes(userRole)) {
       return res.status(400).json({ error: "Invalid user role registration attempt." });
     }
 

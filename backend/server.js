@@ -58,10 +58,12 @@ const applicationRoutes = require('./routes/applicationRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const profileRoutes = require('./routes/profileRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 app.use('/api/applications', applicationRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/payments', paymentRoutes);
 const authenticateToken = require('./middleware/authMiddleware');
 
 app.use('/api/auth', authRoutes);

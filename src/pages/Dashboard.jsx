@@ -723,7 +723,7 @@ export default function Dashboard() {
                                   onClick={(e) => { e.stopPropagation(); setActiveAppToExtend(app); setShowExtensionModal(true); }}
                                   className="text-[10px] text-indigo-600 font-extrabold hover:underline"
                                 >
-                                  {{t("dashboard.requestExtension")}} 🕒
+                                  {t("dashboard.requestExtension")} 🕒
                                 </button>
                               )}
                             </div>
@@ -1110,17 +1110,17 @@ export default function Dashboard() {
 
             {errorMessage && (
               <div className="p-4 mb-6 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-xl">
-                {{"⚠️ " + errorMessage}}
+                {"⚠️ " + errorMessage}
               </div>
             )}
 
             {loading ? (
               <div className="text-center py-8 text-gray-500 font-medium animate-pulse">
-                {{"🔄 " + t("dashboard.fetchingProjects")}}
+                {"🔄 " + t("dashboard.fetchingProjects")}
               </div>
             ) : filteredProjects.length === 0 ? (
               <div className="text-center py-12 border-2 border-dashed border-gray-200 dark:border-slate-800 rounded-xl text-gray-400 font-medium bg-gray-50 dark:bg-slate-800/50 dark:bg-slate-900/50">
-                {{"📭 " + t("dashboard.noProjectsMatch")}}
+                {"📭 " + t("dashboard.noProjectsMatch")}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

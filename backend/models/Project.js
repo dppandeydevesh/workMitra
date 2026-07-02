@@ -29,4 +29,7 @@ const projectSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+projectSchema.index({ companyEmail: 1 });
+projectSchema.index({ status: 1 });
+projectSchema.index({ skillsRequired: 1 });
 module.exports = mongoose.model("Project", projectSchema);

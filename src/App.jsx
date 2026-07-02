@@ -1,3 +1,4 @@
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./components/LoginPage"; // 👈 सीधे हमारा मुख्य पेज लोड होगा
 import Preferences from "./pages/Preferences";
@@ -31,7 +32,7 @@ import AIAssistant from "./components/AIAssistant";
 const PublicRoute = ({ children }) => {
   const savedUser = localStorage.getItem("user");
   
-  if (savedUser && token) {
+  if (savedUser) {
     const user = JSON.parse(savedUser);
     if (user.userRole === "company") {
       return <Navigate to="/company-dashboard" replace />;
@@ -63,6 +64,7 @@ function App() {
         <ToastProvider>
           <WebSocketProvider>
             <BrowserRouter>
+              <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>}>
               <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
@@ -101,6 +103,7 @@ function App() {
                 {/* 404 Wildcard Catch-All */}
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
+              </Suspense>
             </BrowserRouter>
           </WebSocketProvider>
         </ToastProvider>

@@ -788,7 +788,7 @@ export default function ApplicantsHub() {
                     }`}>
                       <p>
                         ⚠️ {t("applicantsHub.codeSimilarityAudit", { score: activeAppToReview.plagiarismScore })}
-                        {activeAppToReview.plagiarismScore > 70 && "{t("applicantsHub.highMatchWarning")}"}
+                        {activeAppToReview.plagiarismScore > 70 && t("applicantsHub.highMatchWarning")}
                       </p>
                     </div>
                   )}
@@ -978,7 +978,7 @@ export default function ApplicantsHub() {
                 {/* Raw Code output area */}
                 <pre className="flex-1 p-6 overflow-y-auto leading-relaxed text-slate-300 bg-slate-950/50 whitespace-pre-wrap">
                   <code>
-                    {getMockCodeFiles(activeAppToReview.projectTitle)[activeFile] || "// {t("applicantsHub.fileNotFound")}"}
+                    {getMockCodeFiles(activeAppToReview.projectTitle)[activeFile] || `// ${t("applicantsHub.fileNotFound")}`}
                   </code>
                 </pre>
               </div>

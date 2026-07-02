@@ -175,6 +175,17 @@ const register = async (req, res) => {
       if (!fullName || !collegeName || !enrollmentNumber) {
         return res.status(400).json({ error: "Full Name, College, and Enrollment Number are required for students." });
       }
+
+      // 🔒 ENFORCE ROLL NO UNIQUENESS PER COLLEGE
+      const existingStudent = await User.findOne({ 
+        collegeName, 
+        enrollmentNumber, 
+        userRole: "student" 
+      });
+      if (existingStudent) {
+        return res.status(400).json({ error: `Enrollment number ${enrollmentNumber} is already registered at ${collegeName}.` });
+      }
+
       const isAcademic = await swot.isAcademic(email);
       if (!isAcademic) {
         const academicTLDFallback = [".edu", ".edu.in", ".ac.in", ".ac.uk", ".ac.jp", ".ac.kr", ".ac.nz", ".ac.za", ".ac.id", ".ac.th", ".ac.il", ".ac.ke", ".ac.be", ".org.in", ".res.in", ".ernet.in"];

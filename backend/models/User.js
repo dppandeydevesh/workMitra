@@ -95,4 +95,17 @@ UserSchema.methods.comparePassword = async function(candidatePassword) {
     return bcrypt.compare(candidatePassword, this.password);
 };
 
+// 🔒 Enforce uniqueness of enrollment numbers per college
+UserSchema.index(
+    { collegeName: 1, enrollmentNumber: 1 }, 
+    { 
+        unique: true, 
+        partialFilterExpression: { 
+            userRole: "student", 
+            enrollmentNumber: { $type: "string" },
+            collegeName: { $type: "string" }
+        } 
+    }
+);
+
 module.exports = mongoose.model('User', UserSchema);

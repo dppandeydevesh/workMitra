@@ -15,10 +15,22 @@ const loginLimiter = rateLimit({
   message: { error: "Too many login attempts. Please try again after 15 minutes." }
 });
 
+const otpVerifyLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Strict 5 attempt limit for brute-force protection
+  message: { error: "Too many failed verification attempts. Please request a new OTP." }
+});
+
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3, // Prevent email spam bombing
+  message: { error: "Too many password reset requests. Please wait an hour before requesting another." }
+});
+
 router.post('/register', registerLimiter, authController.register);
-router.post('/register-verify', authController.verifyOtp);
+router.post('/register-verify', otpVerifyLimiter, authController.verifyOtp);
 router.post('/login', loginLimiter, authController.login);
-router.post('/forgot-password', authController.forgotPassword);
+router.post('/forgot-password', forgotPasswordLimiter, authController.forgotPassword);
 router.post('/reset-password/:token', authController.resetPassword);
 
 module.exports = router;

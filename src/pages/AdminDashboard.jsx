@@ -169,7 +169,7 @@ export default function AdminDashboard() {
         <div className="glass-panel p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
           <div className="relative z-10">
-            <h1 className="text-3xl sm:text-4xl font-black text-slate-800 dark:text-white uppercase tracking-tight flex items-center gap-3">
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-800 dark:text-white uppercase tracking-tight flex items-center gap-3">
               <span className="text-4xl drop-shadow-md">👑</span> {t("admin.title")}
             </h1>
             <p className="text-sm font-medium text-slate-500 dark:text-slate-300 mt-2">{t("admin.description")}</p>

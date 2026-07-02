@@ -16,4 +16,9 @@ router.post('/:applicationId/revision', authenticateToken, applicationController
 router.put('/withdraw/:id', authenticateToken, applicationController.withdrawApplication);
 router.post('/:applicationId/dispute', authenticateToken, applicationController.fileDispute);
 
+
+router.post('/:applicationId/offer-placement', authenticateToken, applicationController.offerPlacement);
+router.post('/:applicationId/resolve-offer', authenticateToken, applicationController.resolvePlacementOffer);
+router.post('/:applicationId/update-pipeline', authenticateToken, applicationController.updatePipelineStatus);
+
 module.exports = router;

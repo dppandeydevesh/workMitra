@@ -746,3 +746,155 @@ exports.fileDispute = async (req, res) => {
 
 
 
+
+
+// =========================================================================
+// 🏛️ ROUTE: Get College Students Roster & Calculate Scores (Phase 11)
+// =========================================================================
+exports.offerPlacement = async (req, res) => {
+  try {
+    const { offerText } = req.body;
+    const recruiterUser = await User.findOne({ email: req.user.email });
+    if (!recruiterUser || recruiterUser.userRole !== "company") {
+      return res.status(403).json({ error: "Corporate recruiter session context required." });
+    }
+
+    const application = await Application.findById(req.params.applicationId);
+    if (!application) {
+      return res.status(404).json({ error: "Application record not found." });
+    }
+
+    const studentUser = await User.findOne({ email: application.studentEmail });
+    if (!studentUser) {
+      return res.status(404).json({ error: "Target student account not found." });
+    }
+
+    // Append to student's offers
+    studentUser.companyOffers.push({
+      companyEmail: recruiterUser.email,
+      companyName: recruiterUser.companyName || recruiterUser.fullName,
+      offerText: offerText || "We would love to extend a placement offer to join our corporate tech team!",
+      status: "Pending",
+      offeredAt: new Date()
+    });
+
+    studentUser.placementStatus = "Offered";
+    await studentUser.save();
+
+    // Trigger real-time alert via WebSocket
+    const studentSocket = global.wsClients.get(studentUser.email);
+    if (studentSocket && studentSocket.readyState === ws.OPEN) {
+      studentSocket.send(
+        JSON.stringify({
+          type: "notification",
+          statusUpdate: true,
+          message: {
+            title: "💼 Career Offer Extended!",
+            message: `Congratulations! ${recruiterUser.companyName || "A company recruiter"} has extended a job placement offer.`
+          }
+        })
+      );
+    }
+
+    const sanitizedStudent = studentUser.toObject();
+    delete sanitizedStudent.password;
+    delete sanitizedStudent.resetPasswordToken;
+    delete sanitizedStudent.resetPasswordExpires;
+
+    res.status(200).json({ message: "Placement offer extended successfully.", studentUser: sanitizedStudent });
+  } catch (err) {
+    console.error("Offer extension error:", err.message);
+    res.status(500).json({ error: "Failed to extend placement job offer." });
+  }
+};
+
+// =========================================================================
+// 💼 ROUTE: Student Resolve Placement Offer (Phase 13)
+// =========================================================================
+exports.resolvePlacementOffer = async (req, res) => {
+  try {
+    const { offerId, status } = req.body; // status: 'Accepted' | 'Rejected'
+    if (!offerId || !status) {
+      return res.status(400).json({ error: "Offer ID and resolution status are required." });
+    }
+
+    const studentUser = await User.findOne({ email: req.user.email });
+    if (!studentUser || studentUser.userRole !== "student") {
+      return res.status(403).json({ error: "Student authorization context required." });
+    }
+
+    const offerIndex = studentUser.companyOffers.findIndex(o => o._id.toString() === offerId);
+    if (offerIndex === -1) {
+      return res.status(404).json({ error: "Placement offer not found." });
+    }
+
+    studentUser.companyOffers[offerIndex].status = status;
+
+    if (status === "Accepted") {
+      studentUser.placementStatus = "Placed";
+      // Auto reject all other pending offers
+      studentUser.companyOffers.forEach((o, i) => {
+        if (i !== offerIndex && o.status === "Pending") {
+          o.status = "Rejected";
+        }
+      });
+    } else {
+      // If student rejects, and has no other pending/accepted offers, revert to Not Placed
+      const hasPending = studentUser.companyOffers.some(o => o.status === "Pending");
+      const hasAccepted = studentUser.companyOffers.some(o => o.status === "Accepted");
+      if (hasAccepted) {
+        studentUser.placementStatus = "Placed";
+      } else if (hasPending) {
+        studentUser.placementStatus = "Offered";
+      } else {
+        studentUser.placementStatus = "Not Placed";
+      }
+    }
+
+    await studentUser.save();
+    const sanitizedStudent = studentUser.toObject();
+    delete sanitizedStudent.password;
+    delete sanitizedStudent.resetPasswordToken;
+    delete sanitizedStudent.resetPasswordExpires;
+
+    res.status(200).json({ message: `Offer has been ${status.toLowerCase()}.`, studentUser: sanitizedStudent });
+  } catch (err) {
+    console.error("Resolve offer error:", err.message);
+    res.status(500).json({ error: "Failed to resolve placement offer." });
+  }
+};
+
+exports.updatePipelineStatus = async (req, res) => {
+  try {
+    const { status } = req.body; // Applied, Shortlisted, Interviewing, Offered, Placed
+    if (!status) {
+      return res.status(400).json({ error: "Target pipeline status required." });
+    }
+
+    const application = await Application.findById(req.params.applicationId).populate("projectId");
+    if (!application) {
+      return res.status(404).json({ error: "Application not found." });
+    }
+
+    if (!application.projectId) {
+      return res.status(400).json({ error: "Underlying project details missing." });
+    }
+
+    // Verify company owner status
+    if (req.user.email !== application.projectId.companyId && req.user.userRole !== "admin") {
+      return res.status(403).json({ error: "Unauthorized: Only the project owner can update candidate pipelines." });
+    }
+
+    // Set matching application status
+    if (status === "Offered") {
+      application.status = "Approved"; // Keep consistent with application states
+    }
+    
+    application.pipelineStage = status; // new field for visual Kanban tracking
+    await application.save();
+
+    res.status(200).json({ message: "Placement pipeline stage updated.", application });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update pipeline stage." });
+  }
+};

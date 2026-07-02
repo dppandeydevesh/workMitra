@@ -126,6 +126,7 @@ export default function Navbar() {
       activeLinks.push({ path: "/faculty-dashboard", label: "Faculty Portal", icon: "🎓" });
     } else if (user.userRole === "admin") {
     activeLinks = adminLinks;
+    activeLinks.push({ path: "/faculty-dashboard", label: "Faculty Portal", icon: "🎓" });
   } else if (user.userRole === "college") {
     activeLinks = collegeLinks;
   }

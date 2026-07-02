@@ -1,6 +1,4 @@
 export const fetchWithAuth = async (endpoint, options = {}) => {
-  const token = localStorage.getItem("token");
-  
   const headers = {
     ...options.headers,
   };
@@ -9,8 +7,9 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const response = await fetch(endpoint, {
+  const response = await fetch(endpoint, { credentials: "include",
     ...options,
+    credentials: "include",
     headers,
   });
 

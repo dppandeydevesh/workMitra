@@ -30,7 +30,7 @@ import AIAssistant from "./components/AIAssistant";
 
 const PublicRoute = ({ children }) => {
   const savedUser = localStorage.getItem("user");
-  const token = localStorage.getItem("token");
+  
   if (savedUser && token) {
     const user = JSON.parse(savedUser);
     if (user.userRole === "company") {

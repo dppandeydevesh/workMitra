@@ -39,12 +39,11 @@ export default function CollegeDashboard() {
   const fetchDashboardData = async (collegeName) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const [studentsRes, companiesRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/college/students/${encodeURIComponent(collegeName)}`, {
+            const [studentsRes, companiesRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/api/college/students/${encodeURIComponent(collegeName)}`, { credentials: "include",
           headers: { "Authorization": `Bearer ${token}` }
         }),
-        fetch(`${API_BASE_URL}/api/college/companies`, {
+        fetch(`${API_BASE_URL}/api/college/companies`, { credentials: "include",
           headers: { "Authorization": `Bearer ${token}` }
         })
       ]);
@@ -67,8 +66,7 @@ export default function CollegeDashboard() {
 
   const handleEndorseToggle = async (studentEmail, currentStatus) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/college/endorse`, {
+            const res = await fetch(`${API_BASE_URL}/api/college/endorse`, { credentials: "include",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -90,8 +88,7 @@ export default function CollegeDashboard() {
 
   const handleCompanyToggle = async (companyEmail, status) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/college/toggle-company`, {
+            const res = await fetch(`${API_BASE_URL}/api/college/toggle-company`, { credentials: "include",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -141,8 +138,7 @@ export default function CollegeDashboard() {
         return;
       }
 
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/college/bulk-import`, {
+            const res = await fetch(`${API_BASE_URL}/api/college/bulk-import`, { credentials: "include",
         method: "POST",
         headers: {
           "Content-Type": "application/json",

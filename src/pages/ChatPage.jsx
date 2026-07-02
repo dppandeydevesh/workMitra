@@ -42,8 +42,7 @@ export default function ChatPage() {
   const fetchPartners = async () => {
     if (!loggedInUser) return;
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/chat/partners/${loggedInUser.email}`, {
+            const res = await fetch(`${API_BASE_URL}/api/chat/partners/${loggedInUser.email}`, { credentials: "include",
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (res.ok) {
@@ -55,7 +54,7 @@ export default function ChatPage() {
         if (recipientEmail && recipientEmail !== loggedInUser.email) {
           const partnerExists = data.some(p => p.email === recipientEmail);
           if (!partnerExists) {
-            const userRes = await fetch(`${API_BASE_URL}/api/auth/user/${recipientEmail}`, {
+            const userRes = await fetch(`${API_BASE_URL}/api/auth/user/${recipientEmail}`, { credentials: "include",
               headers: { "Authorization": `Bearer ${token}` }
             });
             if (userRes.ok) {
@@ -90,10 +89,9 @@ export default function ChatPage() {
       if (!loggedInUser || !activePartner) return;
       setLoadingHistory(true);
       try {
-        const token = localStorage.getItem("token");
-        
+                
         // 1. Mark existing partner messages as read
-        await fetch(`${API_BASE_URL}/api/chat/read`, {
+        await fetch(`${API_BASE_URL}/api/chat/read`, { credentials: "include",
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -103,7 +101,7 @@ export default function ChatPage() {
         });
         
         // 2. Refresh partners list to clear local unread counts immediately
-        const partnerRes = await fetch(`${API_BASE_URL}/api/chat/partners/${loggedInUser.email}`, {
+        const partnerRes = await fetch(`${API_BASE_URL}/api/chat/partners/${loggedInUser.email}`, { credentials: "include",
           headers: { "Authorization": `Bearer ${token}` }
         });
         if (partnerRes.ok) {
@@ -113,7 +111,7 @@ export default function ChatPage() {
 
         // 3. Fetch conversation logs
         const res = await fetch(
-          `${API_BASE_URL}/api/chat/history/${loggedInUser.email}/${activePartner.email}`, {
+          `${API_BASE_URL}/api/chat/history/${loggedInUser.email}/${activePartner.email}`, { credentials: "include",
             headers: { "Authorization": `Bearer ${token}` }
           }
         );
@@ -156,7 +154,7 @@ export default function ChatPage() {
           
           // Mark incoming active partner messages as read immediately
           if (data.sender === currentActivePartner?.email) {
-            fetch(`${API_BASE_URL}/api/chat/read`, {
+            fetch(`${API_BASE_URL}/api/chat/read`, { credentials: "include",
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

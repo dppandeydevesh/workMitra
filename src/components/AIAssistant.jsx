@@ -36,8 +36,7 @@ const AIAssistant = () => {
     setIsTyping(true);
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/api/ai/chat`, {
+            const response = await fetch(`${API_BASE_URL}/api/ai/chat`, { credentials: "include",
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

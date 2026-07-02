@@ -37,8 +37,7 @@ export default function CalendarView() {
   const fetchProjects = async (email) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/projects/company/${email}`, {
+            const res = await fetch(`${API_BASE_URL}/api/projects/company/${email}`, { credentials: "include",
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (res.ok) {

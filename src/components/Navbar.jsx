@@ -46,8 +46,7 @@ export default function Navbar() {
       // Fetch student applications to extract status updates as notifications
       const fetchStudentNotifications = async () => {
         try {
-          const token = localStorage.getItem("token");
-          const res = await fetch(`${API_BASE_URL}/api/applications/student-details/${savedUser.email}`, {
+                    const res = await fetch(`${API_BASE_URL}/api/applications/student-details/${savedUser.email}`, { credentials: "include",
             headers: { "Authorization": `Bearer ${token}` }
           });
           if (res.ok) {
@@ -85,9 +84,13 @@ export default function Navbar() {
 
   if (!user) return null;
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+      await fetch(`${API_BASE_URL}/api/auth/logout`, { method: 'POST', credentials: 'include' });
+    } catch (e) { console.error(e); }
     localStorage.clear();
-    window.location.href = "/login";
+    window.location.href = '/login';
   };
 
   const companyLinks = [

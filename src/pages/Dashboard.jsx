@@ -178,8 +178,7 @@ export default function Dashboard() {
       setLoading(true);
       try {
         if (userObj) {
-          const token = localStorage.getItem("token");
-          const userRes = await fetchWithAuth(`${API_BASE_URL}/api/auth/user/${userObj.email}`);
+                    const userRes = await fetchWithAuth(`${API_BASE_URL}/api/auth/user/${userObj.email}`);
           if (userRes.ok) {
             const latestUser = await userRes.json();
             setCurrentUser(latestUser);
@@ -188,8 +187,7 @@ export default function Dashboard() {
         }
 
         // 🚀 UPDATED: Fetching from our fresh global project collection route
-        const token = localStorage.getItem("token");
-        const isStudent = userObj && userObj.userRole === "student";
+                const isStudent = userObj && userObj.userRole === "student";
         const projectsUrl = isStudent 
           ? `${API_BASE_URL}/api/projects/recommended?page=${page}&limit=${limit}` 
           : `${API_BASE_URL}/api/projects/all?page=${page}&limit=${limit}`;
@@ -261,8 +259,7 @@ export default function Dashboard() {
     formData.append("email", currentUser.email);
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/profile/upload-cv`, {
+            const response = await fetch(`${API_BASE_URL}/api/profile/upload-cv`, { credentials: "include",
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`
@@ -298,8 +295,7 @@ export default function Dashboard() {
     setUpdatingResume(true);
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/profile/resume`, {
+            const response = await fetch(`${API_BASE_URL}/api/profile/resume`, { credentials: "include",
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -341,8 +337,7 @@ export default function Dashboard() {
     setLoadingReview(true);
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/ai/review-cv`, {
+            const response = await fetch(`${API_BASE_URL}/api/ai/review-cv`, { credentials: "include",
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -376,8 +371,7 @@ export default function Dashboard() {
 
   const fetchApplications = async (userEmail) => {
     try {
-      const token = localStorage.getItem("token");
-      const detailsRes = await fetch(`${API_BASE_URL}/api/applications/student-details/${userEmail}`, {
+            const detailsRes = await fetch(`${API_BASE_URL}/api/applications/student-details/${userEmail}`, { credentials: "include",
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (detailsRes.ok) {
@@ -394,8 +388,7 @@ export default function Dashboard() {
     if (!activeAppToSubmit) return;
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/applications/${activeAppToSubmit._id}/submit`, {
+            const response = await fetch(`${API_BASE_URL}/api/applications/${activeAppToSubmit._id}/submit`, { credentials: "include",
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -451,8 +444,7 @@ export default function Dashboard() {
 
     setRequestingExtension(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/applications/${activeAppToExtend._id}/request-extension`, {
+            const res = await fetch(`${API_BASE_URL}/api/applications/${activeAppToExtend._id}/request-extension`, { credentials: "include",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -489,8 +481,7 @@ export default function Dashboard() {
     }
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/applications/apply`, {
+            const response = await fetch(`${API_BASE_URL}/api/applications/apply`, { credentials: "include",
         method: "POST",
         headers: { 
           "Content-Type": "application/json",

@@ -34,8 +34,7 @@ export function WebSocketProvider({ children }) {
   }, []);
 
   const connectWebSocket = () => {
-    const token = localStorage.getItem("token");
-    if (!token || !user) {
+        if (!token || !user) {
       if (socketRef.current) {
         socketRef.current.close();
         socketRef.current = null;

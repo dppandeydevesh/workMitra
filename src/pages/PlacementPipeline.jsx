@@ -34,13 +34,12 @@ export default function PlacementPipeline() {
   const fetchApplications = async (user) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      let url = `${API_BASE_URL}/api/applications`;
+            let url = `${API_BASE_URL}/api/applications`;
       if (user.userRole === "company") {
         url = `${API_BASE_URL}/api/applications/company/${user.email}`;
       }
       
-      const res = await fetch(url, {
+      const res = await fetch(url, { credentials: "include",
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -63,8 +62,7 @@ export default function PlacementPipeline() {
 
   const handleUpdateStage = async (appId, newStage) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/applications/${appId}/update-pipeline`, {
+            const res = await fetch(`${API_BASE_URL}/api/applications/${appId}/update-pipeline`, { credentials: "include",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -91,8 +89,7 @@ export default function PlacementPipeline() {
 
     setSubmittingOffer(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/applications/${selectedApp._id}/offer-placement`, {
+            const res = await fetch(`${API_BASE_URL}/api/applications/${selectedApp._id}/offer-placement`, { credentials: "include",
         method: "POST",
         headers: {
           "Content-Type": "application/json",

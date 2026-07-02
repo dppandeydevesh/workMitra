@@ -69,10 +69,9 @@ export default function Preferences() {
     const parsedUser = JSON.parse(savedUser);
 
     try {
-      const token = localStorage.getItem("token");
-      
+            
       // Save profile preferences using student update API
-      const profileResponse = await fetch(`${API_BASE_URL}/api/profile/student/${parsedUser.email}`, {
+      const profileResponse = await fetch(`${API_BASE_URL}/api/profile/student/${parsedUser.email}`, { credentials: "include",
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",
@@ -101,7 +100,7 @@ export default function Preferences() {
       }
 
       // 🚀 🆕 LOCK ONBOARDING FLAG MATRIX: Flip hasCompletedProfile to true in MongoDB
-      const response = await fetch(`${API_BASE_URL}/api/auth/complete-profile`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/complete-profile`, { credentials: "include",
         method: "POST",
         headers: { 
           "Content-Type": "application/json",

@@ -112,8 +112,7 @@ export default function AddProject() {
     };
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/projects`, {
+            const response = await fetch(`${API_BASE_URL}/api/projects`, { credentials: "include",
         method: "POST",
         headers: { 
           "Content-Type": "application/json",

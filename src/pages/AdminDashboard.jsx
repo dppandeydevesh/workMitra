@@ -69,19 +69,18 @@ export default function AdminDashboard() {
   const fetchAdminData = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const headers = { "Authorization": `Bearer ${token}` };
+            const headers = { "Authorization": `Bearer ${token}` };
 
       // 1. Fetch KPI metrics
-      const metricsRes = await fetch(`${API_BASE_URL}/api/admin/metrics`, { headers });
+      const metricsRes = await fetch(`${API_BASE_URL}/api/admin/metrics`, { credentials: "include", headers });
       const metricsData = await metricsRes.json();
       
       // 2. Fetch disputes
-      const disputesRes = await fetch(`${API_BASE_URL}/api/admin/disputes`, { headers });
+      const disputesRes = await fetch(`${API_BASE_URL}/api/admin/disputes`, { credentials: "include", headers });
       const disputesData = await disputesRes.json();
 
       // 3. Fetch company accounts
-      const companiesRes = await fetch(`${API_BASE_URL}/api/admin/companies`, { headers });
+      const companiesRes = await fetch(`${API_BASE_URL}/api/admin/companies`, { credentials: "include", headers });
       const companiesData = await companiesRes.json();
 
       if (metricsRes.ok && disputesRes.ok && companiesRes.ok) {
@@ -104,8 +103,7 @@ export default function AdminDashboard() {
     
     setResolvingId(applicationId);
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/admin/disputes/${applicationId}/resolve`, {
+            const res = await fetch(`${API_BASE_URL}/api/admin/disputes/${applicationId}/resolve`, { credentials: "include",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -133,8 +131,7 @@ export default function AdminDashboard() {
     
     setVerifyingEmail(companyEmail);
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/admin/companies/${companyEmail}/verify`, {
+            const res = await fetch(`${API_BASE_URL}/api/admin/companies/${companyEmail}/verify`, { credentials: "include",
         method: "POST",
         headers: { "Authorization": `Bearer ${token}` }
       });

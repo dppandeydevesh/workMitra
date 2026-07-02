@@ -1,0 +1,213 @@
+const fsSync = require('fs');
+const pdfParse = require('pdf-parse');
+const CompanyProfile = require('../models/CompanyProfile');
+const User = require('../models/User');
+const Application = require('../models/Application');
+const Project = require('../models/Project');
+
+exports.routeHandler0 = async (req, res) => {
+  try {
+    // Validate request ownership
+    if (req.user.userRole !== "company") {
+      return res.status(403).json({ error: "Access denied. Only recruiters can update company profiles." });
+    }
+    const profileData = { ...req.body, companyEmail: req.user.email };
+    const profile = await CompanyProfile.findOneAndUpdate(
+      { companyEmail: req.user.email },
+      profileData,
+      { new: true, upsert: true, runValidators: true }
+    );
+    res.status(201).json({ message: "Company profile saved successfully!", profile });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to save company profile." });
+  }
+};
+
+exports.routeHandler1 = async (req, res) => {
+  try {
+    const profile = await CompanyProfile.findOne({ companyEmail: req.user.email });
+    if (!profile) {
+      return res.status(404).json({ error: "Company profile not found." });
+    }
+    res.status(200).json(profile);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to retrieve company profile." });
+  }
+};
+
+exports.routeHandler2 = async (req, res) => {
+  try {
+    const { email, resumeUrl, resumeText } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "Email is required." });
+    }
+    if (req.user.email !== email) {
+      return res.status(403).json({ error: "Unauthorized profile update context." });
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      { email },
+      { resumeUrl, resumeText },
+      { new: true }
+    );
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    res.status(200).json({
+      message: "Resume details updated successfully.",
+      user: {
+        fullName: updatedUser.fullName,
+        email: updatedUser.email,
+        userRole: updatedUser.userRole,
+        hasCompletedProfile: updatedUser.hasCompletedProfile,
+        collegeName: updatedUser.collegeName,
+        enrollmentNumber: updatedUser.enrollmentNumber,
+        resumeUrl: updatedUser.resumeUrl,
+        resumeText: updatedUser.resumeText,
+        cvReviewReport: updatedUser.cvReviewReport
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update candidate resume details." });
+  }
+};
+
+exports.routeHandler3 = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No CV file was uploaded." });
+    }
+
+    if (req.file.mimetype !== "application/pdf") {
+      return res.status(400).json({ error: "Only PDF CV formats are supported." });
+    }
+
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "Email is required." });
+    }
+    if (req.user.email !== email) {
+      return res.status(403).json({ error: "Unauthorized profile context." });
+    }
+
+    // Read the PDF from disk for parsing
+    const fileBuffer = fsSync.readFileSync(req.file.path);
+    const pdfData = await pdfParse(fileBuffer);
+    const extractedText = pdfData.text;
+
+    if (!extractedText || extractedText.trim().length === 0) {
+      // Clean up file if unreadable
+      fsSync.unlinkSync(req.file.path);
+      return res.status(400).json({ error: "Could not extract text from the uploaded PDF. Please make sure the PDF has selectable text." });
+    }
+
+    const fileUrl = `/uploads/${req.file.filename}`;
+
+    // Save extracted text and local file URL to user document
+    const updatedUser = await User.findOneAndUpdate(
+      { email },
+      { resumeText: extractedText, resumeUrl: fileUrl },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    res.status(200).json({
+      message: "CV PDF uploaded and text parsed successfully.",
+      resumeText: extractedText
+    });
+  } catch (err) {
+    console.error("PDF upload/parse error:", err);
+    res.status(500).json({ error: `Failed to upload and parse CV PDF: ${err.message}` });
+  }
+};
+
+exports.routeHandler4 = async (req, res) => {
+  try {
+    const { studentEmail, skills, comment } = req.body;
+    if (!studentEmail || !skills || !comment) {
+      return res.status(400).json({ error: "Required vouch payload parameters missing." });
+    }
+    const student = await User.findOne({ email: studentEmail });
+    if (!student) {
+      return res.status(404).json({ error: "Recipient student user not found." });
+    }
+    if (req.user.email === studentEmail) {
+      return res.status(400).json({ error: "You cannot vouch for your own profile." });
+    }
+    
+    // F9: Prevent duplicate vouches
+    const hasAlreadyVouched = student.softSkillsVouches.some(v => v.vouchedBy === req.user.email);
+    if (hasAlreadyVouched) {
+      return res.status(400).json({ error: "You have already vouched for this student." });
+    }
+
+    student.softSkillsVouches.push({
+      vouchedBy: req.user.email,
+      skills,
+      comment
+    });
+    await student.save();
+
+    // Sanitize user object response
+    const sanitizedStudent = student.toObject();
+    delete sanitizedStudent.password;
+    delete sanitizedStudent.resetPasswordToken;
+    delete sanitizedStudent.resetPasswordExpires;
+
+    res.status(200).json({ message: "Vouch endorsement submitted successfully!", student: sanitizedStudent });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to submit vouch endorsement." });
+  }
+};
+
+exports.routeHandler5 = async (req, res) => {
+  try {
+    const { email } = req.params;
+    if (req.user.email !== email) {
+      return res.status(403).json({ error: "Unauthorized profile update request." });
+    }
+    const { 
+      fullName, collegeName, enrollmentNumber, mobile, targetSkills, 
+      projectType, resumeUrl, githubUrl, linkedinUrl, portfolioUrl, bio, interests,
+      isProfilePrivate, major, currentSemester, vanityUsername, videoPitchUrl,
+      extracurriculars, availabilitySlots, preferredTechStack
+    } = req.body;
+    
+    // Check vanity uniqueness if modified
+    if (vanityUsername) {
+      const existing = await User.findOne({ vanityUsername, email: { $ne: email } });
+      if (existing) {
+        return res.status(400).json({ error: "Vanity URL handle is already taken." });
+      }
+    }
+    
+    const user = await User.findOneAndUpdate(
+      { email },
+      { 
+        fullName, collegeName, enrollmentNumber, mobile, targetSkills, 
+        projectType, resumeUrl, githubUrl, linkedinUrl, portfolioUrl, bio, interests,
+        isProfilePrivate, major, currentSemester, vanityUsername, videoPitchUrl,
+        extracurriculars, availabilitySlots, preferredTechStack
+      },
+      { new: true }
+    );
+    
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    const sanitized = user.toObject();
+    delete sanitized.password;
+    delete sanitized.resetPasswordToken;
+    delete sanitized.resetPasswordExpires;
+
+    res.status(200).json({ user: sanitized });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update profile parameters." });
+  }
+};
+

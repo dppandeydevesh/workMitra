@@ -78,7 +78,7 @@ export default function LoginPage() {
     setErrorMessage("");
     setIsLoggingIn(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, { credentials: "include",
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
@@ -89,9 +89,6 @@ export default function LoginPage() {
       if (response.ok) {
         if (data.user) {
           localStorage.setItem("user", JSON.stringify(data.user));
-          if (data.token) {
-            localStorage.setItem("token", data.token);
-          }
           
           if (data.user.userRole === "company") {
             navigate("/company-dashboard"); 
@@ -137,7 +134,7 @@ export default function LoginPage() {
     setSendingRecovery(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, { credentials: "include",
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: recoveryEmail })
@@ -164,7 +161,7 @@ export default function LoginPage() {
     setIsVerifying(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/register-verify`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register-verify`, { credentials: "include",
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -176,9 +173,7 @@ export default function LoginPage() {
       if (response.ok) {
         toast.success(t("login.registrationSuccessful"));
         localStorage.setItem("user", JSON.stringify(data.user));
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-        }
+        
 
         // Reset registration fields
         setCompanyName("");
@@ -398,7 +393,7 @@ export default function LoginPage() {
                     }
 
                     try {
-                      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+                      const response = await fetch(`${API_BASE_URL}/api/auth/register`, { credentials: "include",
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(payload),

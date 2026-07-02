@@ -72,8 +72,7 @@ export default function CompanyPreferences() {
     };
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/profile/company`, {
+            const response = await fetch(`${API_BASE_URL}/api/profile/company`, { credentials: "include",
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -86,13 +85,12 @@ export default function CompanyPreferences() {
       
       if (response.ok) {
         // 🚀 🆕 NEW FEATURE FEATURE: Lock the onboarding flag so the form never repeats
-        const token = localStorage.getItem("token");
-        const savedUser = localStorage.getItem("user");
+                const savedUser = localStorage.getItem("user");
         if (savedUser) {
           const parsedUser = JSON.parse(savedUser);
           
           // Call your new backend endpoint to set hasCompletedProfile to true
-          await fetch(`${API_BASE_URL}/api/auth/complete-profile`, {
+          await fetch(`${API_BASE_URL}/api/auth/complete-profile`, { credentials: "include",
             method: "POST",
             headers: { 
               "Content-Type": "application/json",

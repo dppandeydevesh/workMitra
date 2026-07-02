@@ -109,8 +109,7 @@ export default function ApplicantsHub() {
   const fetchCompanyApplications = async (companyEmail) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/applications/company/${companyEmail}`, {
+            const res = await fetch(`${API_BASE_URL}/api/applications/company/${companyEmail}`, { credentials: "include",
         headers: { "Authorization": `Bearer ${token}` }
       });
       const data = await res.json();
@@ -130,8 +129,7 @@ export default function ApplicantsHub() {
   const handleUpdateStatus = async (applicationId, status) => {
     if (!window.confirm(t("applicantsHub.confirmStatusChange", { status }))) return;
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/applications/${applicationId}/status`, {
+            const res = await fetch(`${API_BASE_URL}/api/applications/${applicationId}/status`, { credentials: "include",
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -183,8 +181,7 @@ export default function ApplicantsHub() {
     
     setSubmittingReview(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/applications/${activeAppToReview._id}/dispute`, {
+            const res = await fetch(`${API_BASE_URL}/api/applications/${activeAppToReview._id}/dispute`, { credentials: "include",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -225,8 +222,7 @@ export default function ApplicantsHub() {
     setSubmittingReview(true);
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/applications/${activeAppToReview._id}/revision`, {
+            const res = await fetch(`${API_BASE_URL}/api/applications/${activeAppToReview._id}/revision`, { credentials: "include",
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -253,8 +249,7 @@ export default function ApplicantsHub() {
     if (!window.confirm(t("applicantsHub.confirmExtension", { status: status.toLowerCase() }))) return;
     
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/applications/${applicationId}/review-extension`, {
+            const res = await fetch(`${API_BASE_URL}/api/applications/${applicationId}/review-extension`, { credentials: "include",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -281,8 +276,7 @@ export default function ApplicantsHub() {
     setSubmittingReview(true);
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/applications/${activeAppToReview._id}/complete`, {
+            const res = await fetch(`${API_BASE_URL}/api/applications/${activeAppToReview._id}/complete`, { credentials: "include",
         method: "POST",
         headers: { 
           "Content-Type": "application/json",

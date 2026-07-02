@@ -59,12 +59,11 @@ export default function StudentProfile() {
     setLoading(true);
     setErrorMessage("");
     try {
-      const token = localStorage.getItem("token");
-      const url = email.includes("@") 
+            const url = email.includes("@") 
         ? `${API_BASE_URL}/api/auth/user/${email}`
         : `${API_BASE_URL}/api/auth/student/vanity/${email}`;
 
-      const res = await fetch(url, {
+      const res = await fetch(url, { credentials: "include",
         headers: { "Authorization": `Bearer ${token}` }
       });
       const data = await res.json();
@@ -96,7 +95,7 @@ export default function StudentProfile() {
       }
 
       // Load student applications history for ratings & reviews
-      const appsRes = await fetch(`${API_BASE_URL}/api/applications/student-details/${email}`, {
+      const appsRes = await fetch(`${API_BASE_URL}/api/applications/student-details/${email}`, { credentials: "include",
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (appsRes.ok) {
@@ -139,8 +138,7 @@ export default function StudentProfile() {
     };
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/profile/student/${email}`, {
+            const res = await fetch(`${API_BASE_URL}/api/profile/student/${email}`, { credentials: "include",
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",
@@ -990,8 +988,7 @@ export default function StudentProfile() {
                 }
                 setVouching(true);
                 try {
-                  const token = localStorage.getItem("token");
-                  const res = await fetch(`${API_BASE_URL}/api/profile/vouch`, {
+                                    const res = await fetch(`${API_BASE_URL}/api/profile/vouch`, { credentials: "include",
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",

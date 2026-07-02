@@ -36,8 +36,7 @@ export default function CompanySettings() {
   const fetchProfile = async (email) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/auth/user/${email}`, {
+            const res = await fetch(`${API_BASE_URL}/api/auth/user/${email}`, { credentials: "include",
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (res.ok) {
@@ -63,8 +62,7 @@ export default function CompanySettings() {
     e.preventDefault();
     setSaving(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE_URL}/api/auth/company-profile`, {
+            const res = await fetch(`${API_BASE_URL}/api/auth/company-profile`, { credentials: "include",
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

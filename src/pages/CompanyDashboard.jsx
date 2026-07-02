@@ -30,12 +30,11 @@ export default function CompanyDashboard() {
   const fetchDashboardData = async (email) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const [statsRes, activityRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/dashboard/company-stats/${email}`, {
+            const [statsRes, activityRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/api/dashboard/company-stats/${email}`, { credentials: "include",
           headers: { "Authorization": `Bearer ${token}` }
         }),
-        fetch(`${API_BASE_URL}/api/dashboard/recent-activity/${email}`, {
+        fetch(`${API_BASE_URL}/api/dashboard/recent-activity/${email}`, { credentials: "include",
           headers: { "Authorization": `Bearer ${token}` }
         })
       ]);

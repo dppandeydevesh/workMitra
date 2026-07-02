@@ -9,6 +9,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
 const swot = require('swot-node');
+const cookieParser = require('cookie-parser');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
@@ -43,6 +44,7 @@ app.use(cors({
     credentials: true
 }));
 
+app.use(cookieParser());
 // Request body size limit
 app.use(express.json({ limit: '1mb' }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -53,7 +55,13 @@ app.use('/api/admin', adminRoutes);
 const collegeRoutes = require('./routes/collegeRoutes');
 app.use('/api/college', collegeRoutes);
 const applicationRoutes = require('./routes/applicationRoutes');
+const chatRoutes = require('./routes/chatRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
+const profileRoutes = require('./routes/profileRoutes');
 app.use('/api/applications', applicationRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/profile', profileRoutes);
 const authenticateToken = require('./middleware/authMiddleware');
 
 app.use('/api/auth', authRoutes);
@@ -280,38 +288,12 @@ mongoose.connect(dbURI)
 // =========================================================================
 // 🏢 Route: Save Company Requirements Profile Form Data
 // =========================================================================
-app.post("/api/profile/company", authenticateToken, async (req, res) => {
-  try {
-    // Validate request ownership
-    if (req.user.userRole !== "company") {
-      return res.status(403).json({ error: "Access denied. Only recruiters can update company profiles." });
-    }
-    const profileData = { ...req.body, companyEmail: req.user.email };
-    const profile = await CompanyProfile.findOneAndUpdate(
-      { companyEmail: req.user.email },
-      profileData,
-      { new: true, upsert: true, runValidators: true }
-    );
-    res.status(201).json({ message: "Company profile saved successfully!", profile });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to save company profile." });
-  }
-});
+
 
 // =========================================================================
 // 🏢 Route: Get Company Profile for authenticated user
 // =========================================================================
-app.get("/api/profile/company", authenticateToken, async (req, res) => {
-  try {
-    const profile = await CompanyProfile.findOne({ companyEmail: req.user.email });
-    if (!profile) {
-      return res.status(404).json({ error: "Company profile not found." });
-    }
-    res.status(200).json(profile);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to retrieve company profile." });
-  }
-});
+
 
 // =========================================================================
 // 🚀 UPDATED GLOBAL ROUTE: Fetch Deployed Company Projects for Marketplace
@@ -341,43 +323,7 @@ app.post("/api/auth/complete-profile", authenticateToken, async (req, res) => {
 // =========================================================================
 // 👑 ADMIN ROUTES: Control Panel Management endpoints
 // =========================================================================
-app.post("/api/profile/resume", authenticateToken, async (req, res) => {
-  try {
-    const { email, resumeUrl, resumeText } = req.body;
-    if (!email) {
-      return res.status(400).json({ error: "Email is required." });
-    }
-    if (req.user.email !== email) {
-      return res.status(403).json({ error: "Unauthorized profile update context." });
-    }
 
-    const updatedUser = await User.findOneAndUpdate(
-      { email },
-      { resumeUrl, resumeText },
-      { new: true }
-    );
-    if (!updatedUser) {
-      return res.status(404).json({ error: "User not found." });
-    }
-
-    res.status(200).json({
-      message: "Resume details updated successfully.",
-      user: {
-        fullName: updatedUser.fullName,
-        email: updatedUser.email,
-        userRole: updatedUser.userRole,
-        hasCompletedProfile: updatedUser.hasCompletedProfile,
-        collegeName: updatedUser.collegeName,
-        enrollmentNumber: updatedUser.enrollmentNumber,
-        resumeUrl: updatedUser.resumeUrl,
-        resumeText: updatedUser.resumeText,
-        cvReviewReport: updatedUser.cvReviewReport
-      }
-    });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to update candidate resume details." });
-  }
-});
 
 const fsSync = require('fs');
 
@@ -403,57 +349,7 @@ const upload = multer({
 });
 
 // 🏢 ROUTE: Upload CV PDF, parse text and save to user profile
-app.post("/api/profile/upload-cv", authenticateToken, upload.single("cvFile"), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: "No CV file was uploaded." });
-    }
 
-    if (req.file.mimetype !== "application/pdf") {
-      return res.status(400).json({ error: "Only PDF CV formats are supported." });
-    }
-
-    const { email } = req.body;
-    if (!email) {
-      return res.status(400).json({ error: "Email is required." });
-    }
-    if (req.user.email !== email) {
-      return res.status(403).json({ error: "Unauthorized profile context." });
-    }
-
-    // Read the PDF from disk for parsing
-    const fileBuffer = fsSync.readFileSync(req.file.path);
-    const pdfData = await pdfParse(fileBuffer);
-    const extractedText = pdfData.text;
-
-    if (!extractedText || extractedText.trim().length === 0) {
-      // Clean up file if unreadable
-      fsSync.unlinkSync(req.file.path);
-      return res.status(400).json({ error: "Could not extract text from the uploaded PDF. Please make sure the PDF has selectable text." });
-    }
-
-    const fileUrl = `/uploads/${req.file.filename}`;
-
-    // Save extracted text and local file URL to user document
-    const updatedUser = await User.findOneAndUpdate(
-      { email },
-      { resumeText: extractedText, resumeUrl: fileUrl },
-      { new: true }
-    );
-
-    if (!updatedUser) {
-      return res.status(404).json({ error: "User not found." });
-    }
-
-    res.status(200).json({
-      message: "CV PDF uploaded and text parsed successfully.",
-      resumeText: extractedText
-    });
-  } catch (err) {
-    console.error("PDF upload/parse error:", err);
-    res.status(500).json({ error: `Failed to upload and parse CV PDF: ${err.message}` });
-  }
-});
 
 // =========================================================================
 // 🧠 ROUTE: Review CV text using Google Gemini 1.5 Flash
@@ -612,290 +508,39 @@ app.get("/api/auth/student/vanity/:username", authenticateToken, async (req, res
   }
 });
 
-app.post("/api/profile/vouch", authenticateToken, async (req, res) => {
-  try {
-    const { studentEmail, skills, comment } = req.body;
-    if (!studentEmail || !skills || !comment) {
-      return res.status(400).json({ error: "Required vouch payload parameters missing." });
-    }
-    const student = await User.findOne({ email: studentEmail });
-    if (!student) {
-      return res.status(404).json({ error: "Recipient student user not found." });
-    }
-    if (req.user.email === studentEmail) {
-      return res.status(400).json({ error: "You cannot vouch for your own profile." });
-    }
-    
-    // F9: Prevent duplicate vouches
-    const hasAlreadyVouched = student.softSkillsVouches.some(v => v.vouchedBy === req.user.email);
-    if (hasAlreadyVouched) {
-      return res.status(400).json({ error: "You have already vouched for this student." });
-    }
 
-    student.softSkillsVouches.push({
-      vouchedBy: req.user.email,
-      skills,
-      comment
-    });
-    await student.save();
-
-    // Sanitize user object response
-    const sanitizedStudent = student.toObject();
-    delete sanitizedStudent.password;
-    delete sanitizedStudent.resetPasswordToken;
-    delete sanitizedStudent.resetPasswordExpires;
-
-    res.status(200).json({ message: "Vouch endorsement submitted successfully!", student: sanitizedStudent });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to submit vouch endorsement." });
-  }
-});
 
 // =========================================================================
 // 📝 ROUTE: Save Student Profile updates
 // =========================================================================
-app.put("/api/profile/student/:email", authenticateToken, async (req, res) => {
-  try {
-    const { email } = req.params;
-    if (req.user.email !== email) {
-      return res.status(403).json({ error: "Unauthorized profile update request." });
-    }
-    const { 
-      fullName, collegeName, enrollmentNumber, mobile, targetSkills, 
-      projectType, resumeUrl, githubUrl, linkedinUrl, portfolioUrl, bio, interests,
-      isProfilePrivate, major, currentSemester, vanityUsername, videoPitchUrl,
-      extracurriculars, availabilitySlots, preferredTechStack
-    } = req.body;
-    
-    // Check vanity uniqueness if modified
-    if (vanityUsername) {
-      const existing = await User.findOne({ vanityUsername, email: { $ne: email } });
-      if (existing) {
-        return res.status(400).json({ error: "Vanity URL handle is already taken." });
-      }
-    }
-    
-    const user = await User.findOneAndUpdate(
-      { email },
-      { 
-        fullName, collegeName, enrollmentNumber, mobile, targetSkills, 
-        projectType, resumeUrl, githubUrl, linkedinUrl, portfolioUrl, bio, interests,
-        isProfilePrivate, major, currentSemester, vanityUsername, videoPitchUrl,
-        extracurriculars, availabilitySlots, preferredTechStack
-      },
-      { new: true }
-    );
-    
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    
-    const sanitized = user.toObject();
-    delete sanitized.password;
-    delete sanitized.resetPasswordToken;
-    delete sanitized.resetPasswordExpires;
 
-    res.status(200).json({ user: sanitized });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to update profile parameters." });
-  }
-});
 
 
 
 // =========================================================================
 // 🔎 ROUTE: Fetch chat message history between two users
 // =========================================================================
-app.get("/api/chat/history/:user1/:user2", authenticateToken, async (req, res) => {
-  try {
-    const { user1, user2 } = req.params;
-    
-    if (req.user.email !== user1 && req.user.email !== user2) {
-      return res.status(403).json({ error: "Unauthorized access to private message history." });
-    }
 
-    const Message = require("./models/Message");
-    
-    const page = parseInt(req.query.page);
-    const limit = parseInt(req.query.limit);
-    
-    let query = Message.find({
-      $or: [
-        { sender: user1, receiver: user2 },
-        { sender: user2, receiver: user1 }
-      ]
-    });
-
-    if (page && limit) {
-      const skip = (page - 1) * limit;
-      // Fetch latest messages first, then reverse so they render chronologically
-      const messages = await query.sort({ timestamp: -1 }).skip(skip).limit(limit);
-      res.status(200).json(messages.reverse());
-    } else {
-      const messages = await query.sort({ timestamp: 1 });
-      res.status(200).json(messages);
-    }
-  } catch (err) {
-    res.status(500).json({ error: "Failed to load chat history." });
-  }
-});
 
 // =========================================================================
 // 🔎 ROUTE: Fetch list of recent chat partners
 // =========================================================================
-app.get("/api/chat/partners/:email", authenticateToken, async (req, res) => {
-  try {
-    const { email } = req.params;
-    if (req.user.email !== email) {
-      return res.status(403).json({ error: "Unauthorized access to chat rosters." });
-    }
 
-    const Message = require("./models/Message");
-
-    // Find all unique email addresses that this user has messaged or received messages from
-    const senders = await Message.distinct("sender", { receiver: email });
-    const receivers = await Message.distinct("receiver", { sender: email });
-    const uniqueEmails = Array.from(new Set([...senders, ...receivers]));
-
-    // Fetch user details for each partner email
-    const partners = await User.find({ email: { $in: uniqueEmails } }, "fullName email companyName userRole");
-    
-    const partnersWithUnread = await Promise.all(
-      partners.map(async (partner) => {
-        const unreadCount = await Message.countDocuments({
-          sender: partner.email,
-          receiver: email,
-          read: false
-        });
-        return {
-          _id: partner._id,
-          fullName: partner.fullName,
-          email: partner.email,
-          companyName: partner.companyName,
-          userRole: partner.userRole,
-          unreadCount
-        };
-      })
-    );
-    
-    res.status(200).json(partnersWithUnread);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to load recent chat partners." });
-  }
-});
 
 // =========================================================================
 // 🔒 ROUTE: Mark all messages from a specific partner as read
 // =========================================================================
-app.post("/api/chat/read", authenticateToken, async (req, res) => {
-  try {
-    const { sender } = req.body;
-    if (!sender) {
-      return res.status(400).json({ error: "Sender email is required." });
-    }
-    const Message = require("./models/Message");
-    await Message.updateMany(
-      { sender, receiver: req.user.email, read: false },
-      { $set: { read: true } }
-    );
-    res.status(200).json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to mark messages as read." });
-  }
-});
+
 
 // =========================================================================
 // 📊 ROUTE: Company Dashboard KPI Stats Aggregation (Phase 10)
 // =========================================================================
-app.get("/api/dashboard/company-stats/:email", authenticateToken, async (req, res) => {
-  try {
-    const companyEmail = req.params.email;
-    if (req.user.email !== companyEmail) {
-      return res.status(403).json({ error: "Unauthorized stats access." });
-    }
 
-    const projects = await Project.find({ companyId: companyEmail });
-    const projectIds = projects.map(p => p._id);
-    const applications = await Application.find({ projectId: { $in: projectIds } }).populate("projectId");
-
-    const totalProjects = projects.length;
-    const totalApplications = applications.length;
-    const submittedCount = applications.filter(a => a.status === "Submitted").length;
-    const completedCount = applications.filter(a => a.status === "Completed").length;
-    const pendingCount = applications.filter(a => a.status === "Pending").length;
-    const approvedCount = applications.filter(a => a.status === "Approved").length;
-    const rejectedCount = applications.filter(a => a.status === "Rejected").length;
-    const revisionCount = applications.filter(a => a.status === "Revision Requested").length;
-
-    const totalBudget = projects.reduce((sum, p) => sum + (p.budget || 0), 0);
-    const ratedApps = applications.filter(a => a.rating && a.rating > 0);
-    const avgRating = ratedApps.length > 0
-      ? (ratedApps.reduce((sum, a) => sum + a.rating, 0) / ratedApps.length).toFixed(1)
-      : "0.0";
-
-    // Top 3 performers
-    const completedApps = applications.filter(a => a.status === "Completed" && a.rating > 0);
-    completedApps.sort((a, b) => b.rating - a.rating);
-    const topPerformers = completedApps.slice(0, 3).map(a => ({
-      studentEmail: a.studentEmail,
-      studentName: a.studentName,
-      rating: a.rating,
-      projectTitle: a.projectId?.title || "Unknown"
-    }));
-
-    res.status(200).json({
-      totalProjects,
-      totalApplications,
-      submittedCount,
-      completedCount,
-      pendingCount,
-      approvedCount,
-      rejectedCount,
-      revisionCount,
-      totalBudget,
-      avgRating,
-      topPerformers
-    });
-  } catch (err) {
-    console.error("Company stats aggregation error:", err.message);
-    res.status(500).json({ error: "Failed to aggregate company dashboard stats." });
-  }
-});
 
 // =========================================================================
 // 🕑 ROUTE: Recent Activity Feed (Phase 10)
 // =========================================================================
-app.get("/api/dashboard/recent-activity/:email", authenticateToken, async (req, res) => {
-  try {
-    const companyEmail = req.params.email;
-    if (req.user.email !== companyEmail) {
-      return res.status(403).json({ error: "Unauthorized activity access." });
-    }
 
-    const projects = await Project.find({ companyId: companyEmail });
-    const projectIds = projects.map(p => p._id);
-    const recentApps = await Application.find({ projectId: { $in: projectIds } })
-      .populate("projectId")
-      .sort({ updatedAt: -1 })
-      .limit(10);
-
-    const feed = recentApps.map(a => ({
-      id: a._id,
-      studentName: a.studentName,
-      studentEmail: a.studentEmail,
-      projectTitle: a.projectId?.title || "Unknown",
-      status: a.status,
-      updatedAt: a.updatedAt || a.createdAt,
-      feedbackText: a.feedbackText || null,
-      rating: a.rating || null
-    }));
-
-    res.status(200).json(feed);
-  } catch (err) {
-    console.error("Recent activity feed error:", err.message);
-    res.status(500).json({ error: "Failed to load recent activity." });
-  }
-});
 
 // =========================================================================
 // ⚙️ ROUTE: Update Company Profile Settings (Phase 10)

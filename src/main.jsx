@@ -8,7 +8,7 @@ import { API_BASE_URL } from './config'
 // 🔒 Intercept window.fetch to automatically append JWT Token to Authorization headers
 const originalFetch = window.fetch;
 window.fetch = async function (url, options = {}) {
-  const token = localStorage.getItem("token");
+  
   if (token && (url.toString().includes("/api/") || url.toString().startsWith("/api"))) {
     options.headers = {
       ...options.headers,

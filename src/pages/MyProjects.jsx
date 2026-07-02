@@ -43,8 +43,7 @@ export default function MyProjects() {
 
     const fetchCompanyData = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${API_BASE_URL}/api/projects/company/${companyEmail}`, {
+                const response = await fetch(`${API_BASE_URL}/api/projects/company/${companyEmail}`, { credentials: "include",
           headers: { "Authorization": `Bearer ${token}` }
         });
         const data = await response.json();
@@ -63,8 +62,7 @@ export default function MyProjects() {
     setSelectedProject(project);
     setLoadingApplicants(true);
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/projects/${project._id}/applicants`, {
+            const response = await fetch(`${API_BASE_URL}/api/projects/${project._id}/applicants`, { credentials: "include",
         headers: { "Authorization": `Bearer ${token}` }
       });
       const data = await response.json();
@@ -79,8 +77,7 @@ export default function MyProjects() {
   const handleAcceptApplicant = async (applicationId) => {
     if (!window.confirm(t("myProjects.confirmApprove"))) return;
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/applications/${applicationId}/status`, {
+            const response = await fetch(`${API_BASE_URL}/api/applications/${applicationId}/status`, { credentials: "include",
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -105,8 +102,7 @@ export default function MyProjects() {
   const handleRejectApplicant = async (applicationId) => {
     if (!window.confirm(t("myProjects.confirmReject"))) return;
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/applications/${applicationId}/status`, {
+            const response = await fetch(`${API_BASE_URL}/api/applications/${applicationId}/status`, { credentials: "include",
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -141,8 +137,7 @@ export default function MyProjects() {
     if (!activeAppToReview) return;
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/applications/${activeAppToReview.applicationId}/complete`, {
+            const response = await fetch(`${API_BASE_URL}/api/applications/${activeAppToReview.applicationId}/complete`, { credentials: "include",
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -169,8 +164,7 @@ export default function MyProjects() {
   const handleDeleteProject = async (projectId) => {
     if (!window.confirm(t("myProjects.confirmDelete"))) return;
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, { credentials: "include",
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -180,7 +174,7 @@ export default function MyProjects() {
         // Refresh project list
         const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
         if (savedUser.email) {
-          const res = await fetch(`${API_BASE_URL}/api/projects/company/${savedUser.email}`, {
+          const res = await fetch(`${API_BASE_URL}/api/projects/company/${savedUser.email}`, { credentials: "include",
             headers: { "Authorization": `Bearer ${token}` }
           });
           const data = await res.json();
@@ -197,8 +191,7 @@ export default function MyProjects() {
   const handleArchiveProject = async (projectId) => {
     if (!window.confirm(t("myProjects.confirmArchive"))) return;
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/projects/archive/${projectId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/projects/archive/${projectId}`, { credentials: "include",
         method: "PUT",
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -206,7 +199,7 @@ export default function MyProjects() {
         toast.success(t("myProjects.projectArchived"));
         const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
         if (savedUser.email) {
-          const res = await fetch(`${API_BASE_URL}/api/projects/company/${savedUser.email}`, {
+          const res = await fetch(`${API_BASE_URL}/api/projects/company/${savedUser.email}`, { credentials: "include",
             headers: { "Authorization": `Bearer ${token}` }
           });
           const data = await res.json();
@@ -249,8 +242,7 @@ export default function MyProjects() {
     };
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(`${API_BASE_URL}/api/projects/${selectedProject._id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/projects/${selectedProject._id}`, { credentials: "include",
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",
@@ -266,7 +258,7 @@ export default function MyProjects() {
         // Refresh project list
         const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
         if (savedUser.email) {
-          const res = await fetch(`${API_BASE_URL}/api/projects/company/${savedUser.email}`, {
+          const res = await fetch(`${API_BASE_URL}/api/projects/company/${savedUser.email}`, { credentials: "include",
             headers: { "Authorization": `Bearer ${token}` }
           });
           const projectsData = await res.json();

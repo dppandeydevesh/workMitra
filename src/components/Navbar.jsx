@@ -47,7 +47,7 @@ export default function Navbar() {
       const fetchStudentNotifications = async () => {
         try {
                     const res = await fetch(`${API_BASE_URL}/api/applications/student-details/${savedUser.email}`, { credentials: "include",
-            headers: { "Authorization": `Bearer ${token}` }
+            headers: {  }
           });
           if (res.ok) {
             const apps = await res.json();

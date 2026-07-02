@@ -75,7 +75,7 @@ export default function Preferences() {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({
           fullName: preferences.name || parsedUser.fullName,
@@ -104,7 +104,7 @@ export default function Preferences() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({ email: parsedUser.email })
       });

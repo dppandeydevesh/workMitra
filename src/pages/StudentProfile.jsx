@@ -64,7 +64,7 @@ export default function StudentProfile() {
         : `${API_BASE_URL}/api/auth/student/vanity/${email}`;
 
       const res = await fetch(url, { credentials: "include",
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: {  }
       });
       const data = await res.json();
       if (res.ok) {
@@ -96,7 +96,7 @@ export default function StudentProfile() {
 
       // Load student applications history for ratings & reviews
       const appsRes = await fetch(`${API_BASE_URL}/api/applications/student-details/${email}`, { credentials: "include",
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: {  }
       });
       if (appsRes.ok) {
         const appsData = await appsRes.json();
@@ -142,7 +142,7 @@ export default function StudentProfile() {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify(payload)
       });
@@ -992,7 +992,7 @@ export default function StudentProfile() {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
-                      "Authorization": `Bearer ${token}`
+                      
                     },
                     body: JSON.stringify({
                       studentEmail: email,

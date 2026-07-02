@@ -34,7 +34,7 @@ export function WebSocketProvider({ children }) {
   }, []);
 
   const connectWebSocket = () => {
-        if (!token || !user) {
+    if (!user) {
       if (socketRef.current) {
         socketRef.current.close();
         socketRef.current = null;
@@ -93,8 +93,7 @@ export function WebSocketProvider({ children }) {
       console.log("Global WebSocket connection closed. Code:", event.code);
 
       // Reconnect with exponential backoff if logged in
-      const currentToken = localStorage.getItem("token");
-      if (currentToken && reconnectAttemptsRef.current < MAX_RECONNECT_ATTEMPTS) {
+      if (user && reconnectAttemptsRef.current < MAX_RECONNECT_ATTEMPTS) {
         const delay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current), 30000);
         console.log(`Reconnecting global socket in ${delay}ms...`);
         reconnectTimeoutRef.current = setTimeout(() => {
@@ -138,10 +137,10 @@ export function WebSocketProvider({ children }) {
 
   return (
     <WebSocketContext.Provider
-      // eslint-disable-next-line react-hooks/refs
+       
       value={{
         wsConnected,
-        // eslint-disable-next-line react-hooks/refs
+         
         socket: socketRef.current,
         addListener,
         sendMessage,

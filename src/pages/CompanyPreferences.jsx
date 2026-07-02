@@ -76,7 +76,7 @@ export default function CompanyPreferences() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify(payload)
       });
@@ -94,7 +94,7 @@ export default function CompanyPreferences() {
             method: "POST",
             headers: { 
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
+              
             },
             body: JSON.stringify({ email: parsedUser.email })
           });

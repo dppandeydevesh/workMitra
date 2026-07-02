@@ -37,7 +37,7 @@ export default function CompanySettings() {
     setLoading(true);
     try {
             const res = await fetch(`${API_BASE_URL}/api/auth/user/${email}`, { credentials: "include",
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: {  }
       });
       if (res.ok) {
         const data = await res.json();
@@ -66,7 +66,7 @@ export default function CompanySettings() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({
           companyBio,

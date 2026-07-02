@@ -1,20 +1,10 @@
 export const fetchWithAuth = async (endpoint, options = {}) => {
-  const headers = {
-    ...options.headers,
-  };
-
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  const response = await fetch(endpoint, { credentials: "include",
-    ...options,
+  const response = await fetch(endpoint, {
     credentials: "include",
-    headers,
+    ...options
   });
 
   if (response.status === 401) {
-    localStorage.removeItem("token");
     localStorage.removeItem("user");
     window.location.href = "/login";
   }

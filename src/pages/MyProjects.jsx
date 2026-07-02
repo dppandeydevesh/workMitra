@@ -44,7 +44,7 @@ export default function MyProjects() {
     const fetchCompanyData = async () => {
       try {
                 const response = await fetch(`${API_BASE_URL}/api/projects/company/${companyEmail}`, { credentials: "include",
-          headers: { "Authorization": `Bearer ${token}` }
+          headers: {  }
         });
         const data = await response.json();
         if (response.ok) setProjects(data);
@@ -63,7 +63,7 @@ export default function MyProjects() {
     setLoadingApplicants(true);
     try {
             const response = await fetch(`${API_BASE_URL}/api/projects/${project._id}/applicants`, { credentials: "include",
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: {  }
       });
       const data = await response.json();
       if (response.ok) setApplicants(data);
@@ -81,7 +81,7 @@ export default function MyProjects() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({ status: "Approved" })
       });
@@ -106,7 +106,7 @@ export default function MyProjects() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({ status: "Rejected" })
       });
@@ -141,7 +141,7 @@ export default function MyProjects() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({ feedbackText, rating, ratingReview })
       });
@@ -166,7 +166,7 @@ export default function MyProjects() {
     try {
             const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}`, { credentials: "include",
         method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: {  }
       });
       if (response.ok) {
         toast.success(t("myProjects.projectDeleted"));
@@ -175,7 +175,7 @@ export default function MyProjects() {
         const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
         if (savedUser.email) {
           const res = await fetch(`${API_BASE_URL}/api/projects/company/${savedUser.email}`, { credentials: "include",
-            headers: { "Authorization": `Bearer ${token}` }
+            headers: {  }
           });
           const data = await res.json();
           if (res.ok) setProjects(data);
@@ -193,14 +193,14 @@ export default function MyProjects() {
     try {
             const response = await fetch(`${API_BASE_URL}/api/projects/archive/${projectId}`, { credentials: "include",
         method: "PUT",
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: {  }
       });
       if (response.ok) {
         toast.success(t("myProjects.projectArchived"));
         const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
         if (savedUser.email) {
           const res = await fetch(`${API_BASE_URL}/api/projects/company/${savedUser.email}`, { credentials: "include",
-            headers: { "Authorization": `Bearer ${token}` }
+            headers: {  }
           });
           const data = await res.json();
           if (res.ok) {
@@ -246,7 +246,7 @@ export default function MyProjects() {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify(payload)
       });
@@ -259,7 +259,7 @@ export default function MyProjects() {
         const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
         if (savedUser.email) {
           const res = await fetch(`${API_BASE_URL}/api/projects/company/${savedUser.email}`, { credentials: "include",
-            headers: { "Authorization": `Bearer ${token}` }
+            headers: {  }
           });
           const projectsData = await res.json();
           if (res.ok) setProjects(projectsData);

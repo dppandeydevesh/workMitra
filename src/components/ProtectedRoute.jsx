@@ -4,27 +4,17 @@ import { Navigate } from "react-router-dom";
 export default function ProtectedRoute({ children, allowedRoles }) {
   const savedUser = localStorage.getItem("user");
   
-  if (!savedUser || !token) {
+  if (!savedUser) {
     return <Navigate to="/login" replace />;
   }
 
-  // Verify token expiry if it exists
+  let user = null;
   try {
-    const payloadBase64 = token.split(".")[1];
-    const payloadDecoded = JSON.parse(atob(payloadBase64));
-    const expTimestamp = payloadDecoded.exp * 1000;
-    if (Date.now() >= expTimestamp) {
-      console.warn("Session expired. Auto-logging out.");
-      localStorage.clear();
-      return <Navigate to="/login" replace />;
-    }
+    user = JSON.parse(savedUser);
   } catch (e) {
-    console.error("Invalid token format. Auto-logging out.");
     localStorage.clear();
     return <Navigate to="/login" replace />;
   }
-
-  const user = JSON.parse(savedUser);
 
   // If role checks are enabled
   if (allowedRoles && !allowedRoles.includes(user.userRole)) {

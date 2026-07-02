@@ -32,10 +32,10 @@ export default function CompanyDashboard() {
     try {
             const [statsRes, activityRes] = await Promise.all([
         fetch(`${API_BASE_URL}/api/dashboard/company-stats/${email}`, { credentials: "include",
-          headers: { "Authorization": `Bearer ${token}` }
+          headers: {  }
         }),
         fetch(`${API_BASE_URL}/api/dashboard/recent-activity/${email}`, { credentials: "include",
-          headers: { "Authorization": `Bearer ${token}` }
+          headers: {  }
         })
       ]);
 

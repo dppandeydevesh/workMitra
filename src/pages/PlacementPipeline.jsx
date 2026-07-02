@@ -40,7 +40,7 @@ export default function PlacementPipeline() {
       }
       
       const res = await fetch(url, { credentials: "include",
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ` }
       });
       const data = await res.json();
       if (res.ok) {
@@ -66,7 +66,7 @@ export default function PlacementPipeline() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer `
         },
         body: JSON.stringify({ status: newStage })
       });
@@ -93,7 +93,7 @@ export default function PlacementPipeline() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer `
         },
         body: JSON.stringify({ offerText })
       });

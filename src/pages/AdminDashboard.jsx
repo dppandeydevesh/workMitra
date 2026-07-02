@@ -69,7 +69,7 @@ export default function AdminDashboard() {
   const fetchAdminData = async () => {
     setLoading(true);
     try {
-            const headers = { "Authorization": `Bearer ${token}` };
+            const headers = {  };
 
       // 1. Fetch KPI metrics
       const metricsRes = await fetch(`${API_BASE_URL}/api/admin/metrics`, { credentials: "include", headers });
@@ -107,7 +107,7 @@ export default function AdminDashboard() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({ decision })
       });
@@ -133,7 +133,7 @@ export default function AdminDashboard() {
     try {
             const res = await fetch(`${API_BASE_URL}/api/admin/companies/${companyEmail}/verify`, { credentials: "include",
         method: "POST",
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: {  }
       });
       const data = await res.json();
       if (res.ok) {

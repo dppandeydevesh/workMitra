@@ -262,7 +262,7 @@ export default function Dashboard() {
             const response = await fetch(`${API_BASE_URL}/api/profile/upload-cv`, { credentials: "include",
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`
+          
         },
         body: formData
       });
@@ -299,7 +299,7 @@ export default function Dashboard() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({
           email: currentUser.email,
@@ -341,7 +341,7 @@ export default function Dashboard() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({
           email: currentUser.email,
@@ -372,7 +372,7 @@ export default function Dashboard() {
   const fetchApplications = async (userEmail) => {
     try {
             const detailsRes = await fetch(`${API_BASE_URL}/api/applications/student-details/${userEmail}`, { credentials: "include",
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: {  }
       });
       if (detailsRes.ok) {
         const details = await detailsRes.json();
@@ -392,7 +392,7 @@ export default function Dashboard() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({
           submissionLink,
@@ -448,7 +448,7 @@ export default function Dashboard() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({ requestedDays: Number(extensionDays), reason: extensionReason })
       });
@@ -485,7 +485,7 @@ export default function Dashboard() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({
           projectId: projectId.toString(), // 🎯 Strong typing string representation to prevent findOne crashes

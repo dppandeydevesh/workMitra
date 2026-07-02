@@ -38,7 +38,7 @@ export default function CalendarView() {
     setLoading(true);
     try {
             const res = await fetch(`${API_BASE_URL}/api/projects/company/${email}`, { credentials: "include",
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: {  }
       });
       if (res.ok) {
         const data = await res.json();

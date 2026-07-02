@@ -110,7 +110,7 @@ export default function ApplicantsHub() {
     setLoading(true);
     try {
             const res = await fetch(`${API_BASE_URL}/api/applications/company/${companyEmail}`, { credentials: "include",
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: {  }
       });
       const data = await res.json();
       if (res.ok) {
@@ -133,7 +133,7 @@ export default function ApplicantsHub() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({ status })
       });
@@ -185,7 +185,7 @@ export default function ApplicantsHub() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({ feedbackText })
       });
@@ -226,7 +226,7 @@ export default function ApplicantsHub() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({ feedbackText })
       });
@@ -253,7 +253,7 @@ export default function ApplicantsHub() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({ requestId, status })
       });
@@ -280,7 +280,7 @@ export default function ApplicantsHub() {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({ feedbackText, rating, ratingReview })
       });

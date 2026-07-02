@@ -41,10 +41,10 @@ export default function CollegeDashboard() {
     try {
             const [studentsRes, companiesRes] = await Promise.all([
         fetch(`${API_BASE_URL}/api/college/students/${encodeURIComponent(collegeName)}`, { credentials: "include",
-          headers: { "Authorization": `Bearer ${token}` }
+          headers: {  }
         }),
         fetch(`${API_BASE_URL}/api/college/companies`, { credentials: "include",
-          headers: { "Authorization": `Bearer ${token}` }
+          headers: {  }
         })
       ]);
 
@@ -70,7 +70,7 @@ export default function CollegeDashboard() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({ studentEmail, endorse: !currentStatus })
       });
@@ -92,7 +92,7 @@ export default function CollegeDashboard() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({ companyEmail, status })
       });
@@ -142,7 +142,7 @@ export default function CollegeDashboard() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          
         },
         body: JSON.stringify({ students: parsedStudents })
       });

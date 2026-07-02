@@ -371,7 +371,7 @@ export default function StudentProfile() {
                       type="url"
                       value={linkedinUrl}
                       onChange={(e) => setLinkedinUrl(e.target.value)}
-                      placeholder="https://linkedin.com/in/username"
+                      placeholder="https://linkedin.com/in/amit-kumar"
                       className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>
@@ -395,7 +395,7 @@ export default function StudentProfile() {
                       type="url"
                       value={avatarUrl}
                       onChange={(e) => setAvatarUrl(e.target.value)}
-                      placeholder="https://example.com/avatar.jpg"
+                      placeholder="https://workmitra.me/assets/default-avatar.jpg"
                       className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
                   </div>

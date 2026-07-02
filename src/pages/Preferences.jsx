@@ -189,7 +189,7 @@ export default function Preferences() {
                   type="url"
                   value={preferences.linkedinUrl}
                   onChange={(e) => setPreferences({...preferences, linkedinUrl: e.target.value})}
-                  placeholder="https://linkedin.com/in/username"
+                  placeholder="https://linkedin.com/in/amit-kumar"
                   className="w-full px-3 py-2 text-xs border border-gray-300 dark:border-slate-700 bg-transparent dark:bg-slate-900 dark:text-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />
               </div>
@@ -209,7 +209,7 @@ export default function Preferences() {
                   type="url"
                   value={preferences.avatarUrl}
                   onChange={(e) => setPreferences({...preferences, avatarUrl: e.target.value})}
-                  placeholder="https://example.com/avatar.jpg"
+                  placeholder="https://workmitra.me/assets/default-avatar.jpg"
                   className="w-full px-3 py-2 text-xs border border-gray-300 dark:border-slate-700 bg-transparent dark:bg-slate-900 dark:text-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
                 />
               </div>

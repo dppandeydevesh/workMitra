@@ -64,7 +64,7 @@ export function WebSocketProvider({ children }) {
     wsSocket.onopen = () => {
       console.log("Global WebSocket connected successfully!");
       reconnectAttemptsRef.current = 0;
-      wsSocket.send(JSON.stringify({ type: "auth", token }));
+      wsSocket.send(JSON.stringify({ type: "auth" }));
     };
 
     wsSocket.onmessage = (event) => {

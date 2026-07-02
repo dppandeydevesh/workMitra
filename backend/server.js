@@ -597,7 +597,8 @@ const wss = new ws.Server({ server });
 
 
 
-wss.on("connection", (socket) => {
+wss.on("connection", (socket, req) => {
+  socket.req = req;
   let userEmail = null;
 
   socket.on("message", async (messageStr) => {

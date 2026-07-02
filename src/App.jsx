@@ -101,7 +101,7 @@ function App() {
                 
                 <Route path="/admin-dashboard" element={<ProtectedLayout allowedRoles={["admin"]}><AdminDashboard /></ProtectedLayout>} />
                 <Route path="/college-dashboard" element={<ProtectedLayout allowedRoles={["college"]}><CollegeDashboard /></ProtectedLayout>} />
-                <Route path="/faculty-dashboard" element={<ProtectedLayout allowedRoles={["faculty", "admin"]}><FacultyDashboard /></ProtectedLayout>} />
+                <Route path="/faculty-dashboard" element={<ProtectedLayout allowedRoles={["faculty"]}><FacultyDashboard /></ProtectedLayout>} />
                 <Route path="/resume-checker" element={<ProtectedLayout><ResumeChecker /></ProtectedLayout>} />
                 
                 {/* 404 Wildcard Catch-All */}

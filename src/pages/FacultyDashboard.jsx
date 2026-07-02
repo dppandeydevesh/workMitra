@@ -1,130 +1,407 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../config";
-import "./FacultyDashboard.css";
+import { useToast } from "../components/Toast";
+import { useWebSocket } from "../components/WebSocketContext";
+import "./FacultyDashboard.css"; // Reuse existing css for global layout if needed
 
 export default function FacultyDashboard() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const toast = useToast();
+  
+  const [user, setUser] = useState(null);
+  const [activeTab, setActiveTab] = useState("overview"); // overview, my-projects, new-project, applicants
+  
+  const [projects, setProjects] = useState([]);
+  const [applicants, setApplicants] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     skills: "",
     budget: "",
   });
+  const [posting, setPosting] = useState(false);
 
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  useEffect(() => {
+    const savedUser = JSON.parse(localStorage.getItem("user") || "null");
+    if (!savedUser || savedUser.userRole !== "faculty") {
+      navigate("/login");
+      return;
+    }
+    setUser(savedUser);
+    fetchFacultyProjects(savedUser.email);
+  }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const fetchFacultyProjects = async (email) => {
     setLoading(true);
-    setMessage("");
-
     try {
-      const res = await fetch(`${API_BASE_URL}/api/projects`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const res = await fetch(`${API_BASE_URL}/api/projects/company/${email}`, {
         credentials: "include",
-        body: JSON.stringify({
-          title: formData.title,
-          description: formData.description,
-          // Split skills by comma and trim whitespace
-          skills: formData.skills.split(",").map((s) => s.trim()).filter(Boolean),
-          budget: formData.budget,
-        }),
+        headers: {}
       });
-
       if (res.ok) {
-        setMessage("Project posted successfully!");
-        setFormData({ title: "", description: "", skills: "", budget: "" });
+        const data = await res.json();
+        setProjects(data);
       } else {
-        const errorData = await res.json();
-        setMessage(`Error: ${errorData.message || "Failed to post project"}`);
+        toast.error("Failed to load academic projects.");
       }
     } catch (error) {
-      setMessage("Error posting project. Please try again.");
+      toast.error("Network error while fetching projects.");
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div className="faculty-dashboard-container">
-      <div className="glass-card faculty-form-card">
-        <h1 className="faculty-dashboard-title">Faculty Dashboard</h1>
-        <p className="faculty-dashboard-subtitle">Post a New Project</p>
+  const fetchApplicantsForProject = async (projectId) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/projects/${projectId}/applicants`, {
+        credentials: "include",
+        headers: {}
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return data;
+      }
+      return [];
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
+  };
 
-        {message && (
-          <div className={`status-message ${message.includes("Error") ? "error" : "success"}`}>
-            {message}
+  const handleViewApplicants = async (projectId) => {
+    setLoading(true);
+    const data = await fetchApplicantsForProject(projectId);
+    setApplicants(data);
+    setActiveTab("applicants");
+    setLoading(false);
+  };
+
+  const handlePostProject = async (e) => {
+    e.preventDefault();
+    setPosting(true);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/projects`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          title: formData.title,
+          description: formData.description,
+          skills: formData.skills.split(",").map((s) => s.trim()).filter(Boolean),
+          budget: formData.budget,
+          projectType: "Academic", // Specific marker for faculty projects
+        }),
+      });
+
+      if (res.ok) {
+        toast.success("Academic Project posted successfully!");
+        setFormData({ title: "", description: "", skills: "", budget: "" });
+        setActiveTab("my-projects");
+        fetchFacultyProjects(user.email);
+      } else {
+        const errorData = await res.json();
+        toast.error(`Error: ${errorData.message || "Failed to post"}`);
+      }
+    } catch (error) {
+      toast.error("Error posting academic project. Please try again.");
+    } finally {
+      setPosting(false);
+    }
+  };
+
+  const handleApplicationStatus = async (appId, newStatus) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/applications/${appId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (res.ok) {
+        toast.success(`Application marked as ${newStatus}`);
+        setApplicants(prev => prev.map(app => app.applicationId === appId ? { ...app, status: newStatus } : app));
+      } else {
+        toast.error("Failed to update status");
+      }
+    } catch (err) {
+      toast.error("Network error");
+    }
+  };
+
+  if (!user) return null;
+
+  return (
+    <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 animate-fade-in">
+      
+      {/* Header Profile Section */}
+      <div className="glass-panel p-8 relative overflow-hidden flex flex-col md:flex-row items-center gap-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgba(255,255,255,0.02)]">
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-xl flex items-center justify-center text-4xl font-bold text-white shrink-0 relative z-10">
+          {user.companyName ? user.companyName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
+        </div>
+        
+        <div className="text-center md:text-left relative z-10 flex-1">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 text-xs font-extrabold tracking-wide uppercase mb-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 dark:bg-indigo-400 animate-pulse"></span>
+            Professor / HOD Account
+          </div>
+          <h1 className="text-3xl font-black text-slate-800 dark:text-white mb-1">
+            {user.companyName || "Faculty Member"}
+          </h1>
+          <p className="text-sm font-medium text-slate-500 dark:text-slate-400 flex items-center justify-center md:justify-start gap-2">
+            <span>✉️ {user.email}</span>
+          </p>
+        </div>
+
+        <div className="relative z-10 w-full md:w-auto mt-4 md:mt-0">
+          <button 
+            onClick={() => setActiveTab("new-project")}
+            className="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 dark:shadow-indigo-900/50 transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2"
+          >
+            <span>➕</span> New Academic Project
+          </button>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex overflow-x-auto hide-scrollbar gap-2 pb-2">
+        {[{ id: "overview", label: "Overview", icon: "📊" },
+          { id: "my-projects", label: "My Projects", icon: "📁" },
+          { id: "new-project", label: "Post Project", icon: "📝" },
+          { id: "applicants", label: "Review Applicants", icon: "👨‍🎓" }
+        ].map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-5 py-3 rounded-xl font-bold text-sm whitespace-nowrap transition-all flex items-center gap-2 ${
+              activeTab === tab.id 
+                ? "bg-indigo-600 text-white shadow-md shadow-indigo-200 dark:shadow-indigo-900/40" 
+                : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-sm border border-slate-100 dark:border-slate-700/50"
+            }`}
+          >
+            <span>{tab.icon}</span> {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Main Content Area */}
+      <div className="mt-6">
+        
+        {/* OVERVIEW TAB */}
+        {activeTab === "overview" && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="glass-panel p-6 border-l-4 border-indigo-500">
+              <p className="text-xs font-black text-slate-400 uppercase tracking-wider">Total Academic Projects</p>
+              <h2 className="text-4xl font-black text-slate-800 dark:text-white mt-2">{projects.length}</h2>
+            </div>
+            <div className="glass-panel p-6 border-l-4 border-purple-500">
+              <p className="text-xs font-black text-slate-400 uppercase tracking-wider">Active Openings</p>
+              <h2 className="text-4xl font-black text-slate-800 dark:text-white mt-2">
+                {projects.filter(p => p.status !== "Archived").length}
+              </h2>
+            </div>
+            <div className="glass-panel p-6 border-l-4 border-emerald-500">
+              <p className="text-xs font-black text-slate-400 uppercase tracking-wider">Department</p>
+              <h2 className="text-2xl font-black text-slate-800 dark:text-white mt-2 flex items-center h-full pb-2">
+                Computer Science
+              </h2>
+            </div>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="faculty-project-form">
-          <div className="form-group">
-            <label htmlFor="title">Title</label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              placeholder="e.g., AI Research Assistant"
-              value={formData.title}
-              onChange={handleChange}
-              required
-            />
+        {/* MY PROJECTS TAB */}
+        {activeTab === "my-projects" && (
+          <div className="glass-panel p-6 sm:p-8">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-black text-slate-800 dark:text-white">Active Academic Projects</h2>
+              <button onClick={() => fetchFacultyProjects(user.email)} className="text-indigo-600 font-bold text-sm hover:underline">
+                Refresh 🔄
+              </button>
+            </div>
+            
+            {loading ? (
+              <div className="text-center py-12 text-slate-400 font-bold">Loading your projects...</div>
+            ) : projects.length === 0 ? (
+              <div className="text-center py-12 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl">
+                <span className="text-4xl mb-3 block">📭</span>
+                <p className="font-bold text-slate-500">No projects posted yet.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {projects.map(project => (
+                  <div key={project._id} className="border border-slate-100 dark:border-slate-700/50 rounded-2xl p-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-lg font-extrabold text-slate-800 dark:text-white mb-1">{project.title}</h3>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 max-w-2xl line-clamp-2">{project.description}</p>
+                      </div>
+                      <span className="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-xs font-bold uppercase tracking-wider">
+                        {project.status || "Active"}
+                      </span>
+                    </div>
+                    
+                    <div className="mt-4 flex flex-wrap gap-4 items-center justify-between border-t border-slate-100 dark:border-slate-700 pt-4">
+                      <div className="flex flex-wrap gap-2">
+                        {project.requiredSkills?.map((s, i) => (
+                          <span key={i} className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 text-xs font-semibold rounded">
+                            {s}
+                          </span>
+                        ))}
+                      </div>
+                      <button 
+                        onClick={() => handleViewApplicants(project._id)}
+                        className="text-sm font-bold bg-slate-800 dark:bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition"
+                      >
+                        View Applicants 👨‍🎓
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+        )}
 
-          <div className="form-group">
-            <label htmlFor="description">Description</label>
-            <textarea
-              id="description"
-              name="description"
-              placeholder="Detailed description of the project and responsibilities..."
-              rows="4"
-              value={formData.description}
-              onChange={handleChange}
-              required
-            />
+        {/* POST PROJECT TAB */}
+        {activeTab === "new-project" && (
+          <div className="glass-panel p-6 sm:p-8 max-w-3xl mx-auto">
+            <h2 className="text-2xl font-black text-slate-800 dark:text-white mb-6">Create Academic Project</h2>
+            <form onSubmit={handlePostProject} className="space-y-5">
+              <div>
+                <label className="block text-sm font-extrabold text-slate-700 dark:text-slate-300 mb-2">Project Title</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.title}
+                  onChange={(e) => setFormData({...formData, title: e.target.value})}
+                  className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                  placeholder="e.g., Deep Learning Research Assistant"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-extrabold text-slate-700 dark:text-slate-300 mb-2">Detailed Description</label>
+                <textarea
+                  required
+                  rows="4"
+                  value={formData.description}
+                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                  placeholder="Describe the research goals and student responsibilities..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-extrabold text-slate-700 dark:text-slate-300 mb-2">Required Skills (Comma separated)</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.skills}
+                  onChange={(e) => setFormData({...formData, skills: e.target.value})}
+                  className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                  placeholder="e.g., Python, PyTorch, Data Analysis"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-extrabold text-slate-700 dark:text-slate-300 mb-2">Incentive (Stipend / Marks)</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.budget}
+                  onChange={(e) => setFormData({...formData, budget: e.target.value})}
+                  className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                  placeholder="e.g., 50 Internal Marks"
+                />
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={posting}
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 rounded-xl transition shadow-lg shadow-indigo-200 dark:shadow-indigo-900/30"
+              >
+                {posting ? "Publishing to Network..." : "Publish Academic Project 🚀"}
+              </button>
+            </form>
           </div>
+        )}
 
-          <div className="form-group">
-            <label htmlFor="skills">Skills Required</label>
-            <input
-              type="text"
-              id="skills"
-              name="skills"
-              placeholder="e.g., Python, React, Machine Learning (comma-separated)"
-              value={formData.skills}
-              onChange={handleChange}
-              required
-            />
+        {/* APPLICANTS TAB */}
+        {activeTab === "applicants" && (
+          <div className="glass-panel p-6 sm:p-8">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-black text-slate-800 dark:text-white">Student Applicants</h2>
+              <button onClick={() => setActiveTab("my-projects")} className="text-indigo-600 font-bold text-sm hover:underline">
+                ← Back to Projects
+              </button>
+            </div>
+
+            {loading ? (
+              <div className="text-center py-12 text-slate-400 font-bold">Loading applicants...</div>
+            ) : applicants.length === 0 ? (
+              <div className="text-center py-12 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl">
+                <p className="font-bold text-slate-500">No students have applied to this project yet.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {applicants.map(app => (
+                  <div key={app.applicationId} className="border border-slate-100 dark:border-slate-700/50 rounded-2xl p-5">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                      <div>
+                        <h3 className="text-lg font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
+                          {app.studentName}
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                            app.status === "Approved" ? "bg-emerald-100 text-emerald-700" :
+                            app.status === "Rejected" ? "bg-rose-100 text-rose-700" :
+                            "bg-amber-100 text-amber-700"
+                          }`}>
+                            {app.status}
+                          </span>
+                        </h3>
+                        <p className="text-xs text-slate-500 mb-2">✉️ {app.studentEmail}</p>
+                        
+                        <div className="flex items-center gap-3">
+                          <div className="bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg">
+                            <span className="text-[10px] font-bold text-slate-400 block uppercase">ATS Match</span>
+                            <span className="text-sm font-black text-indigo-600 dark:text-indigo-400">{app.matchScore}%</span>
+                          </div>
+                          {app.resumeUrl && (
+                            <a href={app.resumeUrl} target="_blank" rel="noreferrer" className="text-xs font-bold text-blue-600 hover:underline">
+                              📄 View CV
+                            </a>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 w-full md:w-auto">
+                        <button 
+                          onClick={() => handleApplicationStatus(app.applicationId, "Approved")}
+                          className="flex-1 md:flex-none px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-sm font-bold transition"
+                        >
+                          Approve
+                        </button>
+                        <button 
+                          onClick={() => handleApplicationStatus(app.applicationId, "Rejected")}
+                          className="flex-1 md:flex-none px-4 py-2 bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 rounded-lg text-sm font-bold transition"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+        )}
 
-          <div className="form-group">
-            <label htmlFor="budget">Incentive (Marks/Stipend)</label>
-            <input
-              type="text"
-              id="budget"
-              name="budget"
-              placeholder="e.g., 50 Marks or ₹5000/month"
-              value={formData.budget}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <button type="submit" className="faculty-submit-btn" disabled={loading}>
-            {loading ? "Posting..." : "Post Project"}
-          </button>
-        </form>
       </div>
     </div>
   );

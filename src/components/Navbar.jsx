@@ -123,9 +123,9 @@ export default function Navbar() {
   if (user.userRole === "company") {
     activeLinks = [...companyLinks];
   } else if (user.userRole === "faculty") {
-    activeLinks = [{ path: "/faculty-dashboard", label: "Faculty Portal", icon: "🎓" }, ...studentLinks];
+    activeLinks = [{ path: "/faculty-dashboard", label: "Professor / HOD Portal", icon: "🎓" }, ...studentLinks];
   } else if (user.userRole === "admin") {
-    activeLinks = [...adminLinks, { path: "/faculty-dashboard", label: "Faculty Portal", icon: "🎓" }];
+    activeLinks = [...adminLinks];
   } else if (user.userRole === "college") {
     activeLinks = [...collegeLinks];
   }

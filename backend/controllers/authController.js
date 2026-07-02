@@ -330,7 +330,7 @@ const verifyOtp = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, portalRole } = req.body;
         if (!email || !password) {
             return res.status(400).json({ error: "Email and password are mandatory parameters." });
         }
@@ -338,6 +338,10 @@ const login = async (req, res) => {
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ error: "Invalid email or account password." });
+        }
+
+        if (portalRole && user.userRole !== portalRole) {
+            return res.status(403).json({ error: `Access Denied: This account belongs to a ${user.userRole}. Please login through the correct portal.` });
         }
 
         const isMatch = await user.comparePassword(password);

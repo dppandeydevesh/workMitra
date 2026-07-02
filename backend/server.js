@@ -45,6 +45,7 @@ app.use(cors({
 
 // Request body size limit
 app.use(express.json({ limit: '1mb' }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const authRoutes = require('./routes/authRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const authenticateToken = require('./middleware/authMiddleware');
@@ -1246,9 +1247,27 @@ app.post("/api/profile/resume", authenticateToken, async (req, res) => {
   }
 });
 
-// Configure multer storage in memory for PDF uploads
+const fsSync = require('fs');
+const path = require('path');
+
+// Configure multer storage on disk to prevent RAM exhaustion
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fsSync.existsSync(uploadDir)) {
+  fsSync.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'resume-' + uniqueSuffix + '.pdf');
+  }
+});
+
 const upload = multer({
-  storage: multer.memoryStorage(),
+  storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
 
@@ -1271,18 +1290,23 @@ app.post("/api/profile/upload-cv", authenticateToken, upload.single("cvFile"), a
       return res.status(403).json({ error: "Unauthorized profile context." });
     }
 
-    // Parse the PDF buffer
-    const pdfData = await pdfParse(req.file.buffer);
+    // Read the PDF from disk for parsing
+    const fileBuffer = fsSync.readFileSync(req.file.path);
+    const pdfData = await pdfParse(fileBuffer);
     const extractedText = pdfData.text;
 
     if (!extractedText || extractedText.trim().length === 0) {
+      // Clean up file if unreadable
+      fsSync.unlinkSync(req.file.path);
       return res.status(400).json({ error: "Could not extract text from the uploaded PDF. Please make sure the PDF has selectable text." });
     }
 
-    // Save extracted text to user document
+    const fileUrl = `/uploads/${req.file.filename}`;
+
+    // Save extracted text and local file URL to user document
     const updatedUser = await User.findOneAndUpdate(
       { email },
-      { resumeText: extractedText },
+      { resumeText: extractedText, resumeUrl: fileUrl },
       { new: true }
     );
 

@@ -119,16 +119,15 @@ export default function Navbar() {
     { label: t("Chat"), path: "/chat", icon: "💬" }
   ];
 
-  let activeLinks = studentLinks;
+  let activeLinks = [...studentLinks];
   if (user.userRole === "company") {
-    activeLinks = companyLinks;
+    activeLinks = [...companyLinks];
   } else if (user.userRole === "faculty") {
-      activeLinks.push({ path: "/faculty-dashboard", label: "Faculty Portal", icon: "🎓" });
-    } else if (user.userRole === "admin") {
-    activeLinks = adminLinks;
-    activeLinks.push({ path: "/faculty-dashboard", label: "Faculty Portal", icon: "🎓" });
+    activeLinks = [{ path: "/faculty-dashboard", label: "Faculty Portal", icon: "🎓" }, ...studentLinks];
+  } else if (user.userRole === "admin") {
+    activeLinks = [...adminLinks, { path: "/faculty-dashboard", label: "Faculty Portal", icon: "🎓" }];
   } else if (user.userRole === "college") {
-    activeLinks = collegeLinks;
+    activeLinks = [...collegeLinks];
   }
 
   return (

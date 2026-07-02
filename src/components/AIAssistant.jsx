@@ -58,7 +58,7 @@ const AIAssistant = () => {
         throw new Error(data.error || 'Failed to get response from AI');
       }
       
-      setMessages((prev) => [...prev, { sender: 'ai', text: data.reply || data.message || 'Sorry, I could not process that.' }]);
+      setMessages((prev) => [...prev, { sender: 'ai', text: data.text || data.reply || data.message || 'Sorry, I could not process that.' }]);
     } catch (error) {
       console.error('Error in AI Assistant chat:', error);
       setMessages((prev) => [...prev, { sender: 'ai', text: `⚠️ ${error.message}` }]);

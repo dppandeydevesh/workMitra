@@ -36,11 +36,11 @@ const AIAssistant = () => {
     setIsTyping(true);
 
     try {
-            const response = await fetch(`${API_BASE_URL}/api/ai/chat`, { credentials: "include",
+      const response = await fetch(`${API_BASE_URL}/api/ai/chat`, {
+        credentials: "include",
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer `
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           message: userMessage.text,
@@ -52,16 +52,16 @@ const AIAssistant = () => {
         })
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to get response');
-      }
-
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to get response from AI');
+      }
       
       setMessages((prev) => [...prev, { sender: 'ai', text: data.reply || data.message || 'Sorry, I could not process that.' }]);
     } catch (error) {
       console.error('Error in AI Assistant chat:', error);
-      setMessages((prev) => [...prev, { sender: 'ai', text: 'Error connecting to the server. Please try again later.' }]);
+      setMessages((prev) => [...prev, { sender: 'ai', text: `⚠️ ${error.message}` }]);
     } finally {
       setIsTyping(false);
     }

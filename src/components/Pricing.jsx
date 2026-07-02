@@ -6,10 +6,20 @@ const Pricing = ({ onClose, onUpgrade }) => {
   const [loading, setLoading] = useState(false);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
   const handlePurchase = async (planId) => {
     setLoading(true);
     try {
-      // 1. Create Mock Order
+      // 1. Create Order on Backend
       const res = await fetch(`${API_BASE_URL}/api/payments/create-order`, {
         method: "POST",
         credentials: "include",
@@ -20,35 +30,62 @@ const Pricing = ({ onClose, onUpgrade }) => {
       
       if (!res.ok) throw new Error(order.error || "Failed to create order");
 
-      // 2. Mock Razorpay Window Simulation (Loading state)
+      // 2. Load Razorpay script
       toast.info("Opening secure payment gateway...");
-      
-      setTimeout(async () => {
-        // 3. Verify Payment
-        const verifyRes = await fetch(`${API_BASE_URL}/api/payments/verify`, {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            orderId: order.id, 
-            paymentId: `pay_${Math.random().toString(36).substr(2, 9)}`,
-            signature: "mock_signature_for_testing"
-          })
-        });
-        const verifyData = await verifyRes.json();
-        
-        if (verifyRes.ok) {
-          toast.success(verifyData.message);
-          onUpgrade(verifyData.user);
-          onClose();
-        } else {
-          toast.error(verifyData.error);
+      const resScript = await loadRazorpayScript();
+      if (!resScript) {
+        throw new Error("Razorpay SDK failed to load. Are you online?");
+      }
+
+      // 3. Configure and open Razorpay Modal
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || "", // Passed from env
+        amount: order.amount,
+        currency: order.currency,
+        name: "workMitra",
+        description: `Upgrade to ${planId === 'premium' ? 'Pro' : 'Standard'} Pass`,
+        order_id: order.id,
+        handler: async function (response) {
+          try {
+            // 4. Verify Payment on Backend
+            const verifyRes = await fetch(`${API_BASE_URL}/api/payments/verify`, {
+              method: "POST",
+              credentials: "include",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ 
+                razorpay_order_id: response.razorpay_order_id, 
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              })
+            });
+            const verifyData = await verifyRes.json();
+            
+            if (verifyRes.ok) {
+              toast.success(verifyData.message);
+              onUpgrade(verifyData.user);
+              onClose();
+            } else {
+              toast.error(verifyData.error);
+            }
+          } catch (err) {
+            toast.error("Verification failed: " + err.message);
+          }
+        },
+        prefill: {
+          name: "User",
+          email: "user@example.com",
+        },
+        theme: {
+          color: "#4f46e5"
         }
-        setLoading(false);
-      }, 1500);
+      };
+
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
 
     } catch (err) {
       toast.error(err.message);
+    } finally {
       setLoading(false);
     }
   };

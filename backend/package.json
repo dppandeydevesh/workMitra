@@ -20,6 +20,7 @@
     "mongoose": "^9.7.1",
     "multer": "^2.2.0",
     "pdf-parse": "^2.4.5",
+    "razorpay": "^2.9.6",
     "swot-node": "^2.0.1489",
     "twilio": "^6.0.2",
     "ws": "^8.21.0"

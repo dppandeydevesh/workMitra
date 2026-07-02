@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+/* Google Fonts Inter is loaded via <link> in index.html for reliable preloading */
 
 :root {
   --glass-bg: rgba(255, 255, 255, 0.75);
@@ -59,6 +59,7 @@ button:active {
 /* 🌌 एनिमेटेड मेश ग्रेडिएंट बैकग्राउंड (इमेज जैसी पेस्टल थीम वाइब)            */
 /* ========================================================================= */
 body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
   margin: 0;
   padding: 0;
   box-sizing: border-box;

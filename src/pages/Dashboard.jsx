@@ -198,15 +198,17 @@ export default function Dashboard() {
         const projectsData = await projectsRes.json();
         
         if (projectsRes.ok) {
+          const list = projectsData.projects || projectsData; // fallback
           if (isStudent) {
-            const unpacked = projectsData.map(item => ({
+            const unpacked = list.map(item => ({
               ...item.project,
               aiRecommendationScore: item.score
             }));
             setProjects(unpacked);
           } else {
-            setProjects(projectsData);
+            setProjects(list);
           }
+          if (projectsData.totalPages) setTotalPages(projectsData.totalPages);
         } else {
           setErrorMessage(projectsData.error || t("dashboard.loadProjectsFail"));
         }

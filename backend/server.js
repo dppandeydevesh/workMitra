@@ -456,6 +456,82 @@ ${textToAnalyze}`;
   }
 });
 
+// =========================================================================
+// 📄 ROUTE: ATS Resume Check against Job Role
+// =========================================================================
+const memoryUpload = multer();
+app.post("/api/ai/resume-check", authenticateToken, memoryUpload.single('resume'), async (req, res) => {
+  try {
+    const { jobRole } = req.body;
+    if (!jobRole) {
+      return res.status(400).json({ error: "jobRole is required." });
+    }
+    if (!req.file) {
+      return res.status(400).json({ error: "resume file is required." });
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: "Gemini API key is not configured." });
+    }
+
+    const pdfData = await pdfParse(req.file.buffer);
+    const resumeText = pdfData.text;
+
+    if (!resumeText || resumeText.trim().length === 0) {
+      return res.status(400).json({ error: "Could not extract text from the provided PDF." });
+    }
+
+    const prompt = `You are an expert Applicant Tracking System (ATS).
+Review the following resume text against the job role: "${jobRole}".
+Provide your response strictly in the following JSON format without any surrounding markdown formatting or code blocks.
+
+JSON Structure:
+{
+  "score": 85,
+  "missingKeywords": ["Docker", "Kubernetes", "Agile"],
+  "feedback": "The candidate has strong backend skills but lacks cloud deployment experience required for this role."
+}
+
+Resume Text:
+${resumeText}`;
+
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: "application/json",
+          temperature: 0.2
+        }
+      })
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      return res.status(500).json({ error: data.error?.message || "Failed to communicate with Gemini API." });
+    }
+
+    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!aiText) {
+      return res.status(500).json({ error: "Empty response from AI engine." });
+    }
+
+    let atsReport;
+    try {
+      atsReport = JSON.parse(aiText.trim());
+    } catch (parseErr) {
+      return res.status(500).json({ error: "Failed to parse AI response into JSON." });
+    }
+
+    res.status(200).json(atsReport);
+  } catch (err) {
+    console.error("ATS Resume Check error:", err.message);
+    res.status(500).json({ error: "Failed to execute ATS resume check." });
+  }
+});
+
 app.get("/api/auth/user/:email", authenticateToken, async (req, res) => {
   try {
     const user = await User.findOne({ email: req.params.email }, "-password");

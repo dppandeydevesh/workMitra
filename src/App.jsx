@@ -28,6 +28,8 @@ import CollegeDashboard from "./pages/CollegeDashboard";
 import PlacementPipeline from "./pages/PlacementPipeline";
 import { ThemeProvider } from "./components/ThemeContext";
 import AIAssistant from "./components/AIAssistant";
+import ResumeChecker from "./pages/ResumeChecker";
+import FacultyDashboard from "./pages/FacultyDashboard";
 
 const PublicRoute = ({ children }) => {
   const savedUser = localStorage.getItem("user");
@@ -99,6 +101,8 @@ function App() {
                 
                 <Route path="/admin-dashboard" element={<ProtectedLayout allowedRoles={["admin"]}><AdminDashboard /></ProtectedLayout>} />
                 <Route path="/college-dashboard" element={<ProtectedLayout allowedRoles={["college"]}><CollegeDashboard /></ProtectedLayout>} />
+                <Route path="/faculty-dashboard" element={<ProtectedLayout allowedRoles={["faculty"]}><FacultyDashboard /></ProtectedLayout>} />
+                <Route path="/resume-checker" element={<ProtectedLayout><ResumeChecker /></ProtectedLayout>} />
                 
                 {/* 404 Wildcard Catch-All */}
                 <Route path="*" element={<NotFoundPage />} />

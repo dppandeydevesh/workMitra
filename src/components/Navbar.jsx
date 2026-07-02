@@ -122,7 +122,9 @@ export default function Navbar() {
   let activeLinks = studentLinks;
   if (user.userRole === "company") {
     activeLinks = companyLinks;
-  } else if (user.userRole === "admin") {
+  } else if (user.userRole === "faculty") {
+      activeLinks.push({ path: "/faculty-dashboard", label: "Faculty Portal", icon: "🎓" });
+    } else if (user.userRole === "admin") {
     activeLinks = adminLinks;
   } else if (user.userRole === "college") {
     activeLinks = collegeLinks;

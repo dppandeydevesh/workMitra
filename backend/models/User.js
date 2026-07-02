@@ -5,7 +5,7 @@ const UserSchema = new mongoose.Schema({
     fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true, index: true },
     password: { type: String, required: function() { return !this.googleId && !this.facebookId; } }, 
-    userRole: { type: String, default: "student", enum: ["student", "company", "college", "admin"] }, // student, company, college, or admin
+    userRole: { type: String, default: "student", enum: ["student", "company", "college", "admin", "faculty"] }, // student, company, college, admin, or faculty
     
     // 🏢 Extra properties fields parsed perfectly by the frontend logic
     companyName: { type: String, default: null },

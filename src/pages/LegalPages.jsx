@@ -154,7 +154,7 @@ export function RefundPage() {
       <section className="space-y-2">
         <h3 className="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider">{t("legal.refundContactHeading")}</h3>
         <p>
-          {t("legal.refundContactBody")} <span className="font-extrabold text-indigo-600">contact.workmitra@gmail.com</span>. {t("legal.refundContactResolution")}
+          {t("legal.refundContactBody")} <span className="font-extrabold text-indigo-600">supportworkmitra@gmail.com</span>. {t("legal.refundContactResolution")}
         </p>
       </section>
     </LegalLayout>

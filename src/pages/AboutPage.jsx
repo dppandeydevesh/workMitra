@@ -142,7 +142,7 @@ export default function AboutPage() {
           </div>
           <div>
             <h4 className="font-extrabold text-gray-800 dark:text-gray-200 uppercase tracking-wider mb-1">✉️ {t("about.assistanceHeading")}</h4>
-            <p>{t("about.primarySupport")} <span className="font-bold text-indigo-600">contact.workmitra@gmail.com</span></p>
+            <p>{t("about.primarySupport")} <span className="font-bold text-indigo-600">supportworkmitra@gmail.com</span></p>
             <p className="mt-0.5">{t("about.responseTime")}</p>
             <p>{t("about.operatingHours")}</p>
           </div>

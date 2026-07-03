@@ -5,6 +5,7 @@ import { API_BASE_URL } from "../config";
 import { useToast } from "../components/Toast";
 import { fetchWithAuth } from "../services/apiClient";
 import { useDashboardStore } from "../stores/useDashboardStore";
+import PremiumCheckoutModal from "../components/PremiumCheckoutModal";
 
 export default function Dashboard() {
   const navigate = useNavigate();

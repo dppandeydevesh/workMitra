@@ -29,7 +29,7 @@ const pdfParse = require('pdf-parse');
 const app = express();
 
 // Security Middlewares
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(mongoSanitize());
 
 // Middleware Setup

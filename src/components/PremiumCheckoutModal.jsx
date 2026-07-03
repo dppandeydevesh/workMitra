@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { toast } from 'react-toastify';
+import { useToast } from './Toast';
 import { useTranslation } from 'react-i18next';
 import { fetchWithAuth } from '../services/apiClient';
 
@@ -10,6 +10,7 @@ const PremiumCheckoutModal = ({
   API_BASE_URL 
 }) => {
   const { t } = useTranslation();
+  const toast = useToast();
   const [checkingOutPass, setCheckingOutPass] = useState(false);
 
   return (

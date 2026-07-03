@@ -476,16 +476,7 @@ const logout = (req, res) => {
   res.status(200).json({ message: 'Logged out successfully' });
 };
 
-module.exports = {
-  register,
-  verifyOtp,
-  login,
-  forgotPassword,
-  resetPassword,
-  logout
-};
-
-exports.me = async (req, res) => {
+const me = async (req, res) => {
   try {
     const User = require("../models/User");
     const user = await User.findOne({ email: req.user.email }).select("-password -__v");
@@ -494,4 +485,14 @@ exports.me = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }
+};
+
+module.exports = {
+  register,
+  verifyOtp,
+  login,
+  forgotPassword,
+  resetPassword,
+  logout,
+  me
 };

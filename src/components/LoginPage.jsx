@@ -96,6 +96,8 @@ export default function LoginPage() {
             navigate("/admin-dashboard");
           } else if (data.user.userRole === "college") {
             navigate("/college-dashboard");
+          } else if (data.user.userRole === "faculty") {
+            navigate("/faculty-dashboard");
           } else {
             if (data.user.hasCompletedProfile === true) {
               navigate("/dashboard");

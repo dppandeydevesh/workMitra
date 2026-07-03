@@ -10,7 +10,7 @@ exports.routeHandler0 = async (req, res) => {
       return res.status(403).json({ error: "Unauthorized access to private message history." });
     }
 
-    const Message = require("./models/Message");
+    const Message = require("../models/Message");
     
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
@@ -43,7 +43,7 @@ exports.routeHandler1 = async (req, res) => {
       return res.status(403).json({ error: "Unauthorized access to chat rosters." });
     }
 
-    const Message = require("./models/Message");
+    const Message = require("../models/Message");
 
     // Find all unique email addresses that this user has messaged or received messages from
     const senders = await Message.distinct("sender", { receiver: email });
@@ -83,7 +83,7 @@ exports.routeHandler2 = async (req, res) => {
     if (!sender) {
       return res.status(400).json({ error: "Sender email is required." });
     }
-    const Message = require("./models/Message");
+    const Message = require("../models/Message");
     await Message.updateMany(
       { sender, receiver: req.user.email, read: false },
       { $set: { read: true } }

@@ -146,7 +146,7 @@ exports.getCompanyApplications = async (req, res) => {
       return res.status(403).json({ error: "Unauthorized access to company applications." });
     }
 
-    const companyProjects = await Project.find({ companyId: email });
+    const companyProjects = await Project.find({ companyId: req.user.userId });
     const projectIds = companyProjects.map(p => p._id);
 
     const applications = await Application.find({ projectId: { $in: projectIds } })
@@ -241,7 +241,7 @@ exports.updateStatus = async (req, res) => {
     }
 
     // Verify company user owns the parent project
-    if (req.user.email !== application.projectId.companyId) {
+    if (req.user.userId !== application.projectId.companyId.toString()) {
       return res.status(403).json({ error: "Unauthorized state modification." });
     }
 
@@ -552,7 +552,7 @@ exports.completeApplication = async (req, res) => {
       return res.status(404).json({ error: "Application not found." });
     }
 
-    if (req.user.email !== application.projectId.companyId) {
+    if (req.user.userId !== application.projectId.companyId.toString()) {
       return res.status(403).json({ error: "Unauthorized status approval request." });
     }
 
@@ -568,7 +568,7 @@ exports.completeApplication = async (req, res) => {
 
     // Auto-update student targetSkills based on project requiredSkills (Item 4)
     try {
-      const User = require("./models/User");
+      const User = require("../models/User");
       const student = await User.findOne({ email: application.studentEmail });
       if (student) {
         let existingSkills = student.targetSkills 
@@ -633,7 +633,7 @@ exports.requestRevision = async (req, res) => {
       return res.status(404).json({ error: "Application not found." });
     }
 
-    if (req.user.email !== application.projectId.companyId) {
+    if (req.user.userId !== application.projectId.companyId.toString()) {
       return res.status(403).json({ error: "Unauthorized status revision request." });
     }
 
@@ -708,7 +708,7 @@ exports.fileDispute = async (req, res) => {
       return res.status(404).json({ error: "Application not found." });
     }
 
-    if (req.user.email !== application.projectId.companyId) {
+    if (req.user.userId !== application.projectId.companyId.toString()) {
       return res.status(403).json({ error: "Unauthorized status modification request." });
     }
 
@@ -881,7 +881,7 @@ exports.updatePipelineStatus = async (req, res) => {
     }
 
     // Verify company owner status
-    if (req.user.email !== application.projectId.companyId && req.user.userRole !== "admin") {
+    if (req.user.userId !== application.projectId.companyId.toString() && req.user.userRole !== "admin") {
       return res.status(403).json({ error: "Unauthorized: Only the project owner can update candidate pipelines." });
     }
 

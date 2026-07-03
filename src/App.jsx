@@ -42,6 +42,8 @@ const PublicRoute = ({ children }) => {
       return <Navigate to="/admin-dashboard" replace />;
     } else if (user.userRole === "college") {
       return <Navigate to="/college-dashboard" replace />;
+    } else if (user.userRole === "faculty") {
+      return <Navigate to="/faculty-dashboard" replace />;
     } else {
       return <Navigate to="/dashboard" replace />;
     }

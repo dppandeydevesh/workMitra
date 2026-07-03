@@ -9,7 +9,7 @@ exports.routeHandler0 = async (req, res) => {
       return res.status(403).json({ error: "Unauthorized stats access." });
     }
 
-    const projects = await Project.find({ companyId: companyEmail });
+    const projects = await Project.find({ companyId: req.user.userId });
     const projectIds = projects.map(p => p._id);
     const applications = await Application.find({ projectId: { $in: projectIds } }).populate("projectId");
 
@@ -64,7 +64,7 @@ exports.routeHandler1 = async (req, res) => {
       return res.status(403).json({ error: "Unauthorized activity access." });
     }
 
-    const projects = await Project.find({ companyId: companyEmail });
+    const projects = await Project.find({ companyId: req.user.userId });
     const projectIds = projects.map(p => p._id);
     const recentApps = await Application.find({ projectId: { $in: projectIds } })
       .populate("projectId")

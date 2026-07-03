@@ -684,14 +684,20 @@ wss.on("connection", (socket, req) => {
       const data = JSON.parse(messageStr);
 
       if (data.type === "auth") {
-        // Authenticate WebSocket connection using JWT verification check
-        if (!data.token) {
+        let token = data.token;
+        const cookieString = socket.req.headers.cookie;
+        if (!token && cookieString) {
+          const match = cookieString.match(/token=([^;]+)/);
+          if (match) token = match[1];
+        }
+
+        if (!token) {
           socket.send(JSON.stringify({ type: "error", message: "JWT token is required for chat authentication." }));
           socket.close();
           return;
         }
 
-        jwt.verify(data.token, JWT_SECRET, (err, decoded) => {
+        jwt.verify(token, JWT_SECRET, (err, decoded) => {
           if (err) {
             socket.send(JSON.stringify({ type: "error", message: "Invalid JWT token." }));
             socket.close();

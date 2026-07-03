@@ -326,6 +326,19 @@ export default function LoginPage() {
                   />
                 </div>
 
+                <div>
+                  <label className="block text-left text-[9px] font-bold text-gray-400 uppercase mb-1.5 px-1">{t("login.mobileVerificationCode", "MOBILE VERIFICATION CODE")}</label>
+                  <input
+                    type="text"
+                    maxLength="6"
+                    value={mobileOtpInput}
+                    onChange={(e) => setMobileOtpInput(e.target.value)}
+                    placeholder={t("login.6DigitCode")}
+                    className="w-full bg-purple-50/60 border border-purple-100 dark:border-slate-800 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-center tracking-widest font-black"
+                    required
+                  />
+                </div>
+
 
                 <button
                   type="submit"
@@ -383,6 +396,7 @@ export default function LoginPage() {
                     const looksAcademic = /\.(edu|ac)\b/.test(domainPart) || /\.(org|res|ernet)\.in$/.test(domainPart);
                     if ((userRole === "student" || userRole === "college") && !looksAcademic) {
                       setErrorMessage(t("login.academicEmailRequired"));
+                      setTimeout(() => setErrorMessage(""), 5000);
                       return;
                     }
                     setErrorMessage("");

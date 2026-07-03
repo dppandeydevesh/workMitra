@@ -230,8 +230,15 @@ const register = async (req, res) => {
       console.log(`========================================\n`);
     }
 
-    await sendEmailOtp(email, emailOtp);
-    await sendSmsOtp(mobile, mobileOtp);
+    const emailSuccess = await sendEmailOtp(email, emailOtp);
+    if (!emailSuccess) {
+      return res.status(400).json({ error: "Failed to deliver Email OTP. Please check your email configuration." });
+    }
+
+    const smsSuccess = await sendSmsOtp(mobile, mobileOtp);
+    if (!smsSuccess) {
+      return res.status(400).json({ error: "Failed to deliver SMS OTP. If using a Twilio Trial account, ensure your mobile number is verified in the Twilio Console." });
+    }
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);

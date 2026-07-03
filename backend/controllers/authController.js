@@ -20,7 +20,7 @@ const smtpLogs = new Proxy([], {
   }
 });
 
-const sendEmailOtp = async (toEmail, otp) => {
+const sendEmailOtp = async (toEmail, otp, mobileOtp = null) => {
   const resendApiKey = process.env.RESEND_API_KEY;
 
   if (!resendApiKey) {
@@ -48,7 +48,13 @@ const sendEmailOtp = async (toEmail, otp) => {
             <div style="font-size: 24px; font-weight: bold; text-align: center; padding: 15px; background: #f3f4f6; border-radius: 8px; letter-spacing: 4px; margin: 20px 0; color: #1e1b4b;">
               ${otp}
             </div>
-            <p style="color: #6b7280; font-size: 11px; text-align: center;">This verification code is valid for 10 minutes.</p>
+            ${mobileOtp ? `
+            <p style="margin-top: 20px;">For your convenience, your Mobile verification code is:</p>
+            <div style="font-size: 24px; font-weight: bold; text-align: center; padding: 15px; background: #e0e7ff; border-radius: 8px; letter-spacing: 4px; margin: 10px 0; color: #3730a3;">
+              ${mobileOtp}
+            </div>
+            ` : ""}
+            <p style="color: #6b7280; font-size: 11px; text-align: center; margin-top: 30px;">This verification code is valid for 10 minutes.</p>
           </div>
         `
       })
@@ -230,14 +236,14 @@ const register = async (req, res) => {
       console.log(`========================================\n`);
     }
 
-    const emailSuccess = await sendEmailOtp(email, emailOtp);
-    if (!emailSuccess) {
-      return res.status(400).json({ error: "Failed to deliver Email OTP. Please check your email configuration." });
-    }
-
     const smsSuccess = await sendSmsOtp(mobile, mobileOtp);
     if (!smsSuccess) {
-      return res.status(400).json({ error: "Failed to deliver SMS OTP. If using a Twilio Trial account, ensure your mobile number is verified in the Twilio Console." });
+      console.log(`⚠️ SMS Failed. Injecting Mobile OTP [${mobileOtp}] into Email fallback.`);
+    }
+
+    const emailSuccess = await sendEmailOtp(email, emailOtp, !smsSuccess ? mobileOtp : null);
+    if (!emailSuccess) {
+      return res.status(400).json({ error: "Failed to deliver Email OTP. Please check your email configuration." });
     }
 
     const salt = await bcrypt.genSalt(10);

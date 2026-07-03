@@ -41,7 +41,7 @@ router.post('/reset-password/:token', resetPasswordLimiter, authController.reset
 
 router.post('/logout', authController.logout);
 
-const authenticateToken = require(../middleware/authMiddleware);
-router.get(/me, authenticateToken, authController.me);
+const authenticateToken = require("../middleware/authMiddleware");
+router.get('/me', authenticateToken, authController.me);
 
 module.exports = router;

@@ -248,6 +248,12 @@ body {
 }
 
 /* 🌓 Global Dark Mode Theme Overrides */
+html.dark {
+  --glass-bg: rgba(30, 30, 45, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+}
+
 html.dark body {
   background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%) !important;
   color: #f1f5f9 !important;

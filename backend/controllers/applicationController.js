@@ -48,6 +48,11 @@ exports.applyForProject = async (req, res) => {
     if (!studentUser) {
       return res.status(404).json({ error: "Student not found." });
     }
+    
+    // Strict Server-Side Validation: Ensure Paid Pass is active for Student Applications
+    if (!studentUser.hasPaidPass) {
+      return res.status(403).json({ error: "Premium Pass is required to apply for projects." });
+    }
     const studentName = studentUser.fullName;
 
     // Compute standard match score fallback
@@ -63,43 +68,12 @@ exports.applyForProject = async (req, res) => {
       }
     }
 
-    // Attempt Gemini AI evaluation if resume is uploaded
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (apiKey && studentUser && studentUser.resumeText && project) {
-      try {
-        const prompt = `Analyze this candidate's resume text against the project description and required skills. Estimate a match percentage (integer 0 to 100) and provide a concise, one-sentence rationale. Return ONLY a valid JSON object matching this schema:
-{
-  "matchScore": number,
-  "aiRationale": "string"
-}
-
-Required Skills: ${project.requiredSkills.join(", ")}
-Project Description: ${project.description}
-Candidate Resume Text: ${studentUser.resumeText}`;
-
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { responseMimeType: "application/json" }
-          })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (aiText) {
-            const aiData = JSON.parse(aiText);
-            if (typeof aiData.matchScore === "number") {
-              matchScore = aiData.matchScore;
-              aiRationale = aiData.aiRationale;
-            }
-          }
-        }
-      } catch (aiErr) {
-        console.error("Gemini applicant match score evaluation bypassed:", aiErr.message);
-      }
+    // Delegate to AiService
+    const AiService = require("../services/AiService");
+    const aiResult = await AiService.evaluateResumeMatch(project, studentUser);
+    if (aiResult.matchScore !== null) {
+      matchScore = aiResult.matchScore;
+      aiRationale = aiResult.aiRationale;
     }
 
     const newApplication = new Application({
@@ -384,44 +358,14 @@ exports.submitApplicationWork = async (req, res) => {
     const lintWarnings = runLinter(submissionText);
     application.lintWarnings = lintWarnings;
 
-    // 3. AI Code Auditor (Google Gemini)
+    // 3. AI Code Auditor (Google Gemini) - Delegated to AiService
+    const AiService = require("../services/AiService");
     let matchScore = null;
     let aiRationale = null;
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (apiKey) {
-      try {
-        const prompt = `Analyze this student's task submission code against the requirements. Grade the solution's code quality, correct implementation, and completeness on a scale of 0 to 100. Also write a one-sentence critique/rationale. Return ONLY a valid JSON object matching this schema:
-{
-  "score": number,
-  "rationale": "string"
-}
-
-Submission Code: ${submissionText}
-Explanatory details: ${submissionText}`;
-
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { responseMimeType: "application/json" }
-          })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (aiText) {
-            const aiData = JSON.parse(aiText);
-            if (typeof aiData.score === "number") {
-              matchScore = aiData.score;
-              aiRationale = aiData.rationale;
-            }
-          }
-        }
-      } catch (aiErr) {
-        console.error("Gemini AI code auditor bypassed:", aiErr.message);
-      }
+    const auditResult = await AiService.auditSubmission(submissionText);
+    if (auditResult.matchScore !== null) {
+      matchScore = auditResult.matchScore;
+      aiRationale = auditResult.aiRationale;
     }
     if (matchScore !== null) {
       application.matchScore = matchScore;

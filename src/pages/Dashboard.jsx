@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../config";
 import { useToast } from "../components/Toast";
 import { fetchWithAuth } from "../services/apiClient";
+import { useDashboardStore } from "../stores/useDashboardStore";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -96,17 +97,21 @@ export default function Dashboard() {
   const [uploadingCV, setUploadingCV] = useState(false);
 
   // Search & Filter States
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
-  const [skillFilter, setSkillFilter] = useState("All");
-  const [workTypeFilter, setWorkTypeFilter] = useState("All");
-  const [maxBudgetFilter, setMaxBudgetFilter] = useState(10000);
-  const [sortBy, setSortBy] = useState("latest");
+  // Zustand Store
+  const {
+    searchTerm, setSearchTerm,
+    showSearchSuggestions, setShowSearchSuggestions,
+    skillFilter, setSkillFilter,
+    workTypeFilter, setWorkTypeFilter,
+    maxBudgetFilter, setMaxBudgetFilter,
+    sortBy, setSortBy,
+    page, setPage,
+    limit, setLimit
+  } = useDashboardStore();
+
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [checkingOutPass, setCheckingOutPass] = useState(false);
   const [checkoutStep, setCheckoutStep] = useState(1);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
 
   // 📥 Phase 12 States & Auto-Save
   const [codeQualityRubric, setCodeQualityRubric] = useState(5);
@@ -259,7 +264,7 @@ export default function Dashboard() {
     formData.append("email", currentUser.email);
 
     try {
-            const response = await fetch(`${API_BASE_URL}/api/profile/upload-cv`, { credentials: "include",
+            const response = await fetchWithAuth(`${API_BASE_URL}/api/profile/upload-cv`, { credentials: "include",
         method: "POST",
         headers: {
           
@@ -295,7 +300,7 @@ export default function Dashboard() {
     setUpdatingResume(true);
 
     try {
-            const response = await fetch(`${API_BASE_URL}/api/profile/resume`, { credentials: "include",
+            const response = await fetchWithAuth(`${API_BASE_URL}/api/profile/resume`, { credentials: "include",
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -337,7 +342,7 @@ export default function Dashboard() {
     setLoadingReview(true);
 
     try {
-            const response = await fetch(`${API_BASE_URL}/api/ai/review-cv`, { credentials: "include",
+            const response = await fetchWithAuth(`${API_BASE_URL}/api/ai/review-cv`, { credentials: "include",
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -371,7 +376,7 @@ export default function Dashboard() {
 
   const fetchApplications = async (userEmail) => {
     try {
-            const detailsRes = await fetch(`${API_BASE_URL}/api/applications/student-details/${userEmail}`, { credentials: "include",
+            const detailsRes = await fetchWithAuth(`${API_BASE_URL}/api/applications/student-details/${userEmail}`, { credentials: "include",
         headers: {  }
       });
       if (detailsRes.ok) {
@@ -388,7 +393,7 @@ export default function Dashboard() {
     if (!activeAppToSubmit) return;
 
     try {
-            const response = await fetch(`${API_BASE_URL}/api/applications/${activeAppToSubmit._id}/submit`, { credentials: "include",
+            const response = await fetchWithAuth(`${API_BASE_URL}/api/applications/${activeAppToSubmit._id}/submit`, { credentials: "include",
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -444,7 +449,7 @@ export default function Dashboard() {
 
     setRequestingExtension(true);
     try {
-            const res = await fetch(`${API_BASE_URL}/api/applications/${activeAppToExtend._id}/request-extension`, { credentials: "include",
+            const res = await fetchWithAuth(`${API_BASE_URL}/api/applications/${activeAppToExtend._id}/request-extension`, { credentials: "include",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -481,7 +486,7 @@ export default function Dashboard() {
     }
 
     try {
-            const response = await fetch(`${API_BASE_URL}/api/applications/apply`, { credentials: "include",
+            const response = await fetchWithAuth(`${API_BASE_URL}/api/applications/apply`, { credentials: "include",
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -1463,135 +1468,13 @@ export default function Dashboard() {
 
           {/* 💳 Real Razorpay Gateway Checkout Modal */}
           {showCheckoutModal && (
-            <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in select-none">
-              <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-gray-100 dark:border-slate-800 flex flex-col text-left">
-                
-                {/* Header bar */}
-                <div className="bg-slate-900 text-white px-6 py-4 flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <span className="text-blue-500 font-extrabold text-sm tracking-wide">Razorpay</span>
-                    <span className="px-1.5 py-0.5 bg-blue-500/20 text-blue-400 text-[8px] font-black uppercase rounded">{t("dashboard.secured")}</span>
-                  </div>
-                  <button 
-                    onClick={() => setShowCheckoutModal(false)}
-                    className="text-slate-400 hover:text-white font-extrabold text-sm transition"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                <div className="p-6 space-y-4">
-                  <div className="text-center">
-                    <span className="text-3xl">🛡️</span>
-                    <h3 className="text-base font-black text-gray-800 dark:text-gray-200 mt-2">{t("dashboard.unlockPremium")}</h3>
-                    <p className="text-xs text-gray-400 mt-1">{t("dashboard.unlockPremiumDesc")}</p>
-                  </div>
-                  
-                  <div className="border border-indigo-100 bg-indigo-50/50 p-4 rounded-2xl flex justify-between items-center">
-                    <div>
-                      <span className="text-[10px] font-black text-indigo-700 uppercase">{t("dashboard.premiumPlan")}</span>
-                      <span className="text-xs font-semibold text-gray-600 dark:text-gray-300 block mt-0.5">{t("dashboard.thirtyDaysAccess")}</span>
-                    </div>
-                    <span className="text-xl font-black text-gray-800 dark:text-gray-200">₹39</span>
-                  </div>
-
-                  <button
-                    onClick={async () => {
-                      try {
-                        setCheckingOutPass(true);
-                        // 1. Create order on backend
-                        const orderRes = await fetch(`${API_BASE_URL}/api/payments/create-order`, {
-                          method: "POST",
-                          credentials: "include",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ planId: "premium" })
-                        });
-                        const order = await orderRes.json();
-                        if (!orderRes.ok) throw new Error(order.error || "Failed to create order");
-
-                        // 2. Load Razorpay SDK
-                        const loaded = await new Promise((resolve) => {
-                          if (window.Razorpay) return resolve(true);
-                          const script = document.createElement("script");
-                          script.src = "https://checkout.razorpay.com/v1/checkout.js";
-                          script.onload = () => resolve(true);
-                          script.onerror = () => resolve(false);
-                          document.body.appendChild(script);
-                        });
-                        if (!loaded) throw new Error("Razorpay SDK failed to load.");
-
-                        // 3. Open Razorpay checkout
-                        const options = {
-                          key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_T8estQxf5h6PD0",
-                          amount: order.amount,
-                          currency: order.currency,
-                          name: "workMitra",
-                          description: "Premium Pass — 30 Days Access",
-                          order_id: order.id,
-                          handler: async function (response) {
-                            // 4. Verify payment on backend
-                            try {
-                              const verifyRes = await fetch(`${API_BASE_URL}/api/payments/verify`, {
-                                method: "POST",
-                                credentials: "include",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                  razorpay_order_id: response.razorpay_order_id,
-                                  razorpay_payment_id: response.razorpay_payment_id,
-                                  razorpay_signature: response.razorpay_signature
-                                })
-                              });
-                              const verifyData = await verifyRes.json();
-                              if (verifyRes.ok) {
-                                // Persist to localStorage from DB response
-                                const updatedUser = { ...currentUser, hasPaidPass: true };
-                                localStorage.setItem("user", JSON.stringify(updatedUser));
-                                localStorage.setItem("hasPaidPass", "true");
-                                setCurrentUser(updatedUser);
-                                setShowCheckoutModal(false);
-                                toast.success("🎉 " + t("dashboard.premiumUnlocked"));
-                              } else {
-                                toast.error(verifyData.error || "Payment verification failed.");
-                              }
-                            } catch (err) {
-                              toast.error("Verification error: " + err.message);
-                            }
-                          },
-                          prefill: {
-                            name: currentUser?.fullName || "Student",
-                            email: currentUser?.email || "",
-                            contact: currentUser?.mobile || ""
-                          },
-                          theme: { color: "#4f46e5" },
-                          modal: {
-                            ondismiss: function () {
-                              setCheckingOutPass(false);
-                            }
-                          }
-                        };
-
-                        const rzp = new window.Razorpay(options);
-                        rzp.open();
-                      } catch (err) {
-                        toast.error(err.message);
-                      } finally {
-                        setCheckingOutPass(false);
-                      }
-                    }}
-                    disabled={checkingOutPass}
-                    className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black transition shadow disabled:opacity-50"
-                  >
-                    {checkingOutPass ? "Opening Razorpay..." : "Pay ₹39 via Razorpay 🔐"}
-                  </button>
-
-                  <p className="text-[10px] text-center text-gray-400 font-medium">
-                    Secure payment processed by Razorpay. No card details stored on our servers.
-                  </p>
-                </div>
-
-              </div>
-            </div>
-          )}
+          <PremiumCheckoutModal 
+            setShowCheckoutModal={setShowCheckoutModal}
+            currentUser={currentUser}
+            setCurrentUser={setCurrentUser}
+            API_BASE_URL={API_BASE_URL}
+          />
+        )}
 
         </div>
       </div>

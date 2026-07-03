@@ -3,6 +3,7 @@ import { API_BASE_URL } from "../config";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "./Toast";
 import { useTranslation } from "react-i18next";
+import { fetchWithAuth } from "../services/apiClient";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ export default function LoginPage() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isOtpVerifying, setIsOtpVerifying] = useState(false);
   const [emailOtpInput, setEmailOtpInput] = useState("");
+  const [mobileOtpInput, setMobileOtpInput] = useState("");
 
   const [airplanePos, setAirplanePos] = useState(-10);
   useEffect(() => {
@@ -78,7 +80,7 @@ export default function LoginPage() {
     setErrorMessage("");
     setIsLoggingIn(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/login`, { credentials: "include",
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/auth/login`, { credentials: "include",
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, portalRole: userRole })
@@ -136,7 +138,7 @@ export default function LoginPage() {
     setSendingRecovery(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, { credentials: "include",
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/auth/forgot-password`, { credentials: "include",
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: recoveryEmail })
@@ -163,12 +165,13 @@ export default function LoginPage() {
     setIsVerifying(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/register-verify`, { credentials: "include",
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/auth/register-verify`, { credentials: "include",
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
-          emailOtp: emailOtpInput
+          emailOtp: emailOtpInput,
+          mobileOtp: mobileOtpInput
         })
       });
       const data = await response.json();
@@ -395,7 +398,7 @@ export default function LoginPage() {
                     }
 
                     try {
-                      const response = await fetch(`${API_BASE_URL}/api/auth/register`, { credentials: "include",
+                      const response = await fetchWithAuth(`${API_BASE_URL}/api/auth/register`, { credentials: "include",
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(payload),
@@ -405,6 +408,7 @@ export default function LoginPage() {
                         setIsOtpVerifying(true);
                         setErrorMessage("");
                         setEmailOtpInput("");
+                        setMobileOtpInput("");
                       } else {
                         setErrorMessage(data.error || t("login.registrationSystemError"));
                       }

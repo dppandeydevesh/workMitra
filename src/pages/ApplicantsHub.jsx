@@ -8,6 +8,17 @@ export default function ApplicantsHub() {
   const navigate = useNavigate();
   const toast = useToast();
   const { t } = useTranslation();
+
+  // Helper function to safely parse submission files for code testing
+  const getSubmissionFiles = (app) => {
+    if (!app) return {};
+    if (app.files && Object.keys(app.files).length > 0) return app.files;
+    
+    // Fallback: use submissionText as solution.txt or derive from githubRepoUrl
+    return {
+      "solution.txt": app.submissionText || app.githubRepoUrl || "// No files submitted"
+    };
+  };
   const renderStepper = (status) => {
     const steps = [
       { label: t("applicantsHub.applied"), statusVal: "Pending" },
@@ -714,8 +725,8 @@ export default function ApplicantsHub() {
                     <button
                       type="button"
                       onClick={() => {
-                        const files = getMockCodeFiles(activeAppToReview.projectTitle);
-                        setActiveFile(Object.keys(files)[0] || "App.js");
+                        const files = getSubmissionFiles(activeAppToReview);
+                        setActiveFile(Object.keys(files)[0] || "submission.txt");
                         setShowSandbox(true);
                       }}
                       className="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-[9px] font-bold transition shadow-sm shrink-0"
@@ -940,7 +951,7 @@ export default function ApplicantsHub() {
                 <div>
                   <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-2">{t("applicantsHub.workspaceFiles")}</span>
                   <div className="space-y-1.5 text-xs">
-                    {Object.keys(getMockCodeFiles(activeAppToReview.projectTitle)).map(filename => (
+                    {Object.keys(getSubmissionFiles(activeAppToReview)).map(filename => (
                       <button
                         key={filename}
                         onClick={() => setActiveFile(filename)}
@@ -978,7 +989,7 @@ export default function ApplicantsHub() {
                 {/* Raw Code output area */}
                 <pre className="flex-1 p-6 overflow-y-auto leading-relaxed text-slate-300 bg-slate-950/50 whitespace-pre-wrap">
                   <code>
-                    {getMockCodeFiles(activeAppToReview.projectTitle)[activeFile] || `// ${t("applicantsHub.fileNotFound")}`}
+                    {getSubmissionFiles(activeAppToReview)[activeFile] || `// ${t("applicantsHub.fileNotFound")}`}
                   </code>
                 </pre>
               </div>

@@ -8,6 +8,13 @@ const UserSchema = new mongoose.Schema({
     userRole: { type: String, default: "student", enum: ["student", "company", "college", "admin", "faculty"] }, // student, company, college, admin, or faculty
     
     // 🏢 Extra properties fields parsed perfectly by the frontend logic
+    website: { type: String, default: null },
+    industry: { type: String, default: null },
+    companySize: { type: String, default: null },
+    location: { type: String, default: null },
+    requiredRoles: { type: [String], default: [] },
+    requiredSkills: { type: [String], default: [] },
+    hiringType: { type: String, default: "Internship" },
     companyName: { type: String, default: null },
     targetSkills: { type: String, default: null },
     projectType: { type: String, default: null },

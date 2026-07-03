@@ -27,12 +27,21 @@ const forgotPasswordLimiter = rateLimit({
   message: { error: "Too many password reset requests. Please wait an hour before requesting another." }
 });
 
+const resetPasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: { error: "Too many password reset attempts. Please try again after 15 minutes." }
+});
+
 router.post('/register', registerLimiter, authController.register);
 router.post('/register-verify', otpVerifyLimiter, authController.verifyOtp);
 router.post('/login', loginLimiter, authController.login);
 router.post('/forgot-password', forgotPasswordLimiter, authController.forgotPassword);
-router.post('/reset-password/:token', authController.resetPassword);
+router.post('/reset-password/:token', resetPasswordLimiter, authController.resetPassword);
 
 router.post('/logout', authController.logout);
+
+const authenticateToken = require(../middleware/authMiddleware);
+router.get(/me, authenticateToken, authController.me);
 
 module.exports = router;

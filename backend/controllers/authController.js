@@ -37,7 +37,7 @@ const sendEmailOtp = async (toEmail, otp) => {
         "Authorization": `Bearer ${resendApiKey}`
       },
       body: JSON.stringify({
-        from: "workMitra <noreply@workmitra.me>",
+        from: process.env.EMAIL_FROM || "workMitra <noreply@workmitra.me>",
         to: toEmail,
         subject: "workMitra Sign Up Verification OTP Code",
         html: `
@@ -85,7 +85,8 @@ const sendSmsOtp = async (toMobile, otp) => {
     const twilio = require("twilio");
     const client = twilio(accountSid, authToken);
     
-    const formattedMobile = toMobile.startsWith("+") ? toMobile : `+91${toMobile}`;
+    const defaultCode = process.env.DEFAULT_COUNTRY_CODE || "+91";
+    const formattedMobile = toMobile.startsWith("+") ? toMobile : `${defaultCode}${toMobile}`;
     
     await client.messages.create({
       body: `Your workMitra Sign Up verification code is: ${otp}`,
@@ -117,7 +118,7 @@ const sendResetPasswordEmail = async (toEmail, resetLink) => {
         "Authorization": `Bearer ${resendApiKey}`
       },
       body: JSON.stringify({
-        from: "workMitra <noreply@workmitra.me>",
+        from: process.env.EMAIL_FROM || "workMitra <noreply@workmitra.me>",
         to: toEmail,
         subject: "workMitra Password Reset Recovery Link",
         html: `
@@ -152,13 +153,13 @@ const sendResetPasswordEmail = async (toEmail, resetLink) => {
 
 const register = async (req, res) => {
   try {
-    const { fullName, companyName, email, password, userRole, mobile, collegeName, enrollmentNumber } = req.body;
+    const { fullName, companyName, email, password, userRole, mobile, collegeName, enrollmentNumber, departmentName } = req.body;
 
     if (!email || !password || !mobile || !userRole) {
       return res.status(400).json({ error: "Email, Password, Mobile Number, and User Role are required parameters." });
     }
 
-    if (!["student", "company", "college", "faculty", "admin"].includes(userRole)) {
+    if (!["student", "company", "college"].includes(userRole)) {
       return res.status(400).json({ error: "Invalid user role registration attempt." });
     }
 
@@ -201,6 +202,12 @@ const register = async (req, res) => {
       return res.status(400).json({ error: "Company Name is required." });
     }
 
+    if (userRole === "college") {
+      if (!fullName || !collegeName || !departmentName) {
+        return res.status(400).json({ error: "Full Name, University Name, and Department are required for college administrators." });
+      }
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: "Email already registered." });
@@ -236,7 +243,8 @@ const register = async (req, res) => {
       password: hashedPassword,
       userRole,
       mobile,
-      collegeName: userRole === "student" ? collegeName : null,
+      collegeName: userRole === "student" || userRole === "college" ? collegeName : null,
+      departmentName: userRole === "college" ? departmentName : null,
       enrollmentNumber: userRole === "student" ? enrollmentNumber : null
     };
 
@@ -261,10 +269,10 @@ const register = async (req, res) => {
 
 const verifyOtp = async (req, res) => {
   try {
-    const { email, emailOtp } = req.body;
+    const { email, emailOtp, mobileOtp } = req.body;
 
-    if (!email || !emailOtp) {
-      return res.status(400).json({ error: "Email and Email OTP are required." });
+    if (!email || !emailOtp || !mobileOtp) {
+      return res.status(400).json({ error: "Email, Email OTP, and Mobile OTP are required." });
     }
 
     const pending = await PendingUser.findOne({ email });
@@ -276,7 +284,11 @@ const verifyOtp = async (req, res) => {
       return res.status(400).json({ error: "Invalid Email verification code." });
     }
 
-    const { fullName, companyName, password, userRole, mobile, collegeName, enrollmentNumber } = pending.registrationData;
+    if (pending.mobileOtp !== mobileOtp) {
+      return res.status(400).json({ error: "Invalid Mobile SMS verification code." });
+    }
+
+    const { fullName, companyName, password, userRole, mobile, collegeName, enrollmentNumber, departmentName } = pending.registrationData;
 
     const newUser = new User({
       fullName,
@@ -284,7 +296,8 @@ const verifyOtp = async (req, res) => {
       email,
       password,
       mobile,
-      collegeName: userRole === "student" ? collegeName : null,
+      collegeName: userRole === "student" || userRole === "college" ? collegeName : null,
+      departmentName: userRole === "college" ? departmentName : null,
       enrollmentNumber: userRole === "student" ? enrollmentNumber : null,
       userRole
     });
@@ -307,7 +320,6 @@ const verifyOtp = async (req, res) => {
 
     res.status(201).json({
       message: "Registration successful!",
-      token,
       user: {
         fullName: newUser.fullName,
         companyName: newUser.companyName,
@@ -352,19 +364,19 @@ const login = async (req, res) => {
         const token = jwt.sign(
           { userId: user._id.toString(), email: user.email, userRole: user.userRole },
           JWT_SECRET,
-          { expiresIn: "24h" }
+          { expiresIn: "7d" }
         );
 
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict"
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
         res.status(200).json({ 
             message: "Success",
-            token,
-            user: { 
+            user: {
                 fullName: user.fullName, 
                 companyName: user.companyName, 
                 email: user.email, 
@@ -471,4 +483,15 @@ module.exports = {
   forgotPassword,
   resetPassword,
   logout
+};
+
+exports.me = async (req, res) => {
+  try {
+    const User = require("../models/User");
+    const user = await User.findOne({ email: req.user.email }).select("-password -__v");
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
 };

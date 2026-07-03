@@ -2,42 +2,92 @@ const Project = require('../models/Project');
 const Application = require('../models/Application');
 const User = require('../models/User');
 
+const resolveBlockedCompanyIds = async (blockedEmails) => {
+  if (!blockedEmails || blockedEmails.length === 0) return [];
+  const companies = await User.find({ email: { $in: blockedEmails }, userRole: 'company' }).select('_id');
+  return companies.map((c) => c._id);
+};
+
+const getBlockedCompanyIdsForStudent = async (student) => {
+  if (!student?.collegeName) return [];
+  const collegeAdmin = await User.findOne({ userRole: 'college', collegeName: student.collegeName });
+  if (!collegeAdmin?.collegeBlockedCompanies?.length) return [];
+  return resolveBlockedCompanyIds(collegeAdmin.collegeBlockedCompanies);
+};
+
 const getAllProjects = async (req, res) => {
   try {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
 
-    let blockedCompanyEmails = [];
-    if (req.user.userRole === "student") {
+    let queryConditions = {};
+    if (req.user.userRole === 'student') {
       const student = await User.findOne({ email: req.user.email });
-      if (student && student.collegeName) {
-        const collegeAdmin = await User.findOne({ userRole: "college", collegeName: student.collegeName });
-        if (collegeAdmin && collegeAdmin.collegeBlockedCompanies) {
-          blockedCompanyEmails = collegeAdmin.collegeBlockedCompanies;
-        }
+      const blockedCompanyIds = await getBlockedCompanyIdsForStudent(student);
+      if (blockedCompanyIds.length > 0) {
+        queryConditions.companyId = { $nin: blockedCompanyIds };
       }
     }
-    
-    let queryConditions = {};
-    if (blockedCompanyEmails.length > 0) {
-      queryConditions.companyId = { $nin: blockedCompanyEmails };
+
+    let aggregatePipeline = [
+      { $match: queryConditions },
+      { $sort: { createdAt: -1 } }
+    ];
+
+    if (page && limit) {
+      aggregatePipeline.push({ $skip: (page - 1) * limit });
+      aggregatePipeline.push({ $limit: limit });
     }
 
-    let query = Project.find(queryConditions).populate('companyId', 'email companyName').sort({ createdAt: -1 });
+    // 1. Lookup applications to count them efficiently
+    aggregatePipeline.push({
+      $lookup: {
+        from: "applications",
+        localField: "_id",
+        foreignField: "projectId",
+        as: "applications"
+      }
+    });
+
+    aggregatePipeline.push({
+      $addFields: {
+        applicantCount: { $size: "$applications" }
+      }
+    });
+
+    // 2. Lookup company user data to match Mongoose populate('companyId', 'email companyName')
+    aggregatePipeline.push({
+      $lookup: {
+        from: "users",
+        localField: "companyId",
+        foreignField: "_id",
+        as: "companyInfo"
+      }
+    });
     
-    if (page && limit) {
-      const skip = (page - 1) * limit;
-      query = query.skip(skip).limit(limit);
-    }
-    
-    const projects = await query;
-    const projectsWithCounts = await Promise.all(projects.map(async (p) => {
-      const applicantCount = await Application.countDocuments({ projectId: p._id });
-      return {
-        ...p.toObject(),
-        applicantCount
-      };
-    }));
+    aggregatePipeline.push({
+      $unwind: { path: "$companyInfo", preserveNullAndEmptyArrays: true }
+    });
+
+    aggregatePipeline.push({
+      $addFields: {
+        companyId: {
+          _id: "$companyInfo._id",
+          email: "$companyInfo.email",
+          companyName: "$companyInfo.companyName"
+        }
+      }
+    });
+
+    // Clean up temporary fields
+    aggregatePipeline.push({
+      $project: {
+        applications: 0,
+        companyInfo: 0
+      }
+    });
+
+    const projectsWithCounts = await Project.aggregate(aggregatePipeline);
     res.status(200).json(projectsWithCounts);
   } catch (err) {
     console.error(err);
@@ -202,14 +252,14 @@ const updateProject = async (req, res) => {
       return res.status(403).json({ error: "Unauthorized access to project parameters." });
     }
 
-    const { title, description, budget, requiredSkills, deadline, projectType } = req.body;
+    const { title, description, budget, requiredSkills, deadline, workType } = req.body;
     
     project.title = title !== undefined ? title : project.title;
     project.description = description !== undefined ? description : project.description;
     project.budget = budget !== undefined ? budget : project.budget;
     project.requiredSkills = requiredSkills !== undefined ? requiredSkills : project.requiredSkills;
     project.deadline = deadline !== undefined ? deadline : project.deadline;
-    project.projectType = projectType !== undefined ? projectType : project.projectType;
+    project.workType = workType !== undefined ? workType : project.workType;
 
     await project.save();
     res.status(200).json(project);
@@ -248,18 +298,12 @@ const getRecommendedProjects = async (req, res) => {
       return res.status(403).json({ error: "Student profile context required." });
     }
 
-    let blockedCompanies = [];
-    if (studentUser.collegeName) {
-      const collegeUser = await User.findOne({ userRole: "college", collegeName: studentUser.collegeName });
-      if (collegeUser) {
-        blockedCompanies = collegeUser.collegeBlockedCompanies || [];
-      }
-    }
+    const blockedCompanyIds = await getBlockedCompanyIdsForStudent(studentUser);
+    const queryConditions = blockedCompanyIds.length > 0
+      ? { companyId: { $nin: blockedCompanyIds } }
+      : {};
 
-    // NOTE: For recommended projects, companyId is now an ObjectId, so this filter needs to be updated if blockedCompanies uses emails
-    // For now, we will populate to keep it intact, though complex $nin on populated fields requires aggregation.
-    // Keeping it simple for the MVP schema migration.
-    const projects = await Project.find().populate('companyId', 'email companyName');
+    const projects = await Project.find(queryConditions).populate('companyId', 'email companyName');
     
     const studentSkills = new Set(
       (studentUser.preferredTechStack || [])

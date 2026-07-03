@@ -17,7 +17,7 @@ const applicationSchema = new mongoose.Schema({
   status: { 
     type: String, 
     default: "Pending",
-    enum: ["Pending", "Approved", "Rejected", "Submitted", "Completed", "Disputed", "Flagged", "Revision Requested", "Withdrawn"]
+    enum: ["Pending", "Approved", "Rejected", "Submitted", "Completed", "Disputed", "Flagged", "Revision Requested", "Withdrawn", "Resolved"]
   },
   submissionText: {
     type: String,
@@ -98,7 +98,17 @@ const applicationSchema = new mongoose.Schema({
   extendedDeadline: {
     type: Date,
     default: null
-  }
+  },
+  pipelineStage: {
+    type: String,
+    default: "Application Received"
+  },
+  timeline: [{
+    action: String,
+    date: { type: Date, default: Date.now },
+    by: String,
+    note: String
+  }]
 });
 
 // Prevent duplicate applications

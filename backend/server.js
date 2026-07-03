@@ -6,7 +6,6 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
-const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
 const swot = require('swot-node');
 const cookieParser = require('cookie-parser');
@@ -23,7 +22,6 @@ global.wsClients = new Map(); // Global registry for WebSocket client sockets
 const User = require('./models/User');
 const Project = require('./models/Project');
 const Application = require('./models/Application');
-const CompanyProfile = require('./models/CompanyProfile');
 const PendingUser = require('./models/PendingUser'); // 🔑 न्यू इम्पोर्ट: पेंडिंग यूजर मॉडल
 const multer = require('multer');
 const pdfParse = require('pdf-parse');
@@ -47,7 +45,6 @@ app.use(cors({
 app.use(cookieParser());
 // Request body size limit
 app.use(express.json({ limit: '1mb' }));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const authRoutes = require('./routes/authRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const adminRoutes = require('./routes/adminRoutes');
@@ -64,6 +61,8 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/payments', paymentRoutes);
+const fileRoutes = require('./routes/fileRoutes');
+app.use('/api/files', fileRoutes);
 const authenticateToken = require('./middleware/authMiddleware');
 
 app.use('/api/auth', authRoutes);
@@ -114,7 +113,8 @@ ${JSON.stringify(projectsList)}
 Select the top 3 project IDs that best match the user's profile.
 Return ONLY a valid JSON array of strings (the 3 project IDs). No markdown, no explanation. Example: ["id1", "id2", "id3"]`;
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
+    const apiUrl = process.env.GEMINI_API_URL || "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+    const response = await fetch(apiUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
       body: JSON.stringify({
@@ -200,7 +200,8 @@ app.post("/api/ai/chat", authenticateToken, async (req, res) => {
       }
     };
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
+    const apiUrl = process.env.GEMINI_API_URL || "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+    const response = await fetch(apiUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
       body: JSON.stringify(requestBody)
@@ -223,6 +224,11 @@ app.post("/api/ai/chat", authenticateToken, async (req, res) => {
 });
 
 app.use('/api/projects', projectRoutes);
+
+const errorHandler = require("./middleware/errorHandler");
+
+// Global Error Handler (must be the last middleware)
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
@@ -405,7 +411,8 @@ CV Text to analyze:
 ${textToAnalyze}`;
 
     // Send API key inside a custom headers configuration instead of URL query parameter
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
+    const apiUrl = process.env.GEMINI_API_URL || "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+    const response = await fetch(apiUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
       body: JSON.stringify({
@@ -496,7 +503,8 @@ JSON Structure:
 Resume Text:
 ${resumeText}`;
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
+    const apiUrl = process.env.GEMINI_API_URL || "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+    const response = await fetch(apiUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
       body: JSON.stringify({

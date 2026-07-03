@@ -25,7 +25,7 @@ exports.routeHandler0 = async (req, res) => {
 
 exports.routeHandler1 = async (req, res) => {
   try {
-    const profile = await CompanyProfile.findOne({ companyEmail: req.user.email });
+    const profile = await User.findOne({ email: req.user.email }).select("-password");
     if (!profile) {
       return res.status(404).json({ error: "Company profile not found." });
     }
@@ -91,18 +91,33 @@ exports.routeHandler3 = async (req, res) => {
       return res.status(403).json({ error: "Unauthorized profile context." });
     }
 
-    // Read the PDF from disk for parsing
-    const fileBuffer = fsSync.readFileSync(req.file.path);
+    // Read the PDF from memory buffer
+    const fileBuffer = req.file.buffer;
     const pdfData = await pdfParse(fileBuffer);
     const extractedText = pdfData.text;
 
     if (!extractedText || extractedText.trim().length === 0) {
-      // Clean up file if unreadable
-      fsSync.unlinkSync(req.file.path);
       return res.status(400).json({ error: "Could not extract text from the uploaded PDF. Please make sure the PDF has selectable text." });
     }
 
-    const fileUrl = `/uploads/${req.file.filename}`;
+    const mongoose = require("mongoose");
+    const { GridFSBucket } = require("mongodb");
+    const bucket = new GridFSBucket(mongoose.connection.db, { bucketName: "resumes" });
+    const filename = `${Date.now()}-${req.file.originalname}`;
+    
+    const uploadStream = bucket.openUploadStream(filename, {
+      contentType: req.file.mimetype,
+      metadata: { email }
+    });
+    
+    uploadStream.end(fileBuffer);
+    
+    await new Promise((resolve, reject) => {
+      uploadStream.on("finish", resolve);
+      uploadStream.on("error", reject);
+    });
+
+    const fileUrl = `/api/files/resumes/${filename}`;
 
     // Save extracted text and local file URL to user document
     const updatedUser = await User.findOneAndUpdate(

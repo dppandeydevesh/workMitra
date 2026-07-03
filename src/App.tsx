@@ -1,37 +1,38 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./components/LoginPage"; // 👈 सीधे हमारा मुख्य पेज लोड होगा
-import Preferences from "./pages/Preferences";
-import CompanyPreferences from "./pages/CompanyPreferences"; // 👈 न्यू कंपनी प्रिफरेंस पेज
-import Dashboard from "./pages/Dashboard";
-import CompanyDashboard from "./pages/CompanyDashboard"; // 👈 🏢 न्यू इम्पोर्ट: कंपनी डैशबोर्ड
-import AddProject from "./pages/AddProject";             // 👈 ➕ न्यू इम्पोर्ट: प्रोजेक्ट फॉर्म पेज
-import MyProjects from "./pages/MyProjects";             // 👈 📂 न्यू इम्पोर्ट: प्रोजेक्ट एनालिसिस हब
-import ApplicantsHub from "./pages/ApplicantsHub";       // 👈 👨‍🎓 न्यू इम्पोर्ट: एप्लिकेंट्स कमांड सेंटर
-import AnalyticsDashboard from "./pages/AnalyticsDashboard"; // 👈 📈 न्यू इम्पोर्ट: रिक्रूटर एनालिटिक्स हब
-import StudentProfile from "./pages/StudentProfile";       // 👈 🎓 न्यू इम्पोर्ट: स्टूडेंट प्रोफाइल/पोर्टफोलियो
-import ResetPasswordPage from "./pages/ResetPasswordPage"; // 👈 🔑 न्यू इम्पोर्ट: रीसेट पासवर्ड पेज
-import ChatPage from "./pages/ChatPage"; // 👈 💬 न्यू इम्पोर्ट: चैट रूम पेज
+const Preferences = React.lazy(() => import("./pages/Preferences"));
+const CompanyPreferences = React.lazy(() => import("./pages/CompanyPreferences"));
+const Dashboard = React.lazy(() => import("./pages/Dashboard"));
+const CompanyDashboard = React.lazy(() => import("./pages/CompanyDashboard"));
+const AddProject = React.lazy(() => import("./pages/AddProject"));
+const MyProjects = React.lazy(() => import("./pages/MyProjects"));
+const ApplicantsHub = React.lazy(() => import("./pages/ApplicantsHub"));
+const AnalyticsDashboard = React.lazy(() => import("./pages/AnalyticsDashboard"));
+const StudentProfile = React.lazy(() => import("./pages/StudentProfile"));
+const ResetPasswordPage = React.lazy(() => import("./pages/ResetPasswordPage"));
+const ChatPage = React.lazy(() => import("./pages/ChatPage"));
 import ProtectedRoute from "./components/ProtectedRoute";
-import NotFoundPage from "./pages/NotFoundPage";
-import ProjectDetails from "./pages/ProjectDetails";       // 👈 📂 न्यू इम्पोर्ट: प्रोजेक्ट डिटेल्स
+const NotFoundPage = React.lazy(() => import("./pages/NotFoundPage"));
+const ProjectDetails = React.lazy(() => import("./pages/ProjectDetails"));
 import Navbar from "./components/Navbar";
-import { ToastProvider } from "./components/Toast";
-import LandingPage from "./pages/LandingPage";
-import AboutPage from "./pages/AboutPage";
-import { TermsPage, PrivacyPage, RefundPage } from "./pages/LegalPages";
+const LandingPage = React.lazy(() => import("./pages/LandingPage"));
+const AboutPage = React.lazy(() => import("./pages/AboutPage"));
+const TermsPage = React.lazy(() => import("./pages/LegalPages").then(module => ({ default: module.TermsPage })));
+const PrivacyPage = React.lazy(() => import("./pages/LegalPages").then(module => ({ default: module.PrivacyPage })));
+const RefundPage = React.lazy(() => import("./pages/LegalPages").then(module => ({ default: module.RefundPage })));
 import { WebSocketProvider } from "./components/WebSocketContext";
-import AdminDashboard from "./pages/AdminDashboard";
-import CalendarView from "./pages/CalendarView";
-import CompanySettings from "./pages/CompanySettings";
-import CollegeDashboard from "./pages/CollegeDashboard";
-import PlacementPipeline from "./pages/PlacementPipeline";
+const AdminDashboard = React.lazy(() => import("./pages/AdminDashboard"));
+const CalendarView = React.lazy(() => import("./pages/CalendarView"));
+const CompanySettings = React.lazy(() => import("./pages/CompanySettings"));
+const CollegeDashboard = React.lazy(() => import("./pages/CollegeDashboard"));
+const PlacementPipeline = React.lazy(() => import("./pages/PlacementPipeline"));
 import { ThemeProvider } from "./components/ThemeContext";
 import AIAssistant from "./components/AIAssistant";
-import ResumeChecker from "./pages/ResumeChecker";
-import FacultyDashboard from "./pages/FacultyDashboard";
+const ResumeChecker = React.lazy(() => import("./pages/ResumeChecker"));
+const FacultyDashboard = React.lazy(() => import("./pages/FacultyDashboard"));
 
-const PublicRoute = ({ children }) => {
+const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const savedUser = localStorage.getItem("user");
   
   if (savedUser) {
@@ -65,11 +66,11 @@ function App() {
   return (
     <ThemeProvider>
       <div className="min-h-screen bg-gray-50 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-200">
-        <ToastProvider>
-          <WebSocketProvider>
+        <WebSocketProvider>
             <BrowserRouter>
               <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>}>
-              <Routes>
+              <Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-slate-50 dark:bg-slate-900 text-indigo-500 font-bold tracking-widest text-sm uppercase">Loading Platform...</div>}>
+          <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
                 <Route path="/terms" element={<TermsPage />} />
@@ -109,10 +110,10 @@ function App() {
                 {/* 404 Wildcard Catch-All */}
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
+        </Suspense>
               </Suspense>
             </BrowserRouter>
           </WebSocketProvider>
-        </ToastProvider>
       </div>
     </ThemeProvider>
   );

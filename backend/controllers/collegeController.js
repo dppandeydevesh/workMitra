@@ -3,19 +3,25 @@ const Project = require('../models/Project');
 const PendingUser = require('../models/PendingUser');
 const Application = require('../models/Application');
 
+const getInstitutionName = (collegeUser) => collegeUser.collegeName || collegeUser.companyName;
+
 exports.getStudents = async (req, res) => {
   try {
-    const { collegeName } = req.params;
     const collegeUser = await User.findOne({ email: req.user.email });
     if (!collegeUser || collegeUser.userRole !== "college") {
       return res.status(403).json({ error: "Unauthorized access: College role required." });
     }
 
-    const students = await User.find({ userRole: "student", collegeName: collegeUser.companyName }).select("-password");
+    const institutionName = getInstitutionName(collegeUser);
+    if (!institutionName) {
+      return res.status(400).json({ error: "College institution name is not configured for this account." });
+    }
+
+    const students = await User.find({ userRole: "student", collegeName: institutionName }).select("-password");
     
     // Merge application stats
     const studentStats = await Promise.all(students.map(async (student) => {
-      const apps = await Application.find({ studentId: student.email });
+      const apps = await Application.find({ studentEmail: student.email });
       return {
         ...student.toObject(),
         applicationsCount: apps.length,
@@ -60,18 +66,26 @@ exports.getCompanies = async (req, res) => {
       return res.status(403).json({ error: "College administrator role required." });
     }
 
+    const institutionName = getInstitutionName(collegeUser);
+
     const allCompanies = await User.find({ userRole: "company" }).select("-password");
     
     const companyStats = await Promise.all(allCompanies.map(async (company) => {
-      const companyEmail = company.email;
-      const projects = await Project.find({ companyId: companyEmail });
+      const companyIdStr = company._id.toString();
+      const projects = await Project.find({ companyId: company._id });
       
       let hiredFromCollege = 0;
-      const apps = await Application.find({ companyId: companyEmail, status: { $in: ["Approved", "Submitted", "Completed"] }});
+      
+      // Find all project IDs for this company
+      const projectIds = projects.map(p => p._id);
+      const apps = await Application.find({ 
+        projectId: { $in: projectIds }, 
+        status: { $in: ["Approved", "Submitted", "Completed"] }
+      });
       
       for (const app of apps) {
-        const stu = await User.findOne({ email: app.studentId });
-        if (stu && stu.collegeName === collegeUser.companyName) {
+        const stu = await User.findOne({ email: app.studentEmail });
+        if (stu && stu.collegeName === institutionName) {
           hiredFromCollege++;
         }
       }
@@ -122,6 +136,11 @@ exports.bulkImportStudents = async (req, res) => {
       return res.status(403).json({ error: "College administrator role required." });
     }
 
+    const institutionName = getInstitutionName(collegeUser);
+    if (!institutionName) {
+      return res.status(400).json({ error: "College institution name is not configured for this account." });
+    }
+
     let importedCount = 0;
     let failedCount = 0;
     let errors = [];
@@ -140,7 +159,7 @@ exports.bulkImportStudents = async (req, res) => {
         continue;
       }
 
-      const existingRoll = await User.findOne({ collegeName: collegeUser.companyName, enrollmentNumber: student.enrollmentNumber, userRole: "student" });
+      const existingRoll = await User.findOne({ collegeName: institutionName, enrollmentNumber: student.enrollmentNumber, userRole: "student" });
       if (existingRoll) {
         failedCount++;
         errors.push({ email: student.email, reason: "Enrollment number already exists in this college." });
@@ -157,7 +176,7 @@ exports.bulkImportStudents = async (req, res) => {
         email: student.email,
         password: hashedPassword,
         userRole: "student",
-        collegeName: collegeUser.companyName,
+        collegeName: institutionName,
         enrollmentNumber: student.enrollmentNumber
       });
       

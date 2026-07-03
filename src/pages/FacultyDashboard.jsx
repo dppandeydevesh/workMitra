@@ -172,10 +172,10 @@ export default function FacultyDashboard() {
 
       {/* Tabs */}
       <div className="flex overflow-x-auto hide-scrollbar gap-2 pb-2">
-        {[{ id: "overview", label: "Overview", icon: "📊" },
-          { id: "my-projects", label: "My Projects", icon: "📁" },
-          { id: "new-project", label: "Post Project", icon: "📝" },
-          { id: "applicants", label: "Review Applicants", icon: "👨‍🎓" }
+        {[{ id: "overview", label: t("facultyDashboard.overview") || "Overview", icon: "📊" },
+          { id: "my-projects", label: t("facultyDashboard.myProjects") || "My Projects", icon: "📁" },
+          { id: "new-project", label: t("facultyDashboard.postProject") || "Post Project", icon: "📝" },
+          { id: "applicants", label: t("facultyDashboard.reviewApplicants") || "Review Applicants", icon: "👨‍🎓" }
         ].map(tab => (
           <button
             key={tab.id}
@@ -198,19 +198,19 @@ export default function FacultyDashboard() {
         {activeTab === "overview" && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="glass-panel p-6 border-l-4 border-indigo-500">
-              <p className="text-xs font-black text-slate-400 uppercase tracking-wider">Total Academic Projects</p>
+              <p className="text-xs font-black text-slate-400 uppercase tracking-wider">{t("facultyDashboard.totalProjects") || "Total Academic Projects"}</p>
               <h2 className="text-4xl font-black text-slate-800 dark:text-white mt-2">{projects.length}</h2>
             </div>
             <div className="glass-panel p-6 border-l-4 border-purple-500">
-              <p className="text-xs font-black text-slate-400 uppercase tracking-wider">Active Openings</p>
+              <p className="text-xs font-black text-slate-400 uppercase tracking-wider">{t("facultyDashboard.activeOpenings") || "Active Openings"}</p>
               <h2 className="text-4xl font-black text-slate-800 dark:text-white mt-2">
                 {projects.filter(p => p.status !== "Archived").length}
               </h2>
             </div>
             <div className="glass-panel p-6 border-l-4 border-emerald-500">
-              <p className="text-xs font-black text-slate-400 uppercase tracking-wider">Department</p>
+              <p className="text-xs font-black text-slate-400 uppercase tracking-wider">{t("facultyDashboard.department") || "Department"}</p>
               <h2 className="text-2xl font-black text-slate-800 dark:text-white mt-2 flex items-center h-full pb-2">
-                Computer Science
+                {user.department || "Computer Science"}
               </h2>
             </div>
           </div>
@@ -220,14 +220,14 @@ export default function FacultyDashboard() {
         {activeTab === "my-projects" && (
           <div className="glass-panel p-6 sm:p-8">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-black text-slate-800 dark:text-white">Active Academic Projects</h2>
+              <h2 className="text-xl font-black text-slate-800 dark:text-white">{t("facultyDashboard.activeProjects") || "Active Academic Projects"}</h2>
               <button onClick={() => fetchFacultyProjects(user.email)} className="text-indigo-600 font-bold text-sm hover:underline">
-                Refresh 🔄
+                {t("facultyDashboard.refresh") || "Refresh 🔄"}
               </button>
             </div>
             
             {loading ? (
-              <div className="text-center py-12 text-slate-400 font-bold">Loading your projects...</div>
+              <div className="text-center py-12 text-slate-400 font-bold">{t("facultyDashboard.loading") || "Loading your projects..."}</div>
             ) : projects.length === 0 ? (
               <div className="text-center py-12 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl">
                 <span className="text-4xl mb-3 block">📭</span>

@@ -1,6 +1,6 @@
 const fsSync = require('fs');
 const pdfParse = require('pdf-parse');
-const CompanyProfile = require('../models/CompanyProfile');
+
 const User = require('../models/User');
 const Application = require('../models/Application');
 const Project = require('../models/Project');
@@ -12,8 +12,8 @@ exports.routeHandler0 = async (req, res) => {
       return res.status(403).json({ error: "Access denied. Only recruiters can update company profiles." });
     }
     const profileData = { ...req.body, companyEmail: req.user.email };
-    const profile = await CompanyProfile.findOneAndUpdate(
-      { companyEmail: req.user.email },
+    const profile = await User.findOneAndUpdate(
+      { email: req.user.email },
       profileData,
       { new: true, upsert: true, runValidators: true }
     );

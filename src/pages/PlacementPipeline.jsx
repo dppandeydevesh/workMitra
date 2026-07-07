@@ -121,7 +121,7 @@ export default function PlacementPipeline() {
   const placedRate = totalApplicants > 0 ? Math.round((placedCount / totalApplicants) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-800/50 pb-12 select-none dark:bg-slate-900 transition-colors duration-250">
+    <div className="min-h-screen bg-transparent dark:bg-slate-950 pb-12 select-none transition-colors duration-250">
       {/* Upper Navigation Header */}
       <div className="bg-white dark:bg-slate-900 border-b sticky top-0 z-35 px-6 py-4 flex justify-between items-center dark:bg-slate-950 dark:border-slate-800 transition-colors duration-250">
         <div>

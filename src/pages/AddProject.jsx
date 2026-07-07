@@ -136,7 +136,7 @@ export default function AddProject() {
   };
 
   return (
-    <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col items-center py-12 px-4 font-sans select-none">
+    <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-transparent flex flex-col items-center py-12 px-4 font-sans select-none">
       <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-100 dark:border-slate-800/50">
         
         {/* Header Section */}

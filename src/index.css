@@ -39,13 +39,12 @@ button:active {
 }
 
 
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ========================================================================= */
-/* 🌌 एनिमेटेड मेश ग्रेडिएंट बैकग्राउंड (इमेज जैसी पेस्टल थीम वाइब)            */
+/* 🌌 Animated Mesh Gradient Background (Warm Peach-Pink-Gold Theme)         */
 /* ========================================================================= */
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
@@ -55,13 +54,21 @@ body {
   width: 100%;
   overflow-x: hidden;
   min-height: 100vh;
-  /* पीच, पिंक और पर्पल शेड्स का मिक्सचर जो धीरे-धीरे मूव होगा */
-  background: linear-gradient(135deg, #fbcfe8 0%, #e9d5ff 25%, #fed7aa 50%, #fbcfe8 75%, #e9d5ff 100%);
+  background: linear-gradient(
+    135deg,
+    #fce4d6 0%,
+    #fbcfe8 15%,
+    #fef3c7 30%,
+    #fce7f3 45%,
+    #e9d5ff 60%,
+    #fed7aa 75%,
+    #fbcfe8 90%,
+    #fce4d6 100%
+  );
   background-size: 400% 400%;
-  animation: meshGradientAnimation 12s ease infinite;
+  animation: meshGradientAnimation 15s ease infinite;
 }
 
-/* 🧘 रंगों को बैकग्राउंड में धीरे-धीरे और स्मूथली तैराने का जादू */
 @keyframes meshGradientAnimation {
   0% {
     background-position: 0% 50%;
@@ -75,8 +82,9 @@ body {
 }
 
 /* ========================================================================= */
-/* 🔮 VIEW 1: ISOMETRIC LANDING PANELS (तैरते हुए ब्लॉक्स)                 */
+/* 🔮 VIEW 1: ISOMETRIC LANDING PANELS                                      */
 /* ========================================================================= */
+
 
 /* हवा में धीरे तैरने का (Floating) एनिमेशन - 4 सेकंड */
 @keyframes floatSlow {

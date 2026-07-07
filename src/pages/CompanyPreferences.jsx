@@ -115,7 +115,7 @@ export default function CompanyPreferences() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#edf2f9] flex flex-col items-center py-12 px-4 select-none font-sans">
+    <div className="min-h-screen w-full bg-transparent dark:bg-slate-950 flex flex-col items-center py-12 px-4 select-none font-sans">
       <div className="w-full max-w-3xl bg-white dark:bg-slate-900 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-8 border border-gray-100 dark:border-slate-800 space-y-8">
         
         <div className="text-center">

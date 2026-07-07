@@ -578,7 +578,7 @@ export default function Dashboard() {
   });
 
   return (
-    <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-transparent">
       {/* Dashboard Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">

@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const swot = require('swot-node');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const { sendWebhookNotification } = require('../utils/webhook');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -317,6 +318,9 @@ const verifyOtp = async (req, res) => {
 
     await newUser.save();
     await PendingUser.findOneAndDelete({ email });
+
+    // Notify via webhook asynchronously
+    sendWebhookNotification(`🚀 New user registered: ${newUser.email} (${newUser.userRole})`);
 
     const token = jwt.sign(
       { userId: newUser._id.toString(), email: newUser.email, userRole: newUser.userRole },

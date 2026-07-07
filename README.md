@@ -1,100 +1,110 @@
-# workMitra — Academic Talent Marketplace
+# 🚀 workMitra Developer Portal
 
-workMitra connects students with freelance and internship projects posted by companies and faculty, with college administrators overseeing endorsements and company approvals.
+Welcome to the **workMitra** Developer Portal! This repository contains the source code for the workMitra proprietary SaaS platform. Our platform is designed to revolutionize how teams collaborate, manage tasks, and streamline their workflow.
 
-## Tech Stack
+## 🌟 Mission & Vision
 
-| Layer | Technologies |
-|-------|-------------|
-| Frontend | React 19, Vite, React Router, Tailwind CSS, i18next |
-| Backend | Node.js, Express, Mongoose, WebSocket |
-| Database | MongoDB (GridFS for resume storage) |
-| Auth | JWT in httpOnly cookies |
-| Payments | Razorpay |
-| AI | Google Gemini |
+**Our Mission:** To empower organizations with a seamless, intelligent, and highly scalable workspace that enhances productivity and fosters collaboration.
 
-## Quick Start
+**Our Vision:** To become the industry standard for enterprise workflow management, bridging the gap between complex operations and intuitive user experiences.
 
-### Prerequisites
+## 🏗️ Architecture & Tech Stack
 
-- Node.js 18+
-- MongoDB running locally or a remote `MONGO_URI`
+Our platform is built using modern, scalable, and robust technologies:
 
-### 1. Install dependencies
+### Frontend
+*   **[React](https://reactjs.org/):** A declarative, efficient, and flexible JavaScript library for building user interfaces.
+*   **[TailwindCSS](https://tailwindcss.com/):** A utility-first CSS framework for rapid UI development and highly customizable designs.
+
+### Backend
+*   **[Node.js](https://nodejs.org/):** A JavaScript runtime built on Chrome's V8 JavaScript engine for scalable server-side applications.
+*   **[Express](https://expressjs.com/):** A fast, unopinionated, minimalist web framework for Node.js.
+*   **[Firebase](https://firebase.google.com/):** A comprehensive app development platform for backend services, including authentication, database (Firestore), and cloud storage.
+
+## 🚀 Developer Quickstart
+
+Follow these steps to get your local development environment up and running.
+
+### 1. Prerequisites
+
+Ensure you have the following installed on your machine:
+*   [Node.js](https://nodejs.org/) (v16 or higher recommended)
+*   [npm](https://www.npmjs.com/) or [Yarn](https://yarnpkg.com/)
+*   [Git](https://git-scm.com/)
+
+### 2. Clone the Repository
+
+Clone the project repository to your local machine:
 
 ```bash
+git clone https://github.com/your-org/workmitra.git
+cd workmitra
+```
+
+*(Note: Replace the URL with the actual repository URL).*
+
+### 3. Setup the Backend
+
+Navigate to the backend directory, install dependencies, and configure your environment:
+
+```bash
+cd backend
 npm install
-npm install --prefix backend
 ```
 
-### 2. Configure environment
+**Environment Variables:**
+Create a `.env` file in the `backend` directory and add your Firebase credentials and other required variables:
 
-Copy the example env files and fill in your values:
+```env
+PORT=5000
+FIREBASE_API_KEY=your_api_key
+FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+FIREBASE_PROJECT_ID=your_project_id
+# Add any other required backend variables here
+```
+
+### 4. Setup the Frontend
+
+Open a new terminal window, navigate to the frontend directory, install dependencies, and configure your environment:
 
 ```bash
-cp .env.example .env
-cp backend/.env.example backend/.env
+cd frontend
+npm install
 ```
 
-### 3. Run in development
+**Environment Variables:**
+Create a `.env` file in the `frontend` directory and add your required variables:
 
-Terminal 1 — backend (port 5000):
-
-```bash
-node backend/server.js
+```env
+REACT_APP_API_URL=http://localhost:5000/api
+# Add any other required frontend variables here
 ```
 
-Terminal 2 — frontend (port 5173):
+### 5. Run the Development Servers
+
+You need to start both the backend and frontend servers.
+
+**Start the Backend:**
+In your backend terminal window, run:
 
 ```bash
 npm run dev
 ```
+*The backend server should now be running on `http://localhost:5000`.*
 
-Set `VITE_API_BASE_URL=http://localhost:5000` in your root `.env` so the frontend talks to the API.
-
-### 4. Production build
+**Start the Frontend:**
+In your frontend terminal window, run:
 
 ```bash
-npm run build
-NODE_ENV=production node backend/server.js
+npm start
 ```
+*The frontend application should now be accessible at `http://localhost:3000`.*
 
-Express serves the Vite `dist/` bundle in production (Heroku-ready via `Procfile`).
+## 🤝 Contributing
 
-## User Roles
+We welcome contributions from our engineering team! Please refer to our internal contributing guidelines before submitting a pull request. Ensure your code follows our linting and formatting standards.
 
-| Role | Description |
-|------|-------------|
-| `student` | Browse projects, apply, manage profile |
-| `company` | Post projects, review applicants, analytics |
-| `college` | Endorse students, approve/block companies |
-| `faculty` | Post academic projects (seeded by admin) |
-| `admin` | Platform oversight, disputes, verification |
+## 📜 License
 
-## Project Structure
-
-```
-backend/
-  controllers/   # Business logic
-  models/        # Mongoose schemas
-  routes/        # Express route definitions
-  middleware/    # Auth middleware
-  server.js      # Entry point
-
-src/
-  components/    # Shared UI (Navbar, Login, Toast, etc.)
-  pages/         # Role-specific dashboards
-  services/      # API helpers
-  locales/       # i18n (English + Hindi)
-```
-
-## Security Notes
-
-- JWT tokens are stored in httpOnly cookies — never in localStorage
-- Resume downloads require authentication and ownership/recruiter checks
-- Admin and faculty accounts cannot be self-registered via the public API
-- Rate limiting is applied to auth endpoints
-
-## License
-
-Private — all rights reserved.
+© 2026 workMitra. All Rights Reserved.
+This is a proprietary codebase. Unauthorized copying, modification, or distribution is strictly prohibited.

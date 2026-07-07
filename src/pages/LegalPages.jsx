@@ -11,12 +11,13 @@ function LegalLayout({ title, subtitle, children }) {
         {/* Navigation header */}
         <div className="flex justify-between items-center border-b pb-6 mb-8 gap-4">
           <div>
-            <img 
-              src="/logo.png" 
-              alt="workMitra Logo" 
-              className="h-9 object-contain cursor-pointer transition hover:scale-105"
-              onClick={() => navigate("/")} 
-            />
+            <div className="logo-hook" onClick={() => navigate("/")}>
+              <img 
+                src="/logo.png" 
+                alt="workMitra Logo" 
+                className="h-8 object-contain"
+              />
+            </div>
             <h1 className="text-xl sm:text-2xl font-black text-gray-800 dark:text-gray-200 tracking-tight mt-3">
               {title}
             </h1>

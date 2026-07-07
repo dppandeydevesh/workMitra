@@ -238,12 +238,16 @@ export default function ChatPage() {
     <div className="min-h-screen w-full flex flex-col p-4 sm:p-6 lg:p-8 z-0 relative font-sans">
       {/* 🧭 TOP HEADER BAR */}
       <div className="max-w-6xl w-full mx-auto glass-panel mb-6 px-5 py-4 flex justify-between items-center z-10">
-        <img 
-          src="/logo.png" 
-          alt="workMitra Logo" 
-          className="h-8 sm:h-9 object-contain cursor-pointer transition-transform hover:scale-105" 
-          onClick={() => navigate(loggedInUser.userRole === "company" ? "/company-dashboard" : "/dashboard")} 
-        />
+        <div 
+          className="logo-hook"
+          onClick={() => navigate(loggedInUser.userRole === "company" ? "/company-dashboard" : "/dashboard")}
+        >
+          <img 
+            src="/logo.png" 
+            alt="workMitra Logo" 
+            className="h-7 sm:h-8 object-contain" 
+          />
+        </div>
         <button 
           onClick={() => navigate(loggedInUser.userRole === "company" ? "/company-dashboard" : "/dashboard")}
           className="text-xs font-bold bg-gray-900/5 hover:bg-gray-900/10 dark:bg-white/10 dark:hover:bg-white/20 text-gray-800 dark:text-gray-100 px-4 py-2 rounded-xl transition-all"

@@ -36,12 +36,13 @@ export default function AboutPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-6 mb-8 gap-4">
           <div>
-            <img 
-              src="/logo.png" 
-              alt="workMitra Logo" 
-              className="h-9 object-contain cursor-pointer transition hover:scale-105"
-              onClick={() => navigate("/")} 
-            />
+            <div className="logo-hook" onClick={() => navigate("/")}>
+              <img 
+                src="/logo.png" 
+                alt="workMitra Logo" 
+                className="h-8 object-contain"
+              />
+            </div>
             <h1 className="text-2xl sm:text-3xl font-black text-gray-800 dark:text-gray-200 tracking-tight mt-3">
               {t("about.pageTitle")}
             </h1>

@@ -33,12 +33,13 @@ export default function LandingPage() {
       {/* 🚀 Sticky Header */}
       <header className="bg-white dark:bg-slate-900/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 dark:border-slate-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
-          <img 
-            src="/logo.png" 
-            alt={t("landing.logoAlt")} 
-            className="h-9 object-contain cursor-pointer transition hover:scale-105" 
-            onClick={() => navigate("/")} 
-          />
+          <div className="logo-hook" onClick={() => navigate("/")}>
+            <img 
+              src="/logo.png" 
+              alt={t("landing.logoAlt")} 
+              className="h-8 object-contain" 
+            />
+          </div>
           <div className="flex items-center gap-4">
             <button 
               onClick={() => navigate("/about")} 

@@ -135,17 +135,21 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <img 
-              src="/logo.png" 
-              alt="workMitra Logo" 
-              className="h-9 object-contain cursor-pointer transition hover:scale-105" 
+            <div 
+              className="logo-hook"
               onClick={() => {
                 if (user.userRole === "company") navigate("/company-dashboard");
                 else if (user.userRole === "admin") navigate("/admin-dashboard");
                 else if (user.userRole === "college") navigate("/college-dashboard");
                 else navigate("/dashboard");
-              }} 
-            />
+              }}
+            >
+              <img 
+                src="/logo.png" 
+                alt="workMitra Logo" 
+                className="h-8 object-contain" 
+              />
+            </div>
           </div>
 
           {/* Desktop Nav Links */}

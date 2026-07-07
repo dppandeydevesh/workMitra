@@ -117,6 +117,47 @@ body {
   animation: floatFast 3s ease-in-out infinite;
 }
 
+/* 🎯 Logo Hook - Eye-catching sharp-border glow effect */
+.logo-hook {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border: 2px solid rgba(99, 102, 241, 0.4);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.15), 0 2px 8px rgba(0, 0, 0, 0.06);
+  animation: logoGlow 3s ease-in-out infinite;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.logo-hook:hover {
+  border-color: rgba(99, 102, 241, 0.7);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.3), 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
+}
+
+html.dark .logo-hook {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(129, 140, 248, 0.4);
+  box-shadow: 0 0 12px rgba(129, 140, 248, 0.2), 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+html.dark .logo-hook:hover {
+  border-color: rgba(129, 140, 248, 0.7);
+  box-shadow: 0 0 24px rgba(129, 140, 248, 0.4), 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes logoGlow {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.15), 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3), 0 4px 16px rgba(99, 102, 241, 0.1);
+  }
+}
+
 /* ✈️ Airplane fly-across animation: left→right, bottom→top */
 @keyframes airplaneFly {
   0% {

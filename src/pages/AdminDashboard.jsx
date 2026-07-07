@@ -2,6 +2,27 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../config";
 import { useToast } from "../components/Toast";
+import { motion } from "framer-motion";
+import { 
+  Users, 
+  Building, 
+  Briefcase, 
+  Lock, 
+  CheckCircle, 
+  AlertTriangle, 
+  Scale, 
+  Building2, 
+  Settings, 
+  Save, 
+  RefreshCw, 
+  Crown, 
+  Sparkles, 
+  Inbox, 
+  Server, 
+  ChevronRight,
+  ShieldCheck,
+  Zap
+} from "lucide-react";
 
 export default function AdminDashboard() {
   const toast = useToast();
@@ -149,94 +170,145 @@ export default function AdminDashboard() {
     }
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  };
+
   if (loading && !metrics) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-transparent">
-        <div className="glass-panel p-8 flex flex-col items-center justify-center space-y-6">
-          <div className="w-16 h-16 border-4 border-marigold-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-sm font-black uppercase text-marigold-500 tracking-widest animate-pulse">{t("admin.loading")}</p>
+      <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10">
+        <div className="glass-panel p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 skeleton-loader h-32 rounded-3xl"></div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="glass-card p-6 rounded-2xl skeleton-loader h-32"></div>
+          ))}
         </div>
+
+        <div className="glass-panel p-8 h-96 skeleton-loader rounded-3xl"></div>
+        <div className="glass-panel p-8 h-96 skeleton-loader rounded-3xl"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 select-none transition-all duration-500 animate-fade-in relative z-10">
-      
+    <motion.div 
+      initial="hidden"
+      animate="show"
+      variants={containerVariants}
+      className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 select-none relative z-10"
+    >
       <div className="max-w-7xl mx-auto space-y-10">
         
         {/* Header Title Section - Glass Panel */}
-        <div className="glass-panel p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
+        <motion.div variants={itemVariants} className="glass-panel premium-card-hover p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-marigold-500/20 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="relative z-10">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-ink-800 dark:text-white uppercase tracking-tight flex items-center gap-3">
-              <span className="text-4xl drop-shadow-md">👑</span> {t("admin.title")}
-            </h1>
-            <p className="text-sm font-medium text-ink-500 dark:text-ink-300 mt-2">{t("admin.description")}</p>
+          <div className="relative z-10 flex items-center gap-4">
+            <div className="p-3 bg-marigold-500/10 rounded-xl shadow-inner border border-marigold-500/20">
+              <Crown className="w-8 h-8 text-marigold-500" />
+            </div>
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-ink-800 dark:text-white uppercase tracking-tight flex items-center gap-3">
+                {t("admin.title")}
+              </h1>
+              <p className="text-sm font-medium text-ink-500 dark:text-ink-300 mt-2">{t("admin.description")}</p>
+            </div>
           </div>
           <button
             onClick={fetchAdminData}
             className="glass-button px-6 py-3 bg-marigold-500/90 hover:bg-marigold-500 text-white rounded-xl text-sm font-bold transition-all shadow-[0_4px_20px_rgba(79,70,229,0.4)] hover:shadow-[0_6px_25px_rgba(79,70,229,0.6)] flex items-center gap-2 relative z-10 backdrop-blur-md"
           >
-            <span className="text-lg">🔄</span> {t("admin.action.sync_data")}
+            <RefreshCw className="w-5 h-5" /> {t("admin.action.sync_data")}
           </button>
-        </div>
+        </motion.div>
 
         {/* Dashboard KPIs Grid */}
         {metrics && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
-            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between group hover:-tranink-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-ink-800/40 border border-white/40 dark:border-ink-700/50 shadow-sm backdrop-blur-md">
+          <motion.div variants={containerVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+            <motion.div variants={itemVariants} className="glass-card premium-card-hover p-6 rounded-2xl flex flex-col justify-between group relative overflow-hidden bg-white/40 dark:bg-ink-800/40 border border-white/40 dark:border-ink-700/50 shadow-sm backdrop-blur-md">
               <div className="absolute -right-4 -top-4 w-16 h-16 bg-marigold-500/10 rounded-full blur-2xl group-hover:bg-marigold-500/20 transition-all"></div>
-              <span className="text-xs font-black text-ink-500 dark:text-ink-400 uppercase tracking-wider mb-2 relative z-10">{t("admin.kpi.total_students")}</span>
+              <div className="flex justify-between items-start mb-2 relative z-10">
+                <span className="text-xs font-black text-ink-500 dark:text-ink-400 uppercase tracking-wider">{t("admin.kpi.total_students")}</span>
+                <Users className="w-5 h-5 text-marigold-500 opacity-80" />
+              </div>
               <span className="text-4xl font-black text-ink-800 dark:text-white drop-shadow-sm relative z-10">{metrics.totalStudents}</span>
-            </div>
+            </motion.div>
             
-            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between group hover:-tranink-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-ink-800/40 border border-white/40 dark:border-ink-700/50 shadow-sm backdrop-blur-md">
+            <motion.div variants={itemVariants} className="glass-card premium-card-hover p-6 rounded-2xl flex flex-col justify-between group relative overflow-hidden bg-white/40 dark:bg-ink-800/40 border border-white/40 dark:border-ink-700/50 shadow-sm backdrop-blur-md">
               <div className="absolute -right-4 -top-4 w-16 h-16 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all"></div>
-              <span className="text-xs font-black text-ink-500 dark:text-ink-400 uppercase tracking-wider mb-2 relative z-10">{t("admin.kpi.verified_recruiters")}</span>
+              <div className="flex justify-between items-start mb-2 relative z-10">
+                <span className="text-xs font-black text-ink-500 dark:text-ink-400 uppercase tracking-wider">{t("admin.kpi.verified_recruiters")}</span>
+                <Building className="w-5 h-5 text-purple-500 opacity-80" />
+              </div>
               <span className="text-4xl font-black text-ink-800 dark:text-white drop-shadow-sm relative z-10">{metrics.totalCompanies}</span>
-            </div>
+            </motion.div>
             
-            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between group hover:-tranink-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-ink-800/40 border border-white/40 dark:border-ink-700/50 shadow-sm backdrop-blur-md">
+            <motion.div variants={itemVariants} className="glass-card premium-card-hover p-6 rounded-2xl flex flex-col justify-between group relative overflow-hidden bg-white/40 dark:bg-ink-800/40 border border-white/40 dark:border-ink-700/50 shadow-sm backdrop-blur-md">
               <div className="absolute -right-4 -top-4 w-16 h-16 bg-pink-500/10 rounded-full blur-2xl group-hover:bg-pink-500/20 transition-all"></div>
-              <span className="text-xs font-black text-ink-500 dark:text-ink-400 uppercase tracking-wider mb-2 relative z-10">{t("admin.kpi.total_gigs")}</span>
+              <div className="flex justify-between items-start mb-2 relative z-10">
+                <span className="text-xs font-black text-ink-500 dark:text-ink-400 uppercase tracking-wider">{t("admin.kpi.total_gigs")}</span>
+                <Briefcase className="w-5 h-5 text-pink-500 opacity-80" />
+              </div>
               <span className="text-4xl font-black text-ink-800 dark:text-white drop-shadow-sm relative z-10">{metrics.totalProjects}</span>
-            </div>
+            </motion.div>
             
-            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between border-l-4 border-l-marigold-500 group hover:-tranink-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-ink-800/40 shadow-sm backdrop-blur-md">
+            <motion.div variants={itemVariants} className="glass-card premium-card-hover p-6 rounded-2xl flex flex-col justify-between border-l-4 border-l-marigold-500 group relative overflow-hidden bg-white/40 dark:bg-ink-800/40 shadow-sm backdrop-blur-md">
               <div className="absolute -right-4 -top-4 w-16 h-16 bg-marigold-500/10 rounded-full blur-2xl group-hover:bg-marigold-500/20 transition-all"></div>
-              <span className="text-xs font-black text-marigold-500 dark:text-marigold-400 uppercase tracking-wider mb-2 relative z-10">{t("admin.kpi.locked_escrow")}</span>
+              <div className="flex justify-between items-start mb-2 relative z-10">
+                <span className="text-xs font-black text-marigold-500 dark:text-marigold-400 uppercase tracking-wider">{t("admin.kpi.locked_escrow")}</span>
+                <Lock className="w-5 h-5 text-marigold-500 opacity-80" />
+              </div>
               <span className="text-3xl font-black text-ink-800 dark:text-white drop-shadow-sm relative z-10">₹{metrics.lockedEscrow.toLocaleString()}</span>
-            </div>
+            </motion.div>
             
-            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between border-l-4 border-l-emerald-500 group hover:-tranink-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-ink-800/40 shadow-sm backdrop-blur-md">
+            <motion.div variants={itemVariants} className="glass-card premium-card-hover p-6 rounded-2xl flex flex-col justify-between border-l-4 border-l-emerald-500 group relative overflow-hidden bg-white/40 dark:bg-ink-800/40 shadow-sm backdrop-blur-md">
               <div className="absolute -right-4 -top-4 w-16 h-16 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
-              <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-2 relative z-10">{t("admin.kpi.completed_payouts")}</span>
+              <div className="flex justify-between items-start mb-2 relative z-10">
+                <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">{t("admin.kpi.completed_payouts")}</span>
+                <CheckCircle className="w-5 h-5 text-emerald-500 opacity-80" />
+              </div>
               <span className="text-3xl font-black text-ink-800 dark:text-white drop-shadow-sm relative z-10">₹{metrics.completedEscrow.toLocaleString()}</span>
-            </div>
+            </motion.div>
             
-            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between border-l-4 border-l-rose-500 group hover:-tranink-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-ink-800/40 shadow-sm backdrop-blur-md">
+            <motion.div variants={itemVariants} className="glass-card premium-card-hover p-6 rounded-2xl flex flex-col justify-between border-l-4 border-l-rose-500 group relative overflow-hidden bg-white/40 dark:bg-ink-800/40 shadow-sm backdrop-blur-md">
               <div className="absolute -right-4 -top-4 w-16 h-16 bg-rose-500/10 rounded-full blur-2xl group-hover:bg-rose-500/20 transition-all"></div>
-              <span className="text-xs font-black text-rose-600 dark:text-rose-400 uppercase tracking-wider mb-2 relative z-10">{t("admin.kpi.disputed_balance")}</span>
+              <div className="flex justify-between items-start mb-2 relative z-10">
+                <span className="text-xs font-black text-rose-600 dark:text-rose-400 uppercase tracking-wider">{t("admin.kpi.disputed_balance")}</span>
+                <AlertTriangle className="w-5 h-5 text-rose-500 opacity-80" />
+              </div>
               <span className="text-3xl font-black text-ink-800 dark:text-white drop-shadow-sm relative z-10">₹{metrics.disputedEscrow.toLocaleString()}</span>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
 
         {/* Disputes Manager Section */}
-        <div className="glass-panel p-8 relative overflow-hidden">
+        <motion.div variants={itemVariants} className="glass-panel premium-card-hover p-8 relative overflow-hidden">
           <div className="absolute -left-20 -top-20 w-64 h-64 bg-rose-500/5 rounded-full blur-3xl pointer-events-none"></div>
           
-          <div className="border-b border-ink-200/50 dark:border-ink-700/50 pb-5 mb-6 relative z-10">
-            <h2 className="text-xl font-black text-ink-800 dark:text-white uppercase tracking-wide flex items-center gap-3">
-              <span className="text-2xl drop-shadow-sm">⚖️</span> {t("admin.disputes.title")}
-            </h2>
-            <p className="text-sm font-medium text-ink-500 dark:text-ink-400 mt-1">{t("admin.disputes.description")}</p>
+          <div className="border-b border-ink-200/50 dark:border-ink-700/50 pb-5 mb-6 relative z-10 flex items-center gap-4">
+            <div className="p-3 bg-rose-500/10 rounded-xl shadow-inner border border-rose-500/20">
+              <Scale className="w-6 h-6 text-rose-500" />
+            </div>
+            <div>
+              <h2 className="text-xl font-black text-ink-800 dark:text-white uppercase tracking-wide">
+                {t("admin.disputes.title")}
+              </h2>
+              <p className="text-sm font-medium text-ink-500 dark:text-ink-400 mt-1">{t("admin.disputes.description")}</p>
+            </div>
           </div>
 
           {disputes.length === 0 ? (
             <div className="py-12 flex flex-col items-center justify-center text-center relative z-10">
-              <span className="text-5xl mb-4 opacity-50">✨</span>
+              <Inbox className="w-16 h-16 text-ink-300 dark:text-ink-600 mb-4 opacity-50" />
               <p className="text-sm font-medium text-ink-500 dark:text-ink-400 italic">{t("admin.disputes.empty")}</p>
             </div>
           ) : (
@@ -267,19 +339,21 @@ export default function AdminDashboard() {
                           "{dispute.feedbackText || t("admin.disputes.fallback.no_feedback")}"
                         </div>
                       </td>
-                      <td className="py-5 px-6 text-right space-x-3">
+                      <td className="py-5 px-6 text-right space-x-3 whitespace-nowrap">
                         <button
                           onClick={() => handleResolveDispute(dispute._id, "release")}
                           disabled={resolvingId === dispute._id}
-                          className="glass-button px-4 py-2 bg-emerald-500/90 hover:bg-emerald-600 text-white rounded-xl font-bold text-xs transition-all shadow-[0_4px_15px_rgba(16,185,129,0.3)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.4)] disabled:opacity-50 disabled:shadow-none backdrop-blur-md border border-white/20"
+                          className="glass-button px-4 py-2 bg-emerald-500/90 hover:bg-emerald-600 text-white rounded-xl font-bold text-xs transition-all shadow-[0_4px_15px_rgba(16,185,129,0.3)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.4)] disabled:opacity-50 disabled:shadow-none backdrop-blur-md border border-white/20 inline-flex items-center gap-1.5"
                         >
+                          <CheckCircle className="w-3.5 h-3.5" />
                           {t("admin.action.release_payout")}
                         </button>
                         <button
                           onClick={() => handleResolveDispute(dispute._id, "refund")}
                           disabled={resolvingId === dispute._id}
-                          className="glass-button px-4 py-2 bg-rose-500/90 hover:bg-rose-600 text-white rounded-xl font-bold text-xs transition-all shadow-[0_4px_15px_rgba(244,63,94,0.3)] hover:shadow-[0_6px_20px_rgba(244,63,94,0.4)] disabled:opacity-50 disabled:shadow-none backdrop-blur-md border border-white/20"
+                          className="glass-button px-4 py-2 bg-rose-500/90 hover:bg-rose-600 text-white rounded-xl font-bold text-xs transition-all shadow-[0_4px_15px_rgba(244,63,94,0.3)] hover:shadow-[0_6px_20px_rgba(244,63,94,0.4)] disabled:opacity-50 disabled:shadow-none backdrop-blur-md border border-white/20 inline-flex items-center gap-1.5"
                         >
+                          <AlertTriangle className="w-3.5 h-3.5" />
                           {t("admin.action.refund_recruiter")}
                         </button>
                       </td>
@@ -289,22 +363,27 @@ export default function AdminDashboard() {
               </table>
             </div>
           )}
-        </div>
+        </motion.div>
 
         {/* Recruiters Verifications Section */}
-        <div className="glass-panel p-8 relative overflow-hidden">
+        <motion.div variants={itemVariants} className="glass-panel premium-card-hover p-8 relative overflow-hidden">
           <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-marigold-500/5 rounded-full blur-3xl pointer-events-none"></div>
           
-          <div className="border-b border-ink-200/50 dark:border-ink-700/50 pb-5 mb-6 relative z-10">
-            <h2 className="text-xl font-black text-ink-800 dark:text-white uppercase tracking-wide flex items-center gap-3">
-              <span className="text-2xl drop-shadow-sm">🏢</span> {t("admin.companies.title")}
-            </h2>
-            <p className="text-sm font-medium text-ink-500 dark:text-ink-400 mt-1">{t("admin.companies.description")}</p>
+          <div className="border-b border-ink-200/50 dark:border-ink-700/50 pb-5 mb-6 relative z-10 flex items-center gap-4">
+            <div className="p-3 bg-purple-500/10 rounded-xl shadow-inner border border-purple-500/20">
+              <Building2 className="w-6 h-6 text-purple-500" />
+            </div>
+            <div>
+              <h2 className="text-xl font-black text-ink-800 dark:text-white uppercase tracking-wide">
+                {t("admin.companies.title")}
+              </h2>
+              <p className="text-sm font-medium text-ink-500 dark:text-ink-400 mt-1">{t("admin.companies.description")}</p>
+            </div>
           </div>
 
           {companies.length === 0 ? (
             <div className="py-12 flex flex-col items-center justify-center text-center relative z-10">
-              <span className="text-5xl mb-4 opacity-50">📭</span>
+              <Inbox className="w-16 h-16 text-ink-300 dark:text-ink-600 mb-4 opacity-50" />
               <p className="text-sm font-medium text-ink-500 dark:text-ink-400 italic">{t("admin.companies.empty")}</p>
             </div>
           ) : (
@@ -343,8 +422,9 @@ export default function AdminDashboard() {
                           <button
                             onClick={() => handleVerifyCompany(company.email)}
                             disabled={verifyingEmail === company.email}
-                            className="glass-button px-4 py-2 bg-marigold-500/90 hover:bg-marigold-500 text-white rounded-xl font-bold text-xs transition-all shadow-[0_4px_15px_rgba(99,102,241,0.3)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.4)] disabled:opacity-50 disabled:shadow-none backdrop-blur-md border border-white/20"
+                            className="glass-button px-4 py-2 bg-marigold-500/90 hover:bg-marigold-500 text-white rounded-xl font-bold text-xs transition-all shadow-[0_4px_15px_rgba(99,102,241,0.3)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.4)] disabled:opacity-50 disabled:shadow-none backdrop-blur-md border border-white/20 inline-flex items-center gap-1.5 whitespace-nowrap"
                           >
+                            <ShieldCheck className="w-3.5 h-3.5" />
                             {t("admin.action.approve_credentials")}
                           </button>
                         ) : (
@@ -357,24 +437,29 @@ export default function AdminDashboard() {
               </table>
             </div>
           )}
-        </div>
+        </motion.div>
 
         {/* 👑 Platform Configuration & System Backups Panel */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           
           {/* Configuration Form settings */}
-          <div className="glass-panel p-8 relative overflow-hidden">
+          <motion.div variants={itemVariants} className="glass-panel premium-card-hover p-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
             
-            <div className="border-b border-ink-200/50 dark:border-ink-700/50 pb-4 mb-6 relative z-10">
-              <h2 className="text-xl font-black text-ink-800 dark:text-white uppercase tracking-wide flex items-center gap-3">
-                <span className="text-2xl drop-shadow-sm">⚙️</span> {t("admin.config.title")}
-              </h2>
-              <p className="text-sm font-medium text-ink-500 dark:text-ink-400 mt-1">{t("admin.config.description")}</p>
+            <div className="border-b border-ink-200/50 dark:border-ink-700/50 pb-4 mb-6 relative z-10 flex items-center gap-4">
+              <div className="p-3 bg-amber-500/10 rounded-xl shadow-inner border border-amber-500/20">
+                <Settings className="w-6 h-6 text-amber-500" />
+              </div>
+              <div>
+                <h2 className="text-xl font-black text-ink-800 dark:text-white uppercase tracking-wide">
+                  {t("admin.config.title")}
+                </h2>
+                <p className="text-sm font-medium text-ink-500 dark:text-ink-400 mt-1">{t("admin.config.description")}</p>
+              </div>
             </div>
             
             <form onSubmit={handleSaveConfig} className="space-y-6 relative z-10">
-              <div className="bg-white/30 dark:bg-ink-800/30 p-5 rounded-2xl border border-white/40 dark:border-ink-700/50 shadow-sm backdrop-blur-md">
+              <div className="bg-white/30 dark:bg-ink-800/30 p-5 rounded-2xl border border-white/40 dark:border-ink-700/50 shadow-sm backdrop-blur-md transition-colors focus-within:border-marigold-500/50">
                 <div className="flex justify-between items-center font-bold text-ink-700 dark:text-ink-200 mb-3 text-sm uppercase tracking-wide">
                   <span>{t("admin.config.commission_fee")}</span>
                   <span className="bg-marigold-500/90 text-white px-3 py-1 rounded-lg shadow-sm border border-marigold-400/50">{commissionRate}%</span>
@@ -389,10 +474,10 @@ export default function AdminDashboard() {
                 />
               </div>
 
-              <div className="bg-white/30 dark:bg-ink-800/30 p-5 rounded-2xl border border-white/40 dark:border-ink-700/50 shadow-sm backdrop-blur-md">
+              <div className="bg-white/30 dark:bg-ink-800/30 p-5 rounded-2xl border border-white/40 dark:border-ink-700/50 shadow-sm backdrop-blur-md transition-colors focus-within:border-marigold-500/50">
                 <label className="block font-bold text-ink-700 dark:text-ink-200 mb-3 text-sm uppercase tracking-wide">{t("admin.config.min_deposit")}</label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -tranink-y-1/2 text-ink-500 font-bold">₹</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-500 font-bold">₹</span>
                   <input
                     type="number"
                     min="500"
@@ -408,30 +493,38 @@ export default function AdminDashboard() {
               <button
                 type="submit"
                 disabled={savingConfig}
-                className="glass-button w-full py-4 bg-gradient-to-r from-marigold-500 to-purple-600 hover:from-marigold-600 hover:to-purple-700 text-white rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-[0_4px_20px_rgba(99,102,241,0.4)] hover:shadow-[0_8px_30px_rgba(99,102,241,0.5)] disabled:opacity-70 disabled:shadow-none mt-2 border border-white/20 backdrop-blur-md"
+                className="glass-button w-full py-4 bg-gradient-to-r from-marigold-500 to-purple-600 hover:from-marigold-600 hover:to-purple-700 text-white rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-[0_4px_20px_rgba(99,102,241,0.4)] hover:shadow-[0_8px_30px_rgba(99,102,241,0.5)] disabled:opacity-70 disabled:shadow-none mt-2 border border-white/20 backdrop-blur-md flex items-center justify-center gap-2"
               >
                 {savingConfig ? (
-                  <span className="flex items-center justify-center gap-2">
+                  <>
                     <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                     {t("admin.action.saving_settings")}
-                  </span>
+                  </>
                 ) : (
-                  t("admin.action.apply_config")
+                  <>
+                    <Zap className="w-4 h-4" />
+                    {t("admin.action.apply_config")}
+                  </>
                 )}
               </button>
             </form>
-          </div>
+          </motion.div>
 
           {/* Database Backup & System Logs */}
-          <div className="glass-panel p-8 relative overflow-hidden flex flex-col">
+          <motion.div variants={itemVariants} className="glass-panel premium-card-hover p-8 relative overflow-hidden flex flex-col">
             <div className="absolute top-0 left-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
             
             <div className="border-b border-ink-200/50 dark:border-ink-700/50 pb-4 mb-6 relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div>
-                <h2 className="text-xl font-black text-ink-800 dark:text-white uppercase tracking-wide flex items-center gap-3">
-                  <span className="text-2xl drop-shadow-sm">💾</span> {t("admin.backup.title")}
-                </h2>
-                <p className="text-sm font-medium text-ink-500 dark:text-ink-400 mt-1">{t("admin.backup.description")}</p>
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-emerald-500/10 rounded-xl shadow-inner border border-emerald-500/20">
+                  <Server className="w-6 h-6 text-emerald-500" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-black text-ink-800 dark:text-white uppercase tracking-wide">
+                    {t("admin.backup.title")}
+                  </h2>
+                  <p className="text-sm font-medium text-ink-500 dark:text-ink-400 mt-1">{t("admin.backup.description")}</p>
+                </div>
               </div>
               <button
                 onClick={handleBackupDatabase}
@@ -445,7 +538,7 @@ export default function AdminDashboard() {
                   </>
                 ) : (
                   <>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    <Save className="w-4 h-4" />
                     {t("admin.action.backup_db")}
                   </>
                 )}
@@ -455,7 +548,7 @@ export default function AdminDashboard() {
             {backupStatus && (
               <div className="mb-4 relative z-10">
                 <p className="text-xs bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/30 p-3 rounded-xl text-emerald-700 dark:text-emerald-400 font-bold shadow-sm flex items-center gap-2 animate-pulse backdrop-blur-sm">
-                  <span className="text-emerald-500">▶</span> {backupStatus}
+                  <ChevronRight className="w-4 h-4 text-emerald-500" /> {backupStatus}
                 </p>
               </div>
             )}
@@ -475,11 +568,11 @@ export default function AdminDashboard() {
               ))}
               <div className="text-ink-600 animate-pulse relative z-10">_</div>
             </div>
-          </div>
+          </motion.div>
           
         </div>
         
       </div>
-    </div>
+    </motion.div>
   );
 }

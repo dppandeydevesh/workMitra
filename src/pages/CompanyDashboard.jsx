@@ -3,6 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 import { useToast } from "../components/Toast";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import { 
+  Folder, Inbox, Search, CheckCircle, DollarSign, Star, 
+  Plus, Users, BarChart2, Calendar, Settings, Trophy, Clock,
+  Building2, FileText, PieChart, Activity
+} from "lucide-react";
 
 export default function CompanyDashboard() {
   const navigate = useNavigate();
@@ -93,21 +99,49 @@ export default function CompanyDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-transparent flex items-center justify-center">
-        <div className="text-center text-ink-500 font-medium animate-pulse flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-marigold-500 border-t-transparent rounded-full animate-spin" />
-          <span>{t("companyDashboard.loadingMsg")}</span>
+      <div className="min-h-screen bg-transparent p-6 sm:p-8 max-w-7xl mx-auto space-y-8">
+        <div className="h-40 skeleton-loader rounded-3xl w-full" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="h-28 skeleton-loader rounded-2xl" />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="space-y-6 lg:col-span-1">
+            <div className="h-64 skeleton-loader rounded-2xl" />
+            <div className="h-64 skeleton-loader rounded-2xl" />
+          </div>
+          <div className="lg:col-span-2 space-y-6">
+            <div className="h-96 skeleton-loader rounded-2xl" />
+          </div>
         </div>
       </div>
     );
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  };
+
   return (
     <div className="min-h-screen bg-transparent font-sans">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-
+      <motion.div 
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8"
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+      >
         {/* Welcome Header */}
-        <div className="bg-gradient-to-r from-marigold-600 via-purple-600 to-marigold-600 rounded-3xl shadow-xl p-6 sm:p-8 mb-8 text-white relative overflow-hidden">
+        <motion.div variants={itemVariants} className="bg-gradient-to-r from-marigold-600 via-purple-600 to-marigold-600 rounded-3xl shadow-xl p-6 sm:p-8 mb-8 text-white relative overflow-hidden">
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-white dark:bg-ink-900/5 dark:bg-ink-900/5 rounded-full blur-2xl" />
           <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white dark:bg-ink-900/5 dark:bg-ink-900/5 rounded-full blur-xl" />
           <div className="relative z-10">
@@ -119,69 +153,76 @@ export default function CompanyDashboard() {
               {t("companyDashboard.dashboardDescription")}
             </p>
             <div className="flex flex-wrap gap-3 mt-5">
-              <span className="bg-white dark:bg-ink-900/15 dark:bg-ink-900/15 backdrop-blur-sm px-3 py-1.5 rounded-xl text-[10px] font-extrabold border border-white/20 dark:border-ink-800/20">
-                📁 {t("companyDashboard.statProjects", { count: stats?.totalProjects || 0 })}
+              <span className="glass-panel px-3 py-1.5 rounded-xl text-[10px] font-extrabold flex items-center gap-1.5 text-white border-white/20">
+                <Folder className="w-3.5 h-3.5" /> {t("companyDashboard.statProjects", { count: stats?.totalProjects || 0 })}
               </span>
-              <span className="bg-white dark:bg-ink-900/15 dark:bg-ink-900/15 backdrop-blur-sm px-3 py-1.5 rounded-xl text-[10px] font-extrabold border border-white/20 dark:border-ink-800/20">
-                👥 {t("companyDashboard.statApplications", { count: stats?.totalApplications || 0 })}
+              <span className="glass-panel px-3 py-1.5 rounded-xl text-[10px] font-extrabold flex items-center gap-1.5 text-white border-white/20">
+                <Users className="w-3.5 h-3.5" /> {t("companyDashboard.statApplications", { count: stats?.totalApplications || 0 })}
               </span>
-              <span className="bg-white dark:bg-ink-900/15 dark:bg-ink-900/15 backdrop-blur-sm px-3 py-1.5 rounded-xl text-[10px] font-extrabold border border-white/20 dark:border-ink-800/20">
-                ⭐ {t("companyDashboard.statAvgRating", { rating: stats?.avgRating || "0.0" })}
+              <span className="glass-panel px-3 py-1.5 rounded-xl text-[10px] font-extrabold flex items-center gap-1.5 text-white border-white/20">
+                <Star className="w-3.5 h-3.5 text-marigold-300 fill-current" /> {t("companyDashboard.statAvgRating", { rating: stats?.avgRating || "0.0" })}
               </span>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* KPI Stats Row */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-8">
+        <motion.div variants={itemVariants} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-8">
           {[
-            { label: t("companyDashboard.kpiTotalProjects"), value: stats?.totalProjects || 0, icon: "📁", color: "from-marigold-500 to-marigold-600" },
-            { label: t("companyDashboard.kpiActiveApplications"), value: stats?.totalApplications || 0, icon: "📨", color: "from-purple-500 to-purple-600" },
-            { label: t("companyDashboard.kpiUnderReview"), value: stats?.submittedCount || 0, icon: "🔍", color: "from-amber-500 to-amber-600" },
-            { label: t("companyDashboard.kpiCompletedTasks"), value: stats?.completedCount || 0, icon: "✅", color: "from-green-500 to-green-600" },
-            { label: t("companyDashboard.kpiTotalBudget"), value: `₹${(stats?.totalBudget || 0).toLocaleString()}`, icon: "💰", color: "from-emerald-500 to-emerald-600" },
-            { label: t("companyDashboard.kpiAvgRating"), value: `${stats?.avgRating || "0.0"} ★`, icon: "⭐", color: "from-pink-500 to-pink-600" }
+            { label: t("companyDashboard.kpiTotalProjects"), value: stats?.totalProjects || 0, icon: <Folder className="w-4 h-4" />, color: "from-marigold-500 to-marigold-600" },
+            { label: t("companyDashboard.kpiActiveApplications"), value: stats?.totalApplications || 0, icon: <Inbox className="w-4 h-4" />, color: "from-purple-500 to-purple-600" },
+            { label: t("companyDashboard.kpiUnderReview"), value: stats?.submittedCount || 0, icon: <Search className="w-4 h-4" />, color: "from-amber-500 to-amber-600" },
+            { label: t("companyDashboard.kpiCompletedTasks"), value: stats?.completedCount || 0, icon: <CheckCircle className="w-4 h-4" />, color: "from-green-500 to-green-600" },
+            { label: t("companyDashboard.kpiTotalBudget"), value: `₹${(stats?.totalBudget || 0).toLocaleString()}`, icon: <DollarSign className="w-4 h-4" />, color: "from-emerald-500 to-emerald-600" },
+            { label: t("companyDashboard.kpiAvgRating"), value: `${stats?.avgRating || "0.0"}`, icon: <Star className="w-4 h-4" />, color: "from-pink-500 to-pink-600" }
           ].map((kpi, idx) => (
-            <div key={idx} className="bg-white dark:bg-ink-900 rounded-2xl shadow-sm border border-ink-100 dark:border-ink-800/50 p-4 hover:shadow-md transition-all duration-200 hover:-tranink-y-0.5 group">
+            <div key={idx} className="glass-panel premium-card-hover p-4 group rounded-2xl">
               <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${kpi.color} flex items-center justify-center text-white text-sm mb-3 group-hover:scale-110 transition-transform`}>
                 {kpi.icon}
               </div>
               <p className="text-[9px] font-extrabold text-ink-400 uppercase tracking-wider">{kpi.label}</p>
-              <p className="text-lg font-black text-ink-800 dark:text-ink-200 mt-0.5">{kpi.value}</p>
+              <div className="flex items-center gap-1 mt-0.5">
+                <p className="text-lg font-black text-ink-800 dark:text-ink-200">{kpi.value}</p>
+                {kpi.label === t("companyDashboard.kpiAvgRating") && <Star className="w-3.5 h-3.5 text-amber-500 fill-current" />}
+              </div>
             </div>
           ))}
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column: Quick Actions + Top Performers */}
           <div className="lg:col-span-1 space-y-6">
             {/* Quick Actions */}
-            <div className="bg-white dark:bg-ink-900 rounded-2xl shadow-sm border border-ink-100 dark:border-ink-800/50 p-5">
-              <h3 className="text-[10px] font-black text-ink-400 uppercase tracking-wider mb-4">⚡ {t("companyDashboard.quickActions")}</h3>
+            <motion.div variants={itemVariants} className="glass-panel p-5 rounded-2xl">
+              <h3 className="text-[10px] font-black text-ink-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                <Activity className="w-4 h-4" /> {t("companyDashboard.quickActions")}
+              </h3>
               <div className="space-y-2.5">
                 {[
-                  { label: t("companyDashboard.actionDeploy"), icon: "➕", path: "/add-project", style: "bg-gradient-to-r from-marigold-600 to-marigold-600 text-white shadow-md" },
-                  { label: t("companyDashboard.actionMyProjects"), icon: "📂", path: "/my-projects", style: "bg-marigold-50 border border-marigold-100 text-marigold-700" },
-                  { label: t("companyDashboard.actionApplicantsHub"), icon: "👨‍🎓", path: "/applicants", style: "bg-green-50 border border-green-100 text-green-700" },
-                  { label: t("companyDashboard.actionAnalytics"), icon: "📊", path: "/analytics", style: "bg-purple-50 border border-purple-100 dark:border-ink-800 text-purple-700" },
-                  { label: t("companyDashboard.actionCalendar"), icon: "📅", path: "/calendar", style: "bg-amber-50 border border-amber-100 text-amber-700" },
-                  { label: t("companyDashboard.actionSettings"), icon: "⚙️", path: "/company-settings", style: "bg-ink-50 dark:bg-ink-800 border border-ink-100 dark:border-ink-800 text-ink-700 dark:text-ink-300" }
+                  { label: t("companyDashboard.actionDeploy"), icon: <Plus className="w-4 h-4" />, path: "/add-project", style: "bg-gradient-to-r from-marigold-600 to-marigold-600 text-white shadow-md hover:shadow-lg" },
+                  { label: t("companyDashboard.actionMyProjects"), icon: <Folder className="w-4 h-4" />, path: "/my-projects", style: "glass-panel premium-card-hover text-marigold-700 dark:text-marigold-400" },
+                  { label: t("companyDashboard.actionApplicantsHub"), icon: <Users className="w-4 h-4" />, path: "/applicants", style: "glass-panel premium-card-hover text-green-700 dark:text-green-400" },
+                  { label: t("companyDashboard.actionAnalytics"), icon: <BarChart2 className="w-4 h-4" />, path: "/analytics", style: "glass-panel premium-card-hover text-purple-700 dark:text-purple-400" },
+                  { label: t("companyDashboard.actionCalendar"), icon: <Calendar className="w-4 h-4" />, path: "/calendar", style: "glass-panel premium-card-hover text-amber-700 dark:text-amber-400" },
+                  { label: t("companyDashboard.actionSettings"), icon: <Settings className="w-4 h-4" />, path: "/company-settings", style: "glass-panel premium-card-hover text-ink-700 dark:text-ink-300" }
                 ].map((action, idx) => (
                   <button
                     key={idx}
                     onClick={() => navigate(action.path)}
-                    className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition hover:opacity-90 hover:-tranink-y-0.5 transform flex items-center gap-3 ${action.style}`}
+                    className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition flex items-center gap-3 ${action.style}`}
                   >
-                    <span className="text-base">{action.icon}</span>
+                    {action.icon}
                     {action.label}
                   </button>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
             {/* Top Performers */}
-            <div className="bg-white dark:bg-ink-900 rounded-2xl shadow-sm border border-ink-100 dark:border-ink-800/50 p-5">
-              <h3 className="text-[10px] font-black text-ink-400 uppercase tracking-wider mb-4">🏆 {t("companyDashboard.topPerformers")}</h3>
+            <motion.div variants={itemVariants} className="glass-panel p-5 rounded-2xl">
+              <h3 className="text-[10px] font-black text-ink-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                <Trophy className="w-4 h-4" /> {t("companyDashboard.topPerformers")}
+              </h3>
               {(!stats?.topPerformers || stats.topPerformers.length === 0) ? (
                 <p className="text-xs text-ink-400 italic">{t("companyDashboard.noTopPerformers")}</p>
               ) : (
@@ -190,7 +231,7 @@ export default function CompanyDashboard() {
                     <div
                       key={idx}
                       onClick={() => navigate(`/student-profile/${perf.studentEmail}`)}
-                      className="flex items-center gap-3 p-3 bg-ink-50 dark:bg-ink-800/50 border border-ink-100 dark:border-ink-800 rounded-xl hover:bg-ink-100 dark:bg-ink-800/50 transition cursor-pointer"
+                      className="flex items-center gap-3 p-3 glass-panel premium-card-hover rounded-xl cursor-pointer"
                     >
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-black text-xs ${
                         idx === 0 ? "bg-amber-400" : idx === 1 ? "bg-ink-400" : "bg-amber-700"
@@ -199,23 +240,26 @@ export default function CompanyDashboard() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-bold text-ink-800 dark:text-ink-200 truncate">{perf.studentName}</p>
-                        <p className="text-[10px] text-ink-400 truncate">{perf.projectTitle}</p>
+                        <p className="text-[10px] text-ink-400 truncate flex items-center gap-1 mt-0.5"><FileText className="w-3 h-3" /> {perf.projectTitle}</p>
                       </div>
-                      <div className="text-right shrink-0">
-                        <span className="text-xs font-black text-amber-500">{perf.rating}★</span>
+                      <div className="text-right shrink-0 flex items-center gap-0.5">
+                        <span className="text-xs font-black text-amber-500">{perf.rating}</span>
+                        <Star className="w-3 h-3 text-amber-500 fill-current" />
                       </div>
                     </div>
                   ))}
                 </div>
               )}
-            </div>
+            </motion.div>
           </div>
 
           {/* Right Column: Recent Activity Feed */}
-          <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-ink-900 rounded-2xl shadow-sm border border-ink-100 dark:border-ink-800/50 p-5 sm:p-6">
+          <div className="lg:col-span-2 space-y-6">
+            <motion.div variants={itemVariants} className="glass-panel p-5 sm:p-6 rounded-2xl">
               <div className="flex justify-between items-center mb-5">
-                <h3 className="text-[10px] font-black text-ink-400 uppercase tracking-wider">🕑 {t("companyDashboard.recentActivity")}</h3>
+                <h3 className="text-[10px] font-black text-ink-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <Clock className="w-4 h-4" /> {t("companyDashboard.recentActivity")}
+                </h3>
                 <button
                   onClick={() => navigate("/applicants")}
                   className="text-[10px] text-marigold-500 font-extrabold hover:underline"
@@ -225,8 +269,8 @@ export default function CompanyDashboard() {
               </div>
 
               {recentActivity.length === 0 ? (
-                <div className="text-center py-12 border-2 border-dashed border-ink-100 dark:border-ink-800 rounded-xl text-ink-400">
-                  <span className="text-3xl block mb-3">📭</span>
+                <div className="text-center py-12 glass-panel border-dashed rounded-xl text-ink-400">
+                  <Inbox className="w-12 h-12 mx-auto mb-3 text-ink-300" />
                   <p className="text-xs font-medium">{t("companyDashboard.noRecentActivity")}</p>
                   <p className="text-[10px] text-ink-300 mt-1">{t("companyDashboard.deployFirstProject")}</p>
                 </div>
@@ -235,7 +279,7 @@ export default function CompanyDashboard() {
                   {recentActivity.map((event, idx) => (
                     <div
                       key={idx}
-                      className="flex items-start gap-3 p-3.5 bg-ink-50 dark:bg-ink-800/30 border border-ink-100 dark:border-ink-800/50 rounded-xl hover:bg-ink-50 dark:bg-ink-800 transition group"
+                      className="flex items-start gap-3 p-3.5 glass-panel premium-card-hover rounded-xl group"
                     >
                       {/* Status indicator */}
                       <div className="shrink-0 mt-0.5">
@@ -245,15 +289,15 @@ export default function CompanyDashboard() {
                       {/* Event details */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
-                          <p className="text-xs font-bold text-ink-800 dark:text-ink-200 truncate">
-                            {event.studentName}
+                          <p className="text-xs font-bold text-ink-800 dark:text-ink-200 truncate flex items-center gap-1.5">
+                            <Building2 className="w-3.5 h-3.5" /> {event.studentName}
                           </p>
                           <span className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded border uppercase ${getStatusColor(event.status)}`}>
                             {event.status}
                           </span>
                         </div>
-                        <p className="text-[11px] text-ink-500 truncate">
-                          📁 {event.projectTitle}
+                        <p className="text-[11px] text-ink-500 truncate flex items-center gap-1.5 mt-1">
+                          <Folder className="w-3 h-3" /> {event.projectTitle}
                         </p>
                         {event.feedbackText && (
                           <p className="text-[10px] text-ink-400 mt-1 italic truncate max-w-md">
@@ -266,19 +310,23 @@ export default function CompanyDashboard() {
                       <div className="text-right shrink-0">
                         <p className="text-[10px] text-ink-400 font-semibold">{getTimeAgo(event.updatedAt)}</p>
                         {event.rating && (
-                          <p className="text-[10px] font-bold text-amber-500 mt-0.5">{event.rating}★</p>
+                          <p className="text-[10px] font-bold text-amber-500 mt-0.5 flex items-center justify-end gap-0.5">
+                            {event.rating} <Star className="w-3 h-3 fill-current" />
+                          </p>
                         )}
                       </div>
                     </div>
                   ))}
                 </div>
               )}
-            </div>
+            </motion.div>
 
             {/* Pipeline Status Breakdown */}
             {stats && (
-              <div className="bg-white dark:bg-ink-900 rounded-2xl shadow-sm border border-ink-100 dark:border-ink-800/50 p-5 sm:p-6 mt-6">
-                <h3 className="text-[10px] font-black text-ink-400 uppercase tracking-wider mb-4">📊 {t("companyDashboard.applicationPipeline")}</h3>
+              <motion.div variants={itemVariants} className="glass-panel p-5 sm:p-6 rounded-2xl">
+                <h3 className="text-[10px] font-black text-ink-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                  <PieChart className="w-4 h-4" /> {t("companyDashboard.applicationPipeline")}
+                </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
                     { label: t("companyDashboard.statusPending"), count: stats.pendingCount, color: "bg-amber-500" },
@@ -288,18 +336,18 @@ export default function CompanyDashboard() {
                     { label: t("companyDashboard.statusRejected"), count: stats.rejectedCount, color: "bg-red-500" },
                     { label: t("companyDashboard.statusInRevision"), count: stats.revisionCount, color: "bg-orange-500" }
                   ].map((item, idx) => (
-                    <div key={idx} className="bg-ink-50 dark:bg-ink-800/50 border border-ink-100 dark:border-ink-800 rounded-xl p-3 text-center">
+                    <div key={idx} className="glass-panel premium-card-hover rounded-xl p-3 text-center">
                       <div className={`w-2 h-2 ${item.color} rounded-full mx-auto mb-2`} />
-                      <p className="text-lg font-black text-ink-800 dark:text-ink-200">{item.count}</p>
+                      <p className="text-lg font-black text-ink-800 dark:text-ink-200">{item.count || 0}</p>
                       <p className="text-[9px] font-extrabold text-ink-400 uppercase tracking-wider">{item.label}</p>
                     </div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

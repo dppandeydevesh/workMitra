@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../config";
+import { motion } from "framer-motion";
+import { Lock } from "lucide-react";
 
 export default function ResetPasswordPage() {
   const { token } = useParams();
@@ -73,8 +75,13 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent font-sans flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-ink-900 rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 max-w-md w-full border border-white/60 dark:border-ink-800/60 text-center space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-ink-900 dark:via-ink-950 dark:to-purple-950 font-sans flex items-center justify-center p-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.5 }}
+        className="glass-panel premium-card-hover bg-white dark:bg-ink-900 rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 max-w-md w-full border border-white/60 dark:border-ink-800/60 text-center space-y-6"
+      >
         <div className="flex justify-center">
           <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain filter drop-shadow-md mix-blend-multiply" />
         </div>
@@ -107,14 +114,17 @@ export default function ResetPasswordPage() {
             {/* New Password */}
             <div>
               <label className="block text-left text-[9px] font-bold text-ink-400 uppercase mb-1.5 px-1">{t("resetPassword.newPasswordLabel")}</label>
-              <input
-                type="password"
-                placeholder={t("resetPassword.newPasswordPlaceholder")}
-                value={password}
-                onChange={(e) => checkPasswordStrength(e.target.value)}
-                className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
-                required
-              />
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4" />
+                <input
+                  type="password"
+                  placeholder={t("resetPassword.newPasswordPlaceholder")}
+                  value={password}
+                  onChange={(e) => checkPasswordStrength(e.target.value)}
+                  className="w-full pl-11 bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  required
+                />
+              </div>
               {password && (
                 <div className="w-full text-left text-[10px] font-bold px-1 space-y-1 mt-1.5">
                   <p className={passwordStrength.score === 4 ? "text-green-600" : "text-amber-600"}>
@@ -133,14 +143,17 @@ export default function ResetPasswordPage() {
             {/* Confirm Password */}
             <div>
               <label className="block text-left text-[9px] font-bold text-ink-400 uppercase mb-1.5 px-1">{t("resetPassword.confirmPasswordLabel")}</label>
-              <input
-                type="password"
-                placeholder={t("resetPassword.confirmPasswordPlaceholder")}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400"
-                required
-              />
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4" />
+                <input
+                  type="password"
+                  placeholder={t("resetPassword.confirmPasswordPlaceholder")}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full pl-11 bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  required
+                />
+              </div>
             </div>
 
             <button
@@ -152,7 +165,7 @@ export default function ResetPasswordPage() {
             </button>
           </form>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }

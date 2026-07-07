@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "./Toast";
 import { useTranslation } from "react-i18next";
 import { fetchWithAuth } from "../services/apiClient";
+import { motion } from "framer-motion";
+import { Mail, Lock, User, Building, Phone, Hash, BookOpen } from "lucide-react";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -212,7 +214,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden select-none p-4">
+    <div className="min-h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-ink-900 dark:via-ink-950 dark:to-purple-950 flex items-center justify-center relative overflow-hidden select-none p-4">
       
       {/* 🌌 Background Decorative Flow Elements */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
@@ -301,7 +303,7 @@ export default function LoginPage() {
           {errorMessage && <div className="mb-4 px-4 py-2 bg-red-100 text-red-700 text-xs font-bold rounded-xl border border-red-200 z-50 shadow-md">⚠️ {errorMessage}</div>}
           
           {isOtpVerifying ? (
-            <div className="w-full max-w-md bg-white dark:bg-ink-900 rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 border border-white/60 dark:border-ink-800/60 text-center space-y-6 animate-fade-in z-20">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="glass-panel premium-card-hover w-full max-w-md bg-white dark:bg-ink-900 rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 border border-white/60 dark:border-ink-800/60 text-center space-y-6 animate-fade-in z-20">
               <div className="flex justify-center">
                 <img src="/logo.png" alt="workMitra Logo" className="h-14 object-contain bg-white px-3 py-1.5 rounded-xl shadow-sm" />
               </div>
@@ -358,10 +360,10 @@ export default function LoginPage() {
                   </button>
                 </div>
               </form>
-            </div>
+            </motion.div>
           ) : (
             /* Desktop/Mobile Adaptive Form Container */
-            <div className={`auth-container ${isSignUp ? "active" : ""} w-full max-w-md md:max-w-[768px] min-h-[580px] bg-white dark:bg-ink-900 rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] overflow-hidden relative flex flex-col md:flex-row border border-white/60 dark:border-ink-800/60`}>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className={`glass-panel premium-card-hover auth-container ${isSignUp ? "active" : ""} w-full max-w-md md:max-w-[768px] min-h-[580px] bg-white dark:bg-ink-900 rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] overflow-hidden relative flex flex-col md:flex-row border border-white/60 dark:border-ink-800/60`}>
               
               {/* MOBILE ONLY NAVIGATION TABS */}
               <div className="flex md:hidden border-b border-purple-100 dark:border-ink-800 w-full">
@@ -441,27 +443,27 @@ export default function LoginPage() {
                   
                   {userRole === "company" ? (
                     <>
-                      <input type="text" placeholder={t("login.companyName")} value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="email" placeholder={t("login.companyEmail")} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <div className="relative"><Building className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4 z-10" /><input type="text" placeholder={t("login.companyName")} value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm pl-11 pr-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" required /></div>
+                      <div className="relative"><Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4 z-10" /><input type="email" placeholder={t("login.companyEmail")} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm pl-11 pr-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" required /></div>
                     </>
                   ) : userRole === "college" ? (
                     <>
-                      <input type="text" placeholder={t("login.fullName")} value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="email" placeholder={t("login.universityEmail")} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="text" placeholder={t("login.universityName")} value={collegeName} onChange={(e) => setCollegeName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="text" placeholder={t("login.departmentName")} value={departmentName} onChange={(e) => setDepartmentName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <div className="relative"><User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4 z-10" /><input type="text" placeholder={t("login.fullName")} value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm pl-11 pr-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" required /></div>
+                      <div className="relative"><Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4 z-10" /><input type="email" placeholder={t("login.universityEmail")} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm pl-11 pr-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" required /></div>
+                      <div className="relative"><Building className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4 z-10" /><input type="text" placeholder={t("login.universityName")} value={collegeName} onChange={(e) => setCollegeName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm pl-11 pr-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" required /></div>
+                      <div className="relative"><BookOpen className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4 z-10" /><input type="text" placeholder={t("login.departmentName")} value={departmentName} onChange={(e) => setDepartmentName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm pl-11 pr-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" required /></div>
                     </>
                   ) : (
                     <>
-                      <input type="text" placeholder={t("login.fullName")} value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="email" placeholder={t("login.studentEmail")} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="text" placeholder={t("login.collegeName")} value={collegeName} onChange={(e) => setCollegeName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                      <input type="text" placeholder={t("login.enrollmentNumber")} value={enrollmentNumber} onChange={(e) => setEnrollmentNumber(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                      <div className="relative"><User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4 z-10" /><input type="text" placeholder={t("login.fullName")} value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm pl-11 pr-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" required /></div>
+                      <div className="relative"><Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4 z-10" /><input type="email" placeholder={t("login.studentEmail")} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm pl-11 pr-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" required /></div>
+                      <div className="relative"><Building className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4 z-10" /><input type="text" placeholder={t("login.collegeName")} value={collegeName} onChange={(e) => setCollegeName(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm pl-11 pr-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" required /></div>
+                      <div className="relative"><Hash className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4 z-10" /><input type="text" placeholder={t("login.enrollmentNumber")} value={enrollmentNumber} onChange={(e) => setEnrollmentNumber(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm pl-11 pr-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" required /></div>
                     </>
                   )}
                   
-                  <input type="tel" pattern="[0-9]{10}" placeholder={t("login.mobileNumber")} value={mobile} onChange={(e) => setMobile(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                  <input type="password" placeholder={t("login.password")} value={password} onChange={(e) => checkPasswordStrength(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                  <div className="relative"><Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4 z-10" /><input type="tel" pattern="[0-9]{10}" placeholder={t("login.mobileNumber")} value={mobile} onChange={(e) => setMobile(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm pl-11 pr-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" required /></div>
+                  <div className="relative"><Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4 z-10" /><input type="password" placeholder={t("login.password")} value={password} onChange={(e) => checkPasswordStrength(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm pl-11 pr-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" required /></div>
                   
                   {password && (
                     <div className="w-full text-left text-[11px] font-bold px-1 space-y-1">
@@ -502,8 +504,8 @@ export default function LoginPage() {
                   </div>
                   <h1 className="text-2xl md:text-3xl font-extrabold text-purple-950 dark:text-purple-200">{t("login.signInTitle")}</h1>
                   <p className="text-xs text-pink-600 font-bold uppercase tracking-wider">{t("login.accessingPortal")}</p>
-                  <input type="email" placeholder={userRole === "company" ? t("login.companyEmail") : t("login.studentEmail")} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
-                  <input type="password" placeholder={t("login.password")} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+                  <div className="relative"><Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4 z-10" /><input type="email" placeholder={userRole === "company" ? t("login.companyEmail") : t("login.studentEmail")} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm pl-11 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" required /></div>
+                  <div className="relative"><Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4 z-10" /><input type="password" placeholder={t("login.password")} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-purple-50/60 border border-purple-100 dark:border-ink-800 text-sm pl-11 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" required /></div>
                   
                   <div className="text-right px-1">
                     <button type="button" onClick={handleForgotPassword} className="text-[11px] text-purple-600 hover:text-pink-600 font-bold transition outline-none">
@@ -560,7 +562,7 @@ export default function LoginPage() {
       {/* ========================================================================= */}
       {view === "forgot" && (
         <div className="w-full min-h-screen flex flex-col items-center justify-center p-6 z-10 animate-fade-in">
-          <div className="bg-white dark:bg-ink-900 rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 max-w-md w-full border border-white/60 dark:border-ink-800/60 text-center space-y-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="glass-panel premium-card-hover bg-white dark:bg-ink-900 rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 max-w-md w-full border border-white/60 dark:border-ink-800/60 text-center space-y-6">
             <div className="flex justify-center">
               <img src="/logo.png" alt="workMitra Logo" className="h-14 object-contain bg-white px-3 py-1.5 rounded-xl shadow-sm" />
             </div>
@@ -632,7 +634,7 @@ export default function LoginPage() {
                 </div>
               </form>
             )}
-          </div>
+          </motion.div>
         </div>
       )}
     </div>

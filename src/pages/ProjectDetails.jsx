@@ -313,8 +313,8 @@ export default function ProjectDetails() {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-marigold-50/50 to-marigold-50/50 border border-marigold-100/50 p-5 rounded-2xl">
-              <h3 className="text-sm font-black text-marigold-900/50 uppercase tracking-wider mb-2.5">{t("projectDetails.aiSkillsMatchRating")}</h3>
+            <div className="bg-gradient-to-br from-marigold-50/50 to-marigold-50/50 dark:from-ink-800 dark:to-ink-800 dark:bg-ink-800 border border-marigold-100/50 dark:border-ink-700 p-5 rounded-2xl">
+              <h3 className="text-sm font-black text-marigold-900/50 dark:text-marigold-200 uppercase tracking-wider mb-2.5">{t("projectDetails.aiSkillsMatchRating")}</h3>
               <div className="flex items-center gap-4">
                 <div className="relative w-16 h-16 flex items-center justify-center bg-white dark:bg-ink-900 rounded-full shadow-sm border border-marigold-100">
                   <span className="text-sm font-black text-marigold-700">{matchPercentage}%</span>

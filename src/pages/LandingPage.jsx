@@ -105,7 +105,7 @@ export default function LandingPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {/* Student Side */}
-            <div className="bg-gradient-to-br from-marigold-50/50 to-marigold-50/50 dark:bg-ink-800 border border-marigold-100/50 dark:border-ink-700 p-6 sm:p-8 rounded-3xl shadow-sm">
+            <div className="bg-gradient-to-br from-marigold-50/50 to-marigold-50/50 dark:from-ink-800 dark:to-ink-800 dark:bg-ink-800 border border-marigold-100/50 dark:border-ink-700 p-6 sm:p-8 rounded-3xl shadow-sm">
               <span className="text-2xl">🎓</span>
               <h3 className="text-lg font-black text-marigold-900 dark:text-white mt-3 mb-2">{t("landing.studentCardTitle")}</h3>
               <p className="text-xs text-ink-500 dark:text-ink-300 mb-6 leading-relaxed">{t("landing.studentCardDescription")}</p>
@@ -126,7 +126,7 @@ export default function LandingPage() {
             </div>
 
             {/* Recruiter Side */}
-            <div className="bg-gradient-to-br from-pink-50/50 to-purple-50/50 dark:bg-ink-800 border border-purple-100/50 dark:border-ink-700 p-6 sm:p-8 rounded-3xl shadow-sm">
+            <div className="bg-gradient-to-br from-pink-50/50 to-purple-50/50 dark:from-ink-800 dark:to-ink-800 dark:bg-ink-800 border border-purple-100/50 dark:border-ink-700 p-6 sm:p-8 rounded-3xl shadow-sm">
               <span className="text-2xl">🏢</span>
               <h3 className="text-lg font-black text-purple-900 dark:text-white mt-3 mb-2">{t("landing.recruiterCardTitle")}</h3>
               <p className="text-xs text-ink-500 dark:text-ink-300 mb-6 leading-relaxed">{t("landing.recruiterCardDescription")}</p>

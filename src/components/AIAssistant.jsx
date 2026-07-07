@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../config';
 
 const AIAssistant = () => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
@@ -22,7 +24,7 @@ const AIAssistant = () => {
     setIsOpen(!isOpen);
     // Add welcome message if opening for first time and empty
     if (!isOpen && messages.length === 0) {
-      setMessages([{ sender: 'ai', text: 'Hi there! I am your AI Assistant. How can I help you today?' }]);
+      setMessages([{ sender: 'ai', text: t('Hi there! I am your AI Assistant. How can I help you today?') }]);
     }
   };
 
@@ -58,7 +60,7 @@ const AIAssistant = () => {
         throw new Error(data.error || 'Failed to get response from AI');
       }
       
-      setMessages((prev) => [...prev, { sender: 'ai', text: data.text || data.reply || data.message || 'Sorry, I could not process that.' }]);
+      setMessages((prev) => [...prev, { sender: 'ai', text: data.text || data.reply || data.message || t('Sorry, I could not process that.') }]);
     } catch (error) {
       console.error('Error in AI Assistant chat:', error);
       setMessages((prev) => [...prev, { sender: 'ai', text: `⚠️ ${error.message}` }]);
@@ -82,14 +84,14 @@ const AIAssistant = () => {
                 </svg>
               </div>
               <div>
-                <h3 className="font-semibold text-sm">AI Assistant</h3>
-                <p className="text-xs text-marigold-100 opacity-90">Always here to help</p>
+                <h3 className="font-semibold text-sm">{t('AI Assistant')}</h3>
+                <p className="text-xs text-marigold-100 opacity-90">{t('Always here to help')}</p>
               </div>
             </div>
             <button 
               onClick={toggleChat}
               className="p-1 hover:bg-white/20 dark:bg-ink-900/20 rounded-full transition-colors"
-              aria-label="Close chat"
+              aria-label={t("Close chat")}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -145,7 +147,7 @@ const AIAssistant = () => {
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder="Ask me anything..."
+                placeholder={t("Ask me anything...")}
                 className="w-full bg-white dark:bg-ink-800 text-ink-900 dark:text-white rounded-full pl-4 pr-12 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-marigold-500/50 border border-ink-200 dark:border-ink-700 shadow-inner"
               />
               <button
@@ -170,7 +172,7 @@ const AIAssistant = () => {
             ? 'bg-ink-800 hover:bg-ink-900 text-white scale-90' 
             : 'bg-gradient-to-r from-marigold-600 to-marigold-600 hover:scale-105 text-white animate-pulse-glow'
         }`}
-        aria-label="Toggle AI Assistant"
+        aria-label={t("Toggle AI Assistant")}
       >
         {isOpen ? (
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

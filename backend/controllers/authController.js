@@ -25,7 +25,7 @@ const sendEmailOtp = async (toEmail, otp, mobileOtp = null) => {
   const resendApiKey = process.env.RESEND_API_KEY;
 
   if (!resendApiKey) {
-    console.log(`⚠️ Resend API key missing. Email OTP [${otp}] simulation logged.`);
+
     smtpLogs.push({ timestamp: new Date(), toEmail, error: "Resend API key missing from environment variables." });
     return false;
   }
@@ -63,7 +63,7 @@ const sendEmailOtp = async (toEmail, otp, mobileOtp = null) => {
 
     const data = await response.json();
     if (response.ok) {
-      console.log(`✉️ Live Email OTP sent successfully to ${toEmail} via Resend HTTP API`);
+
       smtpLogs.push({ timestamp: new Date(), toEmail, status: "Success", response: data });
       return true;
     } else {
@@ -84,7 +84,7 @@ const sendSmsOtp = async (toMobile, otp) => {
   const fromNumber = process.env.TWILIO_PHONE_NUMBER;
 
   if (!accountSid || !authToken || !fromNumber) {
-    console.log(`⚠️ Twilio credentials missing. SMS OTP [${otp}] simulation logged.`);
+
     return false;
   }
 
@@ -100,7 +100,7 @@ const sendSmsOtp = async (toMobile, otp) => {
       from: fromNumber,
       to: formattedMobile
     });
-    console.log(`📱 Live Twilio SMS OTP sent successfully to ${formattedMobile}`);
+
     return true;
   } catch (err) {
     console.error("❌ Failed to deliver live SMS OTP via Twilio:", err.message);
@@ -112,7 +112,7 @@ const sendResetPasswordEmail = async (toEmail, resetLink) => {
   const resendApiKey = process.env.RESEND_API_KEY;
 
   if (!resendApiKey) {
-    console.log(`⚠️ Resend API key missing. Reset Link [${resetLink}] simulation logged.`);
+
     smtpLogs.push({ timestamp: new Date(), toEmail, error: "Resend API key missing for password reset email." });
     return false;
   }
@@ -146,7 +146,7 @@ const sendResetPasswordEmail = async (toEmail, resetLink) => {
 
     const data = await response.json();
     if (response.ok) {
-      console.log(`✉️ Password reset email sent successfully to ${toEmail} via Resend HTTP API`);
+
       return true;
     } else {
       console.error("❌ Failed to deliver password reset via Resend:", data.message || data);
@@ -230,16 +230,10 @@ const register = async (req, res) => {
     const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
     const mobileOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    if (process.env.NODE_ENV !== 'production') {
-      console.log(`\n========================================`);
-      console.log(`✉️ Simulated OTP for Email [${email}]: ${emailOtp}`);
-      console.log(`📱 Simulated OTP for Mobile [${mobile}]: ${mobileOtp}`);
-      console.log(`========================================\n`);
-    }
+
 
     const smsSuccess = await sendSmsOtp(mobile, mobileOtp);
     if (!smsSuccess) {
-      console.log(`⚠️ SMS Failed. Injecting Mobile OTP [${mobileOtp}] into Email fallback.`);
     }
 
     const emailSuccess = await sendEmailOtp(email, emailOtp, !smsSuccess ? mobileOtp : null);

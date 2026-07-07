@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 import { useToast } from "../components/Toast";
@@ -186,9 +186,9 @@ export default function StudentProfile() {
     (profileUser && profileUser.email === currentUser.email)
   );
 
-  const completedTasks = applications.filter(a => a.status === "Completed");
-  const ratingsList = completedTasks.filter(a => typeof a.rating === "number" && a.rating > 0);
-  const avgRating = ratingsList.length > 0 ? (ratingsList.reduce((sum, a) => sum + a.rating, 0) / ratingsList.length).toFixed(1) : null;
+  const completedTasks = useMemo(() => applications.filter(a => a.status === "Completed"), [applications]);
+  const ratingsList = useMemo(() => completedTasks.filter(a => typeof a.rating === "number" && a.rating > 0), [completedTasks]);
+  const avgRating = useMemo(() => ratingsList.length > 0 ? (ratingsList.reduce((sum, a) => sum + a.rating, 0) / ratingsList.length).toFixed(1) : null, [ratingsList]);
 
   return (
     <div className="min-h-screen bg-transparent font-sans">

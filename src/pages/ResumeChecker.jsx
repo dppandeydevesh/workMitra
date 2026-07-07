@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const ResumeChecker = () => {
+  const { t } = useTranslation();
   const [file, setFile] = useState(null);
   const [jobRole, setJobRole] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -21,7 +23,7 @@ const ResumeChecker = () => {
         setFile(droppedFile);
         setError('');
       } else {
-        setError('Please upload a valid PDF file.');
+        setError(t('Please upload a valid PDF file.'));
       }
     }
   };
@@ -33,7 +35,7 @@ const ResumeChecker = () => {
         setFile(selectedFile);
         setError('');
       } else {
-        setError('Please upload a valid PDF file.');
+        setError(t('Please upload a valid PDF file.'));
       }
     }
   };
@@ -41,11 +43,11 @@ const ResumeChecker = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!file) {
-      setError('Please upload a resume (PDF).');
+      setError(t('Please upload a resume (PDF).'));
       return;
     }
     if (!jobRole) {
-      setError('Please enter a target job role.');
+      setError(t('Please enter a target job role.'));
       return;
     }
 
@@ -63,13 +65,13 @@ const ResumeChecker = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to analyze resume');
+        throw new Error(t('Failed to analyze resume'));
       }
 
       const data = await response.json();
       setResult(data);
     } catch (err) {
-      setError(err.message || 'Something went wrong');
+      setError(err.message || t('Something went wrong'));
     } finally {
       setIsLoading(false);
     }
@@ -398,18 +400,18 @@ const ResumeChecker = () => {
       <div className="glass-panel">
         {!result ? (
           <>
-            <h1 className="title">Resume Matcher</h1>
-            <p className="subtitle">Upload your resume to see how well it fits your target role</p>
+            <h1 className="title">{t('Resume Matcher')}</h1>
+            <p className="subtitle">{t('Upload your resume to see how well it fits your target role')}</p>
             
             {error && <div className="error-msg">{error}</div>}
 
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label className="label">Target Job Role</label>
+                <label className="label">{t('Target Job Role')}</label>
                 <input 
                   type="text" 
                   className="input-field" 
-                  placeholder="e.g. Senior Frontend Developer"
+                  placeholder={t("e.g. Senior Frontend Developer")}
                   value={jobRole}
                   onChange={(e) => setJobRole(e.target.value)}
                   disabled={isLoading}
@@ -417,7 +419,7 @@ const ResumeChecker = () => {
               </div>
 
               <div className="form-group">
-                <label className="label">Resume Upload (PDF)</label>
+                <label className="label">{t('Resume Upload (PDF)')}</label>
                 <div 
                   className="dropzone" 
                   onDragOver={handleDragOver} 
@@ -439,10 +441,10 @@ const ResumeChecker = () => {
                   ) : (
                     <div>
                       <p style={{marginBottom: '0.5rem', color: '#e2e8f0', fontSize: '1.1rem', fontWeight: 500}}>
-                        Drag & Drop your PDF here
+                        {t('Drag & Drop your PDF here')}
                       </p>
                       <p style={{color: '#94a3b8', fontSize: '0.95rem'}}>
-                        or click to browse files
+                        {t('or click to browse files')}
                       </p>
                     </div>
                   )}
@@ -461,28 +463,28 @@ const ResumeChecker = () => {
                 <div className="loader"></div>
               ) : (
                 <button type="submit" className="submit-btn" disabled={!file || !jobRole}>
-                  Analyze Resume Match
+                  {t('Analyze Resume Match')}
                 </button>
               )}
             </form>
           </>
         ) : (
           <div className="results-dashboard">
-            <h1 className="title">Analysis Complete</h1>
-            <p className="subtitle">Here's your ATS compatibility for <strong>{jobRole}</strong></p>
+            <h1 className="title">{t('Analysis Complete')}</h1>
+            <p className="subtitle">{t("Here's your ATS compatibility for")} <strong>{jobRole}</strong></p>
 
             <div className="score-container">
               <div className="score-circle" style={{ '--score': `${(result.score || 0) * 3.6}deg` }}>
                 <div className="score-inner">
                   <span className="score-value">{result.score || 0}</span>
-                  <span className="score-label">Match Score</span>
+                  <span className="score-label">{t('Match Score')}</span>
                 </div>
               </div>
             </div>
 
             <div className="feedback-section">
               <h3 className="feedback-title">
-                <span>⚠️</span> Missing Keywords
+                <span>⚠️</span> {t('Missing Keywords')}
               </h3>
               {result.missingKeywords && result.missingKeywords.length > 0 ? (
                 <div className="keywords-list">
@@ -492,20 +494,20 @@ const ResumeChecker = () => {
                 </div>
               ) : (
                 <p className="feedback-text" style={{color: '#34d399'}}>
-                  Great job! You hit all the major keywords.
+                  {t('Great job! You hit all the major keywords.')}
                 </p>
               )}
             </div>
 
             <div className="feedback-section">
               <h3 className="feedback-title">
-                <span>💡</span> Detailed Feedback
+                <span>💡</span> {t('Detailed Feedback')}
               </h3>
-              <p className="feedback-text">{result.feedback || 'No additional feedback provided.'}</p>
+              <p className="feedback-text">{result.feedback || t('No additional feedback provided.')}</p>
             </div>
 
             <button className="back-btn" onClick={() => setResult(null)}>
-              Check Another Resume
+              {t('Check Another Resume')}
             </button>
           </div>
         )}

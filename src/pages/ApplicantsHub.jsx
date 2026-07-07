@@ -3,6 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 import { useToast } from "../components/Toast";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import {
+  Users, CheckCircle, XCircle, MessageCircle, FileText, Mail, Phone,
+  AlertTriangle, ArrowLeft, Search, Folder, Check, AlertCircle, Bot,
+  Code, Calendar, Monitor, Link, Star, ClipboardCheck, Terminal, X,
+  CheckSquare, ShieldCheck, FileCheck, Globe, LayoutDashboard,
+  RefreshCw, FileCode, Clock, ArrowRight
+} from "lucide-react";
 
 export default function ApplicantsHub() {
   const navigate = useNavigate();
@@ -37,8 +45,8 @@ export default function ApplicantsHub() {
 
     if (status === "Disputed") {
       return (
-        <span className="bg-rose-100 text-rose-800 text-[9px] font-black px-2.5 py-0.5 rounded-lg border border-rose-200 uppercase tracking-wider animate-pulse">
-          ⚠️ {t("applicantsHub.flaggedDisputed")}
+        <span className="bg-rose-100 text-rose-800 text-[9px] font-black px-2.5 py-0.5 rounded-lg border border-rose-200 uppercase tracking-wider animate-pulse flex items-center gap-1">
+          <AlertTriangle className="w-3 h-3" /> {t("applicantsHub.flaggedDisputed")}
         </span>
       );
     }
@@ -342,15 +350,21 @@ export default function ApplicantsHub() {
     });
 
   return (
-    <div className="min-h-screen bg-transparent font-sans">
+    <motion.div 
+      className="min-h-screen bg-transparent font-sans"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       {/* Main Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <div className="bg-white dark:bg-ink-900 rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
+        <div className="glass-panel rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
           {/* Header */}
           <div className="border-b pb-6 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-black text-ink-800 dark:text-ink-200 tracking-tight flex items-center gap-2">
-                <span>👨‍🎓 {t("applicantsHub.commandCenterTitle")}</span>
+              <h1 className="text-3xl font-black text-ink-800 dark:text-ink-200 tracking-tight flex items-center gap-3">
+                <Users className="w-8 h-8 text-marigold-500" />
+                <span>{t("applicantsHub.commandCenterTitle")}</span>
               </h1>
               <p className="text-ink-500 mt-1 text-sm">{t("applicantsHub.commandCenterDesc")}</p>
             </div>
@@ -358,28 +372,31 @@ export default function ApplicantsHub() {
               onClick={() => navigate("/company-dashboard")}
               className="px-4 py-2 bg-ink-100 dark:bg-ink-800 hover:bg-ink-200 text-ink-700 dark:text-ink-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
             >
-              ← {t("applicantsHub.backToCommandCenter")}
+              <ArrowLeft className="w-4 h-4" /> {t("applicantsHub.backToCommandCenter")}
             </button>
           </div>
 
           {errorMessage && (
-            <div className="p-4 mb-6 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-xl shadow-sm">
-              ⚠️ {errorMessage}
+            <div className="p-4 mb-6 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-xl shadow-sm flex items-center gap-2">
+              <AlertCircle className="w-4 h-4" /> {errorMessage}
             </div>
           )}
 
           {/* Search and Filters panel */}
-          <div className="bg-ink-50 dark:bg-ink-800/60 border border-ink-100 dark:border-ink-800 p-5 rounded-2xl mb-8 grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div className="glass-panel p-5 rounded-2xl mb-8 grid grid-cols-1 md:grid-cols-5 gap-4">
             {/* Search Input */}
             <div className="md:col-span-1">
               <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1.5">{t("applicantsHub.searchCandidate")}</label>
-              <input
-                type="text"
-                placeholder={t("applicantsHub.searchPlaceholder")}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"
-              />
+              <div className="relative">
+                <Search className="w-4 h-4 absolute left-3 top-2.5 text-ink-400" />
+                <input
+                  type="text"
+                  placeholder={t("applicantsHub.searchPlaceholder")}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full bg-white/50 dark:bg-ink-900/50 border border-ink-200 dark:border-ink-800 text-xs pl-9 pr-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400 backdrop-blur-sm"
+                />
+              </div>
             </div>
 
             {/* Project Filter */}
@@ -436,34 +453,36 @@ export default function ApplicantsHub() {
                 onChange={(e) => setIsBlindMode(e.target.checked)}
                 className="w-4 h-4 accent-marigold-600 cursor-pointer"
               />
-              <label htmlFor="blindModeToggle" className="text-[9px] font-black text-ink-500 uppercase cursor-pointer select-none">
-                🙈 {t("applicantsHub.blindReview")}
+              <label htmlFor="blindModeToggle" className="text-[9px] font-black text-ink-500 uppercase cursor-pointer select-none flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3" /> {t("applicantsHub.blindReview")}
               </label>
             </div>
           </div>
 
           {/* Table / List layout */}
           {loading ? (
-            <div className="text-center py-12 text-ink-500 font-medium animate-pulse flex flex-col items-center justify-center space-y-3">
-              <div className="w-10 h-10 border-4 border-marigold-500 border-t-transparent rounded-full animate-spin"></div>
-              <span>🔄 {t("applicantsHub.loadingCandidates")}</span>
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="skeleton-loader h-32 rounded-2xl w-full glass-panel"></div>
+              ))}
             </div>
           ) : filteredApps.length === 0 ? (
-            <div className="text-center py-16 border-2 border-dashed border-ink-200 dark:border-ink-800 rounded-2xl text-ink-400 font-medium bg-ink-50 dark:bg-ink-800/50">
-              📭 {t("applicantsHub.noCandidates")}
+            <div className="text-center py-16 border-2 border-dashed border-ink-200 dark:border-ink-800 rounded-2xl text-ink-400 font-medium bg-ink-50 dark:bg-ink-800/50 flex flex-col items-center gap-3">
+              <Folder className="w-10 h-10 text-ink-300" />
+              <span>{t("applicantsHub.noCandidates")}</span>
             </div>
           ) : (
             <div className="space-y-4">
               {filteredApps.map((app) => (
                 <div
                   key={app.applicationId}
-                  className="bg-white dark:bg-ink-900 rounded-2xl border border-ink-200 dark:border-ink-800/80 p-6 shadow-sm hover:shadow-md hover:border-marigold-300 transition duration-300 flex flex-col lg:flex-row justify-between gap-6"
+                  className="glass-panel premium-card-hover rounded-2xl p-6 flex flex-col lg:flex-row justify-between gap-6"
                 >
                   {/* Left block: student details & project */}
                   <div className="space-y-4 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="bg-marigold-50 text-marigold-700 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase border border-marigold-100">
-                        📁 {app.projectTitle}
+                      <span className="bg-marigold-50/50 text-marigold-700 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase border border-marigold-100 flex items-center gap-1">
+                        <Folder className="w-3 h-3" /> {app.projectTitle}
                       </span>
                       {renderStepper(app.status)}
                     </div>
@@ -504,7 +523,7 @@ export default function ApplicantsHub() {
                     {app.aiRationale && (
                       <div className="bg-purple-50/40 border border-purple-100 dark:border-ink-800/65 p-3 rounded-xl text-left max-w-lg mt-2">
                         <p className="text-[9px] font-extrabold text-purple-950 dark:text-purple-200 flex items-center gap-1 uppercase tracking-wider">
-                          <span>🤖</span> {t("applicantsHub.aiMatchingInsights")}
+                          <Bot className="w-3 h-3" /> {t("applicantsHub.aiMatchingInsights")}
                         </p>
                         <p className="text-[10px] text-purple-700 font-semibold leading-relaxed mt-0.5">
                           {app.aiRationale}
@@ -549,27 +568,27 @@ export default function ApplicantsHub() {
                           rel="noreferrer"
                           className="text-xs font-bold text-marigold-500 hover:text-marigold-800 transition flex items-center gap-1 hover:underline"
                         >
-                          📄 {t("applicantsHub.viewResume")} ↗
+                          <FileText className="w-3 h-3" /> {t("applicantsHub.viewResume")} ↗
                         </a>
                       ) : (
-                        <span className="text-xs text-ink-400 italic">{t("applicantsHub.noResume")}</span>
+                        <span className="text-xs text-ink-400 italic flex items-center gap-1"><FileText className="w-3 h-3 opacity-50" /> {t("applicantsHub.noResume")}</span>
                       )}
 
                       {/* Social/Portfolio Links Grid */}
                       <div className="flex items-center lg:justify-end gap-3 mt-1.5 text-[10px]">
                         {app.githubUrl && (
-                          <a href={app.githubUrl} target="_blank" rel="noreferrer" className="text-ink-600 dark:text-ink-300 hover:text-purple-600 font-semibold flex items-center gap-0.5" title={t("applicantsHub.github")}>
-                            <span>💻</span> <span className="hover:underline">{t("applicantsHub.github")}</span>
+                          <a href={app.githubUrl} target="_blank" rel="noreferrer" className="text-ink-600 dark:text-ink-300 hover:text-purple-600 font-semibold flex items-center gap-1" title={t("applicantsHub.github")}>
+                            <Github className="w-3 h-3" /> <span className="hover:underline">{t("applicantsHub.github")}</span>
                           </a>
                         )}
                         {app.linkedinUrl && (
-                          <a href={app.linkedinUrl} target="_blank" rel="noreferrer" className="text-marigold-500 hover:text-purple-600 font-semibold flex items-center gap-0.5" title={t("applicantsHub.linkedin")}>
-                            <span>👔</span> <span className="hover:underline">{t("applicantsHub.linkedin")}</span>
+                          <a href={app.linkedinUrl} target="_blank" rel="noreferrer" className="text-marigold-500 hover:text-purple-600 font-semibold flex items-center gap-1" title={t("applicantsHub.linkedin")}>
+                            <Linkedin className="w-3 h-3" /> <span className="hover:underline">{t("applicantsHub.linkedin")}</span>
                           </a>
                         )}
                         {app.portfolioUrl && (
-                          <a href={app.portfolioUrl} target="_blank" rel="noreferrer" className="text-green-600 hover:text-purple-600 font-semibold flex items-center gap-0.5" title={t("applicantsHub.portfolio")}>
-                            <span>🌐</span> <span className="hover:underline">{t("applicantsHub.portfolio")}</span>
+                          <a href={app.portfolioUrl} target="_blank" rel="noreferrer" className="text-green-600 hover:text-purple-600 font-semibold flex items-center gap-1" title={t("applicantsHub.portfolio")}>
+                            <Globe className="w-3 h-3" /> <span className="hover:underline">{t("applicantsHub.portfolio")}</span>
                           </a>
                         )}
                       </div>
@@ -579,7 +598,7 @@ export default function ApplicantsHub() {
                     {app.extensionRequests && app.extensionRequests.length > 0 && app.extensionRequests[app.extensionRequests.length - 1].status === "Pending" && (
                       <div className="mt-3 bg-marigold-50 border border-marigold-100 p-3.5 rounded-2xl text-xs text-ink-800 dark:text-ink-200 space-y-2 animate-fade-in w-full text-left">
                         <div>
-                          <span className="font-extrabold text-marigold-700 block mb-0.5">🕒 {t("applicantsHub.extensionRequested")}</span>
+                          <span className="font-extrabold text-marigold-700 flex items-center gap-1 mb-0.5"><Clock className="w-3 h-3" /> {t("applicantsHub.extensionRequested")}</span>
                           <p className="text-[11px] text-ink-600 dark:text-ink-300 leading-normal">
                             {t("applicantsHub.wants")} <strong>{app.extensionRequests[app.extensionRequests.length - 1].requestedDays} {t("applicantsHub.moreDays")}</strong>. {t("applicantsHub.reason")}: "{app.extensionRequests[app.extensionRequests.length - 1].reason}"
                           </p>
@@ -614,12 +633,12 @@ export default function ApplicantsHub() {
 
                       {app.status === "Approved" && (
                         <div className="w-full text-left">
-                          <span className="text-xs font-bold text-marigold-500/80 bg-marigold-50 px-3 py-1.5 rounded-lg border border-marigold-100 inline-block">
-                            ✓ {t("applicantsHub.approvedAwaiting")}
+                          <span className="text-xs font-bold text-marigold-500/80 bg-marigold-50 px-3 py-1.5 rounded-lg border border-marigold-100 inline-flex items-center gap-1">
+                            <CheckCircle className="w-3 h-3" /> {t("applicantsHub.approvedAwaiting")}
                           </span>
                           {app.extendedDeadline && (
-                            <p className="text-[10px] text-marigold-500 mt-1 font-bold">
-                              🗓️ {t("applicantsHub.extendedDeadline")} {new Date(app.extendedDeadline).toLocaleDateString()}
+                            <p className="text-[10px] text-marigold-500 mt-1 font-bold flex items-center gap-1">
+                              <Calendar className="w-3 h-3" /> {t("applicantsHub.extendedDeadline")} {new Date(app.extendedDeadline).toLocaleDateString()}
                             </p>
                           )}
                         </div>
@@ -628,25 +647,25 @@ export default function ApplicantsHub() {
                       {app.status === "Submitted" && (
                         <button
                           onClick={() => handleOpenReviewModal(app)}
-                          className="w-full lg:w-auto px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl transition shadow-sm"
+                          className="w-full lg:w-auto px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl transition shadow-sm flex items-center justify-center gap-1.5"
                         >
-                          🔍 {t("applicantsHub.auditApproveWork")}
+                          <Search className="w-3 h-3" /> {t("applicantsHub.auditApproveWork")}
                         </button>
                       )}
 
                       {app.status === "Flagged" && (
                         <button
                           onClick={() => handleOpenReviewModal(app)}
-                          className="w-full lg:w-auto px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl transition shadow-sm animate-pulse"
+                          className="w-full lg:w-auto px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl transition shadow-sm animate-pulse flex items-center justify-center gap-1.5"
                         >
-                          🚨 {t("applicantsHub.plagiarismAlert", { score: app.plagiarismScore || 0 })}
+                          <AlertTriangle className="w-3 h-3" /> {t("applicantsHub.plagiarismAlert", { score: app.plagiarismScore || 0 })}
                         </button>
                       )}
 
                       {app.status === "Completed" && (
-                        <div className="text-left lg:text-right">
-                          <span className="text-xs font-extrabold text-green-700 bg-green-50 px-3 py-1.5 rounded-lg border border-green-200 block mb-1">
-                            ✓ {t("applicantsHub.taskVerified")}
+                        <div className="text-left lg:text-right flex flex-col items-start lg:items-end">
+                          <span className="text-xs font-extrabold text-green-700 bg-green-50 px-3 py-1.5 rounded-lg border border-green-200 mb-1 inline-flex items-center gap-1">
+                            <CheckCircle className="w-3 h-3" /> {t("applicantsHub.taskVerified")}
                           </span>
                           {app.feedbackText && (
                             <p className="text-[10px] text-ink-400 italic max-w-[200px] truncate" title={app.feedbackText}>
@@ -657,14 +676,14 @@ export default function ApplicantsHub() {
                       )}
 
                       {app.status === "Rejected" && (
-                        <span className="text-xs font-bold text-red-600/80 bg-red-50 px-3 py-1.5 rounded-lg border border-red-100">
-                          ✕ {t("applicantsHub.rejectedMark")}
+                        <span className="text-xs font-bold text-red-600/80 bg-red-50 px-3 py-1.5 rounded-lg border border-red-100 inline-flex items-center gap-1 h-fit">
+                          <XCircle className="w-3 h-3" /> {t("applicantsHub.rejectedMark")}
                         </span>
                       )}
 
                       {app.status === "Revision Requested" && (
-                        <span className="text-xs font-bold text-amber-600/80 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100">
-                          🔄 {t("applicantsHub.revisionRequestedStatus")}
+                        <span className="text-xs font-bold text-amber-600/80 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100 inline-flex items-center gap-1 h-fit">
+                          <RefreshCw className="w-3 h-3" /> {t("applicantsHub.revisionRequestedStatus")}
                         </span>
                       )}
                     </div>
@@ -679,10 +698,12 @@ export default function ApplicantsHub() {
       {/* Audit Review Overlay Modal */}
       {showReviewModal && activeAppToReview && (
         <div className="fixed inset-0 bg-ink-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-ink-900 rounded-2xl max-w-lg w-full shadow-2xl p-6 border animate-fade-in">
+          <div className="glass-panel rounded-2xl max-w-lg w-full shadow-2xl p-6 animate-fade-in">
             <div className="flex justify-between items-center border-b pb-3 mb-4">
               <h3 className="font-bold text-base text-ink-900 dark:text-ink-200">{t("applicantsHub.verifySolutionTitle")} {activeAppToReview.studentName}</h3>
-              <button onClick={() => { setShowReviewModal(false); setFeedbackText(""); setRating(0); setRatingReview(""); }} className="text-ink-400 hover:text-ink-600 dark:text-ink-300 text-lg">×</button>
+              <button onClick={() => { setShowReviewModal(false); setFeedbackText(""); setRating(0); setRatingReview(""); }} className="text-ink-400 hover:text-ink-600 dark:text-ink-300">
+                <X className="w-5 h-5" />
+              </button>
             </div>
             
             {/* Version History Selector */}
@@ -729,9 +750,9 @@ export default function ApplicantsHub() {
                         setActiveFile(Object.keys(files)[0] || "submission.txt");
                         setShowSandbox(true);
                       }}
-                      className="px-2.5 py-1 bg-ink-900 hover:bg-ink-800 text-white rounded-lg text-[9px] font-bold transition shadow-sm shrink-0"
+                      className="px-2.5 py-1 bg-ink-900 hover:bg-ink-800 text-white rounded-lg text-[9px] font-bold transition shadow-sm shrink-0 flex items-center gap-1.5"
                     >
-                      🖥️ {t("applicantsHub.auditSandbox")}
+                      <Terminal className="w-3 h-3" /> {t("applicantsHub.auditSandbox")}
                     </button>
                   </div>
                   {currentVer.githubRepoUrl && (
@@ -782,10 +803,10 @@ export default function ApplicantsHub() {
                         ? "bg-amber-50 border-amber-100 text-amber-900"
                         : "bg-green-50/50 border-green-100 text-green-800"
                     }`}>
-                      <p className="font-bold">
+                      <p className="font-bold flex items-center gap-1.5">
                         {currentVer.aiDeclaration.usedAi
-                          ? `🤖 ${t("applicantsHub.aiCoauthored", { percentage: currentVer.aiDeclaration.aiPercentage, tools: currentVer.aiDeclaration.toolsUsed })}`
-                          : `✓ ${t("applicantsHub.pureHuman")}`}
+                          ? <><Bot className="w-3 h-3" /> {t("applicantsHub.aiCoauthored", { percentage: currentVer.aiDeclaration.aiPercentage, tools: currentVer.aiDeclaration.toolsUsed })}</>
+                          : <><CheckCircle className="w-3 h-3" /> {t("applicantsHub.pureHuman")}</>}
                       </p>
                     </div>
                   )}
@@ -797,9 +818,12 @@ export default function ApplicantsHub() {
                         ? "bg-red-50 border-red-100 text-red-800 font-extrabold"
                         : "bg-ink-50 dark:bg-ink-800 border-ink-200 dark:border-ink-800 text-ink-700 dark:text-ink-300"
                     }`}>
-                      <p>
-                        ⚠️ {t("applicantsHub.codeSimilarityAudit", { score: activeAppToReview.plagiarismScore })}
-                        {activeAppToReview.plagiarismScore > 20 && t("applicantsHub.highMatchWarning")}
+                      <p className="flex items-start gap-1.5">
+                        <AlertTriangle className="w-3 h-3 shrink-0 mt-0.5" />
+                        <span>
+                          {t("applicantsHub.codeSimilarityAudit", { score: activeAppToReview.plagiarismScore })}
+                          {activeAppToReview.plagiarismScore > 20 && t("applicantsHub.highMatchWarning")}
+                        </span>
                       </p>
                     </div>
                   )}
@@ -807,7 +831,7 @@ export default function ApplicantsHub() {
                   {/* Automated Linter readout */}
                   {activeAppToReview.lintWarnings && activeAppToReview.lintWarnings.length > 0 && (
                     <div className="bg-amber-50/50 border border-amber-150 text-amber-900 p-2.5 rounded-xl text-[11px] text-left">
-                      <p className="font-extrabold mb-1">⚠️ {t("applicantsHub.syntaxLintAdvisories")}</p>
+                      <p className="font-extrabold mb-1 flex items-center gap-1.5"><AlertCircle className="w-3 h-3" /> {t("applicantsHub.syntaxLintAdvisories")}</p>
                       <ul className="list-disc pl-4 space-y-0.5">
                         {activeAppToReview.lintWarnings.map((w, idx) => (
                           <li key={idx}>{w}</li>
@@ -819,7 +843,7 @@ export default function ApplicantsHub() {
                   {/* AI Auditor Feedback readout */}
                   {activeAppToReview.matchScore !== null && activeAppToReview.matchScore !== undefined && (
                     <div className="bg-marigold-50 border border-marigold-100 p-2.5 rounded-xl text-[11px] text-marigold-950 text-left">
-                      <p className="font-extrabold">🤖 {t("applicantsHub.aiAuditorReport")}</p>
+                      <p className="font-extrabold flex items-center gap-1.5"><Bot className="w-3 h-3" /> {t("applicantsHub.aiAuditorReport")}</p>
                       <p className="mt-0.5">{t("applicantsHub.grade")}: <strong>{activeAppToReview.matchScore}/100</strong>. {t("applicantsHub.rationale")}: "{activeAppToReview.aiRationale || t('applicantsHub.noDescription')}"</p>
                     </div>
                   )}
@@ -827,7 +851,7 @@ export default function ApplicantsHub() {
                   {/* Figma Live Embed preview */}
                   {currentVer.submissionLink && (currentVer.submissionLink.includes("figma.com") || currentVer.submissionLink.includes("figma.fun")) && (
                     <div className="border rounded-xl overflow-hidden mt-3 shadow-sm bg-white dark:bg-ink-900">
-                      <p className="text-[9px] uppercase font-bold text-ink-400 bg-ink-100 dark:bg-ink-800 px-3 py-1.5 border-b select-none">🎨 {t("applicantsHub.figmaLivePreview")}</p>
+                      <p className="text-[9px] uppercase font-bold text-ink-400 bg-ink-100 dark:bg-ink-800 px-3 py-1.5 border-b select-none flex items-center gap-1.5"><FileCheck className="w-3 h-3" /> {t("applicantsHub.figmaLivePreview")}</p>
                       <iframe
                         src={`https://www.figma.com/embed?embed_host=workmitra&url=${encodeURIComponent(currentVer.submissionLink)}`}
                         width="100%"
@@ -868,9 +892,9 @@ export default function ApplicantsHub() {
                         key={star}
                         type="button"
                         onClick={() => setRating(star)}
-                        className={`text-2xl transition-all outline-none ${star <= rating ? "text-amber-400 scale-105" : "text-ink-200"}`}
+                        className={`transition-all outline-none ${star <= rating ? "text-amber-400 scale-105" : "text-ink-200"}`}
                       >
-                        ★
+                        <Star className={`w-6 h-6 ${star <= rating ? "fill-current" : ""}`} />
                       </button>
                     ))}
                     <span className="text-[10px] text-ink-400 font-extrabold ml-2">({rating} / 5 {t("applicantsHub.stars")})</span>
@@ -937,9 +961,9 @@ export default function ApplicantsHub() {
               </div>
               <button 
                 onClick={() => setShowSandbox(false)}
-                className="text-ink-400 hover:text-white font-extrabold text-sm transition"
+                className="text-ink-400 hover:text-white font-extrabold text-sm transition flex items-center gap-1.5"
               >
-                {t("applicantsHub.closeSandbox")} ✕
+                {t("applicantsHub.closeSandbox")} <X className="w-4 h-4" />
               </button>
             </div>
 
@@ -961,7 +985,7 @@ export default function ApplicantsHub() {
                             : "text-ink-400 hover:text-ink-200 border border-transparent"
                         }`}
                       >
-                        <span>📄</span>
+                        <FileCode className="w-3.5 h-3.5" />
                         <span className="truncate">{filename}</span>
                       </button>
                     ))}
@@ -971,9 +995,9 @@ export default function ApplicantsHub() {
                 <div className="border-t border-ink-800 pt-4">
                   <span className="text-[9px] font-black text-ink-500 uppercase tracking-widest block mb-2">{t("applicantsHub.checklistAudit")}</span>
                   <div className="space-y-2 text-[10px] text-ink-400 font-semibold">
-                    <p className="flex items-center gap-1.5 text-emerald-500 font-bold">✓ {t("applicantsHub.securityClean")}</p>
-                    <p className="flex items-center gap-1.5 text-emerald-500 font-bold">✓ {t("applicantsHub.lintStandardOk")}</p>
-                    <p className="flex items-center gap-1.5 text-emerald-500 font-bold">✓ {t("applicantsHub.dependenciesVerified")}</p>
+                    <p className="flex items-center gap-1.5 text-emerald-500 font-bold"><CheckCircle className="w-3 h-3" /> {t("applicantsHub.securityClean")}</p>
+                    <p className="flex items-center gap-1.5 text-emerald-500 font-bold"><CheckCircle className="w-3 h-3" /> {t("applicantsHub.lintStandardOk")}</p>
+                    <p className="flex items-center gap-1.5 text-emerald-500 font-bold"><CheckCircle className="w-3 h-3" /> {t("applicantsHub.dependenciesVerified")}</p>
                   </div>
                 </div>
               </div>
@@ -998,8 +1022,8 @@ export default function ApplicantsHub() {
 
             {/* Footer containing quick actions */}
             <div className="bg-ink-900 border-t border-ink-800 px-6 py-4 flex justify-between items-center gap-4">
-              <span className="text-[10px] text-ink-400 font-bold uppercase tracking-wider">
-                {t("applicantsHub.escrowActive")} (🔒 {t("applicantsHub.locked")})
+              <span className="text-[10px] text-ink-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                {t("applicantsHub.escrowActive")} (<ShieldCheck className="w-3 h-3" /> {t("applicantsHub.locked")})
               </span>
               <div className="flex gap-2">
                 <button
@@ -1023,6 +1047,6 @@ export default function ApplicantsHub() {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

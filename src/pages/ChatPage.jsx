@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 import { useWebSocket } from "../components/WebSocketContext";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import { Send, User, Paperclip, Search } from "lucide-react";
 
 export default function ChatPage() {
   const { recipientEmail } = useParams();
@@ -235,7 +237,12 @@ export default function ChatPage() {
   if (!loggedInUser) return null;
 
   return (
-    <div className="min-h-screen w-full flex flex-col p-4 sm:p-6 lg:p-8 z-0 relative font-sans">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen w-full flex flex-col p-4 sm:p-6 lg:p-8 z-0 relative font-sans"
+    >
       {/* 🧭 TOP HEADER BAR */}
       <div className="max-w-6xl w-full mx-auto glass-panel mb-6 px-5 py-4 flex justify-between items-center z-10">
         <div 
@@ -261,7 +268,7 @@ export default function ChatPage() {
         {/* ========================================================================= */}
         {/* 📇 LEFT SIDEBAR: Active Chat Partners List                               */}
         {/* ========================================================================= */}
-        <div className={`w-full md:w-[340px] border-r border-white/20 dark:border-white/10 flex-col bg-white/30 dark:bg-black/20 ${showMobileChat ? "hidden md:flex" : "flex"}`}>
+        <div className={`w-full md:w-[340px] glass-panel border-r border-white/20 dark:border-white/10 flex-col bg-white/30 dark:bg-black/20 ${showMobileChat ? "hidden md:flex" : "flex"}`}>
           <div className="p-5 sm:p-6 border-b border-white/20 dark:border-white/10 backdrop-blur-md">
             <h2 className="text-xl sm:text-2xl font-extrabold bg-gradient-to-r from-marigold-600 to-marigold-600 bg-clip-text text-transparent">{t("chat.title")}</h2>
             <p className="text-xs text-ink-600 dark:text-ink-400 mt-1 font-medium">{t("chat.subtitle")}</p>
@@ -291,7 +298,7 @@ export default function ChatPage() {
                   >
                     <div className="relative">
                       <div className="w-11 h-11 rounded-full bg-gradient-to-br from-marigold-500 to-purple-600 text-white font-bold flex items-center justify-center text-lg shadow-md">
-                        {partner.fullName ? partner.fullName.charAt(0).toUpperCase() : partner.companyName?.charAt(0).toUpperCase() || "?"}
+                        {partner.fullName ? partner.fullName.charAt(0).toUpperCase() : partner.companyName?.charAt(0).toUpperCase() || <User size={20} />}
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -317,7 +324,7 @@ export default function ChatPage() {
         {/* ========================================================================= */}
         {/* 💬 RIGHT CONTAINER: Chat Conversation                                    */}
         {/* ========================================================================= */}
-        <div className={`flex-1 flex-col bg-white/40 dark:bg-black/30 backdrop-blur-sm relative ${!showMobileChat ? "hidden md:flex" : "flex"}`}>
+        <div className={`flex-1 glass-panel flex-col bg-white/40 dark:bg-black/30 backdrop-blur-sm relative ${!showMobileChat ? "hidden md:flex" : "flex"}`}>
           {activePartner ? (
             <>
               {/* Top Conversation Status Header */}
@@ -335,7 +342,7 @@ export default function ChatPage() {
                   </button>
                   <div className="relative">
                     <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-marigold-500 to-purple-600 text-white font-bold flex items-center justify-center text-sm shadow-md ring-2 ring-white/50 dark:ring-white/10">
-                      {activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || "?"}
+                      {activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || <User size={20} />}
                     </div>
                     {/* Seamless online status dot */}
                     <div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-ink-800 ${wsConnected ? "bg-green-500" : "bg-ink-400"}`}></div>
@@ -388,13 +395,15 @@ export default function ChatPage() {
                     const showAvatar = !isOutgoing && (!prevMsg || prevMsg.sender !== msg.sender);
                     
                     return (
-                      <div
+                      <motion.div
+                        initial={{ opacity: 0, x: 10 }}
+                        animate={{ opacity: 1, x: 0 }}
                         key={msg._id || Math.random()}
                         className={`flex ${isOutgoing ? "justify-end" : "justify-start"} items-end gap-2 animate-fade-in`}
                       >
                         {!isOutgoing && (
                           <div className={`w-6 h-6 rounded-full bg-gradient-to-br from-marigold-500 to-purple-600 text-white font-bold flex items-center justify-center text-[10px] shadow-sm shrink-0 ${showAvatar ? "opacity-100" : "opacity-0"}`}>
-                            {showAvatar ? (activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || "?") : ""}
+                            {showAvatar ? (activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || <User size={12} />) : ""}
                           </div>
                         )}
                         
@@ -417,15 +426,15 @@ export default function ChatPage() {
                             })() : ""}
                           </span>
                         </div>
-                      </div>
+                      </motion.div>
                     );
                   })
                 )}
                 
                 {isPartnerTyping && (
-                  <div className="flex justify-start items-end gap-2 animate-fade-in">
+                  <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} className="flex justify-start items-end gap-2 animate-fade-in">
                     <div className="w-6 h-6 rounded-full bg-gradient-to-br from-marigold-500 to-purple-600 text-white font-bold flex items-center justify-center text-[10px] shadow-sm shrink-0">
-                      {activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || "?"}
+                      {activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || <User size={12} />}
                     </div>
                     <div className="bg-white/90 dark:bg-ink-800/90 backdrop-blur-md border border-white/60 dark:border-ink-700/60 rounded-2xl rounded-bl-sm px-4 py-3.5 shadow-sm">
                       <div className="flex space-x-1.5 items-center justify-center h-2">
@@ -434,7 +443,7 @@ export default function ChatPage() {
                         <div className="w-1.5 h-1.5 bg-ink-400 dark:bg-ink-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 )}
                 <div ref={messagesEndRef} className="h-2" />
               </div>
@@ -442,12 +451,15 @@ export default function ChatPage() {
               {/* Message Typing and Send Form */}
               <div className="p-3 sm:p-4 border-t border-white/20 dark:border-white/10 bg-white/50 dark:bg-black/40 backdrop-blur-md z-10">
                 <form onSubmit={handleSendMessage} className="flex gap-2 relative">
+                  <button type="button" className="p-3 text-ink-500 hover:text-ink-700 dark:text-ink-400 dark:hover:text-ink-200 transition-colors">
+                    <Paperclip className="w-5 h-5" />
+                  </button>
                   <input
                     type="text"
                     value={messageInput}
                     onChange={handleInputChange}
                     placeholder={t("chat.typeMessagePlaceholder")}
-                    className="flex-1 bg-white/70 dark:bg-ink-900/70 backdrop-blur-sm border border-white/50 dark:border-ink-700/50 text-sm px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-marigold-400/50 transition-all shadow-inner text-ink-800 dark:text-ink-100 placeholder-ink-500 dark:placeholder-ink-400"
+                    className="flex-1 bg-white/70 dark:bg-ink-900/70 backdrop-blur-sm border border-white/50 dark:border-ink-700/50 text-sm px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-inner text-ink-800 dark:text-ink-100 placeholder-ink-500 dark:placeholder-ink-400"
                     required
                   />
                   <button
@@ -456,9 +468,7 @@ export default function ChatPage() {
                     disabled={!messageInput.trim()}
                   >
                     <span className="hidden sm:inline mr-1">{t("chat.sendButton")}</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                      <path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" />
-                    </svg>
+                    <Send className="w-5 h-5" />
                   </button>
                 </form>
               </div>
@@ -477,6 +487,6 @@ export default function ChatPage() {
         </div>
 
       </div>
-    </div>
+    </motion.div>
   );
 }

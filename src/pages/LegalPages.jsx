@@ -85,6 +85,40 @@ export function TermsPage() {
           {t("legal.termsProhibitedBody")}
         </p>
       </section>
+
+      {/* 🔒 Confidentiality & NDA Policy */}
+      <section className="space-y-3 bg-red-50/50 dark:bg-red-950/20 border border-red-200/60 dark:border-red-800/40 rounded-2xl p-5">
+        <div className="flex items-center gap-2">
+          <span className="text-lg">🔒</span>
+          <h3 className="text-sm font-black text-red-800 dark:text-red-300 uppercase tracking-wider">{t("legal.termsConfidentialityHeading")}</h3>
+        </div>
+        <p>{t("legal.termsConfidentialityBody1")}</p>
+        <ul className="list-disc list-inside space-y-1 text-xs text-gray-600 dark:text-gray-400 pl-2">
+          <li>{t("legal.termsConfidentialityPoint1")}</li>
+          <li>{t("legal.termsConfidentialityPoint2")}</li>
+          <li>{t("legal.termsConfidentialityPoint3")}</li>
+        </ul>
+        <p className="text-xs font-bold text-red-700 dark:text-red-400 bg-red-100/50 dark:bg-red-900/30 rounded-lg px-3 py-2">
+          ⚠️ {t("legal.termsConfidentialityWarning")}
+        </p>
+      </section>
+
+      {/* 🎓 Academic Integrity & Anti-Plagiarism Policy */}
+      <section className="space-y-3 bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/40 rounded-2xl p-5">
+        <div className="flex items-center gap-2">
+          <span className="text-lg">🎓</span>
+          <h3 className="text-sm font-black text-amber-800 dark:text-amber-300 uppercase tracking-wider">{t("legal.termsIntegrityHeading")}</h3>
+        </div>
+        <p>{t("legal.termsIntegrityBody1")}</p>
+        <ul className="list-disc list-inside space-y-1 text-xs text-gray-600 dark:text-gray-400 pl-2">
+          <li>{t("legal.termsIntegrityPoint1")}</li>
+          <li>{t("legal.termsIntegrityPoint2")}</li>
+          <li>{t("legal.termsIntegrityPoint3")}</li>
+        </ul>
+        <p className="text-xs font-bold text-amber-700 dark:text-amber-400 bg-amber-100/50 dark:bg-amber-900/30 rounded-lg px-3 py-2">
+          ⚠️ {t("legal.termsIntegrityWarning")}
+        </p>
+      </section>
     </LegalLayout>
   );
 }

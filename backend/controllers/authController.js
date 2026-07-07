@@ -365,7 +365,8 @@ const login = async (req, res) => {
             return res.status(400).json({ error: "Invalid email or account password." });
         }
 
-        if (portalRole && user.userRole !== portalRole) {
+        // Allow admins to login through any portal to access their dashboard
+        if (portalRole && user.userRole !== portalRole && user.userRole !== "admin") {
             return res.status(403).json({ error: `Access Denied: This account belongs to a ${user.userRole}. Please login through the correct portal.` });
         }
 

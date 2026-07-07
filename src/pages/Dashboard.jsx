@@ -886,7 +886,7 @@ export default function Dashboard() {
                     </div>
 
                     {/* Recommendations Alert Box */}
-                    <div className="bg-white dark:bg-ink-900/5 dark:bg-ink-900/5 border border-white/10 dark:border-ink-800/10 p-4 rounded-xl">
+                    <div className="bg-white/10 border border-white/10 p-4 rounded-xl">
                       <h5 className="text-[10px] font-extrabold uppercase text-marigold-300 mb-1">{t("dashboard.actionableRecommendations")}</h5>
                       <p className="text-xs text-ink-200 leading-relaxed italic">
                         "{cvReport.recommendations}"
@@ -894,7 +894,7 @@ export default function Dashboard() {
                     </div>
 
                     {/* Skill Gap Analyzer */}
-                    <div className="bg-white dark:bg-ink-900/5 dark:bg-ink-900/5 border border-white/10 dark:border-ink-800/10 p-4 rounded-xl text-left">
+                    <div className="bg-white/10 border border-white/10 p-4 rounded-xl text-left">
                       <h5 className="text-[10px] font-extrabold uppercase text-marigold-300 mb-2 flex items-center gap-1.5 justify-between">
                         <span className="flex items-center gap-1.5"><Search className="w-3 h-3" /> {t("dashboard.skillGapAnalyzer")}</span>
                         <span className="bg-marigold-500/20 text-marigold-300 text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1"><TrendingUp className="w-3 h-3" /> {t("dashboard.liveDemands")}</span>

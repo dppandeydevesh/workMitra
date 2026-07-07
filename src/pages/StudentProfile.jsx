@@ -909,7 +909,7 @@ export default function StudentProfile() {
                           </div>
                         </div>
 
-                        <div className="bg-white dark:bg-ink-900/5 dark:bg-ink-900/5 border border-white/10 dark:border-ink-800/10 p-4 rounded-xl">
+                        <div className="bg-white/10 border border-white/10 p-4 rounded-xl">
                           <h5 className="text-[10px] font-extrabold uppercase text-marigold-300 mb-1">{t("studentProfile.aiRecommendations")}</h5>
                           <p className="text-xs text-ink-200 leading-relaxed italic">
                             "{profileUser.cvReviewReport.recommendations}"

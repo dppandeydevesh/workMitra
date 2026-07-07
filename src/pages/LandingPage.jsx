@@ -147,19 +147,22 @@ export default function LandingPage() {
             {faqs.map((faq, idx) => {
               const isOpen = activeFaq === idx;
               return (
-                <div key={idx} className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 p-4 transition shadow-sm">
+                <div key={idx} className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 p-4 shadow-sm">
                   <button 
                     onClick={() => handleFaqToggle(idx)}
                     className="w-full flex justify-between items-center text-left text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-200 focus:outline-none"
                   >
                     <span>{faq.q}</span>
-                    <span className="text-lg text-indigo-500 font-bold">{isOpen ? "−" : "+"}</span>
+                    <span className={`text-lg text-indigo-500 font-bold transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`}>+</span>
                   </button>
-                  {isOpen && (
+                  <div 
+                    className="overflow-hidden transition-all duration-300 ease-in-out"
+                    style={{ maxHeight: isOpen ? "200px" : "0px", opacity: isOpen ? 1 : 0 }}
+                  >
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 leading-relaxed border-t pt-3 border-gray-50 dark:border-slate-800/50">
                       {faq.a}
                     </p>
-                  )}
+                  </div>
                 </div>
               );
             })}

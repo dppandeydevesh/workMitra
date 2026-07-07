@@ -102,22 +102,30 @@ const ResumeChecker = () => {
           width: 100%;
           max-width: 700px;
         }
+        html.dark .glass-panel {
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
 
         .title {
-          font-size: 2.5rem;
+          font-size: 2.2rem;
+          font-weight: 800;
           margin-bottom: 0.5rem;
-          font-weight: 700;
-          background: linear-gradient(90deg, #c084fc, #ec4899);
+          text-align: center;
+          background: linear-gradient(90deg, #f59e0b, #d97706);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
-          text-align: center;
         }
 
         .subtitle {
           text-align: center;
-          color: #94a3b8;
+          color: #475569;
           margin-bottom: 2.5rem;
           font-size: 1.1rem;
+        }
+        html.dark .subtitle {
+          color: #94a3b8;
         }
 
         .form-group {
@@ -128,42 +136,52 @@ const ResumeChecker = () => {
           display: block;
           margin-bottom: 0.75rem;
           font-weight: 500;
-          color: #e2e8f0;
+          color: #334155;
           font-size: 0.95rem;
+        }
+        html.dark .label {
+          color: #e2e8f0;
         }
 
         .input-field {
           width: 100%;
-          background: rgba(255, 255, 255, 0.04);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: rgba(0, 0, 0, 0.03);
+          border: 1px solid rgba(0, 0, 0, 0.1);
           border-radius: 14px;
           padding: 1.2rem;
-          color: white;
+          color: #1e293b;
           font-size: 1rem;
           outline: none;
           transition: all 0.3s ease;
           box-sizing: border-box;
         }
+        html.dark .input-field {
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: white;
+        }
 
         .input-field:focus {
-          border-color: #c084fc;
+          border-color: #f59e0b;
           background: rgba(255, 255, 255, 0.08);
-          box-shadow: 0 0 0 4px rgba(192, 132, 252, 0.1);
         }
 
         .dropzone {
-          border: 2px dashed rgba(255, 255, 255, 0.15);
+          border: 2px dashed #cbd5e1;
           border-radius: 16px;
           padding: 3.5rem 2rem;
           text-align: center;
           cursor: pointer;
           transition: all 0.3s ease;
+          background: rgba(0, 0, 0, 0.02);
+        }
+        html.dark .dropzone {
+          border-color: rgba(255, 255, 255, 0.15);
           background: rgba(255, 255, 255, 0.02);
         }
 
         .dropzone:hover {
-          border-color: #c084fc;
-          background: rgba(255, 255, 255, 0.04);
+          border-color: #f59e0b;
         }
 
         .dropzone-icon {
@@ -179,15 +197,15 @@ const ResumeChecker = () => {
           gap: 1rem;
           margin-top: 1rem;
           padding: 1rem;
-          background: rgba(192, 132, 252, 0.15);
-          border: 1px solid rgba(192, 132, 252, 0.3);
+          background: rgba(245, 158, 11, 0.1);
+          border: 1px solid rgba(245, 158, 11, 0.2);
           border-radius: 12px;
         }
 
         .submit-btn {
           width: 100%;
           padding: 1.2rem;
-          background: linear-gradient(90deg, #a855f7, #ec4899);
+          background: #f59e0b;
           color: white;
           border: none;
           border-radius: 14px;
@@ -200,21 +218,20 @@ const ResumeChecker = () => {
 
         .submit-btn:hover:not(:disabled) {
           transform: translateY(-2px);
-          box-shadow: 0 10px 25px -5px rgba(168, 85, 247, 0.4);
+          box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.4);
         }
         
         .submit-btn:disabled {
           opacity: 0.5;
           cursor: not-allowed;
-          background: rgba(255, 255, 255, 0.1);
         }
 
         .error-msg {
-          color: #fca5a5;
+          color: #dc2626;
           margin-bottom: 1.5rem;
           text-align: center;
-          background: rgba(239, 68, 68, 0.15);
-          border: 1px solid rgba(239, 68, 68, 0.3);
+          background: rgba(220, 38, 38, 0.1);
+          border: 1px solid rgba(220, 38, 38, 0.2);
           padding: 1rem;
           border-radius: 12px;
           font-size: 0.95rem;
@@ -240,24 +257,29 @@ const ResumeChecker = () => {
           width: 180px;
           height: 180px;
           border-radius: 50%;
-          background: conic-gradient(#10b981 var(--score), rgba(255,255,255,0.05) 0deg);
+          background: conic-gradient(#10b981 var(--score), #e2e8f0 0deg);
           display: flex;
           justify-content: center;
           align-items: center;
           position: relative;
-          box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+        }
+        html.dark .score-circle {
+          background: conic-gradient(#10b981 var(--score), rgba(255,255,255,0.05) 0deg);
         }
         
         .score-inner {
           width: 156px;
           height: 156px;
           border-radius: 50%;
-          background: #171825; /* Matches typical dark theme background */
+          background: #ffffff;
           display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: center;
           z-index: 10;
+        }
+        html.dark .score-inner {
+          background: #171825;
         }
 
         .score-value {
@@ -265,33 +287,42 @@ const ResumeChecker = () => {
           font-weight: 800;
           color: #10b981;
           line-height: 1;
-          text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
         }
 
         .score-label {
           font-size: 0.95rem;
-          color: #94a3b8;
+          color: #475569;
           margin-top: 0.5rem;
           text-transform: uppercase;
           letter-spacing: 1px;
         }
+        html.dark .score-label {
+          color: #94a3b8;
+        }
 
         .feedback-section {
-          background: rgba(255, 255, 255, 0.02);
-          border: 1px solid rgba(255, 255, 255, 0.05);
+          background: rgba(0, 0, 0, 0.03);
+          border: 1px solid rgba(0, 0, 0, 0.05);
           border-radius: 16px;
           padding: 1.5rem;
           margin-bottom: 1.5rem;
+        }
+        html.dark .feedback-section {
+          background: rgba(255, 255, 255, 0.02);
+          border: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         .feedback-title {
           font-size: 1.1rem;
           font-weight: 600;
           margin-bottom: 1.2rem;
-          color: #e2e8f0;
+          color: #1e293b;
           display: flex;
           align-items: center;
           gap: 0.5rem;
+        }
+        html.dark .feedback-title {
+          color: #e2e8f0;
         }
 
         .keywords-list {
@@ -302,7 +333,7 @@ const ResumeChecker = () => {
 
         .keyword-tag {
           background: rgba(239, 68, 68, 0.1);
-          color: #fca5a5;
+          color: #dc2626;
           padding: 0.5rem 1rem;
           border-radius: 8px;
           font-size: 0.9rem;
@@ -311,15 +342,28 @@ const ResumeChecker = () => {
         }
 
         .feedback-text {
-          line-height: 1.7;
+          font-size: 0.95rem;
+          line-height: 1.6;
+          color: #475569;
+          margin-bottom: 1rem;
+        }
+        html.dark .feedback-text {
+          color: #94a3b8;
+        }
+        
+        .feedback-list li {
+          position: relative;
+          color: #475569;
+          line-height: 1.5;
+        }
+        html.dark .feedback-list li {
           color: #cbd5e1;
-          font-size: 1rem;
         }
         
         .back-btn {
           background: transparent;
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          color: #cbd5e1;
+          border: 1px solid #cbd5e1;
+          color: #475569;
           padding: 1rem 2rem;
           border-radius: 12px;
           cursor: pointer;

@@ -1,3 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Google Fonts Inter is loaded via <link> in index.html for reliable preloading */
 
@@ -39,9 +42,7 @@ button:active {
 }
 
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
 
 /* ========================================================================= */
 /* 🌌 Animated Mesh Gradient Background (Warm Peach-Pink-Gold Theme)         */

@@ -32,10 +32,10 @@ export default function ActivityHeatmap({ applications = [] }) {
 
   // Helper to determine background color class based on activity count
   const getColorClass = (count) => {
-    if (count === 0) return "bg-gray-100 dark:bg-slate-800 border-gray-200/50 dark:border-slate-700/50";
-    if (count === 1) return "bg-indigo-200 dark:bg-indigo-950 border-indigo-300 text-indigo-800";
-    if (count === 2) return "bg-indigo-400 dark:bg-indigo-800 border-indigo-500 text-white";
-    return "bg-indigo-600 dark:bg-indigo-600 border-indigo-700 text-white font-extrabold";
+    if (count === 0) return "bg-ink-100 dark:bg-ink-800 border-ink-200/50 dark:border-ink-700/50";
+    if (count === 1) return "bg-marigold-200 dark:bg-marigold-950 border-marigold-300 text-marigold-800";
+    if (count === 2) return "bg-marigold-400 dark:bg-marigold-800 border-marigold-500 text-white";
+    return "bg-marigold-500 dark:bg-marigold-500 border-marigold-700 text-white font-extrabold";
   };
 
   // Group into weeks (7 days each)
@@ -45,10 +45,10 @@ export default function ActivityHeatmap({ applications = [] }) {
   }
 
   return (
-    <div className="bg-white dark:bg-slate-900 border dark:border-slate-800 p-6 rounded-3xl shadow-sm flex flex-col space-y-4">
+    <div className="bg-white dark:bg-ink-900 border dark:border-ink-800 p-6 rounded-3xl shadow-sm flex flex-col space-y-4">
       <div>
-        <h4 className="text-xs font-black uppercase text-slate-800 dark:text-white tracking-wider">📅 Practical Task Activity Heatmap</h4>
-        <p className="text-[10px] text-slate-400 mt-0.5">Visual log of task applications, iterations, and completions over the last 12 weeks.</p>
+        <h4 className="text-xs font-black uppercase text-ink-800 dark:text-white tracking-wider">📅 Practical Task Activity Heatmap</h4>
+        <p className="text-[10px] text-ink-400 mt-0.5">Visual log of task applications, iterations, and completions over the last 12 weeks.</p>
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
@@ -65,14 +65,14 @@ export default function ActivityHeatmap({ applications = [] }) {
         ))}
       </div>
 
-      <div className="flex justify-between items-center text-[10px] text-slate-400 pt-1">
+      <div className="flex justify-between items-center text-[10px] text-ink-400 pt-1">
         <span>12 Weeks Ago</span>
         <div className="flex items-center gap-1">
           <span>Less</span>
-          <div className="w-2.5 h-2.5 bg-gray-100 dark:bg-slate-800 border rounded-sm" />
-          <div className="w-2.5 h-2.5 bg-indigo-200 dark:bg-indigo-950 border rounded-sm" />
-          <div className="w-2.5 h-2.5 bg-indigo-400 dark:bg-indigo-800 border rounded-sm" />
-          <div className="w-2.5 h-2.5 bg-indigo-600 border rounded-sm" />
+          <div className="w-2.5 h-2.5 bg-ink-100 dark:bg-ink-800 border rounded-sm" />
+          <div className="w-2.5 h-2.5 bg-marigold-200 dark:bg-marigold-950 border rounded-sm" />
+          <div className="w-2.5 h-2.5 bg-marigold-400 dark:bg-marigold-800 border rounded-sm" />
+          <div className="w-2.5 h-2.5 bg-marigold-500 border rounded-sm" />
           <span>More</span>
         </div>
         <span>Today</span>

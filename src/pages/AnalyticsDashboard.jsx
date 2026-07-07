@@ -114,18 +114,18 @@ export default function AnalyticsDashboard() {
     <div className="min-h-screen bg-transparent font-sans">
       {/* Main Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
+        <div className="bg-white dark:bg-ink-900 rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
           {/* Header */}
           <div className="border-b pb-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-black text-gray-800 dark:text-gray-200 tracking-tight flex items-center gap-2">
+              <h1 className="text-3xl font-black text-ink-800 dark:text-ink-200 tracking-tight flex items-center gap-2">
                 <span>📈 {t("analytics.title")}</span>
               </h1>
-              <p className="text-gray-500 mt-1 text-sm">{t("analytics.description")}</p>
+              <p className="text-ink-500 mt-1 text-sm">{t("analytics.description")}</p>
             </div>
             <button
               onClick={() => navigate("/company-dashboard")}
-              className="px-4 py-2 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-700 dark:text-gray-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+              className="px-4 py-2 bg-ink-100 dark:bg-ink-800 hover:bg-ink-200 text-ink-700 dark:text-ink-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
             >
               ← {t("analytics.backToCommandCenter")}
             </button>
@@ -138,8 +138,8 @@ export default function AnalyticsDashboard() {
           )}
 
           {loading ? (
-            <div className="text-center py-16 text-gray-500 font-medium animate-pulse flex flex-col items-center justify-center space-y-3">
-              <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="text-center py-16 text-ink-500 font-medium animate-pulse flex flex-col items-center justify-center space-y-3">
+              <div className="w-10 h-10 border-4 border-marigold-500 border-t-transparent rounded-full animate-spin"></div>
               <span>📊 {t("analytics.loading")}</span>
             </div>
           ) : (
@@ -147,11 +147,11 @@ export default function AnalyticsDashboard() {
               {/* 🌐 Grid of Key Metrics Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Metric 1 */}
-                <div className="bg-blue-50 border border-blue-100 p-6 rounded-2xl shadow-sm hover:shadow-md transition">
+                <div className="bg-marigold-50 border border-marigold-100 p-6 rounded-2xl shadow-sm hover:shadow-md transition">
                   <div className="text-2xl mb-3">💼</div>
-                  <span className="text-[10px] font-extrabold text-blue-700 uppercase tracking-wider block">{t("analytics.gigsDeployed")}</span>
-                  <span className="text-3xl font-black text-blue-950 block mt-1">{totalProjectsCount}</span>
-                  <p className="text-xs text-blue-800/70 mt-1">{t("analytics.gigsDeployedSub")}</p>
+                  <span className="text-[10px] font-extrabold text-marigold-700 uppercase tracking-wider block">{t("analytics.gigsDeployed")}</span>
+                  <span className="text-3xl font-black text-marigold-950 block mt-1">{totalProjectsCount}</span>
+                  <p className="text-xs text-marigold-800/70 mt-1">{t("analytics.gigsDeployedSub")}</p>
                 </div>
 
                 {/* Metric 2 */}
@@ -163,7 +163,7 @@ export default function AnalyticsDashboard() {
                 </div>
 
                 {/* Metric 3 */}
-                <div className="bg-purple-50 border border-purple-100 dark:border-slate-800 p-6 rounded-2xl shadow-sm hover:shadow-md transition">
+                <div className="bg-purple-50 border border-purple-100 dark:border-ink-800 p-6 rounded-2xl shadow-sm hover:shadow-md transition">
                   <div className="text-2xl mb-3">🎯</div>
                   <span className="text-[10px] font-extrabold text-purple-700 uppercase tracking-wider block">{t("analytics.conversionRate")}</span>
                   <span className="text-3xl font-black text-purple-950 dark:text-purple-200 block mt-1">{conversionPercentage}%</span>
@@ -180,13 +180,13 @@ export default function AnalyticsDashboard() {
               </div>
 
               {/* 🔒 Escrow Protection Ledgers */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-inner">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-ink-50 dark:bg-ink-800/50 p-6 rounded-2xl border border-ink-100 dark:border-ink-800 shadow-inner">
                 <div className="flex items-center gap-4">
-                  <div className="text-3xl bg-blue-100 p-3 rounded-2xl text-blue-700">🔒</div>
+                  <div className="text-3xl bg-marigold-100 p-3 rounded-2xl text-marigold-700">🔒</div>
                   <div>
-                    <span className="text-[10px] font-black text-blue-700 uppercase tracking-wider block">{t("analytics.lockedInEscrow")}</span>
-                    <span className="text-2xl font-black text-gray-800 dark:text-gray-200 block mt-0.5">₹{lockedEscrow.toLocaleString()}</span>
-                    <p className="text-[11px] text-gray-400 mt-0.5">{t("analytics.lockedInEscrowSub")}</p>
+                    <span className="text-[10px] font-black text-marigold-700 uppercase tracking-wider block">{t("analytics.lockedInEscrow")}</span>
+                    <span className="text-2xl font-black text-ink-800 dark:text-ink-200 block mt-0.5">₹{lockedEscrow.toLocaleString()}</span>
+                    <p className="text-[11px] text-ink-400 mt-0.5">{t("analytics.lockedInEscrowSub")}</p>
                   </div>
                 </div>
 
@@ -194,8 +194,8 @@ export default function AnalyticsDashboard() {
                   <div className="text-3xl bg-emerald-100 p-3 rounded-2xl text-emerald-700">💸</div>
                   <div>
                     <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider block">{t("analytics.totalPayouts")}</span>
-                    <span className="text-2xl font-black text-gray-800 dark:text-gray-200 block mt-0.5">₹{releasedPayouts.toLocaleString()}</span>
-                    <p className="text-[11px] text-gray-400 mt-0.5">{t("analytics.totalPayoutsSub")}</p>
+                    <span className="text-2xl font-black text-ink-800 dark:text-ink-200 block mt-0.5">₹{releasedPayouts.toLocaleString()}</span>
+                    <p className="text-[11px] text-ink-400 mt-0.5">{t("analytics.totalPayoutsSub")}</p>
                   </div>
                 </div>
 
@@ -203,8 +203,8 @@ export default function AnalyticsDashboard() {
                   <div className="text-3xl bg-rose-100 p-3 rounded-2xl text-rose-700">⚠️</div>
                   <div>
                     <span className="text-[10px] font-black text-rose-700 uppercase tracking-wider block">{t("analytics.escrowDisputed")}</span>
-                    <span className="text-2xl font-black text-gray-800 dark:text-gray-200 block mt-0.5">₹{disputedEscrow.toLocaleString()}</span>
-                    <p className="text-[11px] text-gray-400 mt-0.5">{t("analytics.escrowDisputedSub")}</p>
+                    <span className="text-2xl font-black text-ink-800 dark:text-ink-200 block mt-0.5">₹{disputedEscrow.toLocaleString()}</span>
+                    <p className="text-[11px] text-ink-400 mt-0.5">{t("analytics.escrowDisputedSub")}</p>
                   </div>
                 </div>
               </div>
@@ -212,13 +212,13 @@ export default function AnalyticsDashboard() {
               {/* 📊 Visual Graph Widget Panels */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Panel 1: Application Status Breakdown */}
-                <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+                <div className="bg-white dark:bg-ink-900 border border-ink-100 dark:border-ink-800 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
                   <div>
-                    <h3 className="text-base font-bold text-gray-800 dark:text-gray-200 mb-1">{t("analytics.applicationLifecycle")}</h3>
-                    <p className="text-xs text-gray-400 mb-6">{t("analytics.applicationLifecycleSub")}</p>
+                    <h3 className="text-base font-bold text-ink-800 dark:text-ink-200 mb-1">{t("analytics.applicationLifecycle")}</h3>
+                    <p className="text-xs text-ink-400 mb-6">{t("analytics.applicationLifecycleSub")}</p>
 
                     {totalApplicationsCount === 0 ? (
-                      <p className="text-xs text-gray-400 italic text-center py-16">{t("analytics.noApplications")}</p>
+                      <p className="text-xs text-ink-400 italic text-center py-16">{t("analytics.noApplications")}</p>
                     ) : (
                       <div className="flex flex-col items-center">
                         {/* Recharts Donut */}
@@ -257,13 +257,13 @@ export default function AnalyticsDashboard() {
                           </ResponsiveContainer>
                           {/* Inner center text overlay */}
                           <div className="absolute flex flex-col items-center justify-center pointer-events-none">
-                            <span className="text-xl font-black text-gray-800 dark:text-gray-200">{totalApplicationsCount}</span>
-                            <span className="text-[9px] uppercase font-bold text-gray-400">{t("analytics.total")}</span>
+                            <span className="text-xl font-black text-ink-800 dark:text-ink-200">{totalApplicationsCount}</span>
+                            <span className="text-[9px] uppercase font-bold text-ink-400">{t("analytics.total")}</span>
                           </div>
                         </div>
 
                         {/* Color Coded Legends */}
-                        <div className="w-full grid grid-cols-2 gap-x-4 gap-y-2.5 text-[11px] font-bold text-gray-600 dark:text-gray-300 mt-2">
+                        <div className="w-full grid grid-cols-2 gap-x-4 gap-y-2.5 text-[11px] font-bold text-ink-600 dark:text-ink-300 mt-2">
                           <div className="flex items-center gap-1.5">
                             <span className="w-2.5 h-2.5 bg-[#10b981] rounded-full inline-block"></span>
                             <span>{t("analytics.statusCompleted")}: {statusCounts.Completed}</span>
@@ -281,7 +281,7 @@ export default function AnalyticsDashboard() {
                             <span>{t("analytics.statusPending")}: {statusCounts.Pending}</span>
                           </div>
                           {statusCounts.Rejected > 0 && (
-                            <div className="flex items-center gap-1.5 col-span-2 justify-center mt-1 border-t pt-2 border-dashed border-gray-100 dark:border-slate-800">
+                            <div className="flex items-center gap-1.5 col-span-2 justify-center mt-1 border-t pt-2 border-dashed border-ink-100 dark:border-ink-800">
                               <span className="w-2.5 h-2.5 bg-[#ef4444] rounded-full inline-block"></span>
                               <span>{t("analytics.legendRejectedSolutions")}: {statusCounts.Rejected}</span>
                             </div>
@@ -290,28 +290,28 @@ export default function AnalyticsDashboard() {
                       </div>
                     )}
                   </div>
-                  <div className="border-t pt-4 mt-6 text-center text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                  <div className="border-t pt-4 mt-6 text-center text-[10px] text-ink-400 font-bold uppercase tracking-wider">
                     {t("analytics.metricsLoopComplete")}
                   </div>
                 </div>
 
                 {/* Panel 2: Budget Leaderboard */}
-                <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+                <div className="bg-white dark:bg-ink-900 border border-ink-100 dark:border-ink-800 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
                   <div>
-                    <h3 className="text-base font-bold text-gray-800 dark:text-gray-200 mb-1">{t("analytics.budgetLeaderboard")}</h3>
-                    <p className="text-xs text-gray-400 mb-6">{t("analytics.budgetLeaderboardSub")}</p>
+                    <h3 className="text-base font-bold text-ink-800 dark:text-ink-200 mb-1">{t("analytics.budgetLeaderboard")}</h3>
+                    <p className="text-xs text-ink-400 mb-6">{t("analytics.budgetLeaderboardSub")}</p>
 
                     {topProjectsLeaderboard.length === 0 ? (
-                      <p className="text-xs text-gray-400 italic text-center py-8">{t("analytics.noProjects")}</p>
+                      <p className="text-xs text-ink-400 italic text-center py-8">{t("analytics.noProjects")}</p>
                     ) : (
                       <div className="space-y-3.5">
                         {topProjectsLeaderboard.map((project, idx) => (
                           <div key={project._id} className="flex justify-between items-center text-xs">
                             <div className="flex items-center gap-2 max-w-[70%]">
-                              <span className="bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-200 text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full">
+                              <span className="bg-ink-100 dark:bg-ink-800 text-ink-800 dark:text-ink-200 text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full">
                                 {idx + 1}
                               </span>
-                              <p className="font-bold text-gray-800 dark:text-gray-200 truncate" title={project.title}>
+                              <p className="font-bold text-ink-800 dark:text-ink-200 truncate" title={project.title}>
                                 {project.title}
                               </p>
                             </div>
@@ -323,19 +323,19 @@ export default function AnalyticsDashboard() {
                       </div>
                     )}
                   </div>
-                  <div className="border-t pt-4 mt-6 text-center text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                  <div className="border-t pt-4 mt-6 text-center text-[10px] text-ink-400 font-bold uppercase tracking-wider">
                     {t("analytics.maxBudget", { max: (topProjectsLeaderboard[0]?.budget || 0).toLocaleString() })}
                   </div>
                 </div>
 
                 {/* Panel 3: In-Demand Skills */}
-                <div className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+                <div className="bg-white dark:bg-ink-900 border border-ink-100 dark:border-ink-800 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
                   <div>
-                    <h3 className="text-base font-bold text-gray-800 dark:text-gray-200 mb-1">{t("analytics.skillDemand")}</h3>
-                    <p className="text-xs text-gray-400 mb-6">{t("analytics.skillDemandSub")}</p>
+                    <h3 className="text-base font-bold text-ink-800 dark:text-ink-200 mb-1">{t("analytics.skillDemand")}</h3>
+                    <p className="text-xs text-ink-400 mb-6">{t("analytics.skillDemandSub")}</p>
 
                     {topSkillsList.length === 0 ? (
-                      <p className="text-xs text-gray-400 italic text-center py-8">{t("analytics.noSkills")}</p>
+                      <p className="text-xs text-ink-400 italic text-center py-8">{t("analytics.noSkills")}</p>
                     ) : (
                       <div className="w-full h-48">
                         <ResponsiveContainer width="100%" height="100%">
@@ -350,7 +350,7 @@ export default function AnalyticsDashboard() {
                       </div>
                     )}
                   </div>
-                  <div className="border-t pt-4 mt-6 text-center text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                  <div className="border-t pt-4 mt-6 text-center text-[10px] text-ink-400 font-bold uppercase tracking-wider">
                     {t("analytics.distinctRequirements", { count: Object.keys(skillFrequency).length })}
                   </div>
                 </div>

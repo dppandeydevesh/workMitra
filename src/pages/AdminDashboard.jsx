@@ -153,8 +153,8 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-transparent">
         <div className="glass-panel p-8 flex flex-col items-center justify-center space-y-6">
-          <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-sm font-black uppercase text-indigo-600 tracking-widest animate-pulse">{t("admin.loading")}</p>
+          <div className="w-16 h-16 border-4 border-marigold-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-sm font-black uppercase text-marigold-500 tracking-widest animate-pulse">{t("admin.loading")}</p>
         </div>
       </div>
     );
@@ -167,16 +167,16 @@ export default function AdminDashboard() {
         
         {/* Header Title Section - Glass Panel */}
         <div className="glass-panel p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-marigold-500/20 rounded-full blur-3xl pointer-events-none"></div>
           <div className="relative z-10">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-800 dark:text-white uppercase tracking-tight flex items-center gap-3">
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-ink-800 dark:text-white uppercase tracking-tight flex items-center gap-3">
               <span className="text-4xl drop-shadow-md">👑</span> {t("admin.title")}
             </h1>
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-300 mt-2">{t("admin.description")}</p>
+            <p className="text-sm font-medium text-ink-500 dark:text-ink-300 mt-2">{t("admin.description")}</p>
           </div>
           <button
             onClick={fetchAdminData}
-            className="glass-button px-6 py-3 bg-indigo-600/90 hover:bg-indigo-600 text-white rounded-xl text-sm font-bold transition-all shadow-[0_4px_20px_rgba(79,70,229,0.4)] hover:shadow-[0_6px_25px_rgba(79,70,229,0.6)] flex items-center gap-2 relative z-10 backdrop-blur-md"
+            className="glass-button px-6 py-3 bg-marigold-500/90 hover:bg-marigold-500 text-white rounded-xl text-sm font-bold transition-all shadow-[0_4px_20px_rgba(79,70,229,0.4)] hover:shadow-[0_6px_25px_rgba(79,70,229,0.6)] flex items-center gap-2 relative z-10 backdrop-blur-md"
           >
             <span className="text-lg">🔄</span> {t("admin.action.sync_data")}
           </button>
@@ -185,40 +185,40 @@ export default function AdminDashboard() {
         {/* Dashboard KPIs Grid */}
         {metrics && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
-            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between group hover:-translate-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-slate-800/40 border border-white/40 dark:border-slate-700/50 shadow-sm backdrop-blur-md">
-              <div className="absolute -right-4 -top-4 w-16 h-16 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all"></div>
-              <span className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 relative z-10">{t("admin.kpi.total_students")}</span>
-              <span className="text-4xl font-black text-slate-800 dark:text-white drop-shadow-sm relative z-10">{metrics.totalStudents}</span>
+            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between group hover:-tranink-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-ink-800/40 border border-white/40 dark:border-ink-700/50 shadow-sm backdrop-blur-md">
+              <div className="absolute -right-4 -top-4 w-16 h-16 bg-marigold-500/10 rounded-full blur-2xl group-hover:bg-marigold-500/20 transition-all"></div>
+              <span className="text-xs font-black text-ink-500 dark:text-ink-400 uppercase tracking-wider mb-2 relative z-10">{t("admin.kpi.total_students")}</span>
+              <span className="text-4xl font-black text-ink-800 dark:text-white drop-shadow-sm relative z-10">{metrics.totalStudents}</span>
             </div>
             
-            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between group hover:-translate-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-slate-800/40 border border-white/40 dark:border-slate-700/50 shadow-sm backdrop-blur-md">
+            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between group hover:-tranink-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-ink-800/40 border border-white/40 dark:border-ink-700/50 shadow-sm backdrop-blur-md">
               <div className="absolute -right-4 -top-4 w-16 h-16 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all"></div>
-              <span className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 relative z-10">{t("admin.kpi.verified_recruiters")}</span>
-              <span className="text-4xl font-black text-slate-800 dark:text-white drop-shadow-sm relative z-10">{metrics.totalCompanies}</span>
+              <span className="text-xs font-black text-ink-500 dark:text-ink-400 uppercase tracking-wider mb-2 relative z-10">{t("admin.kpi.verified_recruiters")}</span>
+              <span className="text-4xl font-black text-ink-800 dark:text-white drop-shadow-sm relative z-10">{metrics.totalCompanies}</span>
             </div>
             
-            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between group hover:-translate-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-slate-800/40 border border-white/40 dark:border-slate-700/50 shadow-sm backdrop-blur-md">
+            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between group hover:-tranink-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-ink-800/40 border border-white/40 dark:border-ink-700/50 shadow-sm backdrop-blur-md">
               <div className="absolute -right-4 -top-4 w-16 h-16 bg-pink-500/10 rounded-full blur-2xl group-hover:bg-pink-500/20 transition-all"></div>
-              <span className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 relative z-10">{t("admin.kpi.total_gigs")}</span>
-              <span className="text-4xl font-black text-slate-800 dark:text-white drop-shadow-sm relative z-10">{metrics.totalProjects}</span>
+              <span className="text-xs font-black text-ink-500 dark:text-ink-400 uppercase tracking-wider mb-2 relative z-10">{t("admin.kpi.total_gigs")}</span>
+              <span className="text-4xl font-black text-ink-800 dark:text-white drop-shadow-sm relative z-10">{metrics.totalProjects}</span>
             </div>
             
-            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between border-l-4 border-l-blue-500 group hover:-translate-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-slate-800/40 shadow-sm backdrop-blur-md">
-              <div className="absolute -right-4 -top-4 w-16 h-16 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all"></div>
-              <span className="text-xs font-black text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-2 relative z-10">{t("admin.kpi.locked_escrow")}</span>
-              <span className="text-3xl font-black text-slate-800 dark:text-white drop-shadow-sm relative z-10">₹{metrics.lockedEscrow.toLocaleString()}</span>
+            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between border-l-4 border-l-marigold-500 group hover:-tranink-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-ink-800/40 shadow-sm backdrop-blur-md">
+              <div className="absolute -right-4 -top-4 w-16 h-16 bg-marigold-500/10 rounded-full blur-2xl group-hover:bg-marigold-500/20 transition-all"></div>
+              <span className="text-xs font-black text-marigold-500 dark:text-marigold-400 uppercase tracking-wider mb-2 relative z-10">{t("admin.kpi.locked_escrow")}</span>
+              <span className="text-3xl font-black text-ink-800 dark:text-white drop-shadow-sm relative z-10">₹{metrics.lockedEscrow.toLocaleString()}</span>
             </div>
             
-            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between border-l-4 border-l-emerald-500 group hover:-translate-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-slate-800/40 shadow-sm backdrop-blur-md">
+            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between border-l-4 border-l-emerald-500 group hover:-tranink-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-ink-800/40 shadow-sm backdrop-blur-md">
               <div className="absolute -right-4 -top-4 w-16 h-16 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
               <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-2 relative z-10">{t("admin.kpi.completed_payouts")}</span>
-              <span className="text-3xl font-black text-slate-800 dark:text-white drop-shadow-sm relative z-10">₹{metrics.completedEscrow.toLocaleString()}</span>
+              <span className="text-3xl font-black text-ink-800 dark:text-white drop-shadow-sm relative z-10">₹{metrics.completedEscrow.toLocaleString()}</span>
             </div>
             
-            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between border-l-4 border-l-rose-500 group hover:-translate-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-slate-800/40 shadow-sm backdrop-blur-md">
+            <div className="glass-card p-6 rounded-2xl flex flex-col justify-between border-l-4 border-l-rose-500 group hover:-tranink-y-1 transition-all duration-300 relative overflow-hidden bg-white/40 dark:bg-ink-800/40 shadow-sm backdrop-blur-md">
               <div className="absolute -right-4 -top-4 w-16 h-16 bg-rose-500/10 rounded-full blur-2xl group-hover:bg-rose-500/20 transition-all"></div>
               <span className="text-xs font-black text-rose-600 dark:text-rose-400 uppercase tracking-wider mb-2 relative z-10">{t("admin.kpi.disputed_balance")}</span>
-              <span className="text-3xl font-black text-slate-800 dark:text-white drop-shadow-sm relative z-10">₹{metrics.disputedEscrow.toLocaleString()}</span>
+              <span className="text-3xl font-black text-ink-800 dark:text-white drop-shadow-sm relative z-10">₹{metrics.disputedEscrow.toLocaleString()}</span>
             </div>
           </div>
         )}
@@ -227,23 +227,23 @@ export default function AdminDashboard() {
         <div className="glass-panel p-8 relative overflow-hidden">
           <div className="absolute -left-20 -top-20 w-64 h-64 bg-rose-500/5 rounded-full blur-3xl pointer-events-none"></div>
           
-          <div className="border-b border-slate-200/50 dark:border-slate-700/50 pb-5 mb-6 relative z-10">
-            <h2 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-wide flex items-center gap-3">
+          <div className="border-b border-ink-200/50 dark:border-ink-700/50 pb-5 mb-6 relative z-10">
+            <h2 className="text-xl font-black text-ink-800 dark:text-white uppercase tracking-wide flex items-center gap-3">
               <span className="text-2xl drop-shadow-sm">⚖️</span> {t("admin.disputes.title")}
             </h2>
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">{t("admin.disputes.description")}</p>
+            <p className="text-sm font-medium text-ink-500 dark:text-ink-400 mt-1">{t("admin.disputes.description")}</p>
           </div>
 
           {disputes.length === 0 ? (
             <div className="py-12 flex flex-col items-center justify-center text-center relative z-10">
               <span className="text-5xl mb-4 opacity-50">✨</span>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 italic">{t("admin.disputes.empty")}</p>
+              <p className="text-sm font-medium text-ink-500 dark:text-ink-400 italic">{t("admin.disputes.empty")}</p>
             </div>
           ) : (
-            <div className="overflow-x-auto relative z-10 rounded-xl border border-slate-200/30 dark:border-slate-700/30 shadow-sm bg-white/20 dark:bg-slate-900/20 backdrop-blur-md">
+            <div className="overflow-x-auto relative z-10 rounded-xl border border-ink-200/30 dark:border-ink-700/30 shadow-sm bg-white/20 dark:bg-ink-900/20 backdrop-blur-md">
               <table className="w-full text-left text-sm border-collapse">
                 <thead>
-                  <tr className="bg-slate-100/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-xs border-b border-slate-200/50 dark:border-slate-700/50">
+                  <tr className="bg-ink-100/50 dark:bg-ink-800/50 text-ink-500 dark:text-ink-400 font-bold uppercase tracking-wider text-xs border-b border-ink-200/50 dark:border-ink-700/50">
                     <th className="py-4 px-6">{t("admin.disputes.th.project")}</th>
                     <th className="py-4 px-6">{t("admin.disputes.th.recruiter")}</th>
                     <th className="py-4 px-6">{t("admin.disputes.th.escrow")}</th>
@@ -251,19 +251,19 @@ export default function AdminDashboard() {
                     <th className="py-4 px-6 text-right">{t("admin.disputes.th.actions")}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200/30 dark:divide-slate-700/30 text-slate-700 dark:text-slate-300">
+                <tbody className="divide-y divide-ink-200/30 dark:divide-ink-700/30 text-ink-700 dark:text-ink-300">
                   {disputes.map((dispute, idx) => (
-                    <tr key={dispute._id} className={`transition-colors duration-200 hover:bg-white/40 dark:hover:bg-slate-800/60 ${idx % 2 === 0 ? 'bg-transparent' : 'bg-slate-50/30 dark:bg-slate-800/30'}`}>
+                    <tr key={dispute._id} className={`transition-colors duration-200 hover:bg-white/40 dark:hover:bg-ink-800/60 ${idx % 2 === 0 ? 'bg-transparent' : 'bg-ink-50/30 dark:bg-ink-800/30'}`}>
                       <td className="py-5 px-6">
-                        <span className="font-bold text-slate-900 dark:text-white block text-base">{dispute.projectId?.title || t("admin.disputes.fallback.project_title")}</span>
-                        <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block mt-1 bg-slate-200/50 dark:bg-slate-700/50 px-2 py-1 rounded-md inline-block">
+                        <span className="font-bold text-ink-900 dark:text-white block text-base">{dispute.projectId?.title || t("admin.disputes.fallback.project_title")}</span>
+                        <span className="text-xs font-medium text-ink-500 dark:text-ink-400 block mt-1 bg-ink-200/50 dark:bg-ink-700/50 px-2 py-1 rounded-md inline-block">
                           {t("admin.disputes.by_student", { name: dispute.studentName, email: dispute.studentEmail })}
                         </span>
                       </td>
                       <td className="py-5 px-6 font-semibold">{dispute.projectId?.companyId}</td>
                       <td className="py-5 px-6 font-black text-emerald-600 dark:text-emerald-400 text-base">₹{dispute.projectId?.budget?.toLocaleString()}</td>
                       <td className="py-5 px-6">
-                        <div className="max-w-xs text-sm italic border-l-2 border-indigo-200 dark:border-indigo-800 pl-3 py-1">
+                        <div className="max-w-xs text-sm italic border-l-2 border-marigold-200 dark:border-marigold-800 pl-3 py-1">
                           "{dispute.feedbackText || t("admin.disputes.fallback.no_feedback")}"
                         </div>
                       </td>
@@ -293,25 +293,25 @@ export default function AdminDashboard() {
 
         {/* Recruiters Verifications Section */}
         <div className="glass-panel p-8 relative overflow-hidden">
-          <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-marigold-500/5 rounded-full blur-3xl pointer-events-none"></div>
           
-          <div className="border-b border-slate-200/50 dark:border-slate-700/50 pb-5 mb-6 relative z-10">
-            <h2 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-wide flex items-center gap-3">
+          <div className="border-b border-ink-200/50 dark:border-ink-700/50 pb-5 mb-6 relative z-10">
+            <h2 className="text-xl font-black text-ink-800 dark:text-white uppercase tracking-wide flex items-center gap-3">
               <span className="text-2xl drop-shadow-sm">🏢</span> {t("admin.companies.title")}
             </h2>
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">{t("admin.companies.description")}</p>
+            <p className="text-sm font-medium text-ink-500 dark:text-ink-400 mt-1">{t("admin.companies.description")}</p>
           </div>
 
           {companies.length === 0 ? (
             <div className="py-12 flex flex-col items-center justify-center text-center relative z-10">
               <span className="text-5xl mb-4 opacity-50">📭</span>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 italic">{t("admin.companies.empty")}</p>
+              <p className="text-sm font-medium text-ink-500 dark:text-ink-400 italic">{t("admin.companies.empty")}</p>
             </div>
           ) : (
-            <div className="overflow-x-auto relative z-10 rounded-xl border border-slate-200/30 dark:border-slate-700/30 shadow-sm bg-white/20 dark:bg-slate-900/20 backdrop-blur-md">
+            <div className="overflow-x-auto relative z-10 rounded-xl border border-ink-200/30 dark:border-ink-700/30 shadow-sm bg-white/20 dark:bg-ink-900/20 backdrop-blur-md">
               <table className="w-full text-left text-sm border-collapse">
                 <thead>
-                  <tr className="bg-slate-100/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-xs border-b border-slate-200/50 dark:border-slate-700/50">
+                  <tr className="bg-ink-100/50 dark:bg-ink-800/50 text-ink-500 dark:text-ink-400 font-bold uppercase tracking-wider text-xs border-b border-ink-200/50 dark:border-ink-700/50">
                     <th className="py-4 px-6">{t("admin.companies.th.company")}</th>
                     <th className="py-4 px-6">{t("admin.companies.th.email")}</th>
                     <th className="py-4 px-6">{t("admin.companies.th.phone")}</th>
@@ -319,14 +319,14 @@ export default function AdminDashboard() {
                     <th className="py-4 px-6 text-right">{t("admin.companies.th.actions")}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200/30 dark:divide-slate-700/30 text-slate-700 dark:text-slate-300">
+                <tbody className="divide-y divide-ink-200/30 dark:divide-ink-700/30 text-ink-700 dark:text-ink-300">
                   {companies.map((company, idx) => (
-                    <tr key={company._id} className={`transition-colors duration-200 hover:bg-white/40 dark:hover:bg-slate-800/60 ${idx % 2 === 0 ? 'bg-transparent' : 'bg-slate-50/30 dark:bg-slate-800/30'}`}>
-                      <td className="py-5 px-6 font-bold text-slate-900 dark:text-white text-base">
+                    <tr key={company._id} className={`transition-colors duration-200 hover:bg-white/40 dark:hover:bg-ink-800/60 ${idx % 2 === 0 ? 'bg-transparent' : 'bg-ink-50/30 dark:bg-ink-800/30'}`}>
+                      <td className="py-5 px-6 font-bold text-ink-900 dark:text-white text-base">
                         {company.companyName || company.fullName}
                       </td>
-                      <td className="py-5 px-6 font-medium text-slate-600 dark:text-slate-300">{company.email}</td>
-                      <td className="py-5 px-6 font-medium text-slate-500 dark:text-slate-400">{company.mobile || <span className="italic opacity-60">{t("admin.companies.fallback.na")}</span>}</td>
+                      <td className="py-5 px-6 font-medium text-ink-600 dark:text-ink-300">{company.email}</td>
+                      <td className="py-5 px-6 font-medium text-ink-500 dark:text-ink-400">{company.mobile || <span className="italic opacity-60">{t("admin.companies.fallback.na")}</span>}</td>
                       <td className="py-5 px-6">
                         {company.isVerified ? (
                           <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg font-black text-xs uppercase tracking-widest flex items-center inline-flex gap-1.5 shadow-sm">
@@ -343,12 +343,12 @@ export default function AdminDashboard() {
                           <button
                             onClick={() => handleVerifyCompany(company.email)}
                             disabled={verifyingEmail === company.email}
-                            className="glass-button px-4 py-2 bg-indigo-500/90 hover:bg-indigo-600 text-white rounded-xl font-bold text-xs transition-all shadow-[0_4px_15px_rgba(99,102,241,0.3)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.4)] disabled:opacity-50 disabled:shadow-none backdrop-blur-md border border-white/20"
+                            className="glass-button px-4 py-2 bg-marigold-500/90 hover:bg-marigold-500 text-white rounded-xl font-bold text-xs transition-all shadow-[0_4px_15px_rgba(99,102,241,0.3)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.4)] disabled:opacity-50 disabled:shadow-none backdrop-blur-md border border-white/20"
                           >
                             {t("admin.action.approve_credentials")}
                           </button>
                         ) : (
-                          <span className="text-xs text-slate-400 dark:text-slate-500 font-medium italic bg-slate-100/50 dark:bg-slate-800/50 px-3 py-1.5 rounded-lg border border-slate-200/50 dark:border-slate-700/50">{t("admin.companies.no_action")}</span>
+                          <span className="text-xs text-ink-400 dark:text-ink-500 font-medium italic bg-ink-100/50 dark:bg-ink-800/50 px-3 py-1.5 rounded-lg border border-ink-200/50 dark:border-ink-700/50">{t("admin.companies.no_action")}</span>
                         )}
                       </td>
                     </tr>
@@ -366,18 +366,18 @@ export default function AdminDashboard() {
           <div className="glass-panel p-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
             
-            <div className="border-b border-slate-200/50 dark:border-slate-700/50 pb-4 mb-6 relative z-10">
-              <h2 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-wide flex items-center gap-3">
+            <div className="border-b border-ink-200/50 dark:border-ink-700/50 pb-4 mb-6 relative z-10">
+              <h2 className="text-xl font-black text-ink-800 dark:text-white uppercase tracking-wide flex items-center gap-3">
                 <span className="text-2xl drop-shadow-sm">⚙️</span> {t("admin.config.title")}
               </h2>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">{t("admin.config.description")}</p>
+              <p className="text-sm font-medium text-ink-500 dark:text-ink-400 mt-1">{t("admin.config.description")}</p>
             </div>
             
             <form onSubmit={handleSaveConfig} className="space-y-6 relative z-10">
-              <div className="bg-white/30 dark:bg-slate-800/30 p-5 rounded-2xl border border-white/40 dark:border-slate-700/50 shadow-sm backdrop-blur-md">
-                <div className="flex justify-between items-center font-bold text-slate-700 dark:text-slate-200 mb-3 text-sm uppercase tracking-wide">
+              <div className="bg-white/30 dark:bg-ink-800/30 p-5 rounded-2xl border border-white/40 dark:border-ink-700/50 shadow-sm backdrop-blur-md">
+                <div className="flex justify-between items-center font-bold text-ink-700 dark:text-ink-200 mb-3 text-sm uppercase tracking-wide">
                   <span>{t("admin.config.commission_fee")}</span>
-                  <span className="bg-indigo-500/90 text-white px-3 py-1 rounded-lg shadow-sm border border-indigo-400/50">{commissionRate}%</span>
+                  <span className="bg-marigold-500/90 text-white px-3 py-1 rounded-lg shadow-sm border border-marigold-400/50">{commissionRate}%</span>
                 </div>
                 <input
                   type="range"
@@ -385,14 +385,14 @@ export default function AdminDashboard() {
                   max="50"
                   value={commissionRate}
                   onChange={(e) => setCommissionRate(Number(e.target.value))}
-                  className="w-full h-2 bg-slate-200/80 dark:bg-slate-700/80 rounded-full appearance-none cursor-pointer accent-indigo-500 shadow-inner"
+                  className="w-full h-2 bg-ink-200/80 dark:bg-ink-700/80 rounded-full appearance-none cursor-pointer accent-marigold-500 shadow-inner"
                 />
               </div>
 
-              <div className="bg-white/30 dark:bg-slate-800/30 p-5 rounded-2xl border border-white/40 dark:border-slate-700/50 shadow-sm backdrop-blur-md">
-                <label className="block font-bold text-slate-700 dark:text-slate-200 mb-3 text-sm uppercase tracking-wide">{t("admin.config.min_deposit")}</label>
+              <div className="bg-white/30 dark:bg-ink-800/30 p-5 rounded-2xl border border-white/40 dark:border-ink-700/50 shadow-sm backdrop-blur-md">
+                <label className="block font-bold text-ink-700 dark:text-ink-200 mb-3 text-sm uppercase tracking-wide">{t("admin.config.min_deposit")}</label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">₹</span>
+                  <span className="absolute left-4 top-1/2 -tranink-y-1/2 text-ink-500 font-bold">₹</span>
                   <input
                     type="number"
                     min="500"
@@ -400,7 +400,7 @@ export default function AdminDashboard() {
                     step="500"
                     value={minDeposit}
                     onChange={(e) => setMinDeposit(Number(e.target.value))}
-                    className="glass-input w-full bg-white/40 dark:bg-slate-900/40 border border-white/50 dark:border-slate-700/50 text-sm pl-10 pr-4 py-3.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 dark:text-white font-bold transition-all shadow-inner backdrop-blur-sm"
+                    className="glass-input w-full bg-white/40 dark:bg-ink-900/40 border border-white/50 dark:border-ink-700/50 text-sm pl-10 pr-4 py-3.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-500/50 focus:border-marigold-500 dark:text-white font-bold transition-all shadow-inner backdrop-blur-sm"
                   />
                 </div>
               </div>
@@ -408,7 +408,7 @@ export default function AdminDashboard() {
               <button
                 type="submit"
                 disabled={savingConfig}
-                className="glass-button w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-[0_4px_20px_rgba(99,102,241,0.4)] hover:shadow-[0_8px_30px_rgba(99,102,241,0.5)] disabled:opacity-70 disabled:shadow-none mt-2 border border-white/20 backdrop-blur-md"
+                className="glass-button w-full py-4 bg-gradient-to-r from-marigold-500 to-purple-600 hover:from-marigold-600 hover:to-purple-700 text-white rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-[0_4px_20px_rgba(99,102,241,0.4)] hover:shadow-[0_8px_30px_rgba(99,102,241,0.5)] disabled:opacity-70 disabled:shadow-none mt-2 border border-white/20 backdrop-blur-md"
               >
                 {savingConfig ? (
                   <span className="flex items-center justify-center gap-2">
@@ -426,17 +426,17 @@ export default function AdminDashboard() {
           <div className="glass-panel p-8 relative overflow-hidden flex flex-col">
             <div className="absolute top-0 left-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
             
-            <div className="border-b border-slate-200/50 dark:border-slate-700/50 pb-4 mb-6 relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="border-b border-ink-200/50 dark:border-ink-700/50 pb-4 mb-6 relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
-                <h2 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-wide flex items-center gap-3">
+                <h2 className="text-xl font-black text-ink-800 dark:text-white uppercase tracking-wide flex items-center gap-3">
                   <span className="text-2xl drop-shadow-sm">💾</span> {t("admin.backup.title")}
                 </h2>
-                <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">{t("admin.backup.description")}</p>
+                <p className="text-sm font-medium text-ink-500 dark:text-ink-400 mt-1">{t("admin.backup.description")}</p>
               </div>
               <button
                 onClick={handleBackupDatabase}
                 disabled={backingUp}
-                className="glass-button px-5 py-2.5 bg-slate-800/90 dark:bg-white/90 hover:bg-slate-900 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-black uppercase tracking-wider rounded-xl disabled:opacity-50 transition-all shadow-[0_4px_15px_rgba(0,0,0,0.2)] dark:shadow-[0_4px_15px_rgba(255,255,255,0.2)] flex items-center gap-2 whitespace-nowrap backdrop-blur-md border border-white/10 dark:border-slate-800/10"
+                className="glass-button px-5 py-2.5 bg-ink-800/90 dark:bg-white/90 hover:bg-ink-900 dark:hover:bg-white text-white dark:text-ink-900 text-xs font-black uppercase tracking-wider rounded-xl disabled:opacity-50 transition-all shadow-[0_4px_15px_rgba(0,0,0,0.2)] dark:shadow-[0_4px_15px_rgba(255,255,255,0.2)] flex items-center gap-2 whitespace-nowrap backdrop-blur-md border border-white/10 dark:border-ink-800/10"
               >
                 {backingUp ? (
                   <>
@@ -460,20 +460,20 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            <div className="flex-1 bg-slate-900/90 dark:bg-slate-950/90 border border-slate-700/50 shadow-inner text-slate-300 font-mono text-[11px] sm:text-xs p-5 rounded-2xl overflow-y-auto space-y-2 select-text relative z-10 backdrop-blur-xl min-h-[200px] max-h-[300px]">
-              <div className="sticky top-0 bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur-sm pb-2 mb-2 border-b border-slate-700/50 text-slate-500 font-bold flex justify-between uppercase tracking-widest text-[10px] py-1 -mt-1 -mx-1 px-1 z-20">
+            <div className="flex-1 bg-ink-900/90 dark:bg-ink-950/90 border border-ink-700/50 shadow-inner text-ink-300 font-mono text-[11px] sm:text-xs p-5 rounded-2xl overflow-y-auto space-y-2 select-text relative z-10 backdrop-blur-xl min-h-[200px] max-h-[300px]">
+              <div className="sticky top-0 bg-ink-900/95 dark:bg-ink-950/95 backdrop-blur-sm pb-2 mb-2 border-b border-ink-700/50 text-ink-500 font-bold flex justify-between uppercase tracking-widest text-[10px] py-1 -mt-1 -mx-1 px-1 z-20">
                 <span>System Terminal</span>
                 <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span> LIVE</span>
               </div>
               {systemLogs.map((log, idx) => (
                 <div key={idx} className="flex gap-3 hover:bg-white/5 p-1 rounded transition-colors relative z-10">
-                  <span className="text-slate-500 shrink-0">[{new Date().toLocaleTimeString()}]</span>
+                  <span className="text-ink-500 shrink-0">[{new Date().toLocaleTimeString()}]</span>
                   <span className={`${log.startsWith("WRN") ? "text-amber-400" : log.startsWith("ERR") ? "text-rose-400" : "text-emerald-400"} break-all`}>
                     {log}
                   </span>
                 </div>
               ))}
-              <div className="text-slate-600 animate-pulse relative z-10">_</div>
+              <div className="text-ink-600 animate-pulse relative z-10">_</div>
             </div>
           </div>
           

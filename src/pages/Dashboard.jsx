@@ -53,12 +53,12 @@ export default function Dashboard() {
               <span className={`px-1.5 py-0.5 rounded font-extrabold transition-all uppercase ${
                 isActive ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-sm" :
                 isCompleted ? "bg-purple-100 text-purple-700 font-semibold" :
-                "bg-gray-100 dark:bg-slate-800 text-gray-400 font-normal"
+                "bg-ink-100 dark:bg-ink-800 text-ink-400 font-normal"
               }`}>
                 {step.label}
               </span>
               {idx < steps.length - 1 && (
-                <span className={isCompleted ? "text-purple-400 font-bold" : "text-gray-300"}>➔</span>
+                <span className={isCompleted ? "text-purple-400 font-bold" : "text-ink-300"}>➔</span>
               )}
             </div>
           );
@@ -581,10 +581,10 @@ export default function Dashboard() {
     <div className="min-h-screen bg-transparent">
       {/* Dashboard Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
+        <div className="bg-white dark:bg-ink-900 rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-6 mb-6 gap-4">
             <div>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-2 flex items-center flex-wrap gap-2">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-ink-800 dark:text-ink-200 mb-2 flex items-center flex-wrap gap-2">
                 {t("dashboard.welcome", { name: currentUser?.fullName || t('dashboard.studentDefault') })}
                 {currentUser?.isEndorsed && (
                   <span className="bg-emerald-50 border border-emerald-100 text-emerald-600 text-[9px] font-black px-2 py-0.5 rounded-full select-none">
@@ -593,17 +593,17 @@ export default function Dashboard() {
                 )}
               </h1>
               {currentUser?.collegeName && (
-                <p className="text-sm font-semibold text-indigo-600">
+                <p className="text-sm font-semibold text-marigold-500">
                   {"🎓 " + t("dashboard.verifiedStudent", { collegeName: currentUser.collegeName, enrollmentNumber: currentUser.enrollmentNumber })}
                 </p>
               )}
             </div>
 
             {/* Membership Pass Panel Card */}
-            <div className="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl flex items-center gap-3.5 shadow-sm">
+            <div className="bg-marigold-50 border border-marigold-100 p-4 rounded-2xl flex items-center gap-3.5 shadow-sm">
               <span className="text-2xl">🎟️</span>
               <div>
-                <span className="text-[10px] font-black text-indigo-700 uppercase tracking-wider block">{t("dashboard.membershipPassStatus")}</span>
+                <span className="text-[10px] font-black text-marigold-700 uppercase tracking-wider block">{t("dashboard.membershipPassStatus")}</span>
                 {localStorage.getItem("hasPaidPass") === "true" ? (
                   <span className="text-xs font-bold text-emerald-600 block mt-0.5">{"✓ " + t("dashboard.premiumActivated")}</span>
                 ) : (
@@ -614,7 +614,7 @@ export default function Dashboard() {
                         setCheckoutStep(1);
                         setShowCheckoutModal(true);
                       }}
-                      className="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[9px] font-bold transition shadow-sm"
+                      className="px-2.5 py-1 bg-marigold-500 hover:bg-marigold-600 text-white rounded-lg text-[9px] font-bold transition shadow-sm"
                     >
                       {t("dashboard.upgradePlan")}
                     </button>
@@ -623,30 +623,30 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-          <p className="text-gray-600 dark:text-gray-300">{t("dashboard.loggedInMsg")}</p>
+          <p className="text-ink-600 dark:text-ink-300">{t("dashboard.loggedInMsg")}</p>
           
           {/* Old Feature Cards (Interactive) */}
           <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
             <button 
               onClick={() => scrollToSection("gigs-section")}
-              className="group text-left bg-blue-50 p-4 sm:p-6 rounded-xl hover:bg-blue-100/70 hover:-translate-y-0.5 transition-all duration-200 shadow-sm border border-blue-100/30 dark:bg-blue-950/40 dark:hover:bg-blue-950/60 dark:border-blue-900/30"
+              className="group text-left bg-marigold-50 p-4 sm:p-6 rounded-xl hover:bg-marigold-100/70 hover:-tranink-y-0.5 transition-all duration-200 shadow-sm border border-marigold-100/30 dark:bg-marigold-950/40 dark:hover:bg-marigold-950/60 dark:border-marigold-900/30"
             >
-              <h3 className="font-bold text-lg text-blue-950 mb-2 group-hover:text-blue-700 dark:text-blue-200 dark:group-hover:text-blue-400">{t("dashboard.myGigs")}</h3>
-              <p className="text-gray-600 dark:text-gray-300 text-xs dark:text-gray-400">{t("dashboard.manageGigs")}</p>
+              <h3 className="font-bold text-lg text-marigold-950 mb-2 group-hover:text-marigold-700 dark:text-marigold-200 dark:group-hover:text-marigold-400">{t("dashboard.myGigs")}</h3>
+              <p className="text-ink-600 dark:text-ink-300 text-xs dark:text-ink-400">{t("dashboard.manageGigs")}</p>
             </button>
             <button 
               onClick={() => scrollToSection("projects-section")}
-              className="group text-left bg-green-50 p-4 sm:p-6 rounded-xl hover:bg-green-100/70 hover:-translate-y-0.5 transition-all duration-200 shadow-sm border border-green-100/30 dark:bg-emerald-950/40 dark:hover:bg-emerald-950/60 dark:border-emerald-900/30"
+              className="group text-left bg-green-50 p-4 sm:p-6 rounded-xl hover:bg-green-100/70 hover:-tranink-y-0.5 transition-all duration-200 shadow-sm border border-green-100/30 dark:bg-emerald-950/40 dark:hover:bg-emerald-950/60 dark:border-emerald-900/30"
             >
               <h3 className="font-bold text-lg text-green-950 mb-2 group-hover:text-green-700 dark:text-emerald-200 dark:group-hover:text-emerald-400">{t("dashboard.orders")}</h3>
-              <p className="text-gray-600 dark:text-gray-300 text-xs dark:text-gray-400">{t("dashboard.exploreProjects")}</p>
+              <p className="text-ink-600 dark:text-ink-300 text-xs dark:text-ink-400">{t("dashboard.exploreProjects")}</p>
             </button>
             <button 
               onClick={() => navigate("/chat")}
-              className="group text-left bg-purple-50 p-4 sm:p-6 rounded-xl hover:bg-purple-100/70 hover:-translate-y-0.5 transition-all duration-200 shadow-sm border border-purple-100/30 dark:bg-purple-950/40 dark:hover:bg-purple-950/60 dark:border-purple-900/30"
+              className="group text-left bg-purple-50 p-4 sm:p-6 rounded-xl hover:bg-purple-100/70 hover:-tranink-y-0.5 transition-all duration-200 shadow-sm border border-purple-100/30 dark:bg-purple-950/40 dark:hover:bg-purple-950/60 dark:border-purple-900/30"
             >
               <h3 className="font-bold text-lg text-purple-950 mb-2 group-hover:text-purple-700 dark:text-purple-200 dark:group-hover:text-purple-400">{t("dashboard.messages")}</h3>
-              <p className="text-gray-600 dark:text-gray-300 text-xs dark:text-gray-400">{t("dashboard.chatManagers")}</p>
+              <p className="text-ink-600 dark:text-ink-300 text-xs dark:text-ink-400">{t("dashboard.chatManagers")}</p>
             </button>
           </div>
 
@@ -654,12 +654,12 @@ export default function Dashboard() {
           {/* 🚀 STUDENT ACTIVE GIGS & APPLICATIONS SECTION                              */}
           {/* ========================================================================= */}
           {currentUser && currentUser.userRole !== "company" && (
-            <div id="gigs-section" className="mt-12 pt-8 border-t border-gray-100 dark:border-slate-800">
-              <h2 className="text-lg sm:text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">{t("dashboard.myGigsAppsTitle")}</h2>
-              <p className="text-sm text-gray-500 mb-6">{t("dashboard.trackAppsDesc")}</p>
+            <div id="gigs-section" className="mt-12 pt-8 border-t border-ink-100 dark:border-ink-800">
+              <h2 className="text-lg sm:text-2xl font-bold text-ink-800 dark:text-ink-200 mb-2">{t("dashboard.myGigsAppsTitle")}</h2>
+              <p className="text-sm text-ink-500 mb-6">{t("dashboard.trackAppsDesc")}</p>
 
               {myApplications.length === 0 ? (
-                <div className="text-center py-8 border border-dashed border-gray-200 rounded-xl text-gray-400 font-medium bg-gray-50 dark:bg-slate-800/50 dark:bg-slate-900/50 dark:border-slate-800 dark:text-slate-400">
+                <div className="text-center py-8 border border-dashed border-ink-200 rounded-xl text-ink-400 font-medium bg-ink-50 dark:bg-ink-800/50 dark:bg-ink-900/50 dark:border-ink-800 dark:text-ink-400">
                   {"📭 " + t("dashboard.noGigsYet")}
                 </div>
               ) : (
@@ -671,18 +671,18 @@ export default function Dashboard() {
                       <div 
                         key={app._id} 
                         onClick={() => navigate(`/project/${project._id}`)}
-                        className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition cursor-pointer"
+                        className="bg-white dark:bg-ink-900 rounded-xl border border-ink-200 dark:border-ink-800 p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition cursor-pointer"
                       >
                         <div>
                           <div className="flex justify-between items-center mb-3">
-                            <span className="bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase">
+                            <span className="bg-marigold-50 text-marigold-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase">
                               💼 {project.workType}
                             </span>
                             {renderStepper(app.status)}
                           </div>
-                          <h4 className="text-sm font-bold text-gray-900 dark:text-gray-200 mb-1">{project.title}</h4>
-                          <p className="text-xs text-gray-400 mb-2">{t("dashboard.companyLabel")} {project.companyId && project.companyId.email ? project.companyId.email.split("@")[0].toUpperCase() : "COMPANY"}</p>
-                          <p className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed mb-4">{project.description}</p>
+                          <h4 className="text-sm font-bold text-ink-900 dark:text-ink-200 mb-1">{project.title}</h4>
+                          <p className="text-xs text-ink-400 mb-2">{t("dashboard.companyLabel")} {project.companyId && project.companyId.email ? project.companyId.email.split("@")[0].toUpperCase() : "COMPANY"}</p>
+                          <p className="text-xs text-ink-600 dark:text-ink-300 line-clamp-2 leading-relaxed mb-4">{project.description}</p>
                         </div>
                         
                         {app.status === "Revision Requested" && app.feedbackText && (
@@ -694,13 +694,13 @@ export default function Dashboard() {
                         <div className="border-t pt-3 mt-2 flex flex-col gap-3">
                           <div className="flex justify-between items-center text-[10px]">
                             <div>
-                              <p className="text-[9px] uppercase font-bold text-gray-400">{t("dashboard.budget")}</p>
+                              <p className="text-[9px] uppercase font-bold text-ink-400">{t("dashboard.budget")}</p>
                               <p className="font-bold text-green-600 text-xs">₹{project.budget.toLocaleString()}</p>
                             </div>
                             {(app.status === "Approved" || app.status === "Revision Requested") && (
                               <div className="text-right">
-                                <p className="text-[9px] uppercase font-bold text-gray-400">{t("dashboard.deadlineDate")}</p>
-                                <p className="font-extrabold text-indigo-600">
+                                <p className="text-[9px] uppercase font-bold text-ink-400">{t("dashboard.deadlineDate")}</p>
+                                <p className="font-extrabold text-marigold-500">
                                   {new Date(app.extendedDeadline || project.deadline).toLocaleDateString()}
                                 </p>
                               </div>
@@ -708,8 +708,8 @@ export default function Dashboard() {
                           </div>
 
                           {app.extensionRequests && app.extensionRequests.length > 0 && (
-                            <div className="text-[10px] bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 p-2 rounded-xl flex justify-between items-center">
-                              <span className="text-slate-400 font-bold">{t("dashboard.extensionStatus")}</span>
+                            <div className="text-[10px] bg-ink-50 dark:bg-ink-800 border border-ink-100 dark:border-ink-800 p-2 rounded-xl flex justify-between items-center">
+                              <span className="text-ink-400 font-bold">{t("dashboard.extensionStatus")}</span>
                               <span className={`font-black uppercase text-[9px] ${
                                 app.extensionRequests[app.extensionRequests.length - 1].status === "Approved"
                                   ? "text-green-600"
@@ -727,7 +727,7 @@ export default function Dashboard() {
                               {app.status === "Approved" && (
                                 <button
                                   onClick={(e) => { e.stopPropagation(); setActiveAppToExtend(app); setShowExtensionModal(true); }}
-                                  className="text-[10px] text-indigo-600 font-extrabold hover:underline"
+                                  className="text-[10px] text-marigold-500 font-extrabold hover:underline"
                                 >
                                   {t("dashboard.requestExtension")} 🕒
                                 </button>
@@ -737,7 +737,7 @@ export default function Dashboard() {
                             {(app.status === "Approved" || app.status === "Revision Requested") && (
                               <button
                                 onClick={(e) => { e.stopPropagation(); setActiveAppToSubmit(app); setShowSubmitModal(true); }}
-                                className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-1.5 rounded-lg transition shadow-sm animate-fade-in"
+                                className="bg-marigold-500 hover:bg-marigold-600 text-white font-bold text-xs px-3.5 py-1.5 rounded-lg transition shadow-sm animate-fade-in"
                               >
                                 {app.status === "Approved" ? t("dashboard.submitWork") : t("dashboard.submitRevision")}
                               </button>
@@ -749,14 +749,14 @@ export default function Dashboard() {
                               <div className="text-right w-full">
                                 <span className="text-[11px] text-green-600 font-bold block">{"✓ " + t("dashboard.approved")}</span>
                                 {app.feedbackText && (
-                                  <p className="text-[10px] text-gray-400 max-w-[150px] truncate" title={app.feedbackText}>
+                                  <p className="text-[10px] text-ink-400 max-w-[150px] truncate" title={app.feedbackText}>
                                     "{app.feedbackText}"
                                   </p>
                                 )}
                               </div>
                             )}
                             {app.status === "Pending" && (
-                              <span className="text-[11px] text-gray-400 font-medium">{t("dashboard.applied")}</span>
+                              <span className="text-[11px] text-ink-400 font-medium">{t("dashboard.applied")}</span>
                             )}
                           </div>
                         </div>
@@ -771,20 +771,20 @@ export default function Dashboard() {
           {/* 🧠 workMitra AI CV ANALYZER & CRITIQUE DASHBOARD                          */}
           {/* ========================================================================= */}
           {currentUser && currentUser.userRole !== "company" && (
-            <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-100 dark:border-slate-800 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
+            <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-ink-100 dark:border-ink-800 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
               {/* Left Panel: Inputs for CV share link and Raw Text */}
-              <div className="lg:col-span-1 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 p-4 sm:p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+              <div className="lg:col-span-1 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 p-4 sm:p-6 rounded-2xl shadow-sm flex flex-col justify-between">
                 <div>
-                  <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-1 flex items-center gap-1.5">
+                  <h3 className="text-lg font-bold text-ink-800 dark:text-ink-200 mb-1 flex items-center gap-1.5">
                     <span>{"🧠 " + t("dashboard.aiCvReviewer")}</span>
-                    <span className="bg-indigo-100 text-indigo-800 text-[8px] font-extrabold px-1.5 py-0.5 rounded uppercase">{t("dashboard.pro")}</span>
+                    <span className="bg-marigold-100 text-marigold-800 text-[8px] font-extrabold px-1.5 py-0.5 rounded uppercase">{t("dashboard.pro")}</span>
                   </h3>
-                  <p className="text-xs text-gray-500 mb-4">{t("dashboard.cvReviewDesc")}</p>
+                  <p className="text-xs text-ink-500 mb-4">{t("dashboard.cvReviewDesc")}</p>
 
                   <form onSubmit={handleUpdateResumeDetails} className="space-y-4">
                     <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("dashboard.uploadCvPdf")}</label>
-                      <div className="relative border-2 border-dashed border-gray-200 dark:border-slate-800 rounded-xl p-3 text-center hover:border-indigo-400 transition cursor-pointer bg-gray-50 dark:bg-slate-800/50">
+                      <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("dashboard.uploadCvPdf")}</label>
+                      <div className="relative border-2 border-dashed border-ink-200 dark:border-ink-800 rounded-xl p-3 text-center hover:border-marigold-400 transition cursor-pointer bg-ink-50 dark:bg-ink-800/50">
                         <input
                           type="file"
                           accept=".pdf"
@@ -794,14 +794,14 @@ export default function Dashboard() {
                         />
                         {uploadingCV ? (
                           <div className="flex flex-col items-center justify-center space-y-1.5 py-1">
-                            <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-                            <span className="text-[10px] text-indigo-600 font-bold">{t("dashboard.extractingText")}</span>
+                            <div className="w-5 h-5 border-2 border-marigold-500 border-t-transparent rounded-full animate-spin"></div>
+                            <span className="text-[10px] text-marigold-500 font-bold">{t("dashboard.extractingText")}</span>
                           </div>
                         ) : (
                           <div className="space-y-1">
                             <div className="text-base">📄</div>
-                            <div className="text-[10px] font-bold text-gray-700 dark:text-gray-200">{t("dashboard.dragDropPdf")}</div>
-                            <div className="text-[9px] text-gray-400">{t("dashboard.pdfFormatMax")}</div>
+                            <div className="text-[10px] font-bold text-ink-700 dark:text-ink-200">{t("dashboard.dragDropPdf")}</div>
+                            <div className="text-[9px] text-ink-400">{t("dashboard.pdfFormatMax")}</div>
                           </div>
                         )}
                       </div>
@@ -830,8 +830,8 @@ export default function Dashboard() {
                       disabled={loadingReview || !resumeText}
                       className={`w-full py-3 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition shadow-md ${
                         !resumeText || loadingReview 
-                          ? "bg-gray-300 cursor-not-allowed" 
-                          : "bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98]"
+                          ? "bg-ink-300 cursor-not-allowed" 
+                          : "bg-marigold-500 hover:bg-marigold-600 active:scale-[0.98]"
                       }`}
                     >
                       {loadingReview ? t("dashboard.analyzing") : t("dashboard.reviewCv")}
@@ -841,26 +841,26 @@ export default function Dashboard() {
               </div>
 
               {/* Right Panel: Quality Report Display */}
-              <div className="lg:col-span-2 bg-gradient-to-br from-indigo-950 to-slate-900 text-white p-4 sm:p-6 rounded-2xl shadow-xl flex flex-col justify-between min-h-[250px] sm:min-h-[350px]">
+              <div className="lg:col-span-2 bg-gradient-to-br from-marigold-950 to-ink-900 text-white p-4 sm:p-6 rounded-2xl shadow-xl flex flex-col justify-between min-h-[250px] sm:min-h-[350px]">
                 {loadingReview ? (
                   <div className="flex flex-col items-center justify-center h-full my-auto space-y-4">
-                    <div className="w-12 h-12 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
-                    <p className="text-xs text-indigo-200 font-bold animate-pulse uppercase tracking-wider">{t("dashboard.aiAnalyzing")}</p>
+                    <div className="w-12 h-12 border-4 border-marigold-400 border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-xs text-marigold-200 font-bold animate-pulse uppercase tracking-wider">{t("dashboard.aiAnalyzing")}</p>
                   </div>
                 ) : cvReport ? (
                   <div className="space-y-6">
                     {/* Header: Score Ring */}
-                    <div className="flex justify-between items-center border-b border-white/10 dark:border-slate-800/10 pb-4">
+                    <div className="flex justify-between items-center border-b border-white/10 dark:border-ink-800/10 pb-4">
                       <div>
                         <h4 className="text-base font-bold text-white">{t("dashboard.aiQualityReport")}</h4>
-                        <p className="text-[10px] text-indigo-300 font-medium mt-0.5">{t("dashboard.poweredBy")}</p>
+                        <p className="text-[10px] text-marigold-300 font-medium mt-0.5">{t("dashboard.poweredBy")}</p>
                       </div>
                       <div className="flex items-center space-x-3 text-right">
                         <div>
-                          <p className="text-[9px] uppercase font-bold text-indigo-300">{t("dashboard.qualityScore")}</p>
-                          <p className="text-2xl font-black text-indigo-400">{cvReport.score}/100</p>
+                          <p className="text-[9px] uppercase font-bold text-marigold-300">{t("dashboard.qualityScore")}</p>
+                          <p className="text-2xl font-black text-marigold-400">{cvReport.score}/100</p>
                         </div>
-                        <div className="relative w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-slate-900/10 dark:bg-slate-900/10 border-2 border-indigo-400">
+                        <div className="relative w-12 h-12 flex items-center justify-center rounded-full bg-white dark:bg-ink-900/10 dark:bg-ink-900/10 border-2 border-marigold-400">
                           <span className="text-[11px] font-black">{cvReport.score}%</span>
                         </div>
                       </div>
@@ -872,7 +872,7 @@ export default function Dashboard() {
                         <h5 className="text-[11px] font-extrabold uppercase text-green-400 mb-2 flex items-center gap-1.5">
                           <span>{"✓ " + t("dashboard.strengths")}</span>
                         </h5>
-                        <ul className="space-y-1.5 text-xs text-slate-300 list-disc list-inside">
+                        <ul className="space-y-1.5 text-xs text-ink-300 list-disc list-inside">
                           {cvReport.strengths?.map((str, idx) => (
                             <li key={idx}>{str}</li>
                           ))}
@@ -882,7 +882,7 @@ export default function Dashboard() {
                         <h5 className="text-[11px] font-extrabold uppercase text-amber-400 mb-2 flex items-center gap-1.5">
                           <span>{"⚠️ " + t("dashboard.areasOfImprovement")}</span>
                         </h5>
-                        <ul className="space-y-1.5 text-xs text-slate-300 list-disc list-inside">
+                        <ul className="space-y-1.5 text-xs text-ink-300 list-disc list-inside">
                           {cvReport.improvements?.map((imp, idx) => (
                             <li key={idx}>{imp}</li>
                           ))}
@@ -891,18 +891,18 @@ export default function Dashboard() {
                     </div>
 
                     {/* Recommendations Alert Box */}
-                    <div className="bg-white dark:bg-slate-900/5 dark:bg-slate-900/5 border border-white/10 dark:border-slate-800/10 p-4 rounded-xl">
-                      <h5 className="text-[10px] font-extrabold uppercase text-indigo-300 mb-1">{t("dashboard.actionableRecommendations")}</h5>
-                      <p className="text-xs text-slate-200 leading-relaxed italic">
+                    <div className="bg-white dark:bg-ink-900/5 dark:bg-ink-900/5 border border-white/10 dark:border-ink-800/10 p-4 rounded-xl">
+                      <h5 className="text-[10px] font-extrabold uppercase text-marigold-300 mb-1">{t("dashboard.actionableRecommendations")}</h5>
+                      <p className="text-xs text-ink-200 leading-relaxed italic">
                         "{cvReport.recommendations}"
                       </p>
                     </div>
 
                     {/* Skill Gap Analyzer */}
-                    <div className="bg-white dark:bg-slate-900/5 dark:bg-slate-900/5 border border-white/10 dark:border-slate-800/10 p-4 rounded-xl text-left">
-                      <h5 className="text-[10px] font-extrabold uppercase text-indigo-300 mb-2 flex items-center gap-1.5 justify-between">
+                    <div className="bg-white dark:bg-ink-900/5 dark:bg-ink-900/5 border border-white/10 dark:border-ink-800/10 p-4 rounded-xl text-left">
+                      <h5 className="text-[10px] font-extrabold uppercase text-marigold-300 mb-2 flex items-center gap-1.5 justify-between">
                         <span>{"🔍 " + t("dashboard.skillGapAnalyzer")}</span>
-                        <span className="bg-indigo-500/20 text-indigo-300 text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">{t("dashboard.liveDemands")}</span>
+                        <span className="bg-marigold-500/20 text-marigold-300 text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider">{t("dashboard.liveDemands")}</span>
                       </h5>
                       {(() => {
                         const userSkills = new Set(
@@ -925,19 +925,19 @@ export default function Dashboard() {
                           .slice(0, 4);
 
                         if (sortedGaps.length === 0) {
-                          return <p className="text-[10px] text-slate-400 italic">{t("dashboard.noSkillGaps")}</p>;
+                          return <p className="text-[10px] text-ink-400 italic">{t("dashboard.noSkillGaps")}</p>;
                         }
 
                         return (
                           <div className="space-y-2">
-                            <p className="text-[10px] text-slate-300 leading-normal">
+                            <p className="text-[10px] text-ink-300 leading-normal">
                               {t("dashboard.missingSkills")}
                             </p>
                             <div className="flex flex-wrap gap-2 pt-1">
                               {sortedGaps.map(([skill, count]) => (
-                                <span key={skill} className="bg-slate-900 border border-slate-700/30 text-indigo-300 text-[10px] font-extrabold px-2.5 py-1 rounded-lg flex items-center gap-1.5" title={`${count} active projects require this`}>
+                                <span key={skill} className="bg-ink-900 border border-ink-700/30 text-marigold-300 text-[10px] font-extrabold px-2.5 py-1 rounded-lg flex items-center gap-1.5" title={`${count} active projects require this`}>
                                   {skill}
-                                  <span className="bg-indigo-900/60 text-indigo-400 text-[8px] font-black px-1 py-0.5 rounded">+{count} {t("dashboard.gigs")}</span>
+                                  <span className="bg-marigold-900/60 text-marigold-400 text-[8px] font-black px-1 py-0.5 rounded">+{count} {t("dashboard.gigs")}</span>
                                 </span>
                               ))}
                             </div>
@@ -949,8 +949,8 @@ export default function Dashboard() {
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full my-auto text-center p-8">
                     <span className="text-4xl mb-3">📄</span>
-                    <h4 className="text-base font-bold text-indigo-200 mb-1">{t("dashboard.noQualityReport")}</h4>
-                    <p className="text-xs text-slate-400 max-w-sm leading-relaxed">{t("dashboard.pasteResumeToReview")}</p>
+                    <h4 className="text-base font-bold text-marigold-200 mb-1">{t("dashboard.noQualityReport")}</h4>
+                    <p className="text-xs text-ink-400 max-w-sm leading-relaxed">{t("dashboard.pasteResumeToReview")}</p>
                   </div>
                 )}
               </div>
@@ -961,20 +961,20 @@ export default function Dashboard() {
           {/* ========================================================================= */}
           {/* 🚀 DEPLOYED COMPANY PROJECTS MARKETPLACE BLOCK                            */}
           {/* ========================================================================= */}
-          <div id="projects-section" className="mt-12 pt-8 border-t border-gray-100 dark:border-slate-800">
-            <h2 className="text-lg sm:text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">{t("dashboard.deployedCompanyProjects")}</h2>
-            <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">{t("dashboard.exploreTasks")}</p>
+          <div id="projects-section" className="mt-12 pt-8 border-t border-ink-100 dark:border-ink-800">
+            <h2 className="text-lg sm:text-2xl font-bold text-ink-800 dark:text-ink-200 mb-2">{t("dashboard.deployedCompanyProjects")}</h2>
+            <p className="text-xs sm:text-sm text-ink-500 mb-4 sm:mb-6">{t("dashboard.exploreTasks")}</p>
 
             {/* AI Top Picks */}
             {currentUser && currentUser.userRole === "student" && (
               <div className="mb-8">
-                <h3 className="text-md font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600 mb-4 flex items-center gap-2 drop-shadow-sm">
+                <h3 className="text-md font-bold text-transparent bg-clip-text bg-gradient-to-r from-marigold-500 to-purple-600 mb-4 flex items-center gap-2 drop-shadow-sm">
                   <span className="text-xl">💡</span> {t("dashboard.aiTopPicks")}
                 </h3>
                 {loadingAiPicks ? (
                   <div className="flex space-x-4 overflow-x-auto pb-4 hide-scrollbar">
                     {[1, 2, 3].map(i => (
-                      <div key={i} className="min-w-[280px] sm:min-w-[320px] h-32 bg-gray-100 dark:bg-slate-800 animate-pulse rounded-2xl border border-gray-200 dark:border-slate-800"></div>
+                      <div key={i} className="min-w-[280px] sm:min-w-[320px] h-32 bg-ink-100 dark:bg-ink-800 animate-pulse rounded-2xl border border-ink-200 dark:border-ink-800"></div>
                     ))}
                   </div>
                 ) : aiTopPicks.length > 0 ? (
@@ -983,26 +983,26 @@ export default function Dashboard() {
                       <div 
                         key={project._id}
                         onClick={() => navigate(`/project/${project._id}`)}
-                        className="min-w-[280px] sm:min-w-[320px] bg-white dark:bg-slate-900 rounded-2xl border border-purple-100 dark:border-slate-800 p-5 shadow-[0_0_15px_rgba(168,85,247,0.15)] hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] transition cursor-pointer flex flex-col justify-between"
+                        className="min-w-[280px] sm:min-w-[320px] bg-white dark:bg-ink-900 rounded-2xl border border-purple-100 dark:border-ink-800 p-5 shadow-[0_0_15px_rgba(168,85,247,0.15)] hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] transition cursor-pointer flex flex-col justify-between"
                       >
                         <div>
                           <div className="flex justify-between items-start mb-2">
-                            <h4 className="font-bold text-gray-900 dark:text-gray-200 text-sm truncate pr-2">{project.title}</h4>
+                            <h4 className="font-bold text-ink-900 dark:text-ink-200 text-sm truncate pr-2">{project.title}</h4>
                             <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm">
                               {t("dashboard.topMatch")}
                             </span>
                           </div>
-                          <p className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2 mb-3">{project.description}</p>
+                          <p className="text-xs text-ink-600 dark:text-ink-300 line-clamp-2 mb-3">{project.description}</p>
                         </div>
                         <div className="flex justify-between items-center mt-2 border-t pt-3">
                           <span className="font-bold text-green-600 text-xs">₹{project.budget?.toLocaleString() || 0}</span>
-                          <span className="text-indigo-600 font-bold text-[10px]">{t("dashboard.viewDetails")} ➔</span>
+                          <span className="text-marigold-500 font-bold text-[10px]">{t("dashboard.viewDetails")} ➔</span>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="text-[11px] text-gray-400 bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-xl p-4 text-center">
+                  <div className="text-[11px] text-ink-400 bg-ink-50 dark:bg-ink-900 border border-ink-100 dark:border-ink-800 rounded-xl p-4 text-center">
                     {t("dashboard.noAiRecommendations")}
                   </div>
                 )}
@@ -1010,9 +1010,9 @@ export default function Dashboard() {
             )}
 
             {/* Marketplace Filters Panel */}
-            <div className="bg-gray-50 dark:bg-slate-800/60 dark:bg-slate-900/60 border border-gray-100 dark:border-slate-800 p-4 rounded-2xl mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="bg-ink-50 dark:bg-ink-800/60 dark:bg-ink-900/60 border border-ink-100 dark:border-ink-800 p-4 rounded-2xl mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
               <div className="relative">
-                <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">{t("dashboard.searchKeywords")}</label>
+                <label className="block text-[9px] font-bold text-ink-400 uppercase mb-1">{t("dashboard.searchKeywords")}</label>
                 <input
                   type="text"
                   placeholder={t("dashboard.searchPlaceholder")}
@@ -1020,10 +1020,10 @@ export default function Dashboard() {
                   onChange={(e) => { setSearchTerm(e.target.value); setShowSearchSuggestions(true); }}
                   onFocus={() => setShowSearchSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 250)}
-                  className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"
                 />
                 {showSearchSuggestions && searchTerm && (
-                  <div className="absolute left-0 right-0 mt-1 bg-white dark:bg-slate-900 border border-slate-200 rounded-xl shadow-lg z-50 max-h-48 overflow-y-auto text-left dark:border-slate-800">
+                  <div className="absolute left-0 right-0 mt-1 bg-white dark:bg-ink-900 border border-ink-200 rounded-xl shadow-lg z-50 max-h-48 overflow-y-auto text-left dark:border-ink-800">
                     {(() => {
                       const query = searchTerm.toLowerCase();
                       const suggestions = [];
@@ -1045,7 +1045,7 @@ export default function Dashboard() {
                           key={idx}
                           type="button"
                           onClick={() => { setSearchTerm(suggestion); setShowSearchSuggestions(false); }}
-                          className="w-full text-left px-4 py-2 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:bg-slate-800 transition border-b border-slate-50 last:border-b-0 font-medium dark:text-slate-300 dark:hover:bg-slate-900 dark:border-slate-800"
+                          className="w-full text-left px-4 py-2 text-xs text-ink-700 dark:text-ink-300 hover:bg-ink-100 dark:bg-ink-800 transition border-b border-ink-50 last:border-b-0 font-medium dark:text-ink-300 dark:hover:bg-ink-900 dark:border-ink-800"
                         >
                           🔍 {suggestion}
                         </button>
@@ -1055,11 +1055,11 @@ export default function Dashboard() {
                 )}
               </div>
               <div>
-                <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">{t("dashboard.filterBySkill")}</label>
+                <label className="block text-[9px] font-bold text-ink-400 uppercase mb-1">{t("dashboard.filterBySkill")}</label>
                 <select
                   value={skillFilter}
                   onChange={(e) => setSkillFilter(e.target.value)}
-                  className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"
                 >
                   <option value="All">{t("dashboard.allSkills")}</option>
                   {uniqueSkillsList.map((skill, idx) => (
@@ -1068,11 +1068,11 @@ export default function Dashboard() {
                 </select>
               </div>
               <div>
-                <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">{t("dashboard.filterByWorkType")}</label>
+                <label className="block text-[9px] font-bold text-ink-400 uppercase mb-1">{t("dashboard.filterByWorkType")}</label>
                 <select
                   value={workTypeFilter}
                   onChange={(e) => setWorkTypeFilter(e.target.value)}
-                  className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"
                 >
                   <option value="All">{t("dashboard.allTypes")}</option>
                   <option value="Internship">{t("dashboard.internship")}</option>
@@ -1085,7 +1085,7 @@ export default function Dashboard() {
 
               {/* Slider for Max Budget */}
               <div>
-                <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">
+                <label className="block text-[9px] font-bold text-ink-400 uppercase mb-1">
                   {t("dashboard.maxBudget")} {maxBudgetFilter >= 10000 ? t("dashboard.unlimited") : `₹${maxBudgetFilter.toLocaleString()}`}
                 </label>
                 <input
@@ -1095,17 +1095,17 @@ export default function Dashboard() {
                   step="1000"
                   value={maxBudgetFilter}
                   onChange={(e) => setMaxBudgetFilter(Number(e.target.value))}
-                  className="w-full h-2 bg-gray-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600 mt-3"
+                  className="w-full h-2 bg-ink-200 dark:bg-ink-700 rounded-lg appearance-none cursor-pointer accent-marigold-600 mt-3"
                 />
               </div>
 
               {/* Sort By Select */}
               <div>
-                <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">{t("dashboard.sortGigs")}</label>
+                <label className="block text-[9px] font-bold text-ink-400 uppercase mb-1">{t("dashboard.sortGigs")}</label>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"
                 >
                   <option value="latest">{t("dashboard.newest")}</option>
                   <option value="budgetHigh">{t("dashboard.highestBudget")}</option>
@@ -1121,11 +1121,11 @@ export default function Dashboard() {
             )}
 
             {loading ? (
-              <div className="text-center py-8 text-gray-500 font-medium animate-pulse">
+              <div className="text-center py-8 text-ink-500 font-medium animate-pulse">
                 {"🔄 " + t("dashboard.fetchingProjects")}
               </div>
             ) : filteredProjects.length === 0 ? (
-              <div className="text-center py-12 border-2 border-dashed border-gray-200 dark:border-slate-800 rounded-xl text-gray-400 font-medium bg-gray-50 dark:bg-slate-800/50 dark:bg-slate-900/50">
+              <div className="text-center py-12 border-2 border-dashed border-ink-200 dark:border-ink-800 rounded-xl text-ink-400 font-medium bg-ink-50 dark:bg-ink-800/50 dark:bg-ink-900/50">
                 {"📭 " + t("dashboard.noProjectsMatch")}
               </div>
             ) : (
@@ -1137,28 +1137,28 @@ export default function Dashboard() {
                     <div 
                       key={project._id}
                       onClick={() => navigate(`/project/${project._id}`)}
-                      className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 p-4 sm:p-6 shadow-sm flex flex-col justify-between hover:border-blue-400 hover:shadow-md transition-all duration-200 cursor-pointer"
+                      className="bg-white dark:bg-ink-900 rounded-xl border border-ink-200 dark:border-ink-800 p-4 sm:p-6 shadow-sm flex flex-col justify-between hover:border-marigold-400 hover:shadow-md transition-all duration-200 cursor-pointer"
                     >
                       <div>
                         <div className="flex justify-between items-center mb-3">
-                          <span className="bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-md">
+                          <span className="bg-marigold-50 text-marigold-700 text-xs font-bold px-2.5 py-1 rounded-md">
                             {"🏢 " + (project.companyId && project.companyId.email ? project.companyId.email.split("@")[0].toUpperCase() : t("dashboard.companyDefault"))}
                           </span>
                           {project.aiRecommendationScore !== undefined && (
-                            <span className="bg-indigo-50 text-indigo-700 text-[10px] font-black px-2 py-0.5 rounded-lg border border-indigo-100/50 flex items-center gap-0.5">
+                            <span className="bg-marigold-50 text-marigold-700 text-[10px] font-black px-2 py-0.5 rounded-lg border border-marigold-100/50 flex items-center gap-0.5">
                               {"🧠 " + project.aiRecommendationScore + "% " + t("dashboard.match")}
                             </span>
                           )}
-                          <span className="bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 text-[11px] font-semibold px-2.5 py-1 rounded-md">
+                          <span className="bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-300 text-[11px] font-semibold px-2.5 py-1 rounded-md">
                             {"📍 " + (project.workType || t("dashboard.internship"))}
                           </span>
                         </div>
 
-                        <h4 className="text-base font-bold text-gray-900 dark:text-gray-200 mb-2">
+                        <h4 className="text-base font-bold text-ink-900 dark:text-ink-200 mb-2">
                           {project.title}
                         </h4>
                         
-                        <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-4 line-clamp-3">
+                        <p className="text-xs text-ink-600 dark:text-ink-300 leading-relaxed mb-4 line-clamp-3">
                           {project.description}
                         </p>
                       </div>
@@ -1166,7 +1166,7 @@ export default function Dashboard() {
                       <div className="border-t pt-4 mt-2 space-y-3">
                         <div className="flex flex-wrap gap-1">
                           {project.requiredSkills?.map((skill, index) => (
-                            <span key={index} className="bg-gray-50 dark:bg-slate-900 text-gray-600 dark:text-gray-300 text-[10px] font-medium px-2 py-0.5 rounded border border-gray-100 dark:border-slate-800">
+                            <span key={index} className="bg-ink-50 dark:bg-ink-900 text-ink-600 dark:text-ink-300 text-[10px] font-medium px-2 py-0.5 rounded border border-ink-100 dark:border-ink-800">
                               {skill}
                             </span>
                           ))}
@@ -1174,7 +1174,7 @@ export default function Dashboard() {
 
                         <div className="flex justify-between items-center text-xs pt-1">
                           <div>
-                            <p className="text-[10px] uppercase font-bold text-gray-400">Budget</p>
+                            <p className="text-[10px] uppercase font-bold text-ink-400">Budget</p>
                             <p className="font-bold text-green-600 text-sm">
                               ₹{project.budget?.toLocaleString()}
                             </p>
@@ -1183,7 +1183,7 @@ export default function Dashboard() {
                           {/* Interface State Management */}
                           <div className="flex gap-2 flex-wrap">
                             {currentUser?.userRole === "company" ? (
-                              <button className="bg-gray-100 dark:bg-slate-800 text-gray-500 font-bold text-xs px-4 py-2 rounded-lg cursor-not-allowed border" disabled>
+                              <button className="bg-ink-100 dark:bg-ink-800 text-ink-500 font-bold text-xs px-4 py-2 rounded-lg cursor-not-allowed border" disabled>
                                 {t("dashboard.companyView")}
                               </button>
                             ) : (
@@ -1192,7 +1192,7 @@ export default function Dashboard() {
                                 className={`font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm ${
                                   isAlreadyApplied 
                                     ? "bg-emerald-100 text-emerald-700 border border-emerald-200 hover:bg-emerald-200/50" 
-                                    : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                                    : "bg-marigold-500 hover:bg-marigold-600 text-white"
                                 }`}
                               >
                                 {isAlreadyApplied ? "✓ " + t("dashboard.appliedDetails") : t("dashboard.viewDetailsBtn")}
@@ -1202,7 +1202,7 @@ export default function Dashboard() {
                             {currentUser?.userRole === "student" && (
                               <button
                                 onClick={(e) => { e.stopPropagation(); navigate(`/chat/${project.companyId.email}`); }}
-                                className="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 dark:border-slate-800 font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm"
+                                className="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 dark:border-ink-800 font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm"
                               >
                                 {t("dashboard.chatBtn")}
                               </button>
@@ -1224,20 +1224,20 @@ export default function Dashboard() {
                   disabled={page === 1}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm ${
                     page === 1 
-                      ? "bg-gray-100 dark:bg-slate-800 text-gray-400 cursor-not-allowed" 
-                      : "bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:bg-slate-800"
+                      ? "bg-ink-100 dark:bg-ink-800 text-ink-400 cursor-not-allowed" 
+                      : "bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:bg-ink-800"
                   }`}
                 >
                   {t("dashboard.previousBtn")}
                 </button>
-                <span className="text-xs font-bold text-gray-600 dark:text-gray-300">{t("dashboard.pageText", { page })}</span>
+                <span className="text-xs font-bold text-ink-600 dark:text-ink-300">{t("dashboard.pageText", { page })}</span>
                 <button
                   onClick={() => setPage(p => p + 1)}
                   disabled={projects.length < limit}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm ${
                     projects.length < limit
-                      ? "bg-gray-100 dark:bg-slate-800 text-gray-400 cursor-not-allowed" 
-                      : "bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:bg-slate-800"
+                      ? "bg-ink-100 dark:bg-ink-800 text-ink-400 cursor-not-allowed" 
+                      : "bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:bg-ink-800"
                   }`}
                 >
                   {t("dashboard.nextBtn")}
@@ -1249,62 +1249,62 @@ export default function Dashboard() {
           {/* 📤 WORK SUBMISSION FORM OVERLAY MODAL                                    */}
           {/* ========================================================================= */}
           {showSubmitModal && activeAppToSubmit && (
-            <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-              <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full shadow-2xl p-6 border overflow-y-auto max-h-[90vh] animate-fade-in text-left">
+            <div className="fixed inset-0 bg-ink-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+              <div className="bg-white dark:bg-ink-900 rounded-2xl max-w-lg w-full shadow-2xl p-6 border overflow-y-auto max-h-[90vh] animate-fade-in text-left">
                 <div className="flex justify-between items-center border-b pb-3 mb-4">
-                  <h3 className="font-black text-sm text-gray-900 dark:text-gray-200 uppercase tracking-wider">{t("dashboard.submitWorkTitle")} {activeAppToSubmit.projectId.title}</h3>
-                  <button onClick={() => setShowSubmitModal(false)} className="text-gray-400 hover:text-gray-600 dark:text-gray-300 text-lg font-black">×</button>
+                  <h3 className="font-black text-sm text-ink-900 dark:text-ink-200 uppercase tracking-wider">{t("dashboard.submitWorkTitle")} {activeAppToSubmit.projectId.title}</h3>
+                  <button onClick={() => setShowSubmitModal(false)} className="text-ink-400 hover:text-ink-600 dark:text-ink-300 text-lg font-black">×</button>
                 </div>
                 <form onSubmit={handleSubmitWork} className="space-y-4">
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">{t("dashboard.submissionLinkLbl")}</label>
+                    <label className="block text-[10px] font-bold text-ink-500 uppercase mb-1">{t("dashboard.submissionLinkLbl")}</label>
                     <input
                       type="url"
                       placeholder="https://drive.google.com/..."
                       value={submissionLink}
                       onChange={(e) => { setSubmissionLink(e.target.value); saveDraft({ submissionLink: e.target.value }); }}
-                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">{t("dashboard.githubLinkLbl")}</label>
+                    <label className="block text-[10px] font-bold text-ink-500 uppercase mb-1">{t("dashboard.githubLinkLbl")}</label>
                     <input
                       type="url"
                       placeholder="https://github.com/username/repo"
                       value={githubRepoUrl}
                       onChange={(e) => { setGithubRepoUrl(e.target.value); saveDraft({ githubRepoUrl: e.target.value }); }}
-                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">{t("dashboard.liveDeploymentLbl")}</label>
+                    <label className="block text-[10px] font-bold text-ink-500 uppercase mb-1">{t("dashboard.liveDeploymentLbl")}</label>
                     <input
                       type="url"
                       placeholder="https://project.vercel.app"
                       value={liveDeploymentUrl}
                       onChange={(e) => { setLiveDeploymentUrl(e.target.value); saveDraft({ liveDeploymentUrl: e.target.value }); }}
-                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">{t("dashboard.notesLbl")}</label>
+                    <label className="block text-[10px] font-bold text-ink-500 uppercase mb-1">{t("dashboard.notesLbl")}</label>
                     <textarea
                       placeholder={t("dashboard.notesPlaceholder")}
                       value={submissionText}
                       onChange={(e) => { setSubmissionText(e.target.value); saveDraft({ submissionText: e.target.value }); }}
                       rows={3}
-                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                      className="w-full bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400 resize-none"
                       required
                     />
                   </div>
 
                   {/* Rubric Self Assessment */}
                   <div className="border-t pt-3 space-y-3">
-                    <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-wider">{"📊 " + t("dashboard.rubricSelfAssessment")}</h4>
+                    <h4 className="text-[10px] font-black text-ink-400 uppercase tracking-wider">{"📊 " + t("dashboard.rubricSelfAssessment")}</h4>
                     <div className="space-y-2 text-xs">
                       <div>
-                        <div className="flex justify-between font-bold text-slate-700 dark:text-slate-300">
+                        <div className="flex justify-between font-bold text-ink-700 dark:text-ink-300">
                           <span>{t("dashboard.codeQuality")}</span>
                           <span>{codeQualityRubric}/10</span>
                         </div>
@@ -1314,11 +1314,11 @@ export default function Dashboard() {
                           max="10"
                           value={codeQualityRubric}
                           onChange={(e) => { setCodeQualityRubric(Number(e.target.value)); saveDraft({ codeQualityRubric: Number(e.target.value) }); }}
-                          className="w-full h-1 bg-gray-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                          className="w-full h-1 bg-ink-200 dark:bg-ink-700 rounded-lg appearance-none cursor-pointer accent-marigold-600"
                         />
                       </div>
                       <div>
-                        <div className="flex justify-between font-bold text-slate-700 dark:text-slate-300">
+                        <div className="flex justify-between font-bold text-ink-700 dark:text-ink-300">
                           <span>{t("dashboard.functionalCorrectness")}</span>
                           <span>{correctnessRubric}/10</span>
                         </div>
@@ -1328,11 +1328,11 @@ export default function Dashboard() {
                           max="10"
                           value={correctnessRubric}
                           onChange={(e) => { setCorrectnessRubric(Number(e.target.value)); saveDraft({ correctnessRubric: Number(e.target.value) }); }}
-                          className="w-full h-1 bg-gray-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                          className="w-full h-1 bg-ink-200 dark:bg-ink-700 rounded-lg appearance-none cursor-pointer accent-marigold-600"
                         />
                       </div>
                       <div>
-                        <div className="flex justify-between font-bold text-slate-700 dark:text-slate-300">
+                        <div className="flex justify-between font-bold text-ink-700 dark:text-ink-300">
                           <span>{t("dashboard.documentation")}</span>
                           <span>{documentationRubric}/10</span>
                         </div>
@@ -1342,7 +1342,7 @@ export default function Dashboard() {
                           max="10"
                           value={documentationRubric}
                           onChange={(e) => { setDocumentationRubric(Number(e.target.value)); saveDraft({ documentationRubric: Number(e.target.value) }); }}
-                          className="w-full h-1 bg-gray-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                          className="w-full h-1 bg-ink-200 dark:bg-ink-700 rounded-lg appearance-none cursor-pointer accent-marigold-600"
                         />
                       </div>
                     </div>
@@ -1356,17 +1356,17 @@ export default function Dashboard() {
                         id="usedAiCheckbox"
                         checked={usedAi}
                         onChange={(e) => { setUsedAi(e.target.checked); saveDraft({ usedAi: e.target.checked }); }}
-                        className="w-3.5 h-3.5 accent-indigo-600 cursor-pointer"
+                        className="w-3.5 h-3.5 accent-marigold-600 cursor-pointer"
                       />
-                      <label htmlFor="usedAiCheckbox" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer select-none">
+                      <label htmlFor="usedAiCheckbox" className="text-xs font-bold text-ink-700 dark:text-ink-300 cursor-pointer select-none">
                         {"🤖 " + t("dashboard.usedAiTools")}
                       </label>
                     </div>
 
                     {usedAi && (
-                      <div className="space-y-3 bg-slate-50 dark:bg-slate-800 border p-3.5 rounded-xl animate-fade-in text-xs">
+                      <div className="space-y-3 bg-ink-50 dark:bg-ink-800 border p-3.5 rounded-xl animate-fade-in text-xs">
                         <div>
-                          <div className="flex justify-between font-bold text-slate-700 dark:text-slate-300">
+                          <div className="flex justify-between font-bold text-ink-700 dark:text-ink-300">
                             <span>{t("dashboard.aiContribution")}</span>
                             <span>{aiPercentage}%</span>
                           </div>
@@ -1376,17 +1376,17 @@ export default function Dashboard() {
                             max="100"
                             value={aiPercentage}
                             onChange={(e) => { setAiPercentage(Number(e.target.value)); saveDraft({ aiPercentage: Number(e.target.value) }); }}
-                            className="w-full h-1 bg-gray-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                            className="w-full h-1 bg-ink-200 dark:bg-ink-700 rounded-lg appearance-none cursor-pointer accent-marigold-600"
                           />
                         </div>
                         <div>
-                          <label className="block text-[9px] font-bold text-gray-400 uppercase mb-1">{t("dashboard.aiToolsUsedDetails")}</label>
+                          <label className="block text-[9px] font-bold text-ink-400 uppercase mb-1">{t("dashboard.aiToolsUsedDetails")}</label>
                           <input
                             type="text"
                             placeholder={t("dashboard.aiToolsPlaceholder")}
                             value={aiToolsUsed}
                             onChange={(e) => { setAiToolsUsed(e.target.value); saveDraft({ aiToolsUsed: e.target.value }); }}
-                            className="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                            className="w-full bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2 rounded-lg focus:outline-none focus:ring-1 focus:ring-marigold-400"
                           />
                         </div>
                       </div>
@@ -1397,13 +1397,13 @@ export default function Dashboard() {
                     <button
                       type="button"
                       onClick={() => setShowSubmitModal(false)}
-                      className="px-4 py-2 border border-gray-200 dark:border-slate-800 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
+                      className="px-4 py-2 border border-ink-200 dark:border-ink-800 rounded-xl text-xs font-bold text-ink-500 hover:bg-ink-50 dark:bg-ink-900 transition"
                     >
                       {t("dashboard.cancelBtn")}
                     </button>
                     <button
                       type="submit"
-                      className="px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-95 text-white rounded-xl text-xs font-black transition shadow-md"
+                      className="px-5 py-2 bg-gradient-to-r from-marigold-600 to-marigold-600 hover:opacity-95 text-white rounded-xl text-xs font-black transition shadow-md"
                     >
                       {t("dashboard.submitWorkBtn")}
                     </button>
@@ -1415,33 +1415,33 @@ export default function Dashboard() {
 
           {/* ⏳ DEADLINE EXTENSION REQUEST MODAL */}
           {showExtensionModal && activeAppToExtend && (
-            <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-              <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full shadow-2xl p-6 border animate-fade-in text-left">
+            <div className="fixed inset-0 bg-ink-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+              <div className="bg-white dark:bg-ink-900 rounded-2xl max-w-md w-full shadow-2xl p-6 border animate-fade-in text-left">
                 <div className="flex justify-between items-center border-b pb-3 mb-4">
-                  <h3 className="font-bold text-base text-gray-900 dark:text-gray-200">{t("dashboard.requestDeadlineExt")}</h3>
-                  <button onClick={() => setShowExtensionModal(false)} className="text-gray-400 hover:text-gray-600 dark:text-gray-300 text-lg">×</button>
+                  <h3 className="font-bold text-base text-ink-900 dark:text-ink-200">{t("dashboard.requestDeadlineExt")}</h3>
+                  <button onClick={() => setShowExtensionModal(false)} className="text-ink-400 hover:text-ink-600 dark:text-ink-300 text-lg">×</button>
                 </div>
                 <form onSubmit={handleRequestExtensionSubmit} className="space-y-4">
                   <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t("dashboard.requestedDaysExt")}</label>
+                    <label className="block text-xs font-bold text-ink-500 uppercase mb-1">{t("dashboard.requestedDaysExt")}</label>
                     <input
                       type="number"
                       min="1"
                       max="7"
                       value={extensionDays}
                       onChange={(e) => setExtensionDays(e.target.value)}
-                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none"
+                      className="w-full bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t("dashboard.reasonForExt")}</label>
+                    <label className="block text-xs font-bold text-ink-500 uppercase mb-1">{t("dashboard.reasonForExt")}</label>
                     <textarea
                       placeholder={t("dashboard.reasonPlaceholder")}
                       value={extensionReason}
                       onChange={(e) => setExtensionReason(e.target.value)}
                       rows={4}
-                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none resize-none"
+                      className="w-full bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none resize-none"
                       required
                     />
                   </div>
@@ -1449,14 +1449,14 @@ export default function Dashboard() {
                     <button
                       type="button"
                       onClick={() => setShowExtensionModal(false)}
-                      className="px-4 py-2 border border-gray-200 dark:border-slate-800 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
+                      className="px-4 py-2 border border-ink-200 dark:border-ink-800 rounded-xl text-xs font-bold text-ink-500 hover:bg-ink-50 dark:bg-ink-900 transition"
                     >
                       {t("dashboard.cancelBtn")}
                     </button>
                     <button
                       type="submit"
                       disabled={requestingExtension}
-                      className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-md"
+                      className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-md"
                     >
                       {requestingExtension ? t("dashboard.requesting") : t("dashboard.submitRequest")}
                     </button>

@@ -173,8 +173,8 @@ export default function ProjectDetails() {
   if (loading) {
     return (
       <div className="min-h-screen bg-transparent flex items-center justify-center">
-        <div className="text-center py-16 text-gray-500 font-medium animate-pulse flex flex-col items-center justify-center space-y-3">
-          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="text-center py-16 text-ink-500 font-medium animate-pulse flex flex-col items-center justify-center space-y-3">
+          <div className="w-10 h-10 border-4 border-marigold-500 border-t-transparent rounded-full animate-spin"></div>
           <span>{t("projectDetails.synchronizing")}</span>
         </div>
       </div>
@@ -184,13 +184,13 @@ export default function ProjectDetails() {
   if (errorMessage || !project) {
     return (
       <div className="min-h-screen bg-transparent flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-slate-800 text-center">
+        <div className="max-w-md w-full bg-white dark:bg-ink-900 rounded-2xl shadow-xl p-8 border border-ink-100 dark:border-ink-800 text-center">
           <span className="text-4xl mb-4 block">⚠️</span>
-          <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">{t("projectDetails.failedToLoadTitle")}</h2>
-          <p className="text-sm text-gray-500 mb-6">{errorMessage || t("projectDetails.couldNotBeFound")}</p>
+          <h2 className="text-lg font-bold text-ink-800 dark:text-ink-200 mb-2">{t("projectDetails.failedToLoadTitle")}</h2>
+          <p className="text-sm text-ink-500 mb-6">{errorMessage || t("projectDetails.couldNotBeFound")}</p>
           <button
             onClick={() => navigate("/dashboard")}
-            className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition shadow"
+            className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow"
           >
             {t("projectDetails.backToMarketplace")}
           </button>
@@ -215,16 +215,16 @@ export default function ProjectDetails() {
         {/* Back Link */}
         <button
           onClick={() => navigate("/dashboard")}
-          className="mb-6 px-4 py-2 bg-white dark:bg-slate-900/80 hover:bg-white dark:bg-slate-900 text-gray-600 dark:text-gray-300 rounded-xl text-xs font-bold transition shadow-sm border border-gray-100 dark:border-slate-800 flex items-center gap-1.5"
+          className="mb-6 px-4 py-2 bg-white dark:bg-ink-900/80 hover:bg-white dark:bg-ink-900 text-ink-600 dark:text-ink-300 rounded-xl text-xs font-bold transition shadow-sm border border-ink-100 dark:border-ink-800 flex items-center gap-1.5"
         >
           ← {t("projectDetails.backToMarketplace")}
         </button>
 
         {/* Project Card */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 sm:p-8 border border-gray-100 dark:border-slate-800">
+        <div className="bg-white dark:bg-ink-900 rounded-2xl shadow-xl p-6 sm:p-8 border border-ink-100 dark:border-ink-800">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-6 mb-6 gap-4">
             <div>
-              <span className="px-2.5 py-1 bg-indigo-50 border border-indigo-100 text-indigo-700 text-[10px] font-black uppercase tracking-wider rounded-lg">
+              <span className="px-2.5 py-1 bg-marigold-50 border border-marigold-100 text-marigold-700 text-[10px] font-black uppercase tracking-wider rounded-lg">
                 {project.workType || t("projectDetails.freelance")}
               </span>
               {project.hasPpiBadge && (
@@ -237,11 +237,11 @@ export default function ProjectDetails() {
                   🎓 {t("projectDetails.universityOnly", { university: project.targetUniversity })}
                 </span>
               )}
-              <h1 className="text-2xl sm:text-3xl font-black text-gray-800 dark:text-gray-200 tracking-tight mt-2.5">
+              <h1 className="text-2xl sm:text-3xl font-black text-ink-800 dark:text-ink-200 tracking-tight mt-2.5">
                 {project.title}
               </h1>
-              <p className="text-xs text-gray-400 mt-1 font-semibold uppercase tracking-wider">
-                {t("projectDetails.postedBy")} {project.companyId?.email || project.companyId} • <span className="text-indigo-500">{project.departmentName || t("projectDetails.coreTeam")}</span>
+              <p className="text-xs text-ink-400 mt-1 font-semibold uppercase tracking-wider">
+                {t("projectDetails.postedBy")} {project.companyId?.email || project.companyId} • <span className="text-marigold-500">{project.departmentName || t("projectDetails.coreTeam")}</span>
               </p>
             </div>
 
@@ -254,38 +254,38 @@ export default function ProjectDetails() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-800/50 p-4 rounded-2xl shadow-inner text-left">
-              <span className="text-[9px] font-black text-gray-400 uppercase tracking-wider block">{t("projectDetails.timelineDuration")}</span>
-              <span className="text-xs font-extrabold text-gray-800 dark:text-gray-200 mt-1 block">⏱️ {project.duration || t("projectDetails.na")}</span>
+            <div className="bg-ink-50 dark:bg-ink-900 border border-ink-100 dark:border-ink-800/50 p-4 rounded-2xl shadow-inner text-left">
+              <span className="text-[9px] font-black text-ink-400 uppercase tracking-wider block">{t("projectDetails.timelineDuration")}</span>
+              <span className="text-xs font-extrabold text-ink-800 dark:text-ink-200 mt-1 block">⏱️ {project.duration || t("projectDetails.na")}</span>
             </div>
 
-            <div className="bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-800/50 p-4 rounded-2xl shadow-inner text-left">
-              <span className="text-[9px] font-black text-gray-400 uppercase tracking-wider block">{t("projectDetails.timeRemaining")}</span>
-              <span className="text-xs font-extrabold text-gray-800 dark:text-gray-200 mt-1 block">
+            <div className="bg-ink-50 dark:bg-ink-900 border border-ink-100 dark:border-ink-800/50 p-4 rounded-2xl shadow-inner text-left">
+              <span className="text-[9px] font-black text-ink-400 uppercase tracking-wider block">{t("projectDetails.timeRemaining")}</span>
+              <span className="text-xs font-extrabold text-ink-800 dark:text-ink-200 mt-1 block">
                 ⏱️ {(() => {
                   const diff = new Date(project.deadline) - new Date();
                   if (diff <= 0) return <span className="text-red-500 font-black">{t("projectDetails.expired")}</span>;
                   const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-                  return <span className="text-indigo-600 font-black">{t("projectDetails.daysLeft", { days })}</span>;
+                  return <span className="text-marigold-500 font-black">{t("projectDetails.daysLeft", { days })}</span>;
                 })()}
               </span>
             </div>
 
-            <div className="bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-800/50 p-4 rounded-2xl shadow-inner text-left">
-              <span className="text-[9px] font-black text-gray-400 uppercase tracking-wider block">{t("projectDetails.studentCapacity")}</span>
-              <span className="text-xs font-extrabold text-gray-800 dark:text-gray-200 mt-1 block">👥 {t("projectDetails.slots", { slots: project.studentsNeeded || 1 })}</span>
+            <div className="bg-ink-50 dark:bg-ink-900 border border-ink-100 dark:border-ink-800/50 p-4 rounded-2xl shadow-inner text-left">
+              <span className="text-[9px] font-black text-ink-400 uppercase tracking-wider block">{t("projectDetails.studentCapacity")}</span>
+              <span className="text-xs font-extrabold text-ink-800 dark:text-ink-200 mt-1 block">👥 {t("projectDetails.slots", { slots: project.studentsNeeded || 1 })}</span>
             </div>
 
-            <div className="bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-800/50 p-4 rounded-2xl shadow-inner text-left">
-              <span className="text-[9px] font-black text-gray-400 uppercase tracking-wider block">{t("projectDetails.complexityTier")}</span>
-              <span className="text-xs font-extrabold text-gray-800 dark:text-gray-200 mt-1 block">🏷️ {project.complexity || t("projectDetails.intermediate")}</span>
+            <div className="bg-ink-50 dark:bg-ink-900 border border-ink-100 dark:border-ink-800/50 p-4 rounded-2xl shadow-inner text-left">
+              <span className="text-[9px] font-black text-ink-400 uppercase tracking-wider block">{t("projectDetails.complexityTier")}</span>
+              <span className="text-xs font-extrabold text-ink-800 dark:text-ink-200 mt-1 block">🏷️ {project.complexity || t("projectDetails.intermediate")}</span>
             </div>
           </div>
 
           {/* Description */}
           <div className="mb-8">
-            <h3 className="text-sm font-black text-gray-400 uppercase tracking-wider mb-3">{t("projectDetails.gigDetailsContext")}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed bg-slate-50 dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 whitespace-pre-line">
+            <h3 className="text-sm font-black text-ink-400 uppercase tracking-wider mb-3">{t("projectDetails.gigDetailsContext")}</h3>
+            <p className="text-sm text-ink-600 dark:text-ink-300 leading-relaxed bg-ink-50 dark:bg-ink-800 p-5 rounded-2xl border border-ink-100 dark:border-ink-800 whitespace-pre-line">
               {project.description}
             </p>
           </div>
@@ -293,7 +293,7 @@ export default function ProjectDetails() {
           {/* Requirements & Matching Score */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             <div>
-              <h3 className="text-sm font-black text-gray-400 uppercase tracking-wider mb-3">{t("projectDetails.requiredTechStack")}</h3>
+              <h3 className="text-sm font-black text-ink-400 uppercase tracking-wider mb-3">{t("projectDetails.requiredTechStack")}</h3>
               <div className="flex flex-wrap gap-2">
                 {requiredSkills.map((skill) => {
                   const matches = studentSkills.some(studentSkill => studentSkill.toLowerCase() === skill.toLowerCase());
@@ -302,8 +302,8 @@ export default function ProjectDetails() {
                       key={skill} 
                       className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition ${
                         matches 
-                          ? "bg-indigo-50 border-indigo-200 text-indigo-700 shadow-sm" 
-                          : "bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-800 text-gray-500"
+                          ? "bg-marigold-50 border-marigold-200 text-marigold-700 shadow-sm" 
+                          : "bg-ink-50 dark:bg-ink-900 border-ink-200 dark:border-ink-800 text-ink-500"
                       }`}
                     >
                       {skill} {matches && "✓"}
@@ -313,17 +313,17 @@ export default function ProjectDetails() {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-indigo-50/50 to-blue-50/50 border border-indigo-100/50 p-5 rounded-2xl">
-              <h3 className="text-sm font-black text-indigo-900/50 uppercase tracking-wider mb-2.5">{t("projectDetails.aiSkillsMatchRating")}</h3>
+            <div className="bg-gradient-to-br from-marigold-50/50 to-marigold-50/50 border border-marigold-100/50 p-5 rounded-2xl">
+              <h3 className="text-sm font-black text-marigold-900/50 uppercase tracking-wider mb-2.5">{t("projectDetails.aiSkillsMatchRating")}</h3>
               <div className="flex items-center gap-4">
-                <div className="relative w-16 h-16 flex items-center justify-center bg-white dark:bg-slate-900 rounded-full shadow-sm border border-indigo-100">
-                  <span className="text-sm font-black text-indigo-700">{matchPercentage}%</span>
+                <div className="relative w-16 h-16 flex items-center justify-center bg-white dark:bg-ink-900 rounded-full shadow-sm border border-marigold-100">
+                  <span className="text-sm font-black text-marigold-700">{matchPercentage}%</span>
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-700 dark:text-gray-200">
+                  <p className="text-xs font-bold text-ink-700 dark:text-ink-200">
                     {t("projectDetails.youMatchSkills", { matchCount: matchingSkills.length, totalCount: requiredSkills.length })}
                   </p>
-                  <p className="text-[11px] text-gray-500 mt-1 leading-relaxed">
+                  <p className="text-[11px] text-ink-500 mt-1 leading-relaxed">
                     {t("projectDetails.higherMatchingPercentage")}
                   </p>
                 </div>
@@ -336,13 +336,13 @@ export default function ProjectDetails() {
             <div>
               {applicationStatus ? (
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-ping"></span>
-                  <span className="text-xs font-extrabold text-gray-600 dark:text-gray-300">
+                  <span className="w-2.5 h-2.5 bg-marigold-500 rounded-full animate-ping"></span>
+                  <span className="text-xs font-extrabold text-ink-600 dark:text-ink-300">
                     {t("projectDetails.currentTrackingStatus")}
                     <span className={`ml-1 px-2.5 py-0.5 rounded-lg border text-[10px] font-black uppercase ${
                       applicationStatus === 'Approved' ? 'bg-emerald-50 border-emerald-100 text-emerald-800' :
                       applicationStatus === 'Rejected' ? 'bg-rose-50 border-rose-100 text-rose-800' :
-                      applicationStatus === 'Completed' ? 'bg-blue-50 border-blue-100 text-blue-800' :
+                      applicationStatus === 'Completed' ? 'bg-marigold-50 border-marigold-100 text-marigold-800' :
                       'bg-amber-50 border-amber-100 text-amber-800'
                     }`}>
                       {applicationStatus}
@@ -350,14 +350,14 @@ export default function ProjectDetails() {
                   </span>
                 </div>
               ) : (
-                <p className="text-xs text-gray-400 italic">{t("projectDetails.ensureProfileConfigured")}</p>
+                <p className="text-xs text-ink-400 italic">{t("projectDetails.ensureProfileConfigured")}</p>
               )}
             </div>
 
             <div className="flex gap-3">
               <button
                 onClick={() => navigate("/dashboard")}
-                className="px-5 py-2.5 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-700 dark:text-gray-200 rounded-xl text-xs font-bold transition"
+                className="px-5 py-2.5 bg-ink-100 dark:bg-ink-800 hover:bg-ink-200 text-ink-700 dark:text-ink-200 rounded-xl text-xs font-bold transition"
               >
                 {t("projectDetails.cancel")}
               </button>
@@ -366,7 +366,7 @@ export default function ProjectDetails() {
                 <button
                   onClick={handleApply}
                   disabled={applying}
-                  className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-black transition shadow disabled:opacity-50"
+                  className="px-6 py-2.5 bg-gradient-to-r from-marigold-600 to-marigold-600 hover:from-marigold-700 hover:to-marigold-700 text-white rounded-xl text-xs font-black transition shadow disabled:opacity-50"
                 >
                   {applying ? t("projectDetails.submittingPayload") : t("projectDetails.applyToGig")}
                 </button>
@@ -386,14 +386,14 @@ export default function ProjectDetails() {
         </div>
       {/* 🔒 Digital NDA Verification Modal Overlay */}
       {showNdaModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full shadow-2xl p-6 border text-left flex flex-col animate-fade-in select-none">
+        <div className="fixed inset-0 bg-ink-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-ink-900 rounded-3xl max-w-lg w-full shadow-2xl p-6 border text-left flex flex-col animate-fade-in select-none">
             <div className="flex justify-between items-center border-b pb-3 mb-4">
-              <h3 className="font-black text-slate-800 dark:text-slate-200 text-sm uppercase tracking-wider">🔒 {t("projectDetails.ndaModalTitle")}</h3>
-              <button onClick={() => setShowNdaModal(false)} className="text-slate-400 hover:text-slate-600 dark:text-slate-300 text-lg">×</button>
+              <h3 className="font-black text-ink-800 dark:text-ink-200 text-sm uppercase tracking-wider">🔒 {t("projectDetails.ndaModalTitle")}</h3>
+              <button onClick={() => setShowNdaModal(false)} className="text-ink-400 hover:text-ink-600 dark:text-ink-300 text-lg">×</button>
             </div>
-            <div className="bg-slate-50 dark:bg-slate-800 border p-4 rounded-2xl text-xs text-slate-600 dark:text-slate-300 leading-relaxed max-h-60 overflow-y-auto space-y-2">
-              <p className="font-extrabold text-slate-800 dark:text-slate-200 text-[13px]">{t("projectDetails.ndaRulesTitle")}</p>
+            <div className="bg-ink-50 dark:bg-ink-800 border p-4 rounded-2xl text-xs text-ink-600 dark:text-ink-300 leading-relaxed max-h-60 overflow-y-auto space-y-2">
+              <p className="font-extrabold text-ink-800 dark:text-ink-200 text-[13px]">{t("projectDetails.ndaRulesTitle")}</p>
               <p>{t("projectDetails.ndaIntro")}</p>
               <ul className="list-decimal list-inside space-y-1.5 font-semibold">
                 <li>{t("projectDetails.ndaRule1")}</li>
@@ -402,15 +402,15 @@ export default function ProjectDetails() {
               </ul>
             </div>
             
-            <div className="flex items-center gap-3 mt-5 p-3.5 bg-indigo-50/50 border border-indigo-100 rounded-xl">
+            <div className="flex items-center gap-3 mt-5 p-3.5 bg-marigold-50/50 border border-marigold-100 rounded-xl">
               <input
                 type="checkbox"
                 id="ndaConfirm"
                 checked={ndaAccepted}
                 onChange={(e) => setNdaAccepted(e.target.checked)}
-                className="w-4 h-4 accent-indigo-600 cursor-pointer"
+                className="w-4 h-4 accent-marigold-600 cursor-pointer"
               />
-              <label htmlFor="ndaConfirm" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer select-none">
+              <label htmlFor="ndaConfirm" className="text-xs font-bold text-ink-700 dark:text-ink-300 cursor-pointer select-none">
                 {t("projectDetails.ndaAcceptText")}
               </label>
             </div>
@@ -419,7 +419,7 @@ export default function ProjectDetails() {
               <button
                 type="button"
                 onClick={() => setShowNdaModal(false)}
-                className="px-4 py-2 border rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
+                className="px-4 py-2 border rounded-xl text-xs font-bold text-ink-500 hover:bg-ink-50 dark:bg-ink-900 transition"
               >
                 {t("projectDetails.cancel")}
               </button>
@@ -435,7 +435,7 @@ export default function ProjectDetails() {
                   handleApply();
                 }}
                 className={`px-5 py-2.5 rounded-xl text-xs font-black transition shadow ${
-                  applying ? "bg-indigo-400 cursor-not-allowed text-white" : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                  applying ? "bg-marigold-400 cursor-not-allowed text-white" : "bg-marigold-500 hover:bg-marigold-600 text-white"
                 }`}
               >
                 {applying ? t("projectDetails.submitting") : t("projectDetails.completeApplication")}
@@ -447,19 +447,19 @@ export default function ProjectDetails() {
 
       {/* 📝 Pre-Test MCQ Screening Overlay Modal */}
       {showQuizModal && project.preTestQuestions && project.preTestQuestions.length > 0 && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full shadow-2xl p-6 border text-left flex flex-col animate-fade-in select-none">
+        <div className="fixed inset-0 bg-ink-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-ink-900 rounded-3xl max-w-lg w-full shadow-2xl p-6 border text-left flex flex-col animate-fade-in select-none">
             <div className="flex justify-between items-center border-b pb-3 mb-4">
-              <h3 className="font-black text-slate-800 dark:text-slate-200 text-sm uppercase tracking-wider">📝 {t("projectDetails.quizModalTitle")}</h3>
-              <button onClick={() => setShowQuizModal(false)} className="text-slate-400 hover:text-slate-600 dark:text-slate-300 text-lg">×</button>
+              <h3 className="font-black text-ink-800 dark:text-ink-200 text-sm uppercase tracking-wider">📝 {t("projectDetails.quizModalTitle")}</h3>
+              <button onClick={() => setShowQuizModal(false)} className="text-ink-400 hover:text-ink-600 dark:text-ink-300 text-lg">×</button>
             </div>
             
-            <p className="text-xs text-slate-500 mb-4 font-semibold">{t("projectDetails.quizIntro")}</p>
+            <p className="text-xs text-ink-500 mb-4 font-semibold">{t("projectDetails.quizIntro")}</p>
 
             <div className="space-y-4 max-h-80 overflow-y-auto pr-1">
               {project.preTestQuestions.map((q, qIdx) => (
-                <div key={qIdx} className="border p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 space-y-2">
-                  <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                <div key={qIdx} className="border p-4 rounded-2xl bg-ink-50 dark:bg-ink-800/50 space-y-2">
+                  <p className="text-xs font-bold text-ink-800 dark:text-ink-200">
                     Q{qIdx + 1}: {q.question}
                   </p>
                   <div className="grid grid-cols-1 gap-1.5">
@@ -472,8 +472,8 @@ export default function ProjectDetails() {
                           onClick={() => setQuizAnswers({ ...quizAnswers, [qIdx]: opt })}
                           className={`text-left text-xs p-2.5 rounded-xl border transition-all ${
                             isSelected 
-                              ? "bg-indigo-600 text-white border-indigo-700 font-bold" 
-                              : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-gray-200 dark:border-slate-800 hover:bg-slate-50 dark:bg-slate-800"
+                              ? "bg-marigold-500 text-white border-marigold-700 font-bold" 
+                              : "bg-white dark:bg-ink-900 text-ink-600 dark:text-ink-300 border-ink-200 dark:border-ink-800 hover:bg-ink-50 dark:bg-ink-800"
                           }`}
                         >
                           {opt}
@@ -489,7 +489,7 @@ export default function ProjectDetails() {
               <button
                 type="button"
                 onClick={() => setShowQuizModal(false)}
-                className="px-4 py-2 border rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
+                className="px-4 py-2 border rounded-xl text-xs font-bold text-ink-500 hover:bg-ink-50 dark:bg-ink-900 transition"
               >
                 {t("projectDetails.cancel")}
               </button>
@@ -519,7 +519,7 @@ export default function ProjectDetails() {
                   handleApply();
                 }}
                 className={`px-5 py-2.5 rounded-xl text-xs font-black transition shadow ${
-                  applying ? "bg-indigo-400 cursor-not-allowed text-white" : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                  applying ? "bg-marigold-400 cursor-not-allowed text-white" : "bg-marigold-500 hover:bg-marigold-600 text-white"
                 }`}
               >
                 {applying ? t("projectDetails.submitting") : t("projectDetails.submitAnswers")}

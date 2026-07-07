@@ -137,18 +137,18 @@ export default function AddProject() {
 
   return (
     <div className="min-h-screen bg-transparent flex flex-col items-center py-12 px-4 font-sans select-none">
-      <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl shadow-xl p-6 sm:p-8 border border-gray-100 dark:border-slate-800/50">
+      <div className="w-full max-w-2xl bg-white dark:bg-ink-900 rounded-3xl shadow-xl p-6 sm:p-8 border border-ink-100 dark:border-ink-800/50">
         
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b pb-4 mb-6">
           <div>
-            <h1 className="text-xl sm:text-2xl font-black text-gray-800 dark:text-gray-200">{t("addProject.pageTitle")}</h1>
-            <p className="text-xs text-gray-400 mt-0.5">{t("addProject.wizardStepSubtitle", { step })}</p>
+            <h1 className="text-xl sm:text-2xl font-black text-ink-800 dark:text-ink-200">{t("addProject.pageTitle")}</h1>
+            <p className="text-xs text-ink-400 mt-0.5">{t("addProject.wizardStepSubtitle", { step })}</p>
           </div>
           <button 
             type="button" 
             onClick={() => navigate("/company-dashboard")}
-            className="w-full sm:w-auto text-center text-xs font-bold text-gray-500 hover:text-indigo-600 bg-gray-100 dark:bg-slate-800 px-3.5 py-2 rounded-xl transition"
+            className="w-full sm:w-auto text-center text-xs font-bold text-ink-500 hover:text-marigold-500 bg-ink-100 dark:bg-ink-800 px-3.5 py-2 rounded-xl transition"
           >
             ← {t("addProject.exitWizard")}
           </button>
@@ -166,7 +166,7 @@ export default function AddProject() {
             <div 
               key={num} 
               className={`h-2 flex-grow rounded-full transition-all duration-300 ${
-                num <= step ? "bg-indigo-600" : "bg-gray-100 dark:bg-slate-800"
+                num <= step ? "bg-marigold-500" : "bg-ink-100 dark:bg-ink-800"
               }`} 
             />
           ))}
@@ -176,35 +176,35 @@ export default function AddProject() {
           {/* STEP 1: Core Details */}
           {step === 1 && (
             <div className="space-y-4 animate-fade-in">
-              <h3 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">{t("addProject.step1Title")}</h3>
+              <h3 className="text-sm font-black text-ink-800 dark:text-ink-200 uppercase tracking-wider">{t("addProject.step1Title")}</h3>
               
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.projectTitleLabel")}</label>
-                <input type="text" placeholder={t("addProject.projectTitlePlaceholder")} value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-800 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition" required />
+                <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("addProject.projectTitleLabel")}</label>
+                <input type="text" placeholder={t("addProject.projectTitlePlaceholder")} value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-ink-50 dark:bg-ink-800 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-marigold-400 focus:bg-white dark:bg-ink-900 transition" required />
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.descriptionLabel")}</label>
-                <textarea rows="4" placeholder={t("addProject.descriptionPlaceholder")} value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-800 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition resize-none" required />
+                <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("addProject.descriptionLabel")}</label>
+                <textarea rows="4" placeholder={t("addProject.descriptionPlaceholder")} value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-ink-50 dark:bg-ink-800 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-marigold-400 focus:bg-white dark:bg-ink-900 transition resize-none" required />
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.skillsLabel")}</label>
-                <input type="text" placeholder={t("addProject.skillsPlaceholder")} value={skillsInput} onChange={e => setSkillsInput(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-800 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition" required />
+                <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("addProject.skillsLabel")}</label>
+                <input type="text" placeholder={t("addProject.skillsPlaceholder")} value={skillsInput} onChange={e => setSkillsInput(e.target.value)} className="w-full bg-ink-50 dark:bg-ink-800 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-marigold-400 focus:bg-white dark:bg-ink-900 transition" required />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.complexityLabel")}</label>
-                  <select value={complexity} onChange={e => setComplexity(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-800 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 bg-white dark:bg-slate-900">
+                  <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("addProject.complexityLabel")}</label>
+                  <select value={complexity} onChange={e => setComplexity(e.target.value)} className="w-full bg-ink-50 dark:bg-ink-800 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-marigold-400 bg-white dark:bg-ink-900">
                     <option value="Beginner">{t("addProject.complexityBeginner")}</option>
                     <option value="Intermediate">{t("addProject.complexityIntermediate")}</option>
                     <option value="Advanced">{t("addProject.complexityAdvanced")}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.departmentLabel")}</label>
-                  <input type="text" value={departmentName} onChange={e => setDepartmentName(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" required />
+                  <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("addProject.departmentLabel")}</label>
+                  <input type="text" value={departmentName} onChange={e => setDepartmentName(e.target.value)} className="w-full bg-ink-50 dark:bg-ink-900 border p-3.5 rounded-xl text-xs outline-none" required />
                 </div>
               </div>
             </div>
@@ -213,28 +213,28 @@ export default function AddProject() {
           {/* STEP 2: Scheduling & Target Broadcast */}
           {step === 2 && (
             <div className="space-y-4 animate-fade-in">
-              <h3 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">{t("addProject.step2Title")}</h3>
+              <h3 className="text-sm font-black text-ink-800 dark:text-ink-200 uppercase tracking-wider">{t("addProject.step2Title")}</h3>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.durationLabel")}</label>
-                  <input type="text" placeholder={t("addProject.durationPlaceholder")} value={duration} onChange={e => setDuration(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400" required />
+                  <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("addProject.durationLabel")}</label>
+                  <input type="text" placeholder={t("addProject.durationPlaceholder")} value={duration} onChange={e => setDuration(e.target.value)} className="w-full bg-ink-50 dark:bg-ink-900 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-marigold-400" required />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.deadlineLabel")}</label>
-                  <input type="date" value={deadline} onChange={e => setDeadline(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400" required />
+                  <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("addProject.deadlineLabel")}</label>
+                  <input type="date" value={deadline} onChange={e => setDeadline(e.target.value)} className="w-full bg-ink-50 dark:bg-ink-900 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-marigold-400" required />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.capacityLabel")}</label>
-                <input type="number" min="1" value={studentsNeeded} onChange={e => setStudentsNeeded(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" required />
+                <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("addProject.capacityLabel")}</label>
+                <input type="number" min="1" value={studentsNeeded} onChange={e => setStudentsNeeded(e.target.value)} className="w-full bg-ink-50 dark:bg-ink-900 border p-3.5 rounded-xl text-xs outline-none" required />
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.broadcastLabel")}</label>
-                <input type="text" placeholder={t("addProject.broadcastPlaceholder")} value={targetUniversity} onChange={e => setTargetUniversity(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" />
-                <p className="text-[10px] text-gray-400 mt-1">{t("addProject.broadcastHint")}</p>
+                <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("addProject.broadcastLabel")}</label>
+                <input type="text" placeholder={t("addProject.broadcastPlaceholder")} value={targetUniversity} onChange={e => setTargetUniversity(e.target.value)} className="w-full bg-ink-50 dark:bg-ink-900 border p-3.5 rounded-xl text-xs outline-none" />
+                <p className="text-[10px] text-ink-400 mt-1">{t("addProject.broadcastHint")}</p>
               </div>
             </div>
           )}
@@ -242,22 +242,22 @@ export default function AddProject() {
           {/* STEP 3: Rewards & Badges */}
           {step === 3 && (
             <div className="space-y-4 animate-fade-in">
-              <h3 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">{t("addProject.step3Title")}</h3>
+              <h3 className="text-sm font-black text-ink-800 dark:text-ink-200 uppercase tracking-wider">{t("addProject.step3Title")}</h3>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.stipendLabel")}</label>
-                <input type="number" placeholder={t("addProject.stipendPlaceholder")} value={budget} onChange={e => setBudget(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" required />
+                <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("addProject.stipendLabel")}</label>
+                <input type="number" placeholder={t("addProject.stipendPlaceholder")} value={budget} onChange={e => setBudget(e.target.value)} className="w-full bg-ink-50 dark:bg-ink-900 border p-3.5 rounded-xl text-xs outline-none" required />
               </div>
 
-              <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
+              <div className="flex items-center gap-3 p-4 bg-ink-50 dark:bg-ink-800 border rounded-2xl">
                 <input
                   type="checkbox"
                   id="hasPpiBadge"
                   checked={hasPpiBadge}
                   onChange={e => setHasPpiBadge(e.target.checked)}
-                  className="w-4 h-4 accent-indigo-600 cursor-pointer"
+                  className="w-4 h-4 accent-marigold-600 cursor-pointer"
                 />
-                <label htmlFor="hasPpiBadge" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer select-none">
+                <label htmlFor="hasPpiBadge" className="text-xs font-bold text-ink-700 dark:text-ink-300 cursor-pointer select-none">
                   🚀 {t("addProject.ppiBadgeLabel")}
                 </label>
               </div>
@@ -267,23 +267,23 @@ export default function AddProject() {
           {/* STEP 4: Prerequisites & NDA */}
           {step === 4 && (
             <div className="space-y-4 animate-fade-in">
-              <h3 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">{t("addProject.step4Title")}</h3>
+              <h3 className="text-sm font-black text-ink-800 dark:text-ink-200 uppercase tracking-wider">{t("addProject.step4Title")}</h3>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.minScoreLabel")}</label>
-                <input type="number" min="0" max="1000" placeholder={t("addProject.minScorePlaceholder")} value={minReadinessScore} onChange={e => setMinReadinessScore(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-900 border p-3.5 rounded-xl text-xs outline-none" />
-                <p className="text-[10px] text-gray-400 mt-1">{t("addProject.minScoreHint")}</p>
+                <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("addProject.minScoreLabel")}</label>
+                <input type="number" min="0" max="1000" placeholder={t("addProject.minScorePlaceholder")} value={minReadinessScore} onChange={e => setMinReadinessScore(e.target.value)} className="w-full bg-ink-50 dark:bg-ink-900 border p-3.5 rounded-xl text-xs outline-none" />
+                <p className="text-[10px] text-ink-400 mt-1">{t("addProject.minScoreHint")}</p>
               </div>
 
-              <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 border rounded-2xl">
+              <div className="flex items-center gap-3 p-4 bg-ink-50 dark:bg-ink-800 border rounded-2xl">
                 <input
                   type="checkbox"
                   id="isNdaRequired"
                   checked={isNdaRequired}
                   onChange={e => setIsNdaRequired(e.target.checked)}
-                  className="w-4 h-4 accent-indigo-600 cursor-pointer"
+                  className="w-4 h-4 accent-marigold-600 cursor-pointer"
                 />
-                <label htmlFor="isNdaRequired" className="text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer select-none">
+                <label htmlFor="isNdaRequired" className="text-xs font-bold text-ink-700 dark:text-ink-300 cursor-pointer select-none">
                   🔒 {t("addProject.ndaLabel")}
                 </label>
               </div>
@@ -294,33 +294,33 @@ export default function AddProject() {
           {step === 5 && (
             <div className="space-y-4 animate-fade-in">
               <div className="flex justify-between items-center">
-                <h3 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">{t("addProject.step5Title")}</h3>
-                <span className="text-[9px] bg-slate-100 dark:bg-slate-800 text-slate-500 font-extrabold px-2 py-0.5 rounded border">{t("addProject.optional")}</span>
+                <h3 className="text-sm font-black text-ink-800 dark:text-ink-200 uppercase tracking-wider">{t("addProject.step5Title")}</h3>
+                <span className="text-[9px] bg-ink-100 dark:bg-ink-800 text-ink-500 font-extrabold px-2 py-0.5 rounded border">{t("addProject.optional")}</span>
               </div>
-              <p className="text-[10px] text-slate-400 -mt-2">{t("addProject.mcqHint")}</p>
+              <p className="text-[10px] text-ink-400 -mt-2">{t("addProject.mcqHint")}</p>
 
-              <div className="border p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 space-y-3">
-                <p className="text-xs font-bold text-indigo-700">{t("addProject.question1")}</p>
-                <input type="text" placeholder={t("addProject.questionPlaceholder")} value={q1Text} onChange={e => setQ1Text(e.target.value)} className="w-full bg-white dark:bg-slate-900 border p-2.5 rounded-xl text-xs" />
+              <div className="border p-4 rounded-2xl bg-ink-50 dark:bg-ink-800/50 space-y-3">
+                <p className="text-xs font-bold text-marigold-700">{t("addProject.question1")}</p>
+                <input type="text" placeholder={t("addProject.questionPlaceholder")} value={q1Text} onChange={e => setQ1Text(e.target.value)} className="w-full bg-white dark:bg-ink-900 border p-2.5 rounded-xl text-xs" />
                 <div className="grid grid-cols-2 gap-2">
-                  <input type="text" placeholder={t("addProject.optionA")} value={q1OptA} onChange={e => setQ1OptA(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder={t("addProject.optionB")} value={q1OptB} onChange={e => setQ1OptB(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder={t("addProject.optionC")} value={q1OptC} onChange={e => setQ1OptC(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder={t("addProject.optionD")} value={q1OptD} onChange={e => setQ1OptD(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder={t("addProject.optionA")} value={q1OptA} onChange={e => setQ1OptA(e.target.value)} className="bg-white dark:bg-ink-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder={t("addProject.optionB")} value={q1OptB} onChange={e => setQ1OptB(e.target.value)} className="bg-white dark:bg-ink-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder={t("addProject.optionC")} value={q1OptC} onChange={e => setQ1OptC(e.target.value)} className="bg-white dark:bg-ink-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder={t("addProject.optionD")} value={q1OptD} onChange={e => setQ1OptD(e.target.value)} className="bg-white dark:bg-ink-900 border p-2 rounded-xl text-[11px]" />
                 </div>
-                <input type="text" placeholder={t("addProject.correctOptionPlaceholder")} value={q1Correct} onChange={e => setQ1Correct(e.target.value)} className="w-full bg-white dark:bg-slate-900 border p-2 rounded-xl text-xs" />
+                <input type="text" placeholder={t("addProject.correctOptionPlaceholder")} value={q1Correct} onChange={e => setQ1Correct(e.target.value)} className="w-full bg-white dark:bg-ink-900 border p-2 rounded-xl text-xs" />
               </div>
 
-              <div className="border p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 space-y-3">
-                <p className="text-xs font-bold text-indigo-700">{t("addProject.question2")}</p>
-                <input type="text" placeholder={t("addProject.questionPlaceholder")} value={q2Text} onChange={e => setQ2Text(e.target.value)} className="w-full bg-white dark:bg-slate-900 border p-2.5 rounded-xl text-xs" />
+              <div className="border p-4 rounded-2xl bg-ink-50 dark:bg-ink-800/50 space-y-3">
+                <p className="text-xs font-bold text-marigold-700">{t("addProject.question2")}</p>
+                <input type="text" placeholder={t("addProject.questionPlaceholder")} value={q2Text} onChange={e => setQ2Text(e.target.value)} className="w-full bg-white dark:bg-ink-900 border p-2.5 rounded-xl text-xs" />
                 <div className="grid grid-cols-2 gap-2">
-                  <input type="text" placeholder={t("addProject.optionA")} value={q2OptA} onChange={e => setQ2OptA(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder={t("addProject.optionB")} value={q2OptB} onChange={e => setQ2OptB(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder={t("addProject.optionC")} value={q2OptC} onChange={e => setQ2OptC(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
-                  <input type="text" placeholder={t("addProject.optionD")} value={q2OptD} onChange={e => setQ2OptD(e.target.value)} className="bg-white dark:bg-slate-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder={t("addProject.optionA")} value={q2OptA} onChange={e => setQ2OptA(e.target.value)} className="bg-white dark:bg-ink-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder={t("addProject.optionB")} value={q2OptB} onChange={e => setQ2OptB(e.target.value)} className="bg-white dark:bg-ink-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder={t("addProject.optionC")} value={q2OptC} onChange={e => setQ2OptC(e.target.value)} className="bg-white dark:bg-ink-900 border p-2 rounded-xl text-[11px]" />
+                  <input type="text" placeholder={t("addProject.optionD")} value={q2OptD} onChange={e => setQ2OptD(e.target.value)} className="bg-white dark:bg-ink-900 border p-2 rounded-xl text-[11px]" />
                 </div>
-                <input type="text" placeholder={t("addProject.correctOptionPlaceholder")} value={q2Correct} onChange={e => setQ2Correct(e.target.value)} className="w-full bg-white dark:bg-slate-900 border p-2 rounded-xl text-xs" />
+                <input type="text" placeholder={t("addProject.correctOptionPlaceholder")} value={q2Correct} onChange={e => setQ2Correct(e.target.value)} className="w-full bg-white dark:bg-ink-900 border p-2 rounded-xl text-xs" />
               </div>
             </div>
           )}
@@ -328,15 +328,15 @@ export default function AddProject() {
           {/* STEP 6: Confirm & Deploy */}
           {step === 6 && (
             <div className="space-y-4 animate-fade-in">
-              <h3 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">{t("addProject.step6Title")}</h3>
+              <h3 className="text-sm font-black text-ink-800 dark:text-ink-200 uppercase tracking-wider">{t("addProject.step6Title")}</h3>
               
-              <div className="border border-indigo-100 bg-indigo-50/20 p-5 rounded-2xl space-y-3 text-xs">
+              <div className="border border-marigold-100 bg-marigold-50/20 p-5 rounded-2xl space-y-3 text-xs">
                 <div className="flex justify-between border-b pb-2">
-                  <span className="font-extrabold text-slate-800 dark:text-slate-200 text-sm">{title || t("addProject.untitledProject")}</span>
-                  <span className="font-black text-indigo-700 font-mono">₹{budget || 0}</span>
+                  <span className="font-extrabold text-ink-800 dark:text-ink-200 text-sm">{title || t("addProject.untitledProject")}</span>
+                  <span className="font-black text-marigold-700 font-mono">₹{budget || 0}</span>
                 </div>
-                <p className="text-slate-500 leading-relaxed">{description || t("addProject.noDescription")}</p>
-                <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-600 dark:text-slate-300 font-semibold pt-1">
+                <p className="text-ink-500 leading-relaxed">{description || t("addProject.noDescription")}</p>
+                <div className="grid grid-cols-2 gap-2 text-[11px] text-ink-600 dark:text-ink-300 font-semibold pt-1">
                   <p>🔹 {t("addProject.complexityReview")}: {complexity}</p>
                   <p>🔹 {t("addProject.departmentReview")}: {departmentName}</p>
                   <p>🔹 {t("addProject.broadcastReview")}: {targetUniversity || t("addProject.publicAll")}</p>
@@ -347,8 +347,8 @@ export default function AddProject() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("addProject.publishingMode")}</label>
-                <select value={status} onChange={e => setStatus(e.target.value)} className="w-full bg-gray-50 dark:bg-slate-800 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 bg-white dark:bg-slate-900">
+                <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("addProject.publishingMode")}</label>
+                <select value={status} onChange={e => setStatus(e.target.value)} className="w-full bg-ink-50 dark:bg-ink-800 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-marigold-400 bg-white dark:bg-ink-900">
                   <option value="Published">{t("addProject.publishLive")}</option>
                   <option value="Draft">{t("addProject.saveDraft")}</option>
                 </select>
@@ -362,7 +362,7 @@ export default function AddProject() {
               <button
                 type="button"
                 onClick={handlePrevStep}
-                className="px-5 py-2.5 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 text-gray-600 dark:text-gray-300 rounded-xl text-xs font-bold transition"
+                className="px-5 py-2.5 bg-ink-100 dark:bg-ink-800 hover:bg-ink-200 text-ink-600 dark:text-ink-300 rounded-xl text-xs font-bold transition"
               >
                 ← {t("addProject.previous")}
               </button>
@@ -374,7 +374,7 @@ export default function AddProject() {
               <button
                 type="button"
                 onClick={handleNextStep}
-                className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black transition shadow"
+                className="px-5 py-2.5 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-black transition shadow"
               >
                 {t("addProject.nextStep")} →
               </button>
@@ -382,7 +382,7 @@ export default function AddProject() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl text-xs font-black uppercase tracking-wider transition shadow-lg hover:opacity-95"
+                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-marigold-600 text-white rounded-xl text-xs font-black uppercase tracking-wider transition shadow-lg hover:opacity-95"
               >
                 {submitting ? t("addProject.deploying") : t("addProject.confirmSave", { status })}
               </button>

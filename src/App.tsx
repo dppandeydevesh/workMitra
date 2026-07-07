@@ -65,10 +65,10 @@ const ProtectedLayout = ({ allowedRoles, children }) => {
 function App() {
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-transparent dark:text-slate-100 transition-colors duration-200">
+      <div className="min-h-screen bg-transparent dark:text-ink-100 transition-colors duration-200">
         <WebSocketProvider>
             <BrowserRouter>
-              <Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-transparent text-indigo-500 font-bold tracking-widest text-sm uppercase">Loading Platform...</div>}>
+              <Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-transparent text-marigold-500 font-bold tracking-widest text-sm uppercase">Loading Platform...</div>}>
           <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />

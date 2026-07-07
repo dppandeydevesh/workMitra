@@ -279,12 +279,12 @@ export default function MyProjects() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Navigation back home Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-sm">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-white dark:bg-ink-900 p-4 sm:p-6 rounded-2xl shadow-sm">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-200">{t("myProjects.title")}</h1>
-            <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">{t("myProjects.subtitle")}</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-ink-800 dark:text-ink-200">{t("myProjects.title")}</h1>
+            <p className="text-[11px] sm:text-xs text-ink-500 mt-0.5">{t("myProjects.subtitle")}</p>
           </div>
-          <button onClick={() => navigate("/company-dashboard")} className="w-full sm:w-auto text-center text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl transition shadow-sm">
+          <button onClick={() => navigate("/company-dashboard")} className="w-full sm:w-auto text-center text-xs font-bold bg-marigold-500 hover:bg-marigold-600 text-white px-4 py-2.5 rounded-xl transition shadow-sm">
             ← {t("myProjects.backToCommandCenter")}
           </button>
         </div>
@@ -295,24 +295,24 @@ export default function MyProjects() {
           
           {/* Left Column: Historical Deployments List */}
           <div className="lg:col-span-1 space-y-4">
-            <h3 className="text-sm font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider mb-2 px-1">{t("myProjects.activeDeployments")}</h3>
+            <h3 className="text-sm font-bold text-ink-700 dark:text-ink-200 uppercase tracking-wider mb-2 px-1">{t("myProjects.activeDeployments")}</h3>
             
             {loadingProjects ? (
-              <div className="text-center py-6 text-xs text-gray-500 font-medium animate-pulse">{t("myProjects.syncingNodes")}</div>
+              <div className="text-center py-6 text-xs text-ink-500 font-medium animate-pulse">{t("myProjects.syncingNodes")}</div>
             ) : projects.length === 0 ? (
-              <div className="bg-white dark:bg-slate-900 p-6 rounded-xl text-center text-xs text-gray-400 border font-medium">{t("myProjects.noLiveProjects")}</div>
+              <div className="bg-white dark:bg-ink-900 p-6 rounded-xl text-center text-xs text-ink-400 border font-medium">{t("myProjects.noLiveProjects")}</div>
             ) : (
               projects.map((proj) => (
                 <div 
                   key={proj._id} 
                   onClick={() => handleInspectApplicants(proj)}
-                  className={`p-5 rounded-xl border bg-white dark:bg-slate-900 shadow-sm cursor-pointer transition transform hover:-translate-y-0.5 ${selectedProject?._id === proj._id ? "ring-2 ring-blue-500 border-transparent" : "hover:border-blue-300"}`}
+                  className={`p-5 rounded-xl border bg-white dark:bg-ink-900 shadow-sm cursor-pointer transition transform hover:-tranink-y-0.5 ${selectedProject?._id === proj._id ? "ring-2 ring-marigold-500 border-transparent" : "hover:border-marigold-300"}`}
                 >
-                  <h4 className="font-bold text-gray-900 dark:text-gray-200 text-sm mb-1">{proj.title}</h4>
-                  <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed mb-3">{proj.description}</p>
-                  <div className="flex justify-between items-center text-[10px] text-gray-400 font-bold uppercase tracking-wide border-t pt-2.5">
+                  <h4 className="font-bold text-ink-900 dark:text-ink-200 text-sm mb-1">{proj.title}</h4>
+                  <p className="text-[11px] text-ink-500 line-clamp-2 leading-relaxed mb-3">{proj.description}</p>
+                  <div className="flex justify-between items-center text-[10px] text-ink-400 font-bold uppercase tracking-wide border-t pt-2.5">
                     <span>💼 {proj.workType}</span>
-                    <span className="text-blue-600">{t("myProjects.inspectApplications")} →</span>
+                    <span className="text-marigold-500">{t("myProjects.inspectApplications")} →</span>
                   </div>
                 </div>
               ))
@@ -322,21 +322,21 @@ export default function MyProjects() {
           {/* Right Column: Applicants Table and Match Analytics Display */}
           <div className="lg:col-span-2">
             {!selectedProject ? (
-              <div className="bg-white dark:bg-slate-900 rounded-2xl border-2 border-dashed p-12 text-center text-gray-400 font-medium h-full flex flex-col justify-center items-center">
+              <div className="bg-white dark:bg-ink-900 rounded-2xl border-2 border-dashed p-12 text-center text-ink-400 font-medium h-full flex flex-col justify-center items-center">
                 <span>📁 {t("myProjects.selectProjectMessage")}</span>
               </div>
             ) : (
-              <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 border border-gray-100 dark:border-slate-800">
+              <div className="bg-white dark:bg-ink-900 rounded-2xl shadow-xl p-6 border border-ink-100 dark:border-ink-800">
                 <div className="border-b pb-4 mb-6">
                   <div className="flex justify-between items-start gap-4">
                     <div>
-                      <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wide">{t("myProjects.selectedStream")}</span>
-                      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-200 mt-2">{selectedProject.title}</h2>
+                      <span className="bg-marigold-100 text-marigold-800 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wide">{t("myProjects.selectedStream")}</span>
+                      <h2 className="text-xl font-bold text-ink-900 dark:text-ink-200 mt-2">{selectedProject.title}</h2>
                     </div>
                     <div className="flex gap-2">
                       <button 
                         onClick={() => handleOpenEditModal(selectedProject)}
-                        className="px-2.5 py-1.5 border border-gray-200 dark:border-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:bg-slate-900 rounded-lg text-xs font-bold transition flex items-center gap-1"
+                        className="px-2.5 py-1.5 border border-ink-200 dark:border-ink-800 text-ink-600 dark:text-ink-300 hover:bg-ink-50 dark:bg-ink-900 rounded-lg text-xs font-bold transition flex items-center gap-1"
                         title={t("myProjects.editProjectDetails")}
                       >
                         ✏️ {t("myProjects.edit")}
@@ -359,18 +359,18 @@ export default function MyProjects() {
                       </button>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1.5">{t("myProjects.duration")}: {selectedProject.duration} | {t("myProjects.budget")}: ₹{selectedProject.budget.toLocaleString()}</p>
+                  <p className="text-xs text-ink-500 mt-1.5">{t("myProjects.duration")}: {selectedProject.duration} | {t("myProjects.budget")}: ₹{selectedProject.budget.toLocaleString()}</p>
                 </div>
 
                 {loadingApplicants ? (
-                  <div className="text-center py-12 text-xs text-gray-500 font-medium animate-pulse">{t("myProjects.parsingApplicants")}</div>
+                  <div className="text-center py-12 text-xs text-ink-500 font-medium animate-pulse">{t("myProjects.parsingApplicants")}</div>
                 ) : applicants.length === 0 ? (
-                  <div className="text-center py-12 text-xs text-gray-400 font-medium">{t("myProjects.noStudentsApplied")}</div>
+                  <div className="text-center py-12 text-xs text-ink-400 font-medium">{t("myProjects.noStudentsApplied")}</div>
                 ) : (
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs text-gray-600 dark:text-gray-300">
+                    <table className="w-full text-left text-xs text-ink-600 dark:text-ink-300">
                       <thead>
-                        <tr className="bg-gray-50 dark:bg-slate-900 uppercase text-[10px] font-bold text-gray-400 border-b tracking-wider">
+                        <tr className="bg-ink-50 dark:bg-ink-900 uppercase text-[10px] font-bold text-ink-400 border-b tracking-wider">
                           <th className="p-3">{t("myProjects.studentName")}</th>
                           <th className="p-3">{t("myProjects.skillsInventory")}</th>
                           <th className="p-3 text-center">{t("myProjects.smartMatch")}</th>
@@ -378,29 +378,29 @@ export default function MyProjects() {
                           <th className="p-3 text-right">{t("myProjects.actions")}</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-100 font-medium text-gray-700 dark:text-gray-200">
+                      <tbody className="divide-y divide-ink-100 font-medium text-ink-700 dark:text-ink-200">
                         {applicants.map((app) => (
-                          <tr key={app.applicationId} className="hover:bg-gray-50 dark:bg-slate-800/80 transition">
+                          <tr key={app.applicationId} className="hover:bg-ink-50 dark:bg-ink-800/80 transition">
                             <td className="p-3">
-                              <p className="font-bold text-gray-900 dark:text-gray-200">{app.studentName}</p>
-                              <p className="text-[10px] text-gray-400">{app.studentEmail}</p>
+                              <p className="font-bold text-ink-900 dark:text-ink-200">{app.studentName}</p>
+                              <p className="text-[10px] text-ink-400">{app.studentEmail}</p>
                               {app.resumeUrl ? (
-                                <a href={app.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-600 font-bold hover:underline block mt-0.5">
+                                <a href={app.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-marigold-500 font-bold hover:underline block mt-0.5">
                                   📄 {t("myProjects.viewResume")} ↗
                                 </a>
                               ) : (
-                                <span className="text-[9px] text-gray-400 italic block mt-0.5">{t("myProjects.noResumeProvided")}</span>
+                                <span className="text-[9px] text-ink-400 italic block mt-0.5">{t("myProjects.noResumeProvided")}</span>
                               )}
 
                               {/* Social/Portfolio Links Grid */}
                               <div className="flex items-center gap-2 mt-1 text-[9px]">
                                 {app.githubUrl && (
-                                  <a href={app.githubUrl} target="_blank" rel="noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 font-bold" title={t("myProjects.github")}>
+                                  <a href={app.githubUrl} target="_blank" rel="noreferrer" className="text-ink-600 dark:text-ink-300 hover:text-purple-600 font-bold" title={t("myProjects.github")}>
                                     <span>💻 {t("myProjects.github")}</span>
                                   </a>
                                 )}
                                 {app.linkedinUrl && (
-                                  <a href={app.linkedinUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-purple-600 font-bold" title={t("myProjects.linkedin")}>
+                                  <a href={app.linkedinUrl} target="_blank" rel="noreferrer" className="text-marigold-500 hover:text-purple-600 font-bold" title={t("myProjects.linkedin")}>
                                     <span>👔 {t("myProjects.linkedin")}</span>
                                   </a>
                                 )}
@@ -419,7 +419,7 @@ export default function MyProjects() {
                             </td>
                             <td className="p-3 max-w-[180px] truncate">{app.skills}</td>
                             <td className="p-3 text-center">
-                              <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${app.matchScore >= 75 ? "bg-green-100 text-green-800" : app.matchScore >= 40 ? "bg-amber-100 text-amber-800" : "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300"}`}>
+                              <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${app.matchScore >= 75 ? "bg-green-100 text-green-800" : app.matchScore >= 40 ? "bg-amber-100 text-amber-800" : "bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-300"}`}>
                                 {app.matchScore}%
                               </span>
                             </td>
@@ -427,9 +427,9 @@ export default function MyProjects() {
                               <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
                                 app.status === "Completed" ? "bg-green-100 text-green-800" :
                                 app.status === "Submitted" ? "bg-amber-100 text-amber-800" :
-                                app.status === "Approved" ? "bg-blue-100 text-blue-800" :
+                                app.status === "Approved" ? "bg-marigold-100 text-marigold-800" :
                                 app.status === "Rejected" ? "bg-red-100 text-red-800" :
-                                "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300"
+                                "bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-300"
                               }`}>
                                 {app.status}
                               </span>
@@ -446,10 +446,10 @@ export default function MyProjects() {
                                 </>
                               )}
                               {app.status === "Approved" && (
-                                <span className="text-[11px] text-blue-600 font-semibold">{t("myProjects.working")}</span>
+                                <span className="text-[11px] text-marigold-500 font-semibold">{t("myProjects.working")}</span>
                               )}
                               {app.status === "Submitted" && (
-                                <button onClick={() => handleOpenReviewModal(app)} className="text-[10px] font-bold bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1 rounded transition shadow-sm">
+                                <button onClick={() => handleOpenReviewModal(app)} className="text-[10px] font-bold bg-marigold-500 hover:bg-marigold-600 text-white px-2.5 py-1 rounded transition shadow-sm">
                                   {t("myProjects.reviewWork")}
                                 </button>
                               )}
@@ -474,38 +474,38 @@ export default function MyProjects() {
           {/* 🔍 WORK SUBMISSION REVIEW OVERLAY MODAL                                   */}
           {/* ========================================================================= */}
           {showReviewModal && activeAppToReview && (
-            <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-              <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full shadow-2xl p-6 border animate-fade-in text-left">
+            <div className="fixed inset-0 bg-ink-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+              <div className="bg-white dark:bg-ink-900 rounded-2xl max-w-md w-full shadow-2xl p-6 border animate-fade-in text-left">
                 <div className="flex justify-between items-center border-b pb-3 mb-4">
-                  <h3 className="font-bold text-base text-gray-900 dark:text-gray-200">{t("myProjects.reviewWorkSubmission")}</h3>
-                  <button onClick={() => setShowReviewModal(false)} className="text-gray-400 hover:text-gray-600 dark:text-gray-300 text-lg">×</button>
+                  <h3 className="font-bold text-base text-ink-900 dark:text-ink-200">{t("myProjects.reviewWorkSubmission")}</h3>
+                  <button onClick={() => setShowReviewModal(false)} className="text-ink-400 hover:text-ink-600 dark:text-ink-300 text-lg">×</button>
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <p className="text-[10px] uppercase font-bold text-gray-400">{t("myProjects.candidate")}</p>
-                    <p className="text-xs font-bold text-gray-900 dark:text-gray-200">{activeAppToReview.studentName} ({activeAppToReview.studentEmail})</p>
+                    <p className="text-[10px] uppercase font-bold text-ink-400">{t("myProjects.candidate")}</p>
+                    <p className="text-xs font-bold text-ink-900 dark:text-ink-200">{activeAppToReview.studentName} ({activeAppToReview.studentEmail})</p>
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase font-bold text-gray-400">{t("myProjects.submissionLink")}</p>
-                    <a href={activeAppToReview.submissionLink} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 font-bold hover:underline break-all">
+                    <p className="text-[10px] uppercase font-bold text-ink-400">{t("myProjects.submissionLink")}</p>
+                    <a href={activeAppToReview.submissionLink} target="_blank" rel="noopener noreferrer" className="text-xs text-marigold-500 font-bold hover:underline break-all">
                       {activeAppToReview.submissionLink} ↗
                     </a>
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase font-bold text-gray-400">{t("myProjects.studentExplanationNotes")}</p>
-                    <p className="text-xs text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-slate-900 border p-3 rounded-xl whitespace-pre-line leading-relaxed max-h-40 overflow-y-auto">
+                    <p className="text-[10px] uppercase font-bold text-ink-400">{t("myProjects.studentExplanationNotes")}</p>
+                    <p className="text-xs text-ink-700 dark:text-ink-200 bg-ink-50 dark:bg-ink-900 border p-3 rounded-xl whitespace-pre-line leading-relaxed max-h-40 overflow-y-auto">
                       {activeAppToReview.submissionText}
                     </p>
                   </div>
                   <form onSubmit={handleCompleteTask} className="space-y-3 pt-2">
                     <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("myProjects.companyFeedback")}</label>
+                      <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("myProjects.companyFeedback")}</label>
                       <textarea
                         placeholder={t("myProjects.feedbackPlaceholder")}
                         value={feedbackText}
                         onChange={(e) => setFeedbackText(e.target.value)}
                         rows={2}
-                        className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                        className="w-full bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400 resize-none"
                         required
                       />
                     </div>
@@ -520,12 +520,12 @@ export default function MyProjects() {
                               key={star}
                               type="button"
                               onClick={() => setRating(star)}
-                              className={`text-xl transition-all outline-none ${star <= rating ? "text-amber-400 scale-105" : "text-gray-200"}`}
+                              className={`text-xl transition-all outline-none ${star <= rating ? "text-amber-400 scale-105" : "text-ink-200"}`}
                             >
                               ★
                             </button>
                           ))}
-                          <span className="text-[9px] text-gray-400 font-extrabold ml-1.5">({rating} / 5)</span>
+                          <span className="text-[9px] text-ink-400 font-extrabold ml-1.5">({rating} / 5)</span>
                         </div>
                       </div>
 
@@ -536,7 +536,7 @@ export default function MyProjects() {
                           value={ratingReview}
                           onChange={(e) => setRatingReview(e.target.value)}
                           rows={1}
-                          className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3 py-1.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
+                          className="w-full bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3 py-1.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
                         />
                       </div>
                     </div>
@@ -544,7 +544,7 @@ export default function MyProjects() {
                       <button
                         type="button"
                         onClick={() => setShowReviewModal(false)}
-                        className="px-4 py-2 border border-gray-200 dark:border-slate-800 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
+                        className="px-4 py-2 border border-ink-200 dark:border-ink-800 rounded-xl text-xs font-bold text-ink-500 hover:bg-ink-50 dark:bg-ink-900 transition"
                       >
                         {t("myProjects.cancel")}
                       </button>
@@ -566,53 +566,53 @@ export default function MyProjects() {
           {/* ✏️ PROJECT EDIT OVERLAY MODAL                                            */}
           {/* ========================================================================= */}
           {showEditModal && selectedProject && (
-            <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-              <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full shadow-2xl p-6 border animate-fade-in text-left">
+            <div className="fixed inset-0 bg-ink-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+              <div className="bg-white dark:bg-ink-900 rounded-2xl max-w-lg w-full shadow-2xl p-6 border animate-fade-in text-left">
                 <div className="flex justify-between items-center border-b pb-3 mb-4">
-                  <h3 className="font-bold text-base text-gray-900 dark:text-gray-200 font-sans">{t("myProjects.editProjectTitle")}</h3>
-                  <button onClick={() => setShowEditModal(false)} className="text-gray-400 hover:text-gray-600 dark:text-gray-300 text-lg">×</button>
+                  <h3 className="font-bold text-base text-ink-900 dark:text-ink-200 font-sans">{t("myProjects.editProjectTitle")}</h3>
+                  <button onClick={() => setShowEditModal(false)} className="text-ink-400 hover:text-ink-600 dark:text-ink-300 text-lg">×</button>
                 </div>
                 <form onSubmit={handleSaveEditProject} className="space-y-4">
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("myProjects.projectTitleLabel")}</label>
+                    <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("myProjects.projectTitleLabel")}</label>
                     <input
                       type="text"
                       value={editTitle}
                       onChange={(e) => setEditTitle(e.target.value)}
-                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("myProjects.descriptionLabel")}</label>
+                    <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("myProjects.descriptionLabel")}</label>
                     <textarea
                       value={editDescription}
                       onChange={(e) => setEditDescription(e.target.value)}
                       rows={3}
-                      className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+                      className="w-full bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400 resize-none"
                       required
                     />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("myProjects.budgetPayoutLabel")}</label>
+                      <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("myProjects.budgetPayoutLabel")}</label>
                       <input
                         type="number"
                         value={editBudget}
                         onChange={(e) => setEditBudget(e.target.value)}
-                        className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("myProjects.durationLabel")}</label>
+                      <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("myProjects.durationLabel")}</label>
                       <input
                         type="text"
                         value={editDuration}
                         onChange={(e) => setEditDuration(e.target.value)}
-                        className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"
                         required
                       />
                     </div>
@@ -620,23 +620,23 @@ export default function MyProjects() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("myProjects.deadlineDateLabel")}</label>
+                      <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("myProjects.deadlineDateLabel")}</label>
                       <input
                         type="text"
                         value={editDeadline}
                         onChange={(e) => setEditDeadline(e.target.value)}
-                        className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">{t("myProjects.requiredSkillsLabel")}</label>
+                      <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("myProjects.requiredSkillsLabel")}</label>
                       <input
                         type="text"
                         value={editSkills}
                         onChange={(e) => setEditSkills(e.target.value)}
                         placeholder={t("myProjects.skillsPlaceholder")}
-                        className="w-full bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full bg-ink-50 dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"
                       />
                     </div>
                   </div>
@@ -645,14 +645,14 @@ export default function MyProjects() {
                     <button
                       type="button"
                       onClick={() => setShowEditModal(false)}
-                      className="px-4 py-2 border border-gray-200 dark:border-slate-800 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition"
+                      className="px-4 py-2 border border-ink-200 dark:border-ink-800 rounded-xl text-xs font-bold text-ink-500 hover:bg-ink-50 dark:bg-ink-900 transition"
                     >
                       {t("myProjects.cancel")}
                     </button>
                     <button
                       type="submit"
                       disabled={submittingEdit}
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-md"
+                      className="px-4 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-md"
                     >
                       {submittingEdit ? t("myProjects.saving") : t("myProjects.saveChanges")}
                     </button>

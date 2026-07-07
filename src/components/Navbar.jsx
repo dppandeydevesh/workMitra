@@ -130,7 +130,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-md sticky top-0 z-50 transition-all border-b border-gray-100 dark:border-slate-800">
+    <nav className="bg-white/80 dark:bg-ink-900/80 backdrop-blur-md shadow-md sticky top-0 z-50 transition-all border-b border-ink-100 dark:border-ink-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -162,8 +162,8 @@ export default function Navbar() {
                   onClick={() => { navigate(link.path); setMobileMenuOpen(false); }}
                   className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ${
                     isActive 
-                      ? "bg-indigo-50 text-indigo-700 shadow-sm border border-indigo-100/50" 
-                      : "text-gray-600 hover:text-indigo-600 hover:bg-gray-50 dark:bg-slate-900"
+                      ? "bg-marigold-50 text-marigold-700 shadow-sm border border-marigold-100/50" 
+                      : "text-ink-600 hover:text-marigold-500 hover:bg-ink-50 dark:bg-ink-900"
                   }`}
                 >
                   <span>{link.icon}</span>
@@ -177,7 +177,7 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setNotificationsOpen(!notificationsOpen)}
-                  className="relative text-gray-500 hover:text-indigo-600 p-2 rounded-full hover:bg-gray-100 dark:bg-slate-800 transition focus:outline-none"
+                  className="relative text-ink-500 hover:text-marigold-500 p-2 rounded-full hover:bg-ink-100 dark:bg-ink-800 transition focus:outline-none"
                 >
                   <span className="text-lg">🔔</span>
                   {notifications.length > 0 && (
@@ -187,17 +187,17 @@ export default function Navbar() {
 
                 {/* Dropdown */}
                 {notificationsOpen && (
-                  <div className="absolute right-0 top-12 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-800 p-4 w-80 max-h-96 overflow-y-auto z-50 text-left animate-slide-in-up">
-                    <h4 className="font-extrabold text-[10px] text-gray-400 uppercase tracking-wider mb-3">Notification Logs ({notifications.length})</h4>
+                  <div className="absolute right-0 top-12 bg-white dark:bg-ink-900 rounded-2xl shadow-2xl border border-ink-100 dark:border-ink-800 p-4 w-80 max-h-96 overflow-y-auto z-50 text-left animate-slide-in-up">
+                    <h4 className="font-extrabold text-[10px] text-ink-400 uppercase tracking-wider mb-3">Notification Logs ({notifications.length})</h4>
                     {notifications.length === 0 ? (
-                      <p className="text-xs text-gray-400 italic text-center py-4">No recent status alerts</p>
+                      <p className="text-xs text-ink-400 italic text-center py-4">No recent status alerts</p>
                     ) : (
                       <div className="space-y-3">
                         {notifications.map(notif => (
                           <div key={notif.id} className={`p-2.5 rounded-xl border text-[11px] ${
                             notif.type === 'success' ? 'bg-emerald-50/50 border-emerald-100 text-emerald-800' :
                             notif.type === 'danger' ? 'bg-rose-50/50 border-rose-100 text-rose-800' :
-                            'bg-blue-50/50 border-blue-100 text-blue-800'
+                            'bg-marigold-50/50 border-marigold-100 text-marigold-800'
                           }`}>
                             <p className="font-extrabold">{notif.title}</p>
                             <p className="opacity-90 mt-0.5 leading-relaxed">{notif.message}</p>
@@ -213,7 +213,7 @@ export default function Navbar() {
             {/* Language Toggle */}
             <button
               onClick={() => i18n.changeLanguage(i18n.language?.startsWith('en') ? 'hi' : 'en')}
-              className="p-2 text-xs font-bold text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition focus:outline-none"
+              className="p-2 text-xs font-bold text-ink-500 hover:text-marigold-500 rounded-full hover:bg-ink-100 dark:bg-ink-800 dark:hover:bg-ink-800 transition focus:outline-none"
             >
               {i18n.language?.startsWith('en') ? 'हिन्दी' : 'EN'}
             </button>
@@ -221,7 +221,7 @@ export default function Navbar() {
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
-              className="p-2 text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition focus:outline-none"
+              className="p-2 text-ink-500 hover:text-marigold-500 rounded-full hover:bg-ink-100 dark:bg-ink-800 dark:hover:bg-ink-800 transition focus:outline-none"
               title="Toggle theme mode"
             >
               <span className="text-lg">{theme === "dark" ? "☀️" : "🌙"}</span>
@@ -230,7 +230,7 @@ export default function Navbar() {
             {/* Logout Button */}
             <button
               onClick={handleLogout}
-              className="px-3 py-2 text-gray-600 hover:text-red-600 hover:bg-red-55 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ml-1"
+              className="px-3 py-2 text-ink-600 hover:text-red-600 hover:bg-red-55 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ml-1"
             >
               <span>🚪</span>
               <span>{t("Logout")}</span>
@@ -243,7 +243,7 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setNotificationsOpen(!notificationsOpen)}
-                  className="relative text-gray-500 hover:text-indigo-600 p-2 rounded-full hover:bg-gray-100 dark:bg-slate-800 transition focus:outline-none"
+                  className="relative text-ink-500 hover:text-marigold-500 p-2 rounded-full hover:bg-ink-100 dark:bg-ink-800 transition focus:outline-none"
                 >
                   <span className="text-lg">🔔</span>
                   {notifications.length > 0 && (
@@ -252,17 +252,17 @@ export default function Navbar() {
                 </button>
                 
                 {notificationsOpen && (
-                  <div className="absolute right-0 top-12 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-100 dark:border-slate-800 p-4 w-72 max-h-96 overflow-y-auto z-50 text-left">
-                    <h4 className="font-extrabold text-[10px] text-gray-400 uppercase tracking-wider mb-3">Notification Logs ({notifications.length})</h4>
+                  <div className="absolute right-0 top-12 bg-white dark:bg-ink-900 rounded-2xl shadow-2xl border border-ink-100 dark:border-ink-800 p-4 w-72 max-h-96 overflow-y-auto z-50 text-left">
+                    <h4 className="font-extrabold text-[10px] text-ink-400 uppercase tracking-wider mb-3">Notification Logs ({notifications.length})</h4>
                     {notifications.length === 0 ? (
-                      <p className="text-xs text-gray-400 italic text-center py-4">No recent status alerts</p>
+                      <p className="text-xs text-ink-400 italic text-center py-4">No recent status alerts</p>
                     ) : (
                       <div className="space-y-3">
                         {notifications.map(notif => (
                           <div key={notif.id} className={`p-2.5 rounded-xl border text-[11px] ${
                             notif.type === 'success' ? 'bg-emerald-50/50 border-emerald-100 text-emerald-800' :
                             notif.type === 'danger' ? 'bg-rose-50/50 border-rose-100 text-rose-800' :
-                            'bg-blue-50/50 border-blue-100 text-blue-800'
+                            'bg-marigold-50/50 border-marigold-100 text-marigold-800'
                           }`}>
                             <p className="font-extrabold">{notif.title}</p>
                             <p className="opacity-90 mt-0.5 leading-relaxed">{notif.message}</p>
@@ -278,14 +278,14 @@ export default function Navbar() {
             {/* Language Toggle */}
             <button
               onClick={() => i18n.changeLanguage(i18n.language?.startsWith('en') ? 'hi' : 'en')}
-              className="p-2 text-xs font-bold text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition focus:outline-none"
+              className="p-2 text-xs font-bold text-ink-500 hover:text-marigold-500 rounded-full hover:bg-ink-100 dark:bg-ink-800 dark:hover:bg-ink-800 transition focus:outline-none"
             >
               {i18n.language?.startsWith('en') ? 'हिन्दी' : 'EN'}
             </button>
 
             <button
               onClick={toggleTheme}
-              className="p-2 text-gray-500 hover:text-indigo-600 rounded-full hover:bg-gray-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition focus:outline-none"
+              className="p-2 text-ink-500 hover:text-marigold-500 rounded-full hover:bg-ink-100 dark:bg-ink-800 dark:hover:bg-ink-800 transition focus:outline-none"
               title="Toggle theme mode"
             >
               <span className="text-lg">{theme === "dark" ? "☀️" : "🌙"}</span>
@@ -293,7 +293,7 @@ export default function Navbar() {
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-gray-500 hover:text-indigo-600 p-2 rounded-lg hover:bg-gray-100 dark:bg-slate-800 transition focus:outline-none"
+              className="text-ink-500 hover:text-marigold-500 p-2 rounded-lg hover:bg-ink-100 dark:bg-ink-800 transition focus:outline-none"
             >
               <span className="text-xl">{mobileMenuOpen ? "✕" : "☰"}</span>
             </button>
@@ -303,7 +303,7 @@ export default function Navbar() {
 
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-slate-800 px-4 py-3 space-y-1.5 shadow-inner">
+        <div className="md:hidden bg-white dark:bg-ink-900 border-t border-ink-100 dark:border-ink-800 px-4 py-3 space-y-1.5 shadow-inner">
           {activeLinks.map((link) => {
             const isActive = location.pathname.startsWith(link.path);
             return (
@@ -312,8 +312,8 @@ export default function Navbar() {
                 onClick={() => { navigate(link.path); setMobileMenuOpen(false); }}
                 className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition ${
                   isActive 
-                    ? "bg-indigo-50 text-indigo-700 border border-indigo-100/50" 
-                    : "text-gray-600 hover:text-indigo-600 hover:bg-gray-50 dark:bg-slate-900"
+                    ? "bg-marigold-50 text-marigold-700 border border-marigold-100/50" 
+                    : "text-ink-600 hover:text-marigold-500 hover:bg-ink-50 dark:bg-ink-900"
                 }`}
               >
                 <span>{link.icon}</span>
@@ -323,7 +323,7 @@ export default function Navbar() {
           })}
           <button
             onClick={handleLogout}
-            className="w-full text-left px-3 py-2.5 text-gray-600 hover:text-red-600 hover:bg-red-55 rounded-xl text-xs font-bold flex items-center gap-2 transition"
+            className="w-full text-left px-3 py-2.5 text-ink-600 hover:text-red-600 hover:bg-red-55 rounded-xl text-xs font-bold flex items-center gap-2 transition"
           >
             <span>🚪</span>
             <span>{t("Logout")}</span>

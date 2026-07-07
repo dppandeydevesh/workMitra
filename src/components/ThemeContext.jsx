@@ -12,7 +12,7 @@ export function ThemeProvider({ children }) {
       }
     }
     // ALWAYS default to light mode because the new vibrant peach/pink gradient is a light theme.
-    // Dark mode currently uses slate-950 which hides the gradient and makes it look dull.
+    // Dark mode currently uses ink-950 which hides the gradient and makes it look dull.
     return "light";
   });
 

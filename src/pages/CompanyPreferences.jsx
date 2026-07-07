@@ -116,11 +116,11 @@ export default function CompanyPreferences() {
 
   return (
     <div className="min-h-screen w-full bg-transparent flex flex-col items-center py-12 px-4 select-none font-sans">
-      <div className="w-full max-w-3xl bg-white dark:bg-slate-900 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-8 border border-gray-100 dark:border-slate-800 space-y-8">
+      <div className="w-full max-w-3xl bg-white dark:bg-ink-900 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-8 border border-ink-100 dark:border-ink-800 space-y-8">
         
         <div className="text-center">
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-200 tracking-tight">{t("companyPreferences.title")}</h1>
-          <p className="text-sm text-slate-500 mt-1">{t("companyPreferences.subtitle")}</p>
+          <h1 className="text-3xl font-extrabold text-ink-900 dark:text-ink-200 tracking-tight">{t("companyPreferences.title")}</h1>
+          <p className="text-sm text-ink-500 mt-1">{t("companyPreferences.subtitle")}</p>
         </div>
 
         {errorMessage && <div className="p-3 bg-red-100 border border-red-200 text-red-700 font-bold rounded-xl text-xs">⚠️ {errorMessage}</div>}
@@ -130,12 +130,12 @@ export default function CompanyPreferences() {
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-purple-950 dark:text-purple-200 border-b pb-2">{t("companyPreferences.section1Title")}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input type="text" placeholder={t("companyPreferences.companyNamePlaceholder")} value={companyName} onChange={e => setCompanyName(e.target.value)} className="bg-slate-50 dark:bg-slate-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-slate-900" required />
-              <input type="text" placeholder={t("companyPreferences.websitePlaceholder")} value={website} onChange={e => setWebsite(e.target.value)} className="bg-slate-50 dark:bg-slate-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-slate-900" required />
-              <input type="text" placeholder={t("companyPreferences.industryPlaceholder")} value={industry} onChange={e => setIndustry(e.target.value)} className="bg-slate-50 dark:bg-slate-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-slate-900" required />
-              <input type="text" placeholder={t("companyPreferences.companySizePlaceholder")} value={companySize} onChange={e => setCompanySize(e.target.value)} className="bg-slate-50 dark:bg-slate-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-slate-900" required />
+              <input type="text" placeholder={t("companyPreferences.companyNamePlaceholder")} value={companyName} onChange={e => setCompanyName(e.target.value)} className="bg-ink-50 dark:bg-ink-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-ink-900" required />
+              <input type="text" placeholder={t("companyPreferences.websitePlaceholder")} value={website} onChange={e => setWebsite(e.target.value)} className="bg-ink-50 dark:bg-ink-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-ink-900" required />
+              <input type="text" placeholder={t("companyPreferences.industryPlaceholder")} value={industry} onChange={e => setIndustry(e.target.value)} className="bg-ink-50 dark:bg-ink-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-ink-900" required />
+              <input type="text" placeholder={t("companyPreferences.companySizePlaceholder")} value={companySize} onChange={e => setCompanySize(e.target.value)} className="bg-ink-50 dark:bg-ink-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-ink-900" required />
             </div>
-            <input type="text" placeholder={t("companyPreferences.locationPlaceholder")} value={location} onChange={e => setLocation(e.target.value)} className="bg-slate-50 dark:bg-slate-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-slate-900" required />
+            <input type="text" placeholder={t("companyPreferences.locationPlaceholder")} value={location} onChange={e => setLocation(e.target.value)} className="bg-ink-50 dark:bg-ink-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-ink-900" required />
           </div>
 
           {/* Section 2: Hiring Requirements */}
@@ -143,7 +143,7 @@ export default function CompanyPreferences() {
             <h3 className="text-lg font-bold text-purple-950 dark:text-purple-200 border-b pb-2">{t("companyPreferences.section2Title")}</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {rolesOptions.map(role => (
-                <label key={role} className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300 font-medium cursor-pointer">
+                <label key={role} className="flex items-center gap-2 text-sm text-ink-700 dark:text-ink-300 font-medium cursor-pointer">
                   <input type="checkbox" checked={requiredRoles.includes(role)} onChange={() => handleCheckboxToggle(role)} className="w-4 h-4 rounded accent-purple-600" />
                   {t(`companyPreferences.roles.${role.replace(/[^a-zA-Z0-9]/g, "")}`)}
                 </label>
@@ -158,7 +158,7 @@ export default function CompanyPreferences() {
               {skillsOptions.map(skill => {
                 const active = requiredSkills.includes(skill);
                 return (
-                  <button key={skill} type="button" onClick={() => handleSkillToggle(skill)} className={`text-xs px-4 py-2 rounded-full border transition font-medium ${active ? "bg-purple-600 border-purple-600 text-white shadow-md shadow-purple-100" : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:bg-slate-800"}`}>
+                  <button key={skill} type="button" onClick={() => handleSkillToggle(skill)} className={`text-xs px-4 py-2 rounded-full border transition font-medium ${active ? "bg-purple-600 border-purple-600 text-white shadow-md shadow-purple-100" : "bg-ink-50 dark:bg-ink-800 border-ink-200 dark:border-ink-800 text-ink-600 dark:text-ink-300 hover:bg-ink-100 dark:bg-ink-800"}`}>
                     {skill}
                   </button>
                 );
@@ -169,17 +169,17 @@ export default function CompanyPreferences() {
           {/* Section 4: Project Details */}
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-purple-950 dark:text-purple-200 border-b pb-2">{t("companyPreferences.section4Title")}</h3>
-            <input type="text" placeholder={t("companyPreferences.projectTitlePlaceholder")} value={projectTitle} onChange={e => setProjectTitle(e.target.value)} className="bg-slate-50 dark:bg-slate-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-slate-900" required />
-            <textarea rows="3" placeholder={t("companyPreferences.projectDescPlaceholder")} value={projectDescription} onChange={e => setProjectDescription(e.target.value)} className="bg-slate-50 dark:bg-slate-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-slate-900 resize-none" required />
-            <input type="text" placeholder={t("companyPreferences.projectDurationPlaceholder")} value={projectDuration} onChange={e => setProjectDuration(e.target.value)} className="bg-slate-50 dark:bg-slate-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-slate-900" required />
+            <input type="text" placeholder={t("companyPreferences.projectTitlePlaceholder")} value={projectTitle} onChange={e => setProjectTitle(e.target.value)} className="bg-ink-50 dark:bg-ink-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-ink-900" required />
+            <textarea rows="3" placeholder={t("companyPreferences.projectDescPlaceholder")} value={projectDescription} onChange={e => setProjectDescription(e.target.value)} className="bg-ink-50 dark:bg-ink-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-ink-900 resize-none" required />
+            <input type="text" placeholder={t("companyPreferences.projectDurationPlaceholder")} value={projectDuration} onChange={e => setProjectDuration(e.target.value)} className="bg-ink-50 dark:bg-ink-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white dark:bg-ink-900" required />
           </div>
 
           {/* Section 5, 7, 8: Radio Metrics Options */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
-              <h3 className="font-bold text-sm text-slate-800 dark:text-slate-200">{t("companyPreferences.section5Title")}</h3>
+              <h3 className="font-bold text-sm text-ink-800 dark:text-ink-200">{t("companyPreferences.section5Title")}</h3>
               {["Internship", "Part-Time", "Full-Time", "Freelance", "Micro Tasks"].map(type => (
-                <label key={type} className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 font-medium cursor-pointer py-0.5">
+                <label key={type} className="flex items-center gap-2 text-xs text-ink-600 dark:text-ink-300 font-medium cursor-pointer py-0.5">
                   <input type="radio" name="hiringType" checked={hiringType === type} onChange={() => setHiringType(type)} className="accent-purple-600" />
                   {t(`companyPreferences.hiringTypeOptions.${type.replace(/[^a-zA-Z0-9]/g, "")}`)}
                 </label>
@@ -187,9 +187,9 @@ export default function CompanyPreferences() {
             </div>
 
             <div className="space-y-2">
-              <h3 className="font-bold text-sm text-slate-800 dark:text-slate-200">{t("companyPreferences.section7Title")}</h3>
+              <h3 className="font-bold text-sm text-ink-800 dark:text-ink-200">{t("companyPreferences.section7Title")}</h3>
               {["Remote", "Hybrid", "On-site"].map(mode => (
-                <label key={mode} className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 font-medium cursor-pointer py-0.5">
+                <label key={mode} className="flex items-center gap-2 text-xs text-ink-600 dark:text-ink-300 font-medium cursor-pointer py-0.5">
                   <input type="radio" name="workMode" checked={workMode === mode} onChange={() => setWorkMode(mode)} className="accent-purple-600" />
                   {t(`companyPreferences.workModeOptions.${mode.replace(/[^a-zA-Z0-9]/g, "")}`)}
                 </label>
@@ -197,9 +197,9 @@ export default function CompanyPreferences() {
             </div>
 
             <div className="space-y-2">
-              <h3 className="font-bold text-sm text-slate-800 dark:text-slate-200">{t("companyPreferences.section8Title")}</h3>
+              <h3 className="font-bold text-sm text-ink-800 dark:text-ink-200">{t("companyPreferences.section8Title")}</h3>
               {["1", "2-5", "5-10", "10+"].map(num => (
-                <label key={num} className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 font-medium cursor-pointer py-0.5">
+                <label key={num} className="flex items-center gap-2 text-xs text-ink-600 dark:text-ink-300 font-medium cursor-pointer py-0.5">
                   <input type="radio" name="studentsReq" checked={studentsRequired === num} onChange={() => setStudentsRequired(num)} className="accent-purple-600" />
                   {num}
                 </label>
@@ -211,12 +211,12 @@ export default function CompanyPreferences() {
           <div className="space-y-3">
             <h3 className="text-lg font-bold text-purple-950 dark:text-purple-200 border-b pb-2">{t("companyPreferences.section6Title")}</h3>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <input type="number" placeholder={t("companyPreferences.minBudgetPlaceholder")} value={budgetMin} onChange={e => setBudgetMin(e.target.value)} className="bg-slate-50 dark:bg-slate-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500" required />
-              <input type="number" placeholder={t("companyPreferences.maxBudgetPlaceholder")} value={budgetMax} onChange={e => setBudgetMax(e.target.value)} className="bg-slate-50 dark:bg-slate-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500" required />
+              <input type="number" placeholder={t("companyPreferences.minBudgetPlaceholder")} value={budgetMin} onChange={e => setBudgetMin(e.target.value)} className="bg-ink-50 dark:bg-ink-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500" required />
+              <input type="number" placeholder={t("companyPreferences.maxBudgetPlaceholder")} value={budgetMax} onChange={e => setBudgetMax(e.target.value)} className="bg-ink-50 dark:bg-ink-800 border p-3 rounded-xl text-sm w-full outline-none focus:ring-2 focus:ring-purple-500" required />
             </div>
           </div>
 
-          <button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-sm uppercase py-4 rounded-xl shadow-md transition active:scale-[0.99]">
+          <button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-marigold-600 hover:from-purple-700 hover:to-marigold-700 text-white font-bold text-sm uppercase py-4 rounded-xl shadow-md transition active:scale-[0.99]">
             {t("companyPreferences.saveButton")}
           </button>
         </form>

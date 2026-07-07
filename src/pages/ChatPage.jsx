@@ -250,7 +250,7 @@ export default function ChatPage() {
         </div>
         <button 
           onClick={() => navigate(loggedInUser.userRole === "company" ? "/company-dashboard" : "/dashboard")}
-          className="text-xs font-bold bg-gray-900/5 hover:bg-gray-900/10 dark:bg-white/10 dark:hover:bg-white/20 text-gray-800 dark:text-gray-100 px-4 py-2 rounded-xl transition-all"
+          className="text-xs font-bold bg-ink-900/5 hover:bg-ink-900/10 dark:bg-white/10 dark:hover:bg-white/20 text-ink-800 dark:text-ink-100 px-4 py-2 rounded-xl transition-all"
         >
           ← {t("chat.dashboardBack")}
         </button>
@@ -263,13 +263,13 @@ export default function ChatPage() {
         {/* ========================================================================= */}
         <div className={`w-full md:w-[340px] border-r border-white/20 dark:border-white/10 flex-col bg-white/30 dark:bg-black/20 ${showMobileChat ? "hidden md:flex" : "flex"}`}>
           <div className="p-5 sm:p-6 border-b border-white/20 dark:border-white/10 backdrop-blur-md">
-            <h2 className="text-xl sm:text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{t("chat.title")}</h2>
-            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">{t("chat.subtitle")}</p>
+            <h2 className="text-xl sm:text-2xl font-extrabold bg-gradient-to-r from-marigold-600 to-marigold-600 bg-clip-text text-transparent">{t("chat.title")}</h2>
+            <p className="text-xs text-ink-600 dark:text-ink-400 mt-1 font-medium">{t("chat.subtitle")}</p>
           </div>
           
           <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
             {partners.length === 0 ? (
-              <div className="text-center py-12 text-xs text-gray-500 font-medium">
+              <div className="text-center py-12 text-xs text-ink-500 font-medium">
                 💬 {t("chat.noConversations")}
               </div>
             ) : (
@@ -290,15 +290,15 @@ export default function ChatPage() {
                     }`}
                   >
                     <div className="relative">
-                      <div className="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold flex items-center justify-center text-lg shadow-md">
+                      <div className="w-11 h-11 rounded-full bg-gradient-to-br from-marigold-500 to-purple-600 text-white font-bold flex items-center justify-center text-lg shadow-md">
                         {partner.fullName ? partner.fullName.charAt(0).toUpperCase() : partner.companyName?.charAt(0).toUpperCase() || "?"}
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className={`text-sm font-bold truncate ${isActive ? "text-gray-900 dark:text-white" : "text-gray-700 dark:text-gray-200"}`}>
+                      <h4 className={`text-sm font-bold truncate ${isActive ? "text-ink-900 dark:text-white" : "text-ink-700 dark:text-ink-200"}`}>
                         {partner.fullName || partner.companyName}
                       </h4>
-                      <p className="text-[11px] text-gray-500 dark:text-gray-400 font-medium truncate mt-0.5 uppercase tracking-wider">
+                      <p className="text-[11px] text-ink-500 dark:text-ink-400 font-medium truncate mt-0.5 uppercase tracking-wider">
                         {partner.userRole === "company" ? t("chat.recruiter") : t("chat.student")}
                       </p>
                     </div>
@@ -328,31 +328,31 @@ export default function ChatPage() {
                       setShowMobileChat(false);
                       navigate("/chat");
                     }} 
-                    className="md:hidden text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 p-2 rounded-xl hover:bg-white/50 dark:hover:bg-white/10 transition-colors"
+                    className="md:hidden text-ink-600 dark:text-ink-300 hover:text-marigold-500 dark:hover:text-marigold-400 p-2 rounded-xl hover:bg-white/50 dark:hover:bg-white/10 transition-colors"
                     title={t("chat.backToList")}
                   >
                     ◀
                   </button>
                   <div className="relative">
-                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold flex items-center justify-center text-sm shadow-md ring-2 ring-white/50 dark:ring-white/10">
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-marigold-500 to-purple-600 text-white font-bold flex items-center justify-center text-sm shadow-md ring-2 ring-white/50 dark:ring-white/10">
                       {activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || "?"}
                     </div>
                     {/* Seamless online status dot */}
-                    <div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-slate-800 ${wsConnected ? "bg-green-500" : "bg-gray-400"}`}></div>
+                    <div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-ink-800 ${wsConnected ? "bg-green-500" : "bg-ink-400"}`}></div>
                   </div>
                   <div>
-                    <h3 className="text-sm sm:text-base font-extrabold text-gray-900 dark:text-white leading-tight">
+                    <h3 className="text-sm sm:text-base font-extrabold text-ink-900 dark:text-white leading-tight">
                       {activePartner.fullName || activePartner.companyName}
                     </h3>
                     <div className="flex items-center gap-1.5 mt-0.5">
-                      <span className="text-[11px] font-medium text-gray-600 dark:text-gray-400">
+                      <span className="text-[11px] font-medium text-ink-600 dark:text-ink-400">
                         {isPartnerTyping ? (
-                          <span className="text-indigo-600 dark:text-indigo-400 font-bold flex items-center gap-1">
+                          <span className="text-marigold-500 dark:text-marigold-400 font-bold flex items-center gap-1">
                             {t("chat.typing")}
                             <span className="flex space-x-0.5 ml-1">
-                              <span className="w-1 h-1 bg-indigo-600 dark:bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                              <span className="w-1 h-1 bg-indigo-600 dark:bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                              <span className="w-1 h-1 bg-indigo-600 dark:bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                              <span className="w-1 h-1 bg-marigold-500 dark:bg-marigold-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                              <span className="w-1 h-1 bg-marigold-500 dark:bg-marigold-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                              <span className="w-1 h-1 bg-marigold-500 dark:bg-marigold-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
                             </span>
                           </span>
                         ) : wsConnected ? (
@@ -370,12 +370,12 @@ export default function ChatPage() {
               <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
                 {loadingHistory ? (
                   <div className="flex items-center justify-center h-full">
-                    <div className="text-xs text-gray-500 font-medium bg-white/50 dark:bg-black/20 px-4 py-2 rounded-full animate-pulse">
+                    <div className="text-xs text-ink-500 font-medium bg-white/50 dark:bg-black/20 px-4 py-2 rounded-full animate-pulse">
                       {t("chat.loadingLogs")}
                     </div>
                   </div>
                 ) : messages.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                  <div className="flex flex-col items-center justify-center h-full text-ink-500">
                     <div className="w-16 h-16 mb-4 text-4xl bg-white/50 dark:bg-black/20 flex items-center justify-center rounded-full shadow-sm animate-float-slow">
                       👋
                     </div>
@@ -393,7 +393,7 @@ export default function ChatPage() {
                         className={`flex ${isOutgoing ? "justify-end" : "justify-start"} items-end gap-2 animate-fade-in`}
                       >
                         {!isOutgoing && (
-                          <div className={`w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold flex items-center justify-center text-[10px] shadow-sm shrink-0 ${showAvatar ? "opacity-100" : "opacity-0"}`}>
+                          <div className={`w-6 h-6 rounded-full bg-gradient-to-br from-marigold-500 to-purple-600 text-white font-bold flex items-center justify-center text-[10px] shadow-sm shrink-0 ${showAvatar ? "opacity-100" : "opacity-0"}`}>
                             {showAvatar ? (activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || "?") : ""}
                           </div>
                         )}
@@ -401,14 +401,14 @@ export default function ChatPage() {
                         <div
                           className={`max-w-[75%] px-4 py-3 shadow-sm text-[13px] leading-relaxed relative group ${
                             isOutgoing
-                              ? "bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-2xl rounded-br-sm"
-                              : "bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-gray-800 dark:text-gray-100 border border-white/60 dark:border-slate-700/60 rounded-2xl rounded-bl-sm"
+                              ? "bg-gradient-to-br from-marigold-600 to-marigold-600 text-white rounded-2xl rounded-br-sm"
+                              : "bg-white/90 dark:bg-ink-800/90 backdrop-blur-md text-ink-800 dark:text-ink-100 border border-white/60 dark:border-ink-700/60 rounded-2xl rounded-bl-sm"
                           }`}
                         >
                           <p className="whitespace-pre-wrap">{msg.text}</p>
                           <span
                             className={`text-[9px] block font-medium opacity-0 group-hover:opacity-100 transition-opacity absolute ${
-                              isOutgoing ? "-left-12 bottom-2 text-gray-500" : "-right-12 bottom-2 text-gray-500"
+                              isOutgoing ? "-left-12 bottom-2 text-ink-500" : "-right-12 bottom-2 text-ink-500"
                             }`}
                           >
                             {msg.timestamp ? (() => {
@@ -424,14 +424,14 @@ export default function ChatPage() {
                 
                 {isPartnerTyping && (
                   <div className="flex justify-start items-end gap-2 animate-fade-in">
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold flex items-center justify-center text-[10px] shadow-sm shrink-0">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-marigold-500 to-purple-600 text-white font-bold flex items-center justify-center text-[10px] shadow-sm shrink-0">
                       {activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || "?"}
                     </div>
-                    <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-white/60 dark:border-slate-700/60 rounded-2xl rounded-bl-sm px-4 py-3.5 shadow-sm">
+                    <div className="bg-white/90 dark:bg-ink-800/90 backdrop-blur-md border border-white/60 dark:border-ink-700/60 rounded-2xl rounded-bl-sm px-4 py-3.5 shadow-sm">
                       <div className="flex space-x-1.5 items-center justify-center h-2">
-                        <div className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                        <div className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                        <div className="w-1.5 h-1.5 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                        <div className="w-1.5 h-1.5 bg-ink-400 dark:bg-ink-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="w-1.5 h-1.5 bg-ink-400 dark:bg-ink-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                        <div className="w-1.5 h-1.5 bg-ink-400 dark:bg-ink-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                       </div>
                     </div>
                   </div>
@@ -447,12 +447,12 @@ export default function ChatPage() {
                     value={messageInput}
                     onChange={handleInputChange}
                     placeholder={t("chat.typeMessagePlaceholder")}
-                    className="flex-1 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm border border-white/50 dark:border-slate-700/50 text-sm px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-400/50 transition-all shadow-inner text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                    className="flex-1 bg-white/70 dark:bg-ink-900/70 backdrop-blur-sm border border-white/50 dark:border-ink-700/50 text-sm px-5 py-3.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-marigold-400/50 transition-all shadow-inner text-ink-800 dark:text-ink-100 placeholder-ink-500 dark:placeholder-ink-400"
                     required
                   />
                   <button
                     type="submit"
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm px-5 sm:px-6 rounded-2xl shadow-md transition-transform hover:scale-105 active:scale-95 flex items-center justify-center disabled:opacity-50 disabled:hover:scale-100"
+                    className="bg-gradient-to-r from-marigold-600 to-marigold-600 hover:from-marigold-700 hover:to-marigold-700 text-white font-bold text-sm px-5 sm:px-6 rounded-2xl shadow-md transition-transform hover:scale-105 active:scale-95 flex items-center justify-center disabled:opacity-50 disabled:hover:scale-100"
                     disabled={!messageInput.trim()}
                   >
                     <span className="hidden sm:inline mr-1">{t("chat.sendButton")}</span>
@@ -468,8 +468,8 @@ export default function ChatPage() {
               <div className="w-24 h-24 mb-6 rounded-full glass-panel flex items-center justify-center text-5xl shadow-xl animate-float-slow">
                 💬
               </div>
-              <h3 className="text-xl font-black text-gray-900 dark:text-white drop-shadow-sm">{t("chat.noConversationSelected")}</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 max-w-sm mt-3 font-medium">
+              <h3 className="text-xl font-black text-ink-900 dark:text-white drop-shadow-sm">{t("chat.noConversationSelected")}</h3>
+              <p className="text-sm text-ink-600 dark:text-ink-400 max-w-sm mt-3 font-medium">
                 {t("chat.noConversationDesc")}
               </p>
             </div>

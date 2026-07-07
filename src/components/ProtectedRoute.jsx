@@ -42,10 +42,10 @@ export default function ProtectedRoute({ children, allowedRoles }) {
 
   if (isVerifying) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+      <div className="min-h-screen flex items-center justify-center bg-ink-50 dark:bg-ink-900">
         <div className="flex flex-col items-center">
           <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="mt-4 text-slate-500 dark:text-slate-400 font-medium animate-pulse">Authenticating securely...</p>
+          <p className="mt-4 text-ink-500 dark:text-ink-400 font-medium animate-pulse">Authenticating securely...</p>
         </div>
       </div>
     );
@@ -60,10 +60,10 @@ export default function ProtectedRoute({ children, allowedRoles }) {
       // If role checks are enabled
   if (allowedRoles && !allowedRoles.includes(userRole)) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-ink-50 dark:bg-ink-900">
         <span className="text-6xl mb-4">⛔</span>
-        <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Access Denied</h1>
-        <p className="text-slate-500 dark:text-slate-400 mb-6">You don"t have permission to view this page.</p>
+        <h1 className="text-2xl font-bold text-ink-800 dark:text-white mb-2">Access Denied</h1>
+        <p className="text-ink-500 dark:text-ink-400 mb-6">You don"t have permission to view this page.</p>
         <button 
           onClick={() => window.location.href = "/"} 
           className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold shadow-lg shadow-purple-500/30 transition"

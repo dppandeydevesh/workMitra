@@ -16,18 +16,18 @@ const PremiumCheckoutModal = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div 
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+        className="absolute inset-0 bg-ink-900/40 backdrop-blur-sm"
         onClick={() => setShowCheckoutModal(false)}
       ></div>
-      <div className="relative bg-white dark:bg-slate-800 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-fade-in-up border border-slate-200 dark:border-slate-700">
+      <div className="relative bg-white dark:bg-ink-800 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-fade-in-up border border-ink-200 dark:border-ink-700">
         
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-marigold-500 to-purple-500"></div>
 
-        <div className="flex justify-between items-center p-4 border-b border-slate-100 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-800/50">
-          <h2 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t("dashboard.premiumRequired")}</h2>
+        <div className="flex justify-between items-center p-4 border-b border-ink-100 dark:border-ink-700/50 bg-ink-50 dark:bg-ink-800/50">
+          <h2 className="text-xs font-bold text-ink-500 dark:text-ink-400 uppercase tracking-wider">{t("dashboard.premiumRequired")}</h2>
           <button 
             onClick={() => setShowCheckoutModal(false)}
-            className="text-slate-400 hover:text-slate-700 dark:hover:text-white font-extrabold text-sm transition"
+            className="text-ink-400 hover:text-ink-700 dark:hover:text-white font-extrabold text-sm transition"
           >
             ✕
           </button>
@@ -36,16 +36,16 @@ const PremiumCheckoutModal = ({
         <div className="p-6 space-y-4">
           <div className="text-center">
             <span className="text-3xl">🛡️</span>
-            <h3 className="text-base font-black text-gray-800 dark:text-gray-200 mt-2">{t("dashboard.unlockPremium")}</h3>
-            <p className="text-xs text-gray-400 mt-1">{t("dashboard.unlockPremiumDesc")}</p>
+            <h3 className="text-base font-black text-ink-800 dark:text-ink-200 mt-2">{t("dashboard.unlockPremium")}</h3>
+            <p className="text-xs text-ink-400 mt-1">{t("dashboard.unlockPremiumDesc")}</p>
           </div>
           
-          <div className="border border-indigo-100 dark:border-indigo-900/30 bg-indigo-50/50 dark:bg-indigo-900/10 p-4 rounded-2xl flex justify-between items-center">
+          <div className="border border-marigold-100 dark:border-marigold-900/30 bg-marigold-50/50 dark:bg-marigold-900/10 p-4 rounded-2xl flex justify-between items-center">
             <div>
-              <span className="text-[10px] font-black text-indigo-700 dark:text-indigo-400 uppercase">{t("dashboard.premiumPlan")}</span>
-              <span className="text-xs font-semibold text-gray-600 dark:text-gray-300 block mt-0.5">{t("dashboard.thirtyDaysAccess")}</span>
+              <span className="text-[10px] font-black text-marigold-700 dark:text-marigold-400 uppercase">{t("dashboard.premiumPlan")}</span>
+              <span className="text-xs font-semibold text-ink-600 dark:text-ink-300 block mt-0.5">{t("dashboard.thirtyDaysAccess")}</span>
             </div>
-            <span className="text-xl font-black text-gray-800 dark:text-gray-200">{t("dashboard.priceAmount")}</span>
+            <span className="text-xl font-black text-ink-800 dark:text-ink-200">{t("dashboard.priceAmount")}</span>
           </div>
 
           <button
@@ -127,11 +127,11 @@ const PremiumCheckoutModal = ({
               }
             }}
             disabled={checkingOutPass}
-            className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black transition shadow disabled:opacity-50"
+            className="w-full py-3 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-black transition shadow disabled:opacity-50"
           >
             {checkingOutPass ? t("dashboard.openingRazorpay") : t("dashboard.payViaRazorpay")}
           </button>
-          <p className="text-[10px] text-center text-gray-400 font-medium">
+          <p className="text-[10px] text-center text-ink-400 font-medium">
             {t("dashboard.securePayment")}
           </p>
         </div>

@@ -34,11 +34,11 @@ export function ToastProvider({ children }) {
           <div
             key={t.id}
             onClick={() => removeToast(t.id)}
-            className={`cursor-pointer px-4 py-3 rounded-2xl shadow-xl border backdrop-blur-md flex items-center gap-3 transition-all transform translate-y-0 scale-100 hover:scale-[1.02] active:scale-95 animate-slide-in-up text-xs font-bold ${
+            className={`cursor-pointer px-4 py-3 rounded-2xl shadow-xl border backdrop-blur-md flex items-center gap-3 transition-all transform tranink-y-0 scale-100 hover:scale-[1.02] active:scale-95 animate-slide-in-up text-xs font-bold ${
               t.type === "success" ? "bg-emerald-50/95 border-emerald-100 text-emerald-800" :
               t.type === "error" ? "bg-rose-50/95 border-rose-100 text-rose-800" :
               t.type === "warning" ? "bg-amber-50/95 border-amber-100 text-amber-800" :
-              "bg-blue-50/95 border-blue-100 text-blue-800"
+              "bg-marigold-50/95 border-marigold-100 text-marigold-800"
             }`}
           >
             <span className="text-base">
@@ -47,7 +47,7 @@ export function ToastProvider({ children }) {
                t.type === "warning" ? "🔔" : "ℹ️"}
             </span>
             <div className="flex-1">{t.message}</div>
-            <button className="text-gray-400 hover:text-gray-600 font-extrabold text-sm ml-2">×</button>
+            <button className="text-ink-400 hover:text-ink-600 font-extrabold text-sm ml-2">×</button>
           </div>
         ))}
       </div>

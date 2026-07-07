@@ -96,17 +96,17 @@ export default function CalendarView() {
       <div className="max-w-4xl mx-auto px-4">
         <button
           onClick={() => navigate("/company-dashboard")}
-          className="mb-6 px-4 py-2 bg-white dark:bg-slate-900/80 hover:bg-white dark:bg-slate-900 text-gray-600 dark:text-gray-300 rounded-xl text-xs font-bold transition shadow-sm border border-gray-100 dark:border-slate-800 flex items-center gap-1.5"
+          className="mb-6 px-4 py-2 bg-white dark:bg-ink-900/80 hover:bg-white dark:bg-ink-900 text-ink-600 dark:text-ink-300 rounded-xl text-xs font-bold transition shadow-sm border border-ink-100 dark:border-ink-800 flex items-center gap-1.5"
         >
           ← {t("calendar.backToCommandCenter")}
         </button>
 
-        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-gray-100 dark:border-slate-800/50 overflow-hidden">
+        <div className="bg-white dark:bg-ink-900 rounded-3xl shadow-xl border border-ink-100 dark:border-ink-800/50 overflow-hidden">
           {/* Calendar Header */}
-          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-5 flex justify-between items-center">
+          <div className="bg-gradient-to-r from-marigold-600 to-purple-600 px-6 py-5 flex justify-between items-center">
             <button
               onClick={handlePrevMonth}
-              className="px-3 py-1.5 bg-white dark:bg-slate-900/20 dark:bg-slate-900/20 hover:bg-white dark:bg-slate-900/30 dark:bg-slate-900/30 text-white rounded-xl text-xs font-bold transition backdrop-blur-sm"
+              className="px-3 py-1.5 bg-white dark:bg-ink-900/20 dark:bg-ink-900/20 hover:bg-white dark:bg-ink-900/30 dark:bg-ink-900/30 text-white rounded-xl text-xs font-bold transition backdrop-blur-sm"
             >
               ← {t("calendar.prev")}
             </button>
@@ -115,15 +115,15 @@ export default function CalendarView() {
             </h2>
             <button
               onClick={handleNextMonth}
-              className="px-3 py-1.5 bg-white dark:bg-slate-900/20 dark:bg-slate-900/20 hover:bg-white dark:bg-slate-900/30 dark:bg-slate-900/30 text-white rounded-xl text-xs font-bold transition backdrop-blur-sm"
+              className="px-3 py-1.5 bg-white dark:bg-ink-900/20 dark:bg-ink-900/20 hover:bg-white dark:bg-ink-900/30 dark:bg-ink-900/30 text-white rounded-xl text-xs font-bold transition backdrop-blur-sm"
             >
               {t("calendar.next")} →
             </button>
           </div>
 
           {loading ? (
-            <div className="text-center py-16 text-gray-400 font-medium animate-pulse flex flex-col items-center gap-3">
-              <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+            <div className="text-center py-16 text-ink-400 font-medium animate-pulse flex flex-col items-center gap-3">
+              <div className="w-8 h-8 border-4 border-marigold-500 border-t-transparent rounded-full animate-spin" />
               <span>{t("calendar.loadingData")}</span>
             </div>
           ) : (
@@ -131,7 +131,7 @@ export default function CalendarView() {
               {/* Day headers */}
               <div className="grid grid-cols-7 gap-1 mb-2">
                 {DAY_NAMES.map((d) => (
-                  <div key={d} className="text-center text-[10px] font-black text-gray-400 uppercase tracking-wider py-2">
+                  <div key={d} className="text-center text-[10px] font-black text-ink-400 uppercase tracking-wider py-2">
                     {d}
                   </div>
                 ))}
@@ -154,10 +154,10 @@ export default function CalendarView() {
                       onClick={() => setSelectedDay(isSelected ? null : day)}
                       className={`h-14 sm:h-16 rounded-xl text-xs font-bold transition-all relative flex flex-col items-center justify-center gap-0.5 ${
                         isSelected
-                          ? "bg-indigo-600 text-white shadow-lg scale-105"
+                          ? "bg-marigold-500 text-white shadow-lg scale-105"
                           : isTodayCell
-                          ? "bg-indigo-50 text-indigo-700 ring-2 ring-indigo-400 ring-offset-1"
-                          : "bg-gray-50 dark:bg-slate-800/50 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:bg-slate-800"
+                          ? "bg-marigold-50 text-marigold-700 ring-2 ring-marigold-400 ring-offset-1"
+                          : "bg-ink-50 dark:bg-ink-800/50 text-ink-700 dark:text-ink-200 hover:bg-ink-100 dark:bg-ink-800"
                       }`}
                     >
                       <span className="text-sm font-extrabold">{day}</span>
@@ -167,7 +167,7 @@ export default function CalendarView() {
                             <span
                               key={pIdx}
                               className={`w-1.5 h-1.5 rounded-full ${
-                                isSelected ? "bg-white dark:bg-slate-900" : "bg-indigo-500"
+                                isSelected ? "bg-white dark:bg-ink-900" : "bg-marigold-500"
                               }`}
                             />
                           ))}
@@ -181,25 +181,25 @@ export default function CalendarView() {
               {/* Selected day detail panel */}
               {selectedDay && (
                 <div className="mt-6 border-t pt-5 animate-fade-in">
-                  <h3 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-3">
+                  <h3 className="text-sm font-black text-ink-800 dark:text-ink-200 uppercase tracking-wider mb-3">
                     📌 {t("calendar.deadlinesOn", { month: MONTH_NAMES[month], day: selectedDay, year })}
                   </h3>
                   {selectedDayProjects.length === 0 ? (
-                    <p className="text-xs text-gray-400 italic">{t("calendar.noDeadlines")}</p>
+                    <p className="text-xs text-ink-400 italic">{t("calendar.noDeadlines")}</p>
                   ) : (
                     <div className="space-y-2">
                       {selectedDayProjects.map((p) => (
                         <div
                           key={p._id}
-                          className="flex justify-between items-center bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 p-3.5 rounded-xl hover:bg-slate-100 dark:bg-slate-800/70 transition"
+                          className="flex justify-between items-center bg-ink-50 dark:bg-ink-800 border border-ink-100 dark:border-ink-800 p-3.5 rounded-xl hover:bg-ink-100 dark:bg-ink-800/70 transition"
                         >
                           <div>
-                            <p className="text-xs font-bold text-slate-800 dark:text-slate-200">{p.title}</p>
-                            <p className="text-[10px] text-gray-400 font-semibold mt-0.5">
+                            <p className="text-xs font-bold text-ink-800 dark:text-ink-200">{p.title}</p>
+                            <p className="text-[10px] text-ink-400 font-semibold mt-0.5">
                               {p.complexity || t("calendar.intermediate")} • {p.duration || t("calendar.na")} • {p.studentsNeeded || 1} {t("calendar.slots")}
                             </p>
                           </div>
-                          <span className="text-sm font-black text-indigo-700 font-mono">₹{p.budget?.toLocaleString()}</span>
+                          <span className="text-sm font-black text-marigold-700 font-mono">₹{p.budget?.toLocaleString()}</span>
                         </div>
                       ))}
                     </div>

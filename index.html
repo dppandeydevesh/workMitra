@@ -12,9 +12,7 @@
     <title>workMitra</title>
     <style>
       body {
-        background: linear-gradient(135deg, #fce4d6 0%, #fbcfe8 15%, #fef3c7 30%, #fce7f3 45%, #e9d5ff 60%, #fed7aa 75%, #fbcfe8 90%, #fce4d6 100%);
-        background-size: 400% 400%;
-        animation: meshGradientAnimation 15s ease infinite;
+        background-color: #fdfbf7;
         margin: 0;
         min-height: 100vh;
         display: flex;
@@ -22,14 +20,8 @@
       }
       @media (prefers-color-scheme: dark) {
         body {
-          background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 15%, #312e81 30%, #4c1d95 45%, #581c87 60%, #4c1d95 75%, #312e81 90%, #0f172a 100%);
-          background-size: 400% 400%;
+          background-color: #0f172a;
         }
-      }
-      @keyframes meshGradientAnimation {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
       }
       .initial-loader {
         display: flex;
@@ -38,15 +30,20 @@
         height: 100vh;
         width: 100vw;
         font-family: 'Inter', sans-serif;
-        color: #8b5cf6;
+        color: #1e1b4b;
         flex-direction: column;
         gap: 16px;
+      }
+      @media (prefers-color-scheme: dark) {
+        .initial-loader {
+          color: #f8fafc;
+        }
       }
       .spinner {
         width: 48px;
         height: 48px;
-        border: 4px solid rgba(139, 92, 246, 0.2);
-        border-top-color: #8b5cf6;
+        border: 4px solid rgba(245, 158, 11, 0.2);
+        border-top-color: #f59e0b;
         border-radius: 50%;
         animation: spin 1s linear infinite;
       }

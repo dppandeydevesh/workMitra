@@ -123,16 +123,16 @@ export default function PlacementPipeline() {
   return (
     <div className="min-h-screen bg-transparent pb-12 select-none transition-colors duration-250">
       {/* Upper Navigation Header */}
-      <div className="bg-white dark:bg-slate-900 border-b sticky top-0 z-35 px-6 py-4 flex justify-between items-center dark:border-slate-800 transition-colors duration-250">
+      <div className="bg-white dark:bg-ink-900 border-b sticky top-0 z-35 px-6 py-4 flex justify-between items-center dark:border-ink-800 transition-colors duration-250">
         <div>
-          <h1 className="text-xl font-black text-slate-900 dark:text-slate-200 tracking-tight flex items-center gap-2 dark:text-white">
+          <h1 className="text-xl font-black text-ink-900 dark:text-ink-200 tracking-tight flex items-center gap-2 dark:text-white">
             <span>💼</span> {t("pipeline.title")}
           </h1>
-          <p className="text-[11px] text-slate-500 font-bold dark:text-slate-400">{t("pipeline.subtitle")}</p>
+          <p className="text-[11px] text-ink-500 font-bold dark:text-ink-400">{t("pipeline.subtitle")}</p>
         </div>
         <button
           onClick={() => navigate(-1)}
-          className="px-3.5 py-1.5 border border-gray-200 text-xs font-bold text-gray-600 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:bg-slate-900 transition dark:text-slate-400 dark:border-slate-800 dark:hover:bg-slate-900"
+          className="px-3.5 py-1.5 border border-ink-200 text-xs font-bold text-ink-600 dark:text-ink-300 rounded-xl hover:bg-ink-50 dark:bg-ink-900 transition dark:text-ink-400 dark:border-ink-800 dark:hover:bg-ink-900"
         >
           ← {t("pipeline.back")}
         </button>
@@ -141,26 +141,26 @@ export default function PlacementPipeline() {
       <div className="max-w-7xl mx-auto px-6 mt-8 space-y-8">
         {/* KPI Cards Panel */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-sm dark:border-slate-800 transition">
-            <p className="text-[10px] uppercase font-black text-slate-400">{t("pipeline.totalCandidates")}</p>
-            <p className="text-2xl font-black text-slate-900 dark:text-slate-200 mt-1 dark:text-white">{totalApplicants}</p>
+          <div className="bg-white dark:bg-ink-900 p-5 rounded-2xl border shadow-sm dark:border-ink-800 transition">
+            <p className="text-[10px] uppercase font-black text-ink-400">{t("pipeline.totalCandidates")}</p>
+            <p className="text-2xl font-black text-ink-900 dark:text-ink-200 mt-1 dark:text-white">{totalApplicants}</p>
           </div>
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-sm dark:border-slate-800 transition">
-            <p className="text-[10px] uppercase font-black text-slate-400">{t("pipeline.activeOffers")}</p>
-            <p className="text-2xl font-black text-indigo-600 mt-1">{offeredCount}</p>
+          <div className="bg-white dark:bg-ink-900 p-5 rounded-2xl border shadow-sm dark:border-ink-800 transition">
+            <p className="text-[10px] uppercase font-black text-ink-400">{t("pipeline.activeOffers")}</p>
+            <p className="text-2xl font-black text-marigold-500 mt-1">{offeredCount}</p>
           </div>
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-sm dark:border-slate-800 transition">
-            <p className="text-[10px] uppercase font-black text-slate-400">{t("pipeline.hiredPlaced")}</p>
+          <div className="bg-white dark:bg-ink-900 p-5 rounded-2xl border shadow-sm dark:border-ink-800 transition">
+            <p className="text-[10px] uppercase font-black text-ink-400">{t("pipeline.hiredPlaced")}</p>
             <p className="text-2xl font-black text-green-600 mt-1">{placedCount}</p>
           </div>
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-sm dark:border-slate-800 transition">
-            <p className="text-[10px] uppercase font-black text-slate-400">{t("pipeline.conversionRate")}</p>
+          <div className="bg-white dark:bg-ink-900 p-5 rounded-2xl border shadow-sm dark:border-ink-800 transition">
+            <p className="text-[10px] uppercase font-black text-ink-400">{t("pipeline.conversionRate")}</p>
             <p className="text-2xl font-black text-purple-600 mt-1">{placedRate}%</p>
           </div>
         </div>
 
         {loading ? (
-          <div className="text-center py-20 text-slate-400 font-bold animate-pulse">
+          <div className="text-center py-20 text-ink-400 font-bold animate-pulse">
             🔄 {t("pipeline.loading")}
           </div>
         ) : (
@@ -170,23 +170,23 @@ export default function PlacementPipeline() {
               const stageApps = applications.filter(app => app.pipelineStage === stage);
 
               return (
-                <div key={stage} className="bg-slate-100 dark:bg-slate-800/70 p-3 rounded-2xl border border-slate-200/50 flex flex-col gap-3 min-h-[450px] dark:bg-slate-950/40 dark:border-slate-800">
+                <div key={stage} className="bg-ink-100 dark:bg-ink-800/70 p-3 rounded-2xl border border-ink-200/50 flex flex-col gap-3 min-h-[450px] dark:bg-ink-950/40 dark:border-ink-800">
                   <div className="flex justify-between items-center px-1">
-                    <span className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wide dark:text-slate-300">{stage}</span>
-                    <span className="px-2 py-0.5 bg-slate-200 text-[10px] font-black rounded-lg text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+                    <span className="text-xs font-black text-ink-700 dark:text-ink-300 uppercase tracking-wide dark:text-ink-300">{stage}</span>
+                    <span className="px-2 py-0.5 bg-ink-200 text-[10px] font-black rounded-lg text-ink-500 dark:bg-ink-800 dark:text-ink-400">
                       {stageApps.length}
                     </span>
                   </div>
 
                   <div className="space-y-3 flex-1 overflow-y-auto">
                     {stageApps.map((app) => (
-                      <div key={app._id} className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col gap-3 hover:shadow transition duration-150 text-left dark:border-slate-800">
+                      <div key={app._id} className="bg-white dark:bg-ink-900 p-4 rounded-xl border border-ink-200 shadow-sm flex flex-col gap-3 hover:shadow transition duration-150 text-left dark:border-ink-800">
                         <div>
-                          <h4 className="font-extrabold text-xs text-slate-900 dark:text-white leading-tight">
+                          <h4 className="font-extrabold text-xs text-ink-900 dark:text-white leading-tight">
                             {app.studentName || app.studentEmail.split("@")[0].toUpperCase()}
                           </h4>
-                          <p className="text-[10px] text-slate-400 font-bold mt-0.5 truncate">{app.projectTitle || t("pipeline.defaultProjectTitle")}</p>
-                          <p className="text-[9px] text-slate-500 mt-1">{app.studentEmail}</p>
+                          <p className="text-[10px] text-ink-400 font-bold mt-0.5 truncate">{app.projectTitle || t("pipeline.defaultProjectTitle")}</p>
+                          <p className="text-[9px] text-ink-500 mt-1">{app.studentEmail}</p>
                         </div>
 
                         {/* Navigation controls */}
@@ -197,7 +197,7 @@ export default function PlacementPipeline() {
                               const prevStage = STAGES[STAGES.indexOf(stage) - 1];
                               handleUpdateStage(app._id, prevStage);
                             }}
-                            className="p-1 hover:bg-slate-100 dark:bg-slate-800 rounded text-slate-400 disabled:opacity-40 dark:hover:bg-slate-900"
+                            className="p-1 hover:bg-ink-100 dark:bg-ink-800 rounded text-ink-400 disabled:opacity-40 dark:hover:bg-ink-900"
                             title={t("pipeline.moveLeft")}
                           >
                             ◀
@@ -206,7 +206,7 @@ export default function PlacementPipeline() {
                           {currentUser?.userRole === "company" && stage !== "Placed" && stage !== "Offered" && (
                             <button
                               onClick={() => { setSelectedApp(app); setShowOfferModal(true); }}
-                              className="text-[9px] bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-extrabold px-2 py-0.5 rounded"
+                              className="text-[9px] bg-marigold-50 text-marigold-700 hover:bg-marigold-100 font-extrabold px-2 py-0.5 rounded"
                             >
                               {t("pipeline.offerJob")} 💼
                             </button>
@@ -218,7 +218,7 @@ export default function PlacementPipeline() {
                               const nextStage = STAGES[STAGES.indexOf(stage) + 1];
                               handleUpdateStage(app._id, nextStage);
                             }}
-                            className="p-1 hover:bg-slate-100 dark:bg-slate-800 rounded text-slate-400 disabled:opacity-40 dark:hover:bg-slate-900"
+                            className="p-1 hover:bg-ink-100 dark:bg-ink-800 rounded text-ink-400 disabled:opacity-40 dark:hover:bg-ink-900"
                             title={t("pipeline.moveRight")}
                           >
                             ▶
@@ -228,7 +228,7 @@ export default function PlacementPipeline() {
                     ))}
 
                     {stageApps.length === 0 && (
-                      <div className="text-center py-8 text-[10px] text-slate-400 italic">
+                      <div className="text-center py-8 text-[10px] text-ink-400 italic">
                         {t("pipeline.noCandidates")}
                       </div>
                     )}
@@ -242,24 +242,24 @@ export default function PlacementPipeline() {
 
       {/* Offer Job modal */}
       {showOfferModal && selectedApp && (
-        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full shadow-2xl p-6 border text-left dark:border-slate-800">
-            <div className="flex justify-between items-center border-b pb-3 mb-4 dark:border-slate-800">
-              <h3 className="font-bold text-base text-gray-900 dark:text-white">{t("pipeline.extendContractTitle")}</h3>
-              <button onClick={() => setShowOfferModal(false)} className="text-gray-400 hover:text-gray-600 dark:text-gray-300 text-lg">×</button>
+        <div className="fixed inset-0 bg-ink-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-ink-900 rounded-2xl max-w-md w-full shadow-2xl p-6 border text-left dark:border-ink-800">
+            <div className="flex justify-between items-center border-b pb-3 mb-4 dark:border-ink-800">
+              <h3 className="font-bold text-base text-ink-900 dark:text-white">{t("pipeline.extendContractTitle")}</h3>
+              <button onClick={() => setShowOfferModal(false)} className="text-ink-400 hover:text-ink-600 dark:text-ink-300 text-lg">×</button>
             </div>
             <form onSubmit={handleSendOfferSubmit} className="space-y-4">
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-ink-500">
                 {t("pipeline.offerPrefix")} <strong>{selectedApp.studentName}</strong>. {t("pipeline.offerSuffix")}
               </p>
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-1 dark:text-slate-400">{t("pipeline.offerMessageTerms")}</label>
+                <label className="block text-xs font-bold text-ink-500 uppercase mb-1 dark:text-ink-400">{t("pipeline.offerMessageTerms")}</label>
                 <textarea
                   placeholder={t("pipeline.offerPlaceholder")}
                   value={offerText}
                   onChange={(e) => setOfferText(e.target.value)}
                   rows={4}
-                  className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none dark:bg-slate-900 dark:border-slate-800 dark:text-white resize-none"
+                  className="w-full bg-ink-50 dark:bg-ink-800 border border-ink-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none dark:bg-ink-900 dark:border-ink-800 dark:text-white resize-none"
                   required
                 />
               </div>
@@ -267,14 +267,14 @@ export default function PlacementPipeline() {
                 <button
                   type="button"
                   onClick={() => setShowOfferModal(false)}
-                  className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 dark:bg-slate-900 transition dark:border-slate-800 dark:text-slate-400"
+                  className="px-4 py-2 border border-ink-200 rounded-xl text-xs font-bold text-ink-500 hover:bg-ink-50 dark:bg-ink-900 transition dark:border-ink-800 dark:text-ink-400"
                 >
                   {t("pipeline.cancel")}
                 </button>
                 <button
                   type="submit"
                   disabled={submittingOffer}
-                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-md"
+                  className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-md"
                 >
                   {submittingOffer ? t("pipeline.sending") : t("pipeline.extendOffer")}
                 </button>

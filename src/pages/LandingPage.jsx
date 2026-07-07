@@ -28,10 +28,10 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent font-sans text-gray-800 dark:text-gray-200 flex flex-col select-none">
+    <div className="min-h-screen bg-transparent font-sans text-ink-800 dark:text-ink-200 flex flex-col select-none">
       
       {/* 🚀 Sticky Header */}
-      <header className="bg-white dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 dark:border-slate-800 shadow-sm">
+      <header className="bg-white dark:bg-ink-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-ink-100 dark:border-ink-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
           <div className="logo-hook" onClick={() => navigate("/")}>
             <img 
@@ -43,13 +43,13 @@ export default function LandingPage() {
           <div className="flex items-center gap-4">
             <button 
               onClick={() => navigate("/about")} 
-              className="text-xs sm:text-sm font-extrabold text-gray-600 dark:text-gray-300 hover:text-indigo-600 transition"
+              className="text-xs sm:text-sm font-extrabold text-ink-600 dark:text-ink-300 hover:text-marigold-500 transition"
             >
               {t("landing.howItWorks")}
             </button>
             <button 
               onClick={() => navigate("/login")} 
-              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs sm:text-sm font-black transition shadow-md hover:shadow-lg hover:-translate-y-0.5 transform"
+              className="px-4 py-2 bg-gradient-to-r from-marigold-600 to-marigold-600 hover:from-marigold-700 hover:to-marigold-700 text-white rounded-xl text-xs sm:text-sm font-black transition shadow-md hover:shadow-lg hover:-tranink-y-0.5 transform"
             >
               {t("landing.signInPortal")}
             </button>
@@ -71,26 +71,26 @@ export default function LandingPage() {
             </defs>
           </svg>
         </div>
-        <span className="px-3.5 py-1.5 bg-indigo-50 border border-indigo-100 text-indigo-700 text-[10px] font-black uppercase tracking-wider rounded-xl animate-pulse">
+        <span className="px-3.5 py-1.5 bg-marigold-50 border border-marigold-100 text-marigold-700 text-[10px] font-black uppercase tracking-wider rounded-xl animate-pulse">
           ✨ {t("landing.heroBadge")}
         </span>
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-gray-800 dark:text-gray-200 tracking-tight mt-6 leading-tight">
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-ink-800 dark:text-ink-200 tracking-tight mt-6 leading-tight">
           {t("landing.heroTitlePart1")} <br className="hidden sm:inline" />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">{t("landing.heroTitleHighlight")}</span>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-marigold-600 to-marigold-600">{t("landing.heroTitleHighlight")}</span>
         </h1>
-        <p className="text-gray-500 mt-4 text-sm sm:text-base lg:text-lg max-w-2xl leading-relaxed">
+        <p className="text-ink-500 mt-4 text-sm sm:text-base lg:text-lg max-w-2xl leading-relaxed">
           {t("landing.heroDescription")}
         </p>
         <div className="flex gap-4 mt-8">
           <button 
             onClick={() => navigate("/login")} 
-            className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-xs sm:text-sm font-black transition shadow-lg hover:shadow-xl hover:-translate-y-0.5 transform"
+            className="px-6 py-3 bg-marigold-500 hover:bg-marigold-600 text-white rounded-2xl text-xs sm:text-sm font-black transition shadow-lg hover:shadow-xl hover:-tranink-y-0.5 transform"
           >
             {t("landing.getStarted")}
           </button>
           <button 
             onClick={() => navigate("/about")} 
-            className="px-6 py-3 bg-white dark:bg-slate-900 hover:bg-gray-50 dark:bg-slate-800 text-gray-700 dark:text-gray-200 rounded-2xl text-xs sm:text-sm font-bold transition shadow-md border border-gray-100 dark:border-slate-800"
+            className="px-6 py-3 bg-white dark:bg-ink-900 hover:bg-ink-50 dark:bg-ink-800 text-ink-700 dark:text-ink-200 rounded-2xl text-xs sm:text-sm font-bold transition shadow-md border border-ink-100 dark:border-ink-800"
           >
             {t("landing.exploreSupportDesk")}
           </button>
@@ -98,50 +98,50 @@ export default function LandingPage() {
       </section>
 
       {/* 🛠️ How it works (Student vs Recruiter) */}
-      <section className="bg-white dark:bg-slate-900 py-16 px-4 border-y border-gray-100 dark:border-slate-800 shadow-inner">
+      <section className="bg-white dark:bg-ink-900 py-16 px-4 border-y border-ink-100 dark:border-ink-800 shadow-inner">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-800 dark:text-white tracking-tight mb-12">
+          <h2 className="text-2xl sm:text-3xl font-black text-center text-ink-800 dark:text-white tracking-tight mb-12">
             {t("landing.dualEngineTitle")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {/* Student Side */}
-            <div className="bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:bg-slate-800 border border-blue-100/50 dark:border-slate-700 p-6 sm:p-8 rounded-3xl shadow-sm">
+            <div className="bg-gradient-to-br from-marigold-50/50 to-marigold-50/50 dark:bg-ink-800 border border-marigold-100/50 dark:border-ink-700 p-6 sm:p-8 rounded-3xl shadow-sm">
               <span className="text-2xl">🎓</span>
-              <h3 className="text-lg font-black text-blue-900 dark:text-white mt-3 mb-2">{t("landing.studentCardTitle")}</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-300 mb-6 leading-relaxed">{t("landing.studentCardDescription")}</p>
+              <h3 className="text-lg font-black text-marigold-900 dark:text-white mt-3 mb-2">{t("landing.studentCardTitle")}</h3>
+              <p className="text-xs text-ink-500 dark:text-ink-300 mb-6 leading-relaxed">{t("landing.studentCardDescription")}</p>
               <div className="space-y-4">
                 <div className="flex items-start gap-3 text-xs">
-                  <span className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">1</span>
-                  <p className="text-gray-600 dark:text-gray-300">{t("landing.studentStep1")}</p>
+                  <span className="bg-marigold-100 text-marigold-700 dark:bg-marigold-900 dark:text-marigold-300 font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">1</span>
+                  <p className="text-ink-600 dark:text-ink-300">{t("landing.studentStep1")}</p>
                 </div>
                 <div className="flex items-start gap-3 text-xs">
-                  <span className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">2</span>
-                  <p className="text-gray-600 dark:text-gray-300">{t("landing.studentStep2")}</p>
+                  <span className="bg-marigold-100 text-marigold-700 dark:bg-marigold-900 dark:text-marigold-300 font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">2</span>
+                  <p className="text-ink-600 dark:text-ink-300">{t("landing.studentStep2")}</p>
                 </div>
                 <div className="flex items-start gap-3 text-xs">
-                  <span className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">3</span>
-                  <p className="text-gray-600 dark:text-gray-300">{t("landing.studentStep3")}</p>
+                  <span className="bg-marigold-100 text-marigold-700 dark:bg-marigold-900 dark:text-marigold-300 font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">3</span>
+                  <p className="text-ink-600 dark:text-ink-300">{t("landing.studentStep3")}</p>
                 </div>
               </div>
             </div>
 
             {/* Recruiter Side */}
-            <div className="bg-gradient-to-br from-pink-50/50 to-purple-50/50 dark:bg-slate-800 border border-purple-100/50 dark:border-slate-700 p-6 sm:p-8 rounded-3xl shadow-sm">
+            <div className="bg-gradient-to-br from-pink-50/50 to-purple-50/50 dark:bg-ink-800 border border-purple-100/50 dark:border-ink-700 p-6 sm:p-8 rounded-3xl shadow-sm">
               <span className="text-2xl">🏢</span>
               <h3 className="text-lg font-black text-purple-900 dark:text-white mt-3 mb-2">{t("landing.recruiterCardTitle")}</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-300 mb-6 leading-relaxed">{t("landing.recruiterCardDescription")}</p>
+              <p className="text-xs text-ink-500 dark:text-ink-300 mb-6 leading-relaxed">{t("landing.recruiterCardDescription")}</p>
               <div className="space-y-4">
                 <div className="flex items-start gap-3 text-xs">
                   <span className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">1</span>
-                  <p className="text-gray-600 dark:text-gray-300">{t("landing.recruiterStep1")}</p>
+                  <p className="text-ink-600 dark:text-ink-300">{t("landing.recruiterStep1")}</p>
                 </div>
                 <div className="flex items-start gap-3 text-xs">
                   <span className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">2</span>
-                  <p className="text-gray-600 dark:text-gray-300">{t("landing.recruiterStep2")}</p>
+                  <p className="text-ink-600 dark:text-ink-300">{t("landing.recruiterStep2")}</p>
                 </div>
                 <div className="flex items-start gap-3 text-xs">
                   <span className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">3</span>
-                  <p className="text-gray-600 dark:text-gray-300">{t("landing.recruiterStep3")}</p>
+                  <p className="text-ink-600 dark:text-ink-300">{t("landing.recruiterStep3")}</p>
                 </div>
               </div>
             </div>
@@ -151,28 +151,28 @@ export default function LandingPage() {
 
 
       {/* 🙋 FAQ Accordion */}
-      <section className="bg-gray-50 dark:bg-slate-900 border-t border-gray-100 dark:border-slate-800 py-16 px-4">
+      <section className="bg-ink-50 dark:bg-ink-900 border-t border-ink-100 dark:border-ink-800 py-16 px-4">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-800 dark:text-white tracking-tight mb-8">
+          <h2 className="text-2xl sm:text-3xl font-black text-center text-ink-800 dark:text-white tracking-tight mb-8">
             {t("landing.faqTitle")}
           </h2>
           <div className="space-y-4">
             {faqs.map((faq, idx) => {
               const isOpen = activeFaq === idx;
               return (
-                <div key={idx} className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 p-4 shadow-sm">
+                <div key={idx} className="bg-white dark:bg-ink-900 rounded-2xl border border-ink-100 dark:border-ink-800 p-4 shadow-sm">
                   <button 
                     onClick={() => handleFaqToggle(idx)}
-                    className="w-full flex justify-between items-center text-left text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-200 focus:outline-none"
+                    className="w-full flex justify-between items-center text-left text-xs sm:text-sm font-bold text-ink-700 dark:text-ink-200 focus:outline-none"
                   >
                     <span>{faq.q}</span>
-                    <span className={`text-lg text-indigo-500 font-bold transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`}>+</span>
+                    <span className={`text-lg text-marigold-500 font-bold transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`}>+</span>
                   </button>
                   <div 
                     className="overflow-hidden transition-all duration-300 ease-in-out"
                     style={{ maxHeight: isOpen ? "200px" : "0px", opacity: isOpen ? 1 : 0 }}
                   >
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 leading-relaxed border-t pt-3 border-gray-50 dark:border-slate-800/50">
+                    <p className="text-xs text-ink-500 dark:text-ink-400 mt-3 leading-relaxed border-t pt-3 border-ink-50 dark:border-ink-800/50">
                       {faq.a}
                     </p>
                   </div>
@@ -184,7 +184,7 @@ export default function LandingPage() {
       </section>
 
       {/* 🚪 Footer */}
-      <footer className="bg-slate-900 text-slate-400 py-12 px-4 mt-auto border-t border-slate-800">
+      <footer className="bg-ink-900 text-ink-400 py-12 px-4 mt-auto border-t border-ink-800">
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8 text-xs">
           <div>
             <h4 className="font-extrabold text-white uppercase tracking-wider mb-3">workMitra</h4>
@@ -211,7 +211,7 @@ export default function LandingPage() {
             <p className="mt-1">{t("landing.footerEmail")}</p>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto border-t border-slate-800 pt-6 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">
+        <div className="max-w-7xl mx-auto border-t border-ink-800 pt-6 text-center text-[10px] font-bold uppercase tracking-widest text-ink-500">
           © {new Date().getFullYear()} workMitra. {t("landing.footerCopyright")}
         </div>
       </footer>

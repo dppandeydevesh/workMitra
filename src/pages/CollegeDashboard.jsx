@@ -201,8 +201,8 @@ export default function CollegeDashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-transparent flex items-center justify-center font-sans">
-        <div className="text-center text-gray-500 font-medium animate-pulse flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+        <div className="text-center text-ink-500 font-medium animate-pulse flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-marigold-500 border-t-transparent rounded-full animate-spin" />
           <span>{t("college.syncDashboard")}</span>
         </div>
       </div>
@@ -213,17 +213,17 @@ export default function CollegeDashboard() {
     <div className="min-h-screen bg-transparent font-sans pb-12">
       
       {/* 🏛️ Top Header Banner */}
-      <header className="bg-white dark:bg-slate-900/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-100 dark:border-slate-800 shadow-sm">
+      <header className="bg-white dark:bg-ink-900/80 dark:bg-ink-900/80 backdrop-blur-md sticky top-0 z-40 border-b border-ink-100 dark:border-ink-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <span className="text-2xl">🏛️</span>
             <div>
-              <h2 className="text-sm font-black text-slate-800 dark:text-slate-200 leading-tight">{t("college.academicControlPortal")}</h2>
-              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{currentUser?.collegeName}</p>
+              <h2 className="text-sm font-black text-ink-800 dark:text-ink-200 leading-tight">{t("college.academicControlPortal")}</h2>
+              <p className="text-[10px] text-ink-400 font-bold uppercase tracking-wider">{currentUser?.collegeName}</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-xs font-extrabold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800">
+            <span className="text-xs font-extrabold text-ink-600 dark:text-ink-300 bg-ink-100 dark:bg-ink-800 px-3 py-1.5 rounded-xl border border-ink-200 dark:border-ink-800">
               {t("college.departmentLabel")}: {currentUser?.departmentName || t("college.general")}
             </span>
             <button 
@@ -240,15 +240,15 @@ export default function CollegeDashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         
         {/* Welcome Card & University Branding */}
-        <div className="bg-gradient-to-r from-indigo-700 via-purple-700 to-indigo-600 rounded-3xl shadow-xl p-6 sm:p-8 text-white mb-8 relative overflow-hidden">
-          <div className="absolute -top-10 -right-10 w-44 h-44 bg-white dark:bg-slate-900/5 dark:bg-slate-900/5 rounded-full blur-3xl" />
-          <div className="absolute -bottom-10 -left-10 w-36 h-36 bg-white dark:bg-slate-900/5 dark:bg-slate-900/5 rounded-full blur-2xl" />
+        <div className="bg-gradient-to-r from-marigold-700 via-purple-700 to-marigold-600 rounded-3xl shadow-xl p-6 sm:p-8 text-white mb-8 relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-44 h-44 bg-white dark:bg-ink-900/5 dark:bg-ink-900/5 rounded-full blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 w-36 h-36 bg-white dark:bg-ink-900/5 dark:bg-ink-900/5 rounded-full blur-2xl" />
           <div className="relative z-10">
-            <p className="text-indigo-200 text-[10px] font-extrabold uppercase tracking-widest mb-1">{t("college.academicEngagementHub")}</p>
+            <p className="text-marigold-200 text-[10px] font-extrabold uppercase tracking-widest mb-1">{t("college.academicEngagementHub")}</p>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
               {currentUser?.collegeName || t("college.partnerUniversity")}
             </h1>
-            <p className="text-indigo-100 text-sm mt-1 max-w-xl">
+            <p className="text-marigold-100 text-sm mt-1 max-w-xl">
               {t("college.hubDescription")}
             </p>
           </div>
@@ -257,23 +257,23 @@ export default function CollegeDashboard() {
         {/* Live Academic KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { label: t("college.enrolledStudents"), value: totalStudents, icon: "👨‍🎓", color: "from-blue-500 to-blue-600" },
-            { label: t("college.avgPlacementScore"), value: `${avgReadiness}/1000`, icon: "📈", color: "from-indigo-500 to-indigo-600" },
+            { label: t("college.enrolledStudents"), value: totalStudents, icon: "👨‍🎓", color: "from-marigold-500 to-marigold-600" },
+            { label: t("college.avgPlacementScore"), value: `${avgReadiness}/1000`, icon: "📈", color: "from-marigold-500 to-marigold-600" },
             { label: t("college.facultyEndorsed"), value: endorsedCount, icon: "🎓", color: "from-emerald-500 to-emerald-600" },
             { label: t("college.atRiskStudents"), value: atRiskCount, icon: "⚠️", color: "from-red-500 to-red-600" }
           ].map((kpi, idx) => (
-            <div key={idx} className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 p-4 hover:shadow-md transition">
+            <div key={idx} className="bg-white dark:bg-ink-900 rounded-2xl shadow-sm border border-ink-100 dark:border-ink-800 p-4 hover:shadow-md transition">
               <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${kpi.color} flex items-center justify-center text-white text-sm mb-3`}>
                 {kpi.icon}
               </div>
-              <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider">{kpi.label}</p>
-              <p className="text-lg font-black text-slate-800 dark:text-slate-200 mt-0.5">{kpi.value}</p>
+              <p className="text-[9px] font-extrabold text-ink-400 uppercase tracking-wider">{kpi.label}</p>
+              <p className="text-lg font-black text-ink-800 dark:text-ink-200 mt-0.5">{kpi.value}</p>
             </div>
           ))}
         </div>
 
         {/* Tab Selection Row */}
-        <div className="flex border-b border-slate-200 dark:border-slate-800 mb-6 gap-2 overflow-x-auto pb-1">
+        <div className="flex border-b border-ink-200 dark:border-ink-800 mb-6 gap-2 overflow-x-auto pb-1">
           {[
             { id: "roster", label: t("college.tabRoster"), icon: "📋" },
             { id: "leaderboard", label: t("college.tabLeaderboard"), icon: "🏆" },
@@ -285,8 +285,8 @@ export default function CollegeDashboard() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition whitespace-nowrap shrink-0 ${
                 activeTab === tab.id
-                  ? "bg-indigo-600 text-white shadow-md shadow-indigo-100"
-                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:bg-slate-800"
+                  ? "bg-marigold-500 text-white shadow-md shadow-marigold-100"
+                  : "text-ink-600 dark:text-ink-300 hover:bg-ink-100 dark:bg-ink-800"
               }`}
             >
               <span>{tab.icon}</span>
@@ -299,18 +299,18 @@ export default function CollegeDashboard() {
         
         {/* 📋 TAB 1: Student Roster & Credit Tracker */}
         {activeTab === "roster" && (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+          <div className="bg-white dark:bg-ink-900 rounded-2xl shadow-sm border border-ink-100 dark:border-ink-800 overflow-hidden">
             {students.length === 0 ? (
-              <div className="text-center py-16 text-slate-400">
+              <div className="text-center py-16 text-ink-400">
                 <span className="text-4xl block mb-3">📭</span>
                 <p className="text-xs font-medium">{t("college.noStudentsYet")}</p>
-                <p className="text-[10px] text-gray-300 mt-1">{t("college.useBulkOnboarding")}</p>
+                <p className="text-[10px] text-ink-300 mt-1">{t("college.useBulkOnboarding")}</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800 text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                    <tr className="bg-ink-50 dark:bg-ink-800 border-b border-ink-100 dark:border-ink-800 text-[10px] font-black text-ink-400 uppercase tracking-wider">
                       <th className="px-6 py-4">{t("college.thStudentDetails")}</th>
                       <th className="px-6 py-4">{t("college.thAcademicTrack")}</th>
                       <th className="px-6 py-4 text-center">{t("college.thClearedTasks")}</th>
@@ -319,35 +319,35 @@ export default function CollegeDashboard() {
                       <th className="px-6 py-4 text-right">{t("college.thActions")}</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-50 text-xs">
+                  <tbody className="divide-y divide-ink-50 text-xs">
                     {students.map((student) => {
                       const isAtRisk = student.readinessScore < 400;
                       return (
-                        <tr key={student.email} className="hover:bg-slate-50 dark:bg-slate-800/50 transition">
+                        <tr key={student.email} className="hover:bg-ink-50 dark:bg-ink-800/50 transition">
                           <td className="px-6 py-4">
                             <div>
-                              <p className="font-extrabold text-slate-800 dark:text-slate-200">{student.fullName}</p>
-                              <p className="text-[10px] text-slate-400 font-semibold">{student.email}</p>
+                              <p className="font-extrabold text-ink-800 dark:text-ink-200">{student.fullName}</p>
+                              <p className="text-[10px] text-ink-400 font-semibold">{student.email}</p>
                             </div>
                           </td>
                           <td className="px-6 py-4">
                             <div>
-                              <p className="font-bold text-slate-700 dark:text-slate-300">{student.major}</p>
-                              <p className="text-[10px] text-slate-400 font-semibold">{t("college.semesterLabel")}: {student.currentSemester}</p>
+                              <p className="font-bold text-ink-700 dark:text-ink-300">{student.major}</p>
+                              <p className="text-[10px] text-ink-400 font-semibold">{t("college.semesterLabel")}: {student.currentSemester}</p>
                             </div>
                           </td>
                           <td className="px-6 py-4 text-center">
-                            <span className="font-black text-slate-700 dark:text-slate-300">{student.completedTasksCount}</span>
+                            <span className="font-black text-ink-700 dark:text-ink-300">{student.completedTasksCount}</span>
                           </td>
                           <td className="px-6 py-4 text-center">
                             <div className="flex flex-col items-center">
                               <span className={`font-black text-sm ${
-                                isAtRisk ? "text-red-500" : student.readinessScore >= 800 ? "text-emerald-600" : "text-indigo-600"
+                                isAtRisk ? "text-red-500" : student.readinessScore >= 800 ? "text-emerald-600" : "text-marigold-500"
                               }`}>
                                 {student.readinessScore}
                               </span>
                               <span className={`text-[8px] font-black uppercase px-1 py-0.5 rounded mt-0.5 border ${
-                                isAtRisk ? "text-red-500 border-red-100 bg-red-50" : student.readinessScore >= 800 ? "text-emerald-500 border-emerald-100 bg-emerald-50" : "text-indigo-500 border-indigo-100 bg-indigo-50"
+                                isAtRisk ? "text-red-500 border-red-100 bg-red-50" : student.readinessScore >= 800 ? "text-emerald-500 border-emerald-100 bg-emerald-50" : "text-marigold-500 border-marigold-100 bg-marigold-50"
                               }`}>
                                 {isAtRisk ? t("college.statusAtRisk") : student.readinessScore >= 800 ? t("college.statusExcellent") : t("college.statusOnTrack")}
                               </span>
@@ -359,7 +359,7 @@ export default function CollegeDashboard() {
                               className={`px-3 py-1.5 rounded-xl text-[10px] font-bold border transition ${
                                 student.isEndorsed
                                   ? "bg-emerald-50 border-emerald-200 text-emerald-700"
-                                  : "bg-white dark:bg-slate-900 hover:bg-slate-50 dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-800"
+                                  : "bg-white dark:bg-ink-900 hover:bg-ink-50 dark:bg-ink-800 text-ink-500 border-ink-200 dark:border-ink-800"
                               }`}
                             >
                               🎓 {student.isEndorsed ? t("college.btnEndorsed") : t("college.btnEndorse")}
@@ -368,7 +368,7 @@ export default function CollegeDashboard() {
                           <td className="px-6 py-4 text-right">
                             <button
                               onClick={() => setPrintStudent(student)}
-                              className="px-3 py-1.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl text-[10px] font-black transition"
+                              className="px-3 py-1.5 bg-marigold-50 text-marigold-500 hover:bg-marigold-100 rounded-xl text-[10px] font-black transition"
                             >
                               {t("college.btnReportCard")}
                             </button>
@@ -385,33 +385,33 @@ export default function CollegeDashboard() {
 
         {/* 🏆 TAB 2: Department Leaderboard */}
         {activeTab === "leaderboard" && (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 p-6">
-            <h3 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-4">🏆 {t("college.deptRankings")}</h3>
+          <div className="bg-white dark:bg-ink-900 rounded-2xl shadow-sm border border-ink-100 dark:border-ink-800 p-6">
+            <h3 className="text-sm font-black text-ink-800 dark:text-ink-200 uppercase tracking-wider mb-4">🏆 {t("college.deptRankings")}</h3>
             {leaderboard.length === 0 ? (
-              <p className="text-xs text-slate-400 italic">{t("college.noDeptData")}</p>
+              <p className="text-xs text-ink-400 italic">{t("college.noDeptData")}</p>
             ) : (
               <div className="space-y-4">
                 {leaderboard.map((dept, idx) => (
                   <div
                     key={dept.major}
-                    className="flex justify-between items-center bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 p-4 rounded-2xl hover:bg-slate-100 dark:bg-slate-800/50 transition"
+                    className="flex justify-between items-center bg-ink-50 dark:bg-ink-800 border border-ink-100 dark:border-ink-800 p-4 rounded-2xl hover:bg-ink-100 dark:bg-ink-800/50 transition"
                   >
                     <div className="flex items-center gap-4">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-black text-sm ${
-                        idx === 0 ? "bg-amber-400 animate-pulse" : idx === 1 ? "bg-gray-400" : "bg-amber-700"
+                        idx === 0 ? "bg-amber-400 animate-pulse" : idx === 1 ? "bg-ink-400" : "bg-amber-700"
                       }`}>
                         #{idx + 1}
                       </div>
                       <div>
-                        <h4 className="text-sm font-black text-slate-800 dark:text-slate-200">{dept.major}</h4>
-                        <p className="text-[10px] text-slate-400 font-semibold mt-0.5">
+                        <h4 className="text-sm font-black text-ink-800 dark:text-ink-200">{dept.major}</h4>
+                        <p className="text-[10px] text-ink-400 font-semibold mt-0.5">
                           {t("college.deptStats", { count: dept.count, tasks: dept.completedTasks })}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-sm font-black text-indigo-700">{t("college.ptsLabel", { score: dept.avgScore })}</span>
-                      <p className="text-[9px] text-slate-400 uppercase font-black tracking-wider mt-0.5">{t("college.averageScore")}</p>
+                      <span className="text-sm font-black text-marigold-700">{t("college.ptsLabel", { score: dept.avgScore })}</span>
+                      <p className="text-[9px] text-ink-400 uppercase font-black tracking-wider mt-0.5">{t("college.averageScore")}</p>
                     </div>
                   </div>
                 ))}
@@ -422,9 +422,9 @@ export default function CollegeDashboard() {
 
         {/* 🛡️ TAB 3: Vetting Recruiters (Approved/Blocked Companies) */}
         {activeTab === "vetting" && (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+          <div className="bg-white dark:bg-ink-900 rounded-2xl shadow-sm border border-ink-100 dark:border-ink-800 overflow-hidden">
             {companies.length === 0 ? (
-              <div className="text-center py-16 text-slate-400">
+              <div className="text-center py-16 text-ink-400">
                 <span className="text-4xl block mb-3">🏢</span>
                 <p className="text-xs font-medium">{t("college.noRecruitersYet")}</p>
               </div>
@@ -432,7 +432,7 @@ export default function CollegeDashboard() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800 text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                    <tr className="bg-ink-50 dark:bg-ink-800 border-b border-ink-100 dark:border-ink-800 text-[10px] font-black text-ink-400 uppercase tracking-wider">
                       <th className="px-6 py-4">{t("college.thCompanyName")}</th>
                       <th className="px-6 py-4">{t("college.thCompanyEmail")}</th>
                       <th className="px-6 py-4">{t("college.thIndustry")}</th>
@@ -440,17 +440,17 @@ export default function CollegeDashboard() {
                       <th className="px-6 py-4 text-right">{t("college.thActions")}</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-50 text-xs">
+                  <tbody className="divide-y divide-ink-50 text-xs">
                     {companies.map((c) => (
-                      <tr key={c.email} className="hover:bg-slate-50 dark:bg-slate-800/50 transition">
+                      <tr key={c.email} className="hover:bg-ink-50 dark:bg-ink-800/50 transition">
                         <td className="px-6 py-4">
-                          <p className="font-extrabold text-slate-800 dark:text-slate-200">{c.companyName}</p>
+                          <p className="font-extrabold text-ink-800 dark:text-ink-200">{c.companyName}</p>
                         </td>
                         <td className="px-6 py-4">
-                          <p className="font-semibold text-slate-500">{c.email}</p>
+                          <p className="font-semibold text-ink-500">{c.email}</p>
                         </td>
                         <td className="px-6 py-4">
-                          <p className="font-bold text-slate-700 dark:text-slate-300">{c.industryVertical}</p>
+                          <p className="font-bold text-ink-700 dark:text-ink-300">{c.industryVertical}</p>
                         </td>
                         <td className="px-6 py-4">
                           <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold border uppercase ${
@@ -458,7 +458,7 @@ export default function CollegeDashboard() {
                               ? "bg-green-50 text-green-600 border-green-100"
                               : c.status === "Blocked"
                               ? "bg-red-50 text-red-600 border-red-100"
-                              : "bg-slate-50 dark:bg-slate-800 text-slate-500 border-slate-100 dark:border-slate-800"
+                              : "bg-ink-50 dark:bg-ink-800 text-ink-500 border-ink-100 dark:border-ink-800"
                           }`}>
                             {c.status}
                           </span>
@@ -490,39 +490,39 @@ export default function CollegeDashboard() {
 
         {/* ➕ TAB 4: Bulk Student Onboarding Console */}
         {activeTab === "onboarding" && (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 p-6">
+          <div className="bg-white dark:bg-ink-900 rounded-2xl shadow-sm border border-ink-100 dark:border-ink-800 p-6">
             <div className="mb-5">
-              <h3 className="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">➕ {t("college.bulkStudentRegistrar")}</h3>
-              <p className="text-[11px] text-slate-400 mt-1">
-                {t("college.onboardingDesc1")} <code className="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono font-bold text-slate-700 dark:text-slate-300">password123</code>.
+              <h3 className="text-sm font-black text-ink-800 dark:text-ink-200 uppercase tracking-wider">➕ {t("college.bulkStudentRegistrar")}</h3>
+              <p className="text-[11px] text-ink-400 mt-1">
+                {t("college.onboardingDesc1")} <code className="bg-ink-100 dark:bg-ink-800 px-1 py-0.5 rounded font-mono font-bold text-ink-700 dark:text-ink-300">password123</code>.
               </p>
             </div>
 
             <form onSubmit={handleBulkImport} className="space-y-4">
               <div>
-                <label className="block text-[10px] font-bold text-slate-400 uppercase mb-2">{t("college.studentDataPayload")}</label>
+                <label className="block text-[10px] font-bold text-ink-400 uppercase mb-2">{t("college.studentDataPayload")}</label>
                 <textarea
                   rows={8}
                   value={bulkInput}
                   onChange={(e) => setBulkInput(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl text-xs outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white dark:bg-slate-900 transition resize-none font-mono"
+                  className="w-full bg-ink-50 dark:bg-ink-800/50 border border-ink-200 dark:border-ink-800 p-4 rounded-2xl text-xs outline-none focus:ring-2 focus:ring-marigold-400 focus:bg-white dark:bg-ink-900 transition resize-none font-mono"
                   placeholder={t("college.csvPlaceholder")}
                 />
               </div>
 
               {importStats && (
-                <div className="bg-indigo-50/50 border border-indigo-100 rounded-2xl p-4 text-xs space-y-1">
-                  <p className="font-bold text-indigo-800">📊 {t("college.lastImportSummary")}</p>
-                  <p className="text-indigo-900/80">🔹 {t("college.studentsRegistered")}: <strong className="text-indigo-700">{importStats.imported}</strong></p>
-                  <p className="text-indigo-900/80">🔹 {t("college.duplicatesSkipped")}: <strong className="text-slate-600 dark:text-slate-300">{importStats.duplicate}</strong></p>
-                  <p className="text-indigo-900/80">🔹 {t("college.invalidDomains")}: <strong className="text-red-600">{importStats.invalid}</strong></p>
+                <div className="bg-marigold-50/50 border border-marigold-100 rounded-2xl p-4 text-xs space-y-1">
+                  <p className="font-bold text-marigold-800">📊 {t("college.lastImportSummary")}</p>
+                  <p className="text-marigold-900/80">🔹 {t("college.studentsRegistered")}: <strong className="text-marigold-700">{importStats.imported}</strong></p>
+                  <p className="text-marigold-900/80">🔹 {t("college.duplicatesSkipped")}: <strong className="text-ink-600 dark:text-ink-300">{importStats.duplicate}</strong></p>
+                  <p className="text-marigold-900/80">🔹 {t("college.invalidDomains")}: <strong className="text-red-600">{importStats.invalid}</strong></p>
                 </div>
               )}
 
               <button
                 type="submit"
                 disabled={importing}
-                className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl text-xs font-black tracking-wider uppercase transition shadow-lg shadow-indigo-100 disabled:opacity-50"
+                className="px-6 py-2.5 bg-gradient-to-r from-marigold-600 to-purple-600 hover:from-marigold-700 hover:to-purple-700 text-white rounded-xl text-xs font-black tracking-wider uppercase transition shadow-lg shadow-marigold-100 disabled:opacity-50"
               >
                 {importing ? t("college.processingPayload") : t("college.executeBulkImport")}
               </button>
@@ -534,11 +534,11 @@ export default function CollegeDashboard() {
 
       {/* 🧾 Student Report Card Modal Overlay */}
       {printStudent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border p-6 sm:p-8 max-w-xl w-full border-slate-100 dark:border-slate-800 relative animate-scale-up">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-900/40 backdrop-blur-sm">
+          <div className="bg-white dark:bg-ink-900 rounded-3xl shadow-2xl border p-6 sm:p-8 max-w-xl w-full border-ink-100 dark:border-ink-800 relative animate-scale-up">
             <button
               onClick={() => setPrintStudent(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:text-gray-300 text-lg font-black"
+              className="absolute top-4 right-4 text-ink-400 hover:text-ink-600 dark:text-ink-300 text-lg font-black"
             >
               ✕
             </button>
@@ -547,42 +547,42 @@ export default function CollegeDashboard() {
               {/* Header */}
               <div className="text-center border-b pb-5">
                 <span className="text-3xl block mb-2">🎓</span>
-                <h2 className="text-xl font-black text-slate-800 dark:text-slate-200 tracking-tight">{t("college.academicCorpReportCard")}</h2>
-                <p className="text-[10px] text-gray-400 uppercase font-black tracking-wider mt-0.5">{currentUser?.collegeName}</p>
+                <h2 className="text-xl font-black text-ink-800 dark:text-ink-200 tracking-tight">{t("college.academicCorpReportCard")}</h2>
+                <p className="text-[10px] text-ink-400 uppercase font-black tracking-wider mt-0.5">{currentUser?.collegeName}</p>
               </div>
 
               {/* Grid details */}
               <div className="grid grid-cols-2 gap-4 text-xs">
                 <div>
-                  <p className="text-slate-400 font-bold text-[9px] uppercase">{t("college.studentName")}</p>
-                  <p className="font-extrabold text-slate-800 dark:text-slate-200 mt-0.5">{printStudent.fullName}</p>
+                  <p className="text-ink-400 font-bold text-[9px] uppercase">{t("college.studentName")}</p>
+                  <p className="font-extrabold text-ink-800 dark:text-ink-200 mt-0.5">{printStudent.fullName}</p>
                 </div>
                 <div>
-                  <p className="text-slate-400 font-bold text-[9px] uppercase">{t("college.enrollmentNumber")}</p>
-                  <p className="font-extrabold text-slate-800 dark:text-slate-200 mt-0.5">{printStudent.enrollmentNumber}</p>
+                  <p className="text-ink-400 font-bold text-[9px] uppercase">{t("college.enrollmentNumber")}</p>
+                  <p className="font-extrabold text-ink-800 dark:text-ink-200 mt-0.5">{printStudent.enrollmentNumber}</p>
                 </div>
                 <div>
-                  <p className="text-slate-400 font-bold text-[9px] uppercase">{t("college.departmentMajor")}</p>
-                  <p className="font-extrabold text-slate-800 dark:text-slate-200 mt-0.5">{printStudent.major}</p>
+                  <p className="text-ink-400 font-bold text-[9px] uppercase">{t("college.departmentMajor")}</p>
+                  <p className="font-extrabold text-ink-800 dark:text-ink-200 mt-0.5">{printStudent.major}</p>
                 </div>
                 <div>
-                  <p className="text-slate-400 font-bold text-[9px] uppercase">{t("college.currentSemester")}</p>
-                  <p className="font-extrabold text-slate-800 dark:text-slate-200 mt-0.5">{printStudent.currentSemester}</p>
+                  <p className="text-ink-400 font-bold text-[9px] uppercase">{t("college.currentSemester")}</p>
+                  <p className="font-extrabold text-ink-800 dark:text-ink-200 mt-0.5">{printStudent.currentSemester}</p>
                 </div>
               </div>
 
               <div className="border-t pt-5 grid grid-cols-3 gap-4 text-center">
-                <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-2xl border border-slate-100 dark:border-slate-800">
-                  <p className="text-[8px] font-black text-slate-400 uppercase tracking-wider">{t("college.gigsCleared")}</p>
-                  <p className="text-lg font-black text-slate-800 dark:text-slate-200 mt-0.5">{printStudent.completedTasksCount}</p>
+                <div className="bg-ink-50 dark:bg-ink-800 p-3 rounded-2xl border border-ink-100 dark:border-ink-800">
+                  <p className="text-[8px] font-black text-ink-400 uppercase tracking-wider">{t("college.gigsCleared")}</p>
+                  <p className="text-lg font-black text-ink-800 dark:text-ink-200 mt-0.5">{printStudent.completedTasksCount}</p>
                 </div>
-                <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-2xl border border-slate-100 dark:border-slate-800">
-                  <p className="text-[8px] font-black text-slate-400 uppercase tracking-wider">{t("college.avgRating")}</p>
-                  <p className="text-lg font-black text-slate-800 dark:text-slate-200 mt-0.5">{printStudent.avgRating}★</p>
+                <div className="bg-ink-50 dark:bg-ink-800 p-3 rounded-2xl border border-ink-100 dark:border-ink-800">
+                  <p className="text-[8px] font-black text-ink-400 uppercase tracking-wider">{t("college.avgRating")}</p>
+                  <p className="text-lg font-black text-ink-800 dark:text-ink-200 mt-0.5">{printStudent.avgRating}★</p>
                 </div>
-                <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-2xl border border-slate-100 dark:border-slate-800">
-                  <p className="text-[8px] font-black text-slate-400 uppercase tracking-wider">{t("college.readinessScore")}</p>
-                  <p className="text-lg font-black text-indigo-600 mt-0.5">{printStudent.readinessScore}</p>
+                <div className="bg-ink-50 dark:bg-ink-800 p-3 rounded-2xl border border-ink-100 dark:border-ink-800">
+                  <p className="text-[8px] font-black text-ink-400 uppercase tracking-wider">{t("college.readinessScore")}</p>
+                  <p className="text-lg font-black text-marigold-500 mt-0.5">{printStudent.readinessScore}</p>
                 </div>
               </div>
 
@@ -603,13 +603,13 @@ export default function CollegeDashboard() {
               <div className="flex justify-end gap-3 pt-4 border-t no-print">
                 <button
                   onClick={() => setPrintStudent(null)}
-                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-bold transition"
+                  className="px-4 py-2 bg-ink-100 dark:bg-ink-800 hover:bg-ink-200 text-ink-600 dark:text-ink-300 rounded-xl text-xs font-bold transition"
                 >
                   {t("college.btnClose")}
                 </button>
                 <button
                   onClick={() => window.print()}
-                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition"
+                  className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition"
                 >
                   {t("college.btnPrintReport")}
                 </button>

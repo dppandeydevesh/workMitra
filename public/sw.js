@@ -1,10 +1,8 @@
-const CACHE_NAME = 'workmitra-cache-v1';
+const CACHE_NAME = 'workmitra-cache-v2';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      // We are just caching the root for offline capability.
-      // A more robust SW would use Workbox, but this satisfies the basic PWA requirement.
       return cache.addAll(['/']);
     })
   );
@@ -33,11 +31,32 @@ self.addEventListener('fetch', (event) => {
   // Ignore API requests
   if (event.request.url.includes('/api/')) return;
 
+  // For HTML requests (navigation), use Network First, fallback to cache.
+  if (event.request.mode === 'navigate' || event.request.headers.get('accept').includes('text/html')) {
+    event.respondWith(
+      fetch(event.request).then((networkResponse) => {
+        return caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        });
+      }).catch(() => {
+        return caches.match(event.request);
+      })
+    );
+    return;
+  }
+
+  // For other requests (like assets), use Cache First, fallback to network.
   event.respondWith(
     caches.match(event.request).then((response) => {
-      return response || fetch(event.request).catch(() => {
-        // Return offline fallback here if we had one
+      return response || fetch(event.request).then((networkResponse) => {
+        return caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        });
       });
+    }).catch(() => {
+      // Return offline fallback here if we had one
     })
   );
 });

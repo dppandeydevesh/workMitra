@@ -65,11 +65,10 @@ const ProtectedLayout = ({ allowedRoles, children }) => {
 function App() {
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-200">
+      <div className="min-h-screen bg-transparent dark:text-slate-100 transition-colors duration-200">
         <WebSocketProvider>
             <BrowserRouter>
-              <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>}>
-              <Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-slate-50 dark:bg-slate-900 text-indigo-500 font-bold tracking-widest text-sm uppercase">Loading Platform...</div>}>
+              <Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-transparent text-indigo-500 font-bold tracking-widest text-sm uppercase">Loading Platform...</div>}>
           <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
@@ -110,8 +109,7 @@ function App() {
                 {/* 404 Wildcard Catch-All */}
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
-        </Suspense>
-              </Suspense>
+            </Suspense>
             </BrowserRouter>
           </WebSocketProvider>
       </div>

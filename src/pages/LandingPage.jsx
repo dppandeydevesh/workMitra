@@ -28,7 +28,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-transparent font-sans text-gray-800 dark:text-gray-200 flex flex-col select-none">
+    <div className="min-h-screen bg-transparent font-sans text-gray-800 dark:text-gray-200 flex flex-col select-none">
       
       {/* 🚀 Sticky Header */}
       <header className="bg-white dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 dark:border-slate-800 shadow-sm">
@@ -105,7 +105,7 @@ export default function LandingPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {/* Student Side */}
-            <div className="bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:bg-slate-800 dark:bg-none border border-blue-100/50 dark:border-slate-700 p-6 sm:p-8 rounded-3xl shadow-sm">
+            <div className="bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:bg-slate-800 border border-blue-100/50 dark:border-slate-700 p-6 sm:p-8 rounded-3xl shadow-sm">
               <span className="text-2xl">🎓</span>
               <h3 className="text-lg font-black text-blue-900 dark:text-white mt-3 mb-2">{t("landing.studentCardTitle")}</h3>
               <p className="text-xs text-gray-500 dark:text-gray-300 mb-6 leading-relaxed">{t("landing.studentCardDescription")}</p>
@@ -126,7 +126,7 @@ export default function LandingPage() {
             </div>
 
             {/* Recruiter Side */}
-            <div className="bg-gradient-to-br from-pink-50/50 to-purple-50/50 dark:bg-slate-800 dark:bg-none border border-purple-100/50 dark:border-slate-700 p-6 sm:p-8 rounded-3xl shadow-sm">
+            <div className="bg-gradient-to-br from-pink-50/50 to-purple-50/50 dark:bg-slate-800 border border-purple-100/50 dark:border-slate-700 p-6 sm:p-8 rounded-3xl shadow-sm">
               <span className="text-2xl">🏢</span>
               <h3 className="text-lg font-black text-purple-900 dark:text-white mt-3 mb-2">{t("landing.recruiterCardTitle")}</h3>
               <p className="text-xs text-gray-500 dark:text-gray-300 mb-6 leading-relaxed">{t("landing.recruiterCardDescription")}</p>

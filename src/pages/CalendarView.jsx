@@ -92,7 +92,7 @@ export default function CalendarView() {
   const selectedDayProjects = selectedDay ? getProjectsForDay(selectedDay) : [];
 
   return (
-    <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-transparent font-sans py-8">
+    <div className="min-h-screen bg-transparent font-sans py-8">
       <div className="max-w-4xl mx-auto px-4">
         <button
           onClick={() => navigate("/company-dashboard")}

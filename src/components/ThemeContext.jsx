@@ -4,16 +4,15 @@ const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
-    // Check local storage or system preference
+    // Check local storage. If nothing is saved, default to light mode to ensure the beautiful gradient shows.
     if (typeof window !== "undefined") {
       const savedTheme = localStorage.getItem("theme");
       if (savedTheme) {
         return savedTheme;
       }
-      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        return "dark";
-      }
     }
+    // ALWAYS default to light mode because the new vibrant peach/pink gradient is a light theme.
+    // Dark mode currently uses slate-950 which hides the gradient and makes it look dull.
     return "light";
   });
 

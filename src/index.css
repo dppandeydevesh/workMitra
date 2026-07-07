@@ -70,6 +70,20 @@ body {
   animation: meshGradientAnimation 15s ease infinite;
 }
 
+html.dark body {
+  background: linear-gradient(
+    135deg,
+    #0f172a 0%,
+    #1e1b4b 15%,
+    #312e81 30%,
+    #4c1d95 45%,
+    #581c87 60%,
+    #4c1d95 75%,
+    #312e81 90%,
+    #0f172a 100%
+  );
+}
+
 @keyframes meshGradientAnimation {
   0% {
     background-position: 0% 50%;

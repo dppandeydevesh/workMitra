@@ -275,7 +275,7 @@ export default function MyProjects() {
   };
 
   return (
-    <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-transparent py-8 font-sans select-none">
+    <div className="min-h-screen bg-transparent py-8 font-sans select-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Navigation back home Header */}

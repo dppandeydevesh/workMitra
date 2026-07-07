@@ -200,7 +200,7 @@ export default function CollegeDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-transparent flex items-center justify-center font-sans">
+      <div className="min-h-screen bg-transparent flex items-center justify-center font-sans">
         <div className="text-center text-gray-500 font-medium animate-pulse flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
           <span>{t("college.syncDashboard")}</span>
@@ -210,7 +210,7 @@ export default function CollegeDashboard() {
   }
 
   return (
-    <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-transparent font-sans pb-12">
+    <div className="min-h-screen bg-transparent font-sans pb-12">
       
       {/* 🏛️ Top Header Banner */}
       <header className="bg-white dark:bg-slate-900/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-100 dark:border-slate-800 shadow-sm">

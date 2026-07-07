@@ -73,7 +73,7 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-transparent font-sans flex items-center justify-center p-4">
+    <div className="min-h-screen bg-transparent font-sans flex items-center justify-center p-4">
       <div className="bg-white dark:bg-slate-900 rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 max-w-md w-full border border-white/60 dark:border-slate-800/60 text-center space-y-6">
         <div className="flex justify-center">
           <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain filter drop-shadow-md mix-blend-multiply" />

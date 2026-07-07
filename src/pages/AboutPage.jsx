@@ -30,7 +30,7 @@ export default function AboutPage() {
   };
 
   return (
-    <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-transparent font-sans py-12 px-4 select-none">
+    <div className="min-h-screen bg-transparent font-sans py-12 px-4 select-none">
       <div className="max-w-4xl mx-auto bg-white dark:bg-slate-900 rounded-3xl shadow-xl p-6 sm:p-10 border border-gray-100 dark:border-slate-800">
         
         {/* Header */}

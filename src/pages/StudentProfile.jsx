@@ -191,7 +191,7 @@ export default function StudentProfile() {
   const avgRating = ratingsList.length > 0 ? (ratingsList.reduce((sum, a) => sum + a.rating, 0) / ratingsList.length).toFixed(1) : null;
 
   return (
-    <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-transparent font-sans">
+    <div className="min-h-screen bg-transparent font-sans">
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

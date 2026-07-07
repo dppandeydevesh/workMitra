@@ -121,9 +121,9 @@ export default function PlacementPipeline() {
   const placedRate = totalApplicants > 0 ? Math.round((placedCount / totalApplicants) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-transparent dark:bg-slate-950 pb-12 select-none transition-colors duration-250">
+    <div className="min-h-screen bg-transparent pb-12 select-none transition-colors duration-250">
       {/* Upper Navigation Header */}
-      <div className="bg-white dark:bg-slate-900 border-b sticky top-0 z-35 px-6 py-4 flex justify-between items-center dark:bg-slate-950 dark:border-slate-800 transition-colors duration-250">
+      <div className="bg-white dark:bg-slate-900 border-b sticky top-0 z-35 px-6 py-4 flex justify-between items-center dark:border-slate-800 transition-colors duration-250">
         <div>
           <h1 className="text-xl font-black text-slate-900 dark:text-slate-200 tracking-tight flex items-center gap-2 dark:text-white">
             <span>💼</span> {t("pipeline.title")}
@@ -141,19 +141,19 @@ export default function PlacementPipeline() {
       <div className="max-w-7xl mx-auto px-6 mt-8 space-y-8">
         {/* KPI Cards Panel */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-sm dark:bg-slate-950 dark:border-slate-800 transition">
+          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-sm dark:border-slate-800 transition">
             <p className="text-[10px] uppercase font-black text-slate-400">{t("pipeline.totalCandidates")}</p>
             <p className="text-2xl font-black text-slate-900 dark:text-slate-200 mt-1 dark:text-white">{totalApplicants}</p>
           </div>
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-sm dark:bg-slate-950 dark:border-slate-800 transition">
+          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-sm dark:border-slate-800 transition">
             <p className="text-[10px] uppercase font-black text-slate-400">{t("pipeline.activeOffers")}</p>
             <p className="text-2xl font-black text-indigo-600 mt-1">{offeredCount}</p>
           </div>
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-sm dark:bg-slate-950 dark:border-slate-800 transition">
+          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-sm dark:border-slate-800 transition">
             <p className="text-[10px] uppercase font-black text-slate-400">{t("pipeline.hiredPlaced")}</p>
             <p className="text-2xl font-black text-green-600 mt-1">{placedCount}</p>
           </div>
-          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-sm dark:bg-slate-950 dark:border-slate-800 transition">
+          <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border shadow-sm dark:border-slate-800 transition">
             <p className="text-[10px] uppercase font-black text-slate-400">{t("pipeline.conversionRate")}</p>
             <p className="text-2xl font-black text-purple-600 mt-1">{placedRate}%</p>
           </div>
@@ -180,7 +180,7 @@ export default function PlacementPipeline() {
 
                   <div className="space-y-3 flex-1 overflow-y-auto">
                     {stageApps.map((app) => (
-                      <div key={app._id} className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col gap-3 hover:shadow transition duration-150 text-left dark:bg-slate-950 dark:border-slate-800">
+                      <div key={app._id} className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col gap-3 hover:shadow transition duration-150 text-left dark:border-slate-800">
                         <div>
                           <h4 className="font-extrabold text-xs text-slate-900 dark:text-white leading-tight">
                             {app.studentName || app.studentEmail.split("@")[0].toUpperCase()}
@@ -243,7 +243,7 @@ export default function PlacementPipeline() {
       {/* Offer Job modal */}
       {showOfferModal && selectedApp && (
         <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full shadow-2xl p-6 border text-left dark:bg-slate-950 dark:border-slate-800">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full shadow-2xl p-6 border text-left dark:border-slate-800">
             <div className="flex justify-between items-center border-b pb-3 mb-4 dark:border-slate-800">
               <h3 className="font-bold text-base text-gray-900 dark:text-white">{t("pipeline.extendContractTitle")}</h3>
               <button onClick={() => setShowOfferModal(false)} className="text-gray-400 hover:text-gray-600 dark:text-gray-300 text-lg">×</button>

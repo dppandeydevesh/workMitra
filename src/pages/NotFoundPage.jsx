@@ -7,7 +7,7 @@ export default function NotFoundPage() {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen dark:bg-slate-950 dark:bg-none flex flex-col items-center justify-center bg-transparent p-6 select-none">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 select-none">
       <div className="text-center space-y-6 max-w-md bg-white dark:bg-slate-900 p-8 rounded-[40px] shadow-[0_20px_50px_rgba(100,50,150,0.08)] border border-white/60 dark:border-slate-800/60">
         <h1 className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">404</h1>
         <h2 className="text-2xl font-extrabold text-purple-950 dark:text-purple-200">{t("notFound.title")}</h2>

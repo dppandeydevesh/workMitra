@@ -347,8 +347,8 @@ exports.submitApplicationWork = async (req, res) => {
     }
     application.plagiarismScore = plagiarismScore;
     
-    // Set status to Flagged if plagiarism score exceeds 70%
-    if (plagiarismScore > 70) {
+    // Auto-reject if plagiarism score exceeds 20% (as per Terms of Service policy)
+    if (plagiarismScore > 20) {
       application.status = "Flagged";
     } else {
       application.status = "Submitted";

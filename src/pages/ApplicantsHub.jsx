@@ -793,13 +793,13 @@ export default function ApplicantsHub() {
                   {/* Plagiarism Checker readout */}
                   {activeAppToReview.plagiarismScore > 0 && (
                     <div className={`p-2.5 rounded-xl border text-[11px] ${
-                      activeAppToReview.plagiarismScore > 70
+                      activeAppToReview.plagiarismScore > 20
                         ? "bg-red-50 border-red-100 text-red-800 font-extrabold"
                         : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300"
                     }`}>
                       <p>
                         ⚠️ {t("applicantsHub.codeSimilarityAudit", { score: activeAppToReview.plagiarismScore })}
-                        {activeAppToReview.plagiarismScore > 70 && t("applicantsHub.highMatchWarning")}
+                        {activeAppToReview.plagiarismScore > 20 && t("applicantsHub.highMatchWarning")}
                       </p>
                     </div>
                   )}

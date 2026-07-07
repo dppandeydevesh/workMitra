@@ -37,8 +37,27 @@ export default function Preferences() {
     }
   }, []);
 
-  const skillsList = ["React", "Node.js", "Python", "UI/UX", "Content Writing", "Video Editing", "Marketing", "Data Entry"];
-  const interestsList = ["Web Development", "Mobile Apps", "AI/ML", "Design", "Writing", "Business", "Teaching"];
+  const skillsList = ["React", "Node.js", "Python", "Java", "C/C++", "UI/UX", "Content Writing", "Video Editing", "Marketing", "Data Entry", "Cyber Security", "Cloud Computing", "DevOps", "Blockchain", "Graphic Design", "SEO", "Database Management", "Flutter", "Machine Learning"];
+  const interestsList = ["Web Development", "Mobile Apps", "AI/ML", "Design", "Writing", "Business", "Teaching", "Cyber Security", "Data Science", "IoT", "Game Development", "Open Source", "Research", "Robotics", "Finance & Fintech"];
+
+  const [customSkill, setCustomSkill] = useState("");
+  const [customInterest, setCustomInterest] = useState("");
+
+  const handleAddCustomSkill = () => {
+    const trimmed = customSkill.trim();
+    if (trimmed && !preferences.skills.includes(trimmed)) {
+      setPreferences({...preferences, skills: [...preferences.skills, trimmed]});
+    }
+    setCustomSkill("");
+  };
+
+  const handleAddCustomInterest = () => {
+    const trimmed = customInterest.trim();
+    if (trimmed && !preferences.interests.includes(trimmed)) {
+      setPreferences({...preferences, interests: [...preferences.interests, trimmed]});
+    }
+    setCustomInterest("");
+  };
 
   const handleSkillToggle = (skill) => {
     if (preferences.skills.includes(skill)) {
@@ -265,6 +284,25 @@ export default function Preferences() {
                 </button>
               ))}
             </div>
+            {/* Custom skill input */}
+            <div className="flex gap-2 mt-3">
+              <input
+                type="text"
+                value={customSkill}
+                onChange={(e) => setCustomSkill(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddCustomSkill())}
+                placeholder={t("preferences.customSkillPlaceholder", "Type your own skill...")}
+                className="flex-1 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-sm px-3 py-1.5 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 dark:text-gray-200 placeholder-gray-400"
+              />
+              <button
+                type="button"
+                onClick={handleAddCustomSkill}
+                disabled={!customSkill.trim()}
+                className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-slate-700 text-white text-sm font-bold rounded-full transition shadow-sm disabled:shadow-none"
+              >
+                + {t("preferences.addBtn", "Add")}
+              </button>
+            </div>
           </div>
 
           {/* Interests */}
@@ -285,6 +323,25 @@ export default function Preferences() {
                   {interest}
                 </button>
               ))}
+            </div>
+            {/* Custom interest input */}
+            <div className="flex gap-2 mt-3">
+              <input
+                type="text"
+                value={customInterest}
+                onChange={(e) => setCustomInterest(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddCustomInterest())}
+                placeholder={t("preferences.customInterestPlaceholder", "Type your own interest...")}
+                className="flex-1 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-sm px-3 py-1.5 rounded-full focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-700 dark:text-gray-200 placeholder-gray-400"
+              />
+              <button
+                type="button"
+                onClick={handleAddCustomInterest}
+                disabled={!customInterest.trim()}
+                className="px-4 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 dark:disabled:bg-slate-700 text-white text-sm font-bold rounded-full transition shadow-sm disabled:shadow-none"
+              >
+                + {t("preferences.addBtn", "Add")}
+              </button>
             </div>
           </div>
 

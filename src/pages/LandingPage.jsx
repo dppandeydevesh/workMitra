@@ -31,7 +31,7 @@ export default function LandingPage() {
     <div className="min-h-screen dark:bg-slate-950 dark:bg-none bg-gradient-to-br from-blue-50 to-indigo-100 font-sans text-gray-800 dark:text-gray-200 flex flex-col select-none">
       
       {/* 🚀 Sticky Header */}
-      <header className="bg-white dark:bg-slate-900/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 dark:border-slate-800 shadow-sm">
+      <header className="bg-white dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 dark:border-slate-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
           <div className="logo-hook" onClick={() => navigate("/")}>
             <img 
@@ -151,7 +151,7 @@ export default function LandingPage() {
 
 
       {/* 🙋 FAQ Accordion */}
-      <section className="bg-gray-50 dark:bg-slate-800/60 dark:bg-slate-900 border-t border-gray-100 dark:border-slate-800 py-16 px-4">
+      <section className="bg-gray-50 dark:bg-slate-900 border-t border-gray-100 dark:border-slate-800 py-16 px-4">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-800 dark:text-white tracking-tight mb-8">
             {t("landing.faqTitle")}

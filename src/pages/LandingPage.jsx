@@ -57,7 +57,19 @@ export default function LandingPage() {
       </header>
 
       {/* 🔮 Hero Section */}
-      <section className="py-16 sm:py-24 text-center px-4 max-w-4xl mx-auto flex flex-col items-center">
+      <section className="py-16 sm:py-24 text-center px-4 max-w-4xl mx-auto flex flex-col items-center relative overflow-hidden">
+        {/* ✈️ Animated Paper Airplane */}
+        <div className="airplane-fly pointer-events-none absolute" style={{ top: "60%", left: "-60px" }}>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ transform: "rotate(-30deg)" }}>
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="url(#planeGrad)" opacity="0.7"/>
+            <defs>
+              <linearGradient id="planeGrad" x1="2" y1="3" x2="23" y2="21" gradientUnits="userSpaceOnUse">
+                <stop stopColor="#6366f1"/>
+                <stop offset="1" stopColor="#3b82f6"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
         <span className="px-3.5 py-1.5 bg-indigo-50 border border-indigo-100 text-indigo-700 text-[10px] font-black uppercase tracking-wider rounded-xl animate-pulse">
           ✨ {t("landing.heroBadge")}
         </span>

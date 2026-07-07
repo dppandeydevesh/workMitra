@@ -117,6 +117,31 @@ body {
   animation: floatFast 3s ease-in-out infinite;
 }
 
+/* ✈️ Airplane fly-across animation: left→right, bottom→top */
+@keyframes airplaneFly {
+  0% {
+    transform: translateX(0) translateY(0);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  95% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(calc(100vw + 120px)) translateY(-180px);
+    opacity: 0;
+  }
+}
+
+.airplane-fly {
+  animation: airplaneFly 6s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+}
+
 /* फ्रंट पेज के एलिमेंट्स को स्मूथली लोड करने का एंट्री इफ़ेक्ट */
 @keyframes fadeIn {
   from { 

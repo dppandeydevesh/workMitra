@@ -2,11 +2,12 @@ const express = require('express');
 const router = express.Router();
 const applicationController = require('../controllers/applicationController');
 const authenticateToken = require('../middleware/authMiddleware');
+const { applyLimiter } = require('../middleware/rateLimiter');
 
 // ==========================================
 // 🚀 RESTful API V2 (Modern Standards)
 // ==========================================
-router.post('/', authenticateToken, applicationController.applyForProject); // Replaces /apply
+router.post('/', authenticateToken, applyLimiter, applicationController.applyForProject); // Replaces /apply
 router.get('/student', authenticateToken, applicationController.getStudentApplications); // Context from JWT instead of URL param
 router.get('/company', authenticateToken, applicationController.getCompanyApplications); // Context from JWT
 router.get('/student-details', authenticateToken, applicationController.getStudentDetails); 
@@ -25,7 +26,7 @@ router.patch('/:applicationId/pipeline', authenticateToken, applicationControlle
 // ==========================================
 // 🏚️ Legacy RPC Routes (Maintained for Frontend Compatibility)
 // ==========================================
-router.post('/apply', authenticateToken, applicationController.applyForProject);
+router.post('/apply', authenticateToken, applyLimiter, applicationController.applyForProject);
 router.get('/student/:email', authenticateToken, applicationController.getStudentApplications);
 router.get('/company/:email', authenticateToken, applicationController.getCompanyApplications);
 router.get('/student-details/:email', authenticateToken, applicationController.getStudentDetails);

@@ -79,35 +79,8 @@ const sendEmailOtp = async (toEmail, otp, mobileOtp = null) => {
   }
 };
 
-const sendSmsOtp = async (toMobile, otp) => {
-  const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const authToken = process.env.TWILIO_AUTH_TOKEN;
-  const fromNumber = process.env.TWILIO_PHONE_NUMBER;
-
-  if (!accountSid || !authToken || !fromNumber) {
-
-    return false;
-  }
-
-  try {
-    const twilio = require("twilio");
-    const client = twilio(accountSid, authToken);
-    
-    const defaultCode = process.env.DEFAULT_COUNTRY_CODE || "+91";
-    const formattedMobile = toMobile.startsWith("+") ? toMobile : `${defaultCode}${toMobile}`;
-    
-    await client.messages.create({
-      body: `Your workMitra Sign Up verification code is: ${otp}`,
-      from: fromNumber,
-      to: formattedMobile
-    });
-
-    return true;
-  } catch (err) {
-    console.error("❌ Failed to deliver live SMS OTP via Twilio:", err.message);
-    return false;
-  }
-};
+// SMS OTP removed — single email OTP is used for all verifications.
+// Twilio trial restriction (verified numbers only) made this unusable at scale.
 
 const sendResetPasswordEmail = async (toEmail, resetLink) => {
   const resendApiKey = process.env.RESEND_API_KEY;
@@ -234,18 +207,12 @@ const register = async (req, res) => {
       }
     }
 
+    // Single email OTP — no SMS required, works for any user on any plan
     const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    const mobileOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
-
-
-    const smsSuccess = await sendSmsOtp(mobile, mobileOtp);
-    if (!smsSuccess) {
-    }
-
-    const emailSuccess = await sendEmailOtp(email, emailOtp, !smsSuccess ? mobileOtp : null);
+    const emailSuccess = await sendEmailOtp(email, emailOtp);
     if (!emailSuccess) {
-      return res.status(400).json({ error: "Failed to deliver Email OTP. Please check your email configuration." });
+      return res.status(400).json({ error: "Failed to deliver OTP. Please check your email address and try again." });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -267,7 +234,7 @@ const register = async (req, res) => {
     const pendingUser = new PendingUser({
       email,
       emailOtp,
-      mobileOtp,
+      mobileOtp: emailOtp, // kept for schema compat — same value, verified as one code
       registrationData
     });
     await pendingUser.save();
@@ -284,10 +251,12 @@ const register = async (req, res) => {
 
 const verifyOtp = async (req, res) => {
   try {
-    const { email, emailOtp, mobileOtp } = req.body;
+    // Accept either emailOtp or otp field for frontend compatibility
+    const { email, emailOtp, otp, mobileOtp } = req.body;
+    const submittedOtp = emailOtp || otp;
 
-    if (!email || !emailOtp || !mobileOtp) {
-      return res.status(400).json({ error: "Email, Email OTP, and Mobile OTP are required." });
+    if (!email || !submittedOtp) {
+      return res.status(400).json({ error: "Email and verification code are required." });
     }
 
     const pending = await PendingUser.findOne({ email });
@@ -295,12 +264,9 @@ const verifyOtp = async (req, res) => {
       return res.status(400).json({ error: "Verification session expired or invalid. Please try registering again." });
     }
 
-    if (pending.emailOtp !== emailOtp) {
-      return res.status(400).json({ error: "Invalid Email verification code." });
-    }
-
-    if (pending.mobileOtp !== mobileOtp) {
-      return res.status(400).json({ error: "Invalid Mobile SMS verification code." });
+    // Accept OTP if it matches the email OTP (mobileOtp is same value for backward compat)
+    if (pending.emailOtp !== submittedOtp && pending.mobileOtp !== submittedOtp) {
+      return res.status(400).json({ error: "Invalid verification code. Please check your email." });
     }
 
     const { fullName, companyName, password, userRole, mobile, collegeName, enrollmentNumber, departmentName } = pending.registrationData;

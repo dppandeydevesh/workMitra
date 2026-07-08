@@ -41,7 +41,6 @@ export default function LoginPage() {const navigate = useNavigate();
  const [isVerifying, setIsVerifying] = useState(false);
  const [isOtpVerifying, setIsOtpVerifying] = useState(false);
  const [emailOtpInput, setEmailOtpInput] = useState("");
- const [mobileOtpInput, setMobileOtpInput] = useState("");
 
  const [airplanePos, setAirplanePos] = useState(-10);
  useEffect(() => {const interval = setInterval(() => {setAirplanePos((prev) => (prev >= 110 ? -10 : prev + 0.5));
@@ -145,10 +144,10 @@ export default function LoginPage() {const navigate = useNavigate();
  try {const response = await fetchWithAuth(`${API_BASE_URL}/api/auth/register-verify`, { credentials:"include",
  method:"POST",
  headers: {"Content-Type":"application/json"},
- body: JSON.stringify({email,
- emailOtp: emailOtpInput,
- mobileOtp: mobileOtpInput
-})
+ body: JSON.stringify({
+  email,
+  emailOtp: emailOtpInput,
+ })
 });
  const data = await response.json();
  if (response.ok) {toast.success(t("login.registrationSuccessful"));
@@ -282,21 +281,12 @@ export default function LoginPage() {const navigate = useNavigate();
  <div>
  <label className="block text-left text-[9px] font-bold text-ink-400 uppercase mb-1.5 px-1">{t("login.emailVerificationCode")}</label>
  <input
- type="text"maxLength="6"value={emailOtpInput}
+ type="text" maxLength="6" value={emailOtpInput}
  onChange={(e) => setEmailOtpInput(e.target.value)}
  placeholder={t("login.6DigitCode")}
- className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-center tracking-widest font-black"required
+ className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-center tracking-widest font-black" required
  />
- </div>
-
- <div>
- <label className="block text-left text-[9px] font-bold text-ink-400 uppercase mb-1.5 px-1">{t("login.mobileVerificationCode","MOBILE VERIFICATION CODE")}</label>
- <input
- type="text"maxLength="6"value={mobileOtpInput}
- onChange={(e) => setMobileOtpInput(e.target.value)}
- placeholder={t("login.6DigitCode")}
- className="w-full bg-purple-50/60 border border-purple-100 text-sm px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 text-center tracking-widest font-black"required
- />
+ <p className="text-[10px] text-ink-400 mt-1.5 px-1">Check your email inbox for the 6-digit code.</p>
  </div>
 
 

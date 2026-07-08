@@ -6,6 +6,7 @@ import { useTranslation} from"react-i18next";
 import { fetchWithAuth} from"../services/apiClient";
 import { motion} from"framer-motion";
 import { Mail, Lock, User, Building, Phone, Hash, BookOpen} from"lucide-react";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 export default function LoginPage() {const navigate = useNavigate();
  const toast = useToast();
@@ -32,6 +33,7 @@ export default function LoginPage() {const navigate = useNavigate();
  const [passwordStrength, setPasswordStrength] = useState({ score: 0, text:""});
 
  const [errorMessage, setErrorMessage] = useState("");
+ const [turnstileToken, setTurnstileToken] = useState("");
 
  // OTP Verification States
  const [isRegistering, setIsRegistering] = useState(false);
@@ -78,7 +80,7 @@ export default function LoginPage() {const navigate = useNavigate();
  try {const response = await fetchWithAuth(`${API_BASE_URL}/api/auth/login`, { credentials:"include",
  method:"POST",
  headers: {"Content-Type":"application/json"},
- body: JSON.stringify({ email, password, portalRole: userRole})
+ body: JSON.stringify({ email, password, portalRole: userRole, turnstileToken })
 });
 
  const data = await response.json();
@@ -349,9 +351,9 @@ export default function LoginPage() {const navigate = useNavigate();
  setIsRegistering(true);
  
  let payload;
- if (userRole ==="company") {payload = { fullName: companyName, companyName, email, password, mobile, userRole:"company"};
-} else if (userRole ==="college") {payload = { fullName, email, password, mobile, collegeName, departmentName, userRole:"college"};
-} else {payload = { fullName, email, password, mobile, collegeName, enrollmentNumber, userRole:"student"};
+ if (userRole ==="company") {payload = { fullName: companyName, companyName, email, password, mobile, userRole:"company", turnstileToken };
+} else if (userRole ==="college") {payload = { fullName, email, password, mobile, collegeName, departmentName, userRole:"college", turnstileToken };
+} else {payload = { fullName, email, password, mobile, collegeName, enrollmentNumber, userRole:"student", turnstileToken };
 }
 
  try {const response = await fetchWithAuth(`${API_BASE_URL}/api/auth/register`, { credentials:"include",
@@ -414,9 +416,15 @@ export default function LoginPage() {const navigate = useNavigate();
  </div>
  </div>
  )}
+  <div className="flex justify-center my-2">
+    <Turnstile
+      siteKey={import.meta.env.VITE_CF_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
+      onSuccess={(token) => setTurnstileToken(token)}
+    />
+  </div>
 
- <button 
- type="submit"disabled={passwordStrength.score < 4 || isRegistering}
+  <button 
+  type="submit"disabled={passwordStrength.score < 4 || isRegistering}
  className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3 rounded-xl shadow-md mt-1 transition flex justify-center items-center ${passwordStrength.score === 4 && !isRegistering ?"bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95 cursor-pointer" :"bg-ink-400 cursor-not-allowed"}`}
  >
  {isRegistering ? (
@@ -446,6 +454,13 @@ export default function LoginPage() {const navigate = useNavigate();
  {t("login.forgotPassword")}
  </button>
  </div>
+
+  <div className="flex justify-center my-2">
+    <Turnstile
+      siteKey={import.meta.env.VITE_CF_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
+      onSuccess={(token) => setTurnstileToken(token)}
+    />
+  </div>
 
  <button
  type="submit"disabled={isLoggingIn}

@@ -5,6 +5,7 @@ const swot = require('swot-node');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const { sendWebhookNotification } = require('../utils/webhook');
+const { verifyTurnstile } = require('../utils/verifyTurnstile');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -160,7 +161,13 @@ const sendResetPasswordEmail = async (toEmail, resetLink) => {
 
 const register = async (req, res) => {
   try {
-    const { fullName, companyName, email, password, userRole, mobile, collegeName, enrollmentNumber, departmentName } = req.body;
+    const { fullName, companyName, email, password, userRole, mobile, collegeName, enrollmentNumber, departmentName, turnstileToken } = req.body;
+
+    // Verify Cloudflare Turnstile token
+    const isTokenValid = await verifyTurnstile(turnstileToken, req.realIP);
+    if (!isTokenValid) {
+      return res.status(400).json({ error: "Security verification failed. Please try again." });
+    }
 
     if (!email || !password || !mobile || !userRole) {
       return res.status(400).json({ error: "Email, Password, Mobile Number, and User Role are required parameters." });
@@ -353,7 +360,14 @@ const verifyOtp = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        const { email, password, portalRole } = req.body;
+        const { email, password, portalRole, turnstileToken } = req.body;
+
+        // Verify Cloudflare Turnstile token
+        const isTokenValid = await verifyTurnstile(turnstileToken, req.realIP);
+        if (!isTokenValid) {
+            return res.status(400).json({ error: "Security verification failed. Please try again." });
+        }
+
         if (!email || !password) {
             return res.status(400).json({ error: "Email and password are mandatory parameters." });
         }

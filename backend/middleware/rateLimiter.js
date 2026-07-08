@@ -8,6 +8,7 @@ const make = (max, windowMs, message) =>
     standardHeaders: true,
     legacyHeaders: false,
     keyGenerator: (req) => req.realIP || req.ip,
+    validate: false,
   });
 
 const loginLimiter    = make(5,  60000,  'Too many login attempts. Try again in 1 minute.');

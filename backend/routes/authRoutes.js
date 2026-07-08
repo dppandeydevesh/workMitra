@@ -9,6 +9,7 @@ const forgotPasswordLimiter = rateLimit({
   max: 3, // Prevent email spam bombing
   message: { error: "Too many password reset requests. Please wait an hour before requesting another." },
   keyGenerator: (req) => req.realIP || req.ip,
+  validate: false,
 });
 
 const resetPasswordLimiter = rateLimit({
@@ -16,6 +17,7 @@ const resetPasswordLimiter = rateLimit({
   max: 5,
   message: { error: "Too many password reset attempts. Please try again after 15 minutes." },
   keyGenerator: (req) => req.realIP || req.ip,
+  validate: false,
 });
 
 router.post('/register', registerLimiter, authController.register);

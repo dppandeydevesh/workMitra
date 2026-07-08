@@ -1,6 +1,7 @@
 const Project = require('../models/Project');
 const Application = require('../models/Application');
 const User = require('../models/User');
+const { upsertProject: pineconeUpsert, deleteProject: pineconeDelete } = require('../utils/pinecone');
 
 const resolveBlockedCompanyIds = async (blockedEmails) => {
   if (!blockedEmails || blockedEmails.length === 0) return [];
@@ -132,6 +133,8 @@ const createProject = async (req, res) => {
     });
     
     await project.save();
+    // 📌 Pinecone: index project for semantic search (fire-and-forget)
+    pineconeUpsert(project).catch(err => console.error('[Pinecone] createProject upsert error:', err.message));
     res.status(201).json(project);
   } catch (err) {
     console.error(err);
@@ -262,6 +265,8 @@ const updateProject = async (req, res) => {
     project.workType = workType !== undefined ? workType : project.workType;
 
     await project.save();
+    // 📌 Pinecone: re-index updated project (fire-and-forget)
+    pineconeUpsert(project).catch(err => console.error('[Pinecone] updateProject upsert error:', err.message));
     res.status(200).json(project);
   } catch (err) {
     console.error(err);
@@ -284,6 +289,8 @@ const deleteProject = async (req, res) => {
 
     await Project.findByIdAndDelete(projectId);
     await Application.deleteMany({ projectId });
+    // 📌 Pinecone: remove deleted project from index (fire-and-forget)
+    pineconeDelete(projectId).catch(err => console.error('[Pinecone] deleteProject error:', err.message));
     res.status(200).json({ message: "Project and associated applications deleted successfully." });
   } catch (err) {
     console.error(err);
@@ -351,6 +358,8 @@ const archiveProject = async (req, res) => {
 
     project.status = "Archived";
     await project.save();
+    // 📌 Pinecone: remove archived project from index (fire-and-forget)
+    pineconeDelete(project._id).catch(err => console.error('[Pinecone] archiveProject error:', err.message));
     res.status(200).json(project);
   } catch (err) {
     console.error(err);

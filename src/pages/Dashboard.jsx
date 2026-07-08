@@ -217,6 +217,18 @@ export default function Dashboard() {const navigate = useNavigate();
 
         setLoadingAiPicks(true);
         try {
+          // 🧠 Try Pinecone semantic match first (instant, scales to thousands of projects)
+          const semanticRes = await fetchWithAuth(`${API_BASE_URL}/api/ai/semantic-match/${userObj.email}`);
+          if (semanticRes.ok) {
+            const semanticData = await semanticRes.json();
+            if (semanticData.pinecone && semanticData.matches?.length > 0) {
+              // Pinecone is live — use semantic matches
+              setAiTopPicks(semanticData.matches.map(p => ({ ...p, _semanticPowered: true })));
+              setLoadingAiPicks(false);
+              return; // skip Gemini fallback
+            }
+          }
+          // Fallback: Gemini text-generation recommendations
           const aiRes = await fetchWithAuth(`${API_BASE_URL}/api/projects/recommendations/${userObj.email}`);
           if (aiRes.ok) {
             const aiData = await aiRes.json();

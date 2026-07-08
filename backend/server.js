@@ -94,8 +94,60 @@ app.use('/api/payments', paymentRoutes);
 const fileRoutes = require('./routes/fileRoutes');
 app.use('/api/files', fileRoutes);
 const authenticateToken = require('./middleware/authMiddleware');
+const { matchProjectsForStudent, backfillAllProjects } = require('./utils/pinecone');
 
 app.use('/api/auth', authRoutes);
+
+// =========================================================================
+// 🧠 ROUTE: Pinecone semantic match — top projects for a student
+// =========================================================================
+app.get("/api/ai/semantic-match/:email", authenticateToken, async (req, res) => {
+  try {
+    const { email } = req.params;
+    if (req.user.email !== email) {
+      return res.status(403).json({ error: "Unauthorized." });
+    }
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: "User not found." });
+
+    const matches = await matchProjectsForStudent(user, 5);
+    if (!matches) {
+      return res.status(200).json({ pinecone: false, matches: [] });
+    }
+
+    // Enrich with full project data from MongoDB
+    const projectIds = matches.map(m => m.projectId);
+    const projects = await Project.find({ _id: { $in: projectIds }, status: 'Published' })
+      .populate('companyId', 'email companyName');
+
+    // Re-order by Pinecone similarity score and attach score
+    const enriched = matches
+      .map(m => {
+        const project = projects.find(p => p._id.toString() === m.projectId);
+        if (!project) return null;
+        return { ...project.toObject(), semanticScore: m.score };
+      })
+      .filter(Boolean);
+
+    res.status(200).json({ pinecone: true, matches: enriched });
+  } catch (err) {
+    console.error('[Semantic Match]', err);
+    res.status(500).json({ error: "Semantic match failed." });
+  }
+});
+
+// =========================================================================
+// 🔄 ROUTE: Admin — backfill all existing projects into Pinecone
+// =========================================================================
+app.post("/api/admin/pinecone-backfill", authenticateToken, async (req, res) => {
+  if (req.user.userRole !== 'admin') return res.status(403).json({ error: 'Admin only.' });
+  try {
+    const count = await backfillAllProjects(Project);
+    res.status(200).json({ message: `Backfill complete. ${count} projects indexed.` });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // =========================================================================
 // 💡 ROUTE: Get AI Top Picks for a student

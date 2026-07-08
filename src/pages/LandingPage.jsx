@@ -29,8 +29,7 @@ export default function LandingPage() {const navigate = useNavigate();
     <header className="bg-white sticky top-0 z-50 border-b border-ink-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
         <div className="cursor-pointer flex items-center gap-2" onClick={() => navigate("/")}>
-          <div className="w-2.5 h-2.5 rounded-full bg-marigold-500" />
-          <span className="font-bold text-ink-900 text-sm tracking-tight">workMitra</span>
+          <img src="/logo.png" alt="workMitra Logo" className="h-8 object-contain" />
         </div>
         <div className="flex items-center gap-4">
           <button 

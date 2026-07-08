@@ -15,9 +15,9 @@ export default function StudentProfile() {
     linkedinUrl, setLinkedinUrl, portfolioUrl, setPortfolioUrl, avatarUrl, setAvatarUrl, bioText, setBioText,
     major, setMajor, currentSemester, setCurrentSemester, vanityUsername, setVanityUsername,
     videoPitchUrl, setVideoPitchUrl, isProfilePrivate, setIsProfilePrivate, extracurriculars, setExtracurriculars,
-    preferredTechStack, setPreferredTechStack, availabilitySlots, showVouchModal, setShowVouchModal,
+    preferredTechStack, setPreferredTechStack, availabilitySlots, setAvailabilitySlots, showVouchModal, setShowVouchModal,
     vouchSkills, setVouchSkills, vouchComment, setVouchComment, vouching,
-    handleSaveProfile, handleVouchSubmit, fetchUserProfile, isOwner, ratingsList, avgRating
+    handleSaveProfile, handleVouchSubmit, fetchUserProfile, isOwner, ratingsList, avgRating, completedTasks
   } = useStudentProfile();
 
  return (

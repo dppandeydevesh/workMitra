@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { API_BASE_URL } from '../config';
 import { useToast } from '../components/Toast';
-import { fetchWithAuth } from '../services/apiClient';
 import { identifyUser, capture } from '../lib/posthog';
+import { login, forgotPassword, verifyOtp, registerUser } from '../services/authService';
 
 /**
  * useLoginPage — Hook to manage login/signup/forgot-password/OTP states and api pipeline flows.
@@ -86,21 +85,9 @@ export function useLoginPage() {
     setErrorMessage('');
     setIsLoggingIn(true);
     try {
-      const response = await fetchWithAuth(`${API_BASE_URL}/api/auth/login`, {
-        credentials: 'include',
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          password,
-          portalRole: userRole,
-          turnstileToken,
-        }),
-      });
+      const { ok, data } = await login(email, password, userRole, turnstileToken);
 
-      const data = await response.json();
-
-      if (response.ok) {
+      if (ok) {
         if (data.user) {
           localStorage.setItem('user', JSON.stringify(data.user));
           identifyUser(); // 📊 PostHog identification
@@ -132,6 +119,82 @@ export function useLoginPage() {
     }
   };
 
+  const handleRegisterSubmit = async (e) => {
+    e.preventDefault();
+    if (!turnstileToken) {
+      setErrorMessage('Please complete the security challenge verification.');
+      return;
+    }
+    if (passwordStrength.score < 4) {
+      setErrorMessage(t('login.strongerPasswordRequired'));
+      return;
+    }
+    const domainPart = email.toLowerCase().split('@')[1] || '';
+    const looksAcademic =
+      /\.(edu|ac)\b/.test(domainPart) ||
+      /\.(org|res|ernet)\.in$/.test(domainPart);
+    if ((userRole === 'student' || userRole === 'college') && !looksAcademic) {
+      setErrorMessage(t('login.academicEmailRequired'));
+      setTimeout(() => setErrorMessage(''), 5000);
+      return;
+    }
+
+    setErrorMessage('');
+    setIsRegistering(true);
+
+    let payload;
+    if (userRole === 'company') {
+      payload = {
+        fullName: companyName,
+        companyName,
+        email,
+        password,
+        mobile,
+        userRole: 'company',
+        turnstileToken,
+      };
+    } else if (userRole === 'college') {
+      payload = {
+        fullName,
+        email,
+        password,
+        mobile,
+        collegeName,
+        departmentName,
+        userRole: 'college',
+        turnstileToken,
+      };
+    } else {
+      payload = {
+        fullName,
+        email,
+        password,
+        mobile,
+        collegeName,
+        enrollmentNumber,
+        userRole: 'student',
+        turnstileToken,
+      };
+    }
+
+    try {
+      const { ok, data } = await registerUser(payload);
+      if (ok) {
+        setIsOtpVerifying(true);
+        setErrorMessage('');
+        setEmailOtpInput('');
+      } else {
+        setErrorMessage(data.error || t('login.registrationSystemError'));
+      }
+    } catch (err) {
+      setErrorMessage(
+        t('login.registrationError', { message: err.message })
+      );
+    } finally {
+      setIsRegistering(false);
+    }
+  };
+
   const handleForgotPassword = () => {
     setView('forgot');
     setErrorMessage('');
@@ -146,17 +209,8 @@ export function useLoginPage() {
     setSendingRecovery(true);
 
     try {
-      const response = await fetchWithAuth(
-        `${API_BASE_URL}/api/auth/forgot-password`,
-        {
-          credentials: 'include',
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: recoveryEmail }),
-        }
-      );
-      const data = await response.json();
-      if (response.ok) {
+      const { ok, data } = await forgotPassword(recoveryEmail);
+      if (ok) {
         setRecoveryMessage(t('login.resetInstructionsSent'));
         if (data.resetLink) {
           setGeneratedResetLink(data.resetLink);
@@ -179,20 +233,8 @@ export function useLoginPage() {
     setIsVerifying(true);
 
     try {
-      const response = await fetchWithAuth(
-        `${API_BASE_URL}/api/auth/register-verify`,
-        {
-          credentials: 'include',
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email,
-            emailOtp: emailOtpInput,
-          }),
-        }
-      );
-      const data = await response.json();
-      if (response.ok) {
+      const { ok, data } = await verifyOtp(email, emailOtpInput);
+      if (ok) {
         toast.success(t('login.registrationSuccessful'));
         localStorage.setItem('user', JSON.stringify(data.user));
         identifyUser();
@@ -265,6 +307,7 @@ export function useLoginPage() {
     // handlers
     checkPasswordStrength,
     handleLoginSubmit,
+    handleRegisterSubmit,
     handleForgotPassword,
     handleRecoverySubmit,
     handleOtpVerifySubmit,

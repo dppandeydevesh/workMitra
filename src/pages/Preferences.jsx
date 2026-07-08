@@ -8,29 +8,33 @@ export default function Preferences() {const navigate = useNavigate();
  const [errorMessage, setErrorMessage] = useState("");
  
  // User preferences state
- const [preferences, setPreferences] = useState({name:"",
- bio:"",
- skills: [],
- experience:"beginner",
- interests: [],
- githubUrl:"",
- linkedinUrl:"",
- portfolioUrl:"",
- avatarUrl:""
-});
-
- useEffect(() => {const savedUser = localStorage.getItem("user");
- if (savedUser) {const parsedUser = JSON.parse(savedUser);
- setPreferences(prev => ({...prev,
- name: parsedUser.fullName ||"",
- skills: parsedUser.targetSkills ? parsedUser.targetSkills.split(",").map(s => s.trim()) : [],
- githubUrl: parsedUser.githubUrl ||"",
- linkedinUrl: parsedUser.linkedinUrl ||"",
- portfolioUrl: parsedUser.portfolioUrl ||"",
- avatarUrl: parsedUser.avatarUrl ||""
-}));
-}
-}, []);
+  const [preferences, setPreferences] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    const base = {
+      name: "",
+      bio: "",
+      skills: [],
+      experience: "beginner",
+      interests: [],
+      githubUrl: "",
+      linkedinUrl: "",
+      portfolioUrl: "",
+      avatarUrl: ""
+    };
+    if (savedUser) {
+      const parsedUser = JSON.parse(savedUser);
+      return {
+        ...base,
+        name: parsedUser.fullName || "",
+        skills: parsedUser.targetSkills ? parsedUser.targetSkills.split(",").map(s => s.trim()) : [],
+        githubUrl: parsedUser.githubUrl || "",
+        linkedinUrl: parsedUser.linkedinUrl || "",
+        portfolioUrl: parsedUser.portfolioUrl || "",
+        avatarUrl: parsedUser.avatarUrl || ""
+      };
+    }
+    return base;
+  });
 
  const skillsList = ["React","Node.js","Python","Java","C/C++","UI/UX","Content Writing","Video Editing","Marketing","Data Entry","Cyber Security","Cloud Computing","DevOps","Blockchain","Graphic Design","SEO","Database Management","Flutter","Machine Learning"];
  const interestsList = ["Web Development","Mobile Apps","AI/ML","Design","Writing","Business","Teaching","Cyber Security","Data Science","IoT","Game Development","Open Source","Research","Robotics","Finance & Fintech"];

@@ -31,26 +31,34 @@ export default function MyProjects() {const navigate = useNavigate();
  const [editDeadline, setEditDeadline] = useState("");
  const [submittingEdit, setSubmittingEdit] = useState(false);
 
- useEffect(() => {const savedUser = JSON.parse(localStorage.getItem("user") ||"{}");
- const companyEmail = savedUser.email;
+  const fetchCompanyData = async (companyEmail) => {
+    if (!companyEmail) return;
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/projects/company/${companyEmail}`, {
+        credentials: "include",
+        headers: {}
+      });
+      const data = await response.json();
+      if (response.ok) setProjects(data);
+    } catch (err) {
+      setErrorMessage(t("myProjects.failedSync"));
+    } finally {
+      setLoadingProjects(false);
+    }
+  };
 
- if (!companyEmail) {setErrorMessage(t("myProjects.corporateSessionMissing"));
- setLoadingProjects(false);
- return;
-}
+  useEffect(() => {
+    const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
+    const companyEmail = savedUser.email;
 
- const fetchCompanyData = async () => {try {const response = await fetch(`${API_BASE_URL}/api/projects/company/${companyEmail}`, { credentials:"include",
- headers: {}
-});
- const data = await response.json();
- if (response.ok) setProjects(data);
-} catch (err) {setErrorMessage(t("myProjects.failedSync"));
-} finally {setLoadingProjects(false);
-}
-};
+    if (!companyEmail) {
+      setErrorMessage(t("myProjects.corporateSessionMissing"));
+      setLoadingProjects(false);
+      return;
+    }
 
- fetchCompanyData();
-}, []);
+    fetchCompanyData(companyEmail);
+  }, []);
 
  const handleInspectApplicants = async (project) => {setSelectedProject(project);
  setLoadingApplicants(true);
@@ -236,7 +244,7 @@ export default function MyProjects() {const navigate = useNavigate();
          <span>⚠️</span> {errorMessage}
        </div>
        <button 
-         onClick={() => fetchCompanyData()}
+         onClick={() => fetchCompanyData(JSON.parse(localStorage.getItem("user") || "{}").email)}
          className="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold text-[11px] transition active:scale-95 whitespace-nowrap"
        >
          Retry

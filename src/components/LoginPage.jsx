@@ -18,7 +18,7 @@ export default function LoginPage() {
     isRegistering, setIsRegistering, isLoggingIn, isVerifying,
     isOtpVerifying, setIsOtpVerifying, emailOtpInput, setEmailOtpInput,
     recoveryEmail, setRecoveryEmail, recoveryMessage, generatedResetLink, sendingRecovery,
-    checkPasswordStrength, handleLoginSubmit, handleForgotPassword,
+    checkPasswordStrength, handleLoginSubmit, handleRegisterSubmit, handleForgotPassword,
     handleRecoverySubmit, handleOtpVerifySubmit
   } = useLoginPage();
 
@@ -175,46 +175,7 @@ export default function LoginPage() {
  <div className={`sign-up-panel flex-col items-center justify-center px-6 md:px-12 text-center text-ink-800 overflow-y-auto py-8 w-full md:w-1/2 md:absolute md:top-0 md:left-0 md:h-full md:flex ${isSignUp ?"flex min-h-[500px]" :"hidden"
 }`}>
  <form 
- className="w-full space-y-3"onSubmit={async (e) => {e.preventDefault();
-  if (!turnstileToken) {
-    setErrorMessage("Please complete the security challenge verification.");
-    return;
-  }
- if (passwordStrength.score < 4) {setErrorMessage(t("login.strongerPasswordRequired"));
- return;
-}
- // Lightweight client-side check — backend does authoritative swot-node verification
- const domainPart = email.toLowerCase().split("@")[1] ||"";
- const looksAcademic = /\.(edu|ac)\b/.test(domainPart) || /\.(org|res|ernet)\.in$/.test(domainPart);
- if ((userRole ==="student" || userRole ==="college") && !looksAcademic) {setErrorMessage(t("login.academicEmailRequired"));
- setTimeout(() => setErrorMessage(""), 5000);
- return;
-}
- setErrorMessage("");
- setIsRegistering(true);
- 
- let payload;
- if (userRole ==="company") {payload = { fullName: companyName, companyName, email, password, mobile, userRole:"company", turnstileToken };
-} else if (userRole ==="college") {payload = { fullName, email, password, mobile, collegeName, departmentName, userRole:"college", turnstileToken };
-} else {payload = { fullName, email, password, mobile, collegeName, enrollmentNumber, userRole:"student", turnstileToken };
-}
-
- try {const response = await fetchWithAuth(`${API_BASE_URL}/api/auth/register`, { credentials:"include",
- method:"POST",
- headers: {"Content-Type":"application/json"},
- body: JSON.stringify(payload),
-});
- const data = await response.json();
- if (response.ok) {setIsOtpVerifying(true);
- setErrorMessage("");
- setEmailOtpInput("");
- setMobileOtpInput("");
-} else {setErrorMessage(data.error || t("login.registrationSystemError"));
-}
-} catch (err) {setErrorMessage(t("login.registrationError", { message: err.message}));
-} finally {setIsRegistering(false);
-}
-}}
+ className="w-full space-y-3" onSubmit={handleRegisterSubmit}
  >
  <div className="flex justify-center -mb-2">
  <img src="/logo.png" alt="workMitra Logo" className="h-14 object-contain bg-white px-3 py-1.5 rounded-xl shadow-sm" />

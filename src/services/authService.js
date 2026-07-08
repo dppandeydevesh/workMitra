@@ -40,11 +40,11 @@ export async function registerUser(registrationData) {
  * @param {string} otp
  */
 export async function verifyOtp(email, otp) {
-  const res = await fetch(`${API_BASE_URL}/api/auth/verify-otp`, {
+  const res = await fetch(`${API_BASE_URL}/api/auth/register-verify`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, otp }),
+    body: JSON.stringify({ email, emailOtp: otp }),
   });
   const data = await res.json();
   return { ok: res.ok, data };
@@ -71,11 +71,11 @@ export async function forgotPassword(email) {
  * @param {string} password - new password
  */
 export async function resetPassword(token, password) {
-  const res = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
+  const res = await fetch(`${API_BASE_URL}/api/auth/reset-password/${token}`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ token, password }),
+    body: JSON.stringify({ password }),
   });
   const data = await res.json();
   return { ok: res.ok, data };

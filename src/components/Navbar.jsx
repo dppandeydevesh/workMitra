@@ -9,7 +9,7 @@ import { resetPostHog } from '../lib/posthog';
 
 export default function Navbar() {const navigate = useNavigate();
  const location = useLocation();
- const [user, setUser] = useState(null);
+ const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user") || "null"));
  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
  const [notificationsOpen, setNotificationsOpen] = useState(false);
  const [notifications, setNotifications] = useState([]);
@@ -33,8 +33,8 @@ export default function Navbar() {const navigate = useNavigate();
 }, [addListener]);
 
 
- useEffect(() => {const savedUser = JSON.parse(localStorage.getItem("user") ||"null");
- setUser(savedUser);
+ useEffect(() => {
+ const savedUser = user;
 
  if (savedUser && savedUser.userRole ==="student") {// Fetch student applications to extract status updates as notifications
  const fetchStudentNotifications = async () => {try {const res = await fetch(`${API_BASE_URL}/api/applications/student-details/${savedUser.email}`, { credentials:"include",

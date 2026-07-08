@@ -67,7 +67,9 @@ export default function ProtectedRoute({ children, allowedRoles}) {const [isVeri
 } else {return <Navigate to="/preferences" replace />;
 }
 }
-} catch (e) {}
+} catch (e) {
+  // ignore parsing errors
+}
 
  return children;
 }

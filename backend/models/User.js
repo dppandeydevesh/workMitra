@@ -92,12 +92,8 @@ UserSchema.pre('save', async function() {
     if (!this.isModified('password')) return;
     const bcryptRegex = /^\$2[ayb]\$[0-9]{2}\$[./A-Za-z0-9]{53}$/;
     if (this.password && bcryptRegex.test(this.password)) return;
-    try {
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
-    } catch (err) {
-        throw err;
-    }
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
 });
 
 // Compare password method

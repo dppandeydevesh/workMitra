@@ -412,14 +412,16 @@ export default function ChatPage() {const { recipientEmail} = useParams();
  </div>
  </>
  ) : (
- <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-white/20">
- <div className="w-24 h-24 mb-6 rounded-full wm-panel flex items-center justify-center text-5xl shadow-sm animate-float-slow">
- 💬
+ <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-paper">
+ <div className="w-12 h-12 rounded-xl bg-marigold-50 flex items-center justify-center text-marigold-500 shadow-sm border border-marigold-100 mb-4">
+ <MessageSquare className="w-6 h-6" />
  </div>
- <h3 className="text-xl font-black text-ink-900 drop-shadow-sm">{t("chat.noConversationSelected")}</h3>
- <p className="text-sm text-ink-600 max-w-sm mt-3 font-medium">
+ <div>
+ <h3 className="text-sm font-semibold text-ink-900 tracking-tight">{t("chat.noConversationSelected")}</h3>
+ <p className="text-xs text-ink-500 mt-1 max-w-xs leading-relaxed">
  {t("chat.noConversationDesc")}
  </p>
+ </div>
  </div>
  )}
  </div>
@@ -428,3 +430,4 @@ export default function ChatPage() {const { recipientEmail} = useParams();
  </motion.div>
  );
 }
+

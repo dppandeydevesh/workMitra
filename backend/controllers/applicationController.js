@@ -15,7 +15,9 @@ function calculateSimilarity(str1, str2) {
   return match / Math.max(s1.length, s2.length);
 }
 
-function runLinter(githubUrl, fileTypes) {
+// Stub for future GitHub linter integration (not currently wired)
+// eslint-disable-next-line no-unused-vars
+function _runGithubLinter(githubUrl, fileTypes) {
   let score = 95;
   let issues = ["No syntax errors found.", "Variables well named."];
   if (fileTypes.includes("python")) {
@@ -23,6 +25,7 @@ function runLinter(githubUrl, fileTypes) {
   }
   return { score, issues };
 }
+
 
 exports.applyForProject = async (req, res) => {
   try {
@@ -244,34 +247,10 @@ exports.updateStatus = async (req, res) => {
   }
 };
 
+
 // =========================================================================
-// 📤 ROUTE: Submit completed work for review
+// 📤 Submit completed work for review
 // =========================================================================
-function calculateSimilarity(str1, str2) {
-  if (!str1 || !str2) return 0;
-  const s1 = str1.toLowerCase().replace(/[^a-z0-9]/g, "");
-  const s2 = str2.toLowerCase().replace(/[^a-z0-9]/g, "");
-  if (s1 === s2) return 100;
-  
-  const getBigrams = (str) => {
-    const bigrams = new Set();
-    for (let i = 0; i < str.length - 1; i++) {
-      bigrams.add(str.substring(i, i + 2));
-    }
-    return bigrams;
-  };
-
-  const b1 = getBigrams(s1);
-  const b2 = getBigrams(s2);
-  if (b1.size === 0 || b2.size === 0) return 0;
-
-  let intersection = 0;
-  b1.forEach(bg => {
-    if (b2.has(bg)) intersection++;
-  });
-
-  return Math.round((2 * intersection) / (b1.size + b2.size) * 100);
-}
 
 function runLinter(code) {
   const warnings = [];

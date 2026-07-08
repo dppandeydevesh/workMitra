@@ -15,23 +15,12 @@ const jwt = require('jsonwebtoken');
 const swot = require('swot-node');
 const cookieParser = require('cookie-parser');
 
-const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) {
-  console.error("🚨 FATAL ERROR: JWT_SECRET environment variable is missing. Server cannot start securely.");
-  process.exit(1);
-}
+const JWT_SECRET = process.env.JWT_SECRET; // Already validated by validateEnv()
 
-global.wsClients = new Map(); // Global registry for WebSocket client sockets
-
-// Models Loading
-const User = require('./models/User');
-const Project = require('./models/Project');
-const Application = require('./models/Application');
-const PendingUser = require('./models/PendingUser'); // 🔑 न्यू इम्पोर्ट: पेंडिंग यूजर मॉडल
-const multer = require('multer');
-const pdfParse = require('pdf-parse');
+global.wsClients = new Map(); // Global WebSocket client registry
 
 const app = express();
+
 
 // Configure trust proxy for Cloudflare
 app.set('trust proxy', [
@@ -117,60 +106,20 @@ const PORT = process.env.PORT || 5000;
 
 
 
-// Auth Token Verification Middleware
-// Seed default admin account
-const seedAdmin = async () => {
-  try {
-    const User = require("./models/User");
-    const adminEmail = process.env.ADMIN_EMAIL;
-    const adminPassword = process.env.ADMIN_PASSWORD;
-    
-    if (!adminEmail || !adminPassword) {
-      console.error("🚨 FATAL ERROR: ADMIN_EMAIL and ADMIN_PASSWORD environment variables are required.");
-      process.exit(1);
-    }
-    
-    const existingAdmin = await User.findOne({ email: adminEmail });
-    if (!existingAdmin) {
-      // Generate a random 10-digit mobile number to avoid unique index collisions with older mock admins
-      const randomMobile = Math.floor(1000000000 + Math.random() * 9000000000).toString();
-      const newAdmin = new User({
-        fullName: "Super Admin",
-        email: adminEmail,
-        password: adminPassword,
-        userRole: "admin",
-        mobile: randomMobile,
-        hasCompletedProfile: true,
-        isVerified: true
-      });
-      await newAdmin.save();
-      console.log("👑 Seeded administrator account successfully.");
-    }
-  } catch (err) {
-    console.error("Failed to seed admin:", err.message);
-  }
-};
-
 // Database Connection
-const dbURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/workmitra";
+const seedAdmin = require('./utils/seedAdmin');
+const dbURI = process.env.MONGO_URI;
+
 mongoose.connect(dbURI)
-    .then(() => {
-        console.log("🔌 Connected to MongoDB Successfully!");
-        seedAdmin();
-    })
-    .catch((err) => {
-        console.error("❌ MongoDB connection error:", err);
-        if (dbURI !== "mongodb://127.0.0.1:27017/workmitra") {
-            console.log("🔄 Falling back to local MongoDB at mongodb://127.0.0.1:27017/workmitra...");
-            mongoose.disconnect()
-                .catch(() => {})
-                .finally(() => {
-                    mongoose.connect("mongodb://127.0.0.1:27017/workmitra")
-                        .then(() => console.log("🔌 Connected to fallback local MongoDB Successfully!"))
-                        .catch((localErr) => console.error("❌ Fallback local MongoDB connection also failed:", localErr));
-                });
-        }
-    });
+  .then(() => {
+    console.log('🔌 Connected to MongoDB Successfully!');
+    seedAdmin();
+  })
+  .catch((err) => {
+    console.error('❌ MongoDB connection error:', err.message);
+    process.exit(1); // Fail fast — DB is required for the app to function
+  });
+
 
 
 // =========================================================================

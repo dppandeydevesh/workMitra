@@ -1,42 +1,78 @@
-name: CI Pipeline
+name: CI — Lint, Build & Test
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
-  build-and-test:
-    name: Build and Test
+  # ===================================================================
+  # Frontend: lint + build (validates imports, no TS errors)
+  # ===================================================================
+  frontend:
+    name: Frontend Quality Gate
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js 20
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '20'
+          cache: 'npm'
 
       - name: Install frontend dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Build frontend
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Build production bundle
         run: npm run build
 
-      - name: Test frontend
-        run: npm test
+  # ===================================================================
+  # Backend: unit + integration tests against ephemeral MongoDB
+  # ===================================================================
+  backend:
+    name: Backend Quality Gate
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_ENV: test
+      JWT_SECRET: ci-test-jwt-secret-not-for-production
+      MONGO_URI: mongodb://localhost:27017/workmitra_test
+      ADMIN_EMAIL: admin@ci-test.com
+      ADMIN_PASSWORD: CiTestPassword123!
+      CORS_ORIGINS: http://localhost:5173
+      GEMINI_API_KEY: test-key-mocked-in-tests
+      FRONTEND_URL: http://localhost:5173
+
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
 
       - name: Install backend dependencies
-        run: |
-          cd backend
-          npm install
+        run: npm ci
+        working-directory: backend
 
-      - name: Test backend
-        run: |
-          cd backend
-          npm test
+      - name: Run backend tests
+        run: npm test
+        working-directory: backend

@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
-const { GridFSBucket } = require('mongodb');
 const authenticateToken = require('../middleware/authMiddleware');
 const User = require('../models/User');
+const { supabase } = require('../utils/supabase');
 
 const RECRUITER_ROLES = new Set(['company', 'college', 'admin', 'faculty']);
 
@@ -28,15 +27,22 @@ router.get('/resumes/:filename', authenticateToken, async (req, res) => {
       return res.status(403).json({ error: 'You do not have permission to access this resume.' });
     }
 
-    const bucket = new GridFSBucket(mongoose.connection.db, { bucketName: 'resumes' });
-    const file = await mongoose.connection.db.collection('resumes.files').findOne({ filename });
-    if (!file) {
-      return res.status(404).json({ error: 'File not found' });
-    }
+    if (supabase) {
+      const { data, error } = await supabase.storage
+        .from('resumes')
+        .download(filename);
 
-    res.set('Content-Type', file.contentType);
-    const downloadStream = bucket.openDownloadStreamByName(filename);
-    downloadStream.pipe(res);
+      if (error || !data) {
+        return res.status(404).json({ error: 'File not found on storage server.' });
+      }
+
+      const arrayBuffer = await data.arrayBuffer();
+      res.set('Content-Type', 'application/pdf');
+      res.send(Buffer.from(arrayBuffer));
+    } else {
+      console.warn("⚠️ Warning: Supabase storage is not configured. Bypassing download.");
+      res.status(404).json({ error: 'Supabase storage is not configured.' });
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch file' });

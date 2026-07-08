@@ -2,6 +2,7 @@ const fsSync = require('fs');
 const pdfParse = require('pdf-parse');
 
 const User = require('../models/User');
+const { supabase } = require('../utils/supabase');
 const Application = require('../models/Application');
 const Project = require('../models/Project');
 
@@ -100,22 +101,22 @@ exports.routeHandler3 = async (req, res) => {
       return res.status(400).json({ error: "Could not extract text from the uploaded PDF. Please make sure the PDF has selectable text." });
     }
 
-    const mongoose = require("mongoose");
-    const { GridFSBucket } = require("mongodb");
-    const bucket = new GridFSBucket(mongoose.connection.db, { bucketName: "resumes" });
     const filename = `${Date.now()}-${req.file.originalname}`;
     
-    const uploadStream = bucket.openUploadStream(filename, {
-      contentType: req.file.mimetype,
-      metadata: { email }
-    });
-    
-    uploadStream.end(fileBuffer);
-    
-    await new Promise((resolve, reject) => {
-      uploadStream.on("finish", resolve);
-      uploadStream.on("error", reject);
-    });
+    if (supabase) {
+      const { data, error } = await supabase.storage
+        .from('resumes')
+        .upload(filename, fileBuffer, {
+          contentType: req.file.mimetype,
+          upsert: true
+        });
+
+      if (error) {
+        throw new Error(`Supabase upload failed: ${error.message}`);
+      }
+    } else {
+      console.warn("⚠️ Warning: Supabase Storage is not configured. Bypassing upload step.");
+    }
 
     const fileUrl = `/api/files/resumes/${filename}`;
 

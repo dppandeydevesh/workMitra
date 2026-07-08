@@ -801,24 +801,24 @@ export default function StudentProfile() {const { email} = useParams();
  </div>
 
  {/* AI Critique Panel */}
- <div className="bg-white border border-ink-200 text-white rounded-xl shadow-sm p-6 md:p-8 space-y-6">
- <div className="flex justify-between items-center border-b border-ink-200 pb-4">
+ <div style={{ background: '#1B2333' }} className="border border-ink-700 rounded-xl shadow-sm p-6 md:p-8 space-y-6">
+ <div className="flex justify-between items-center border-b border-ink-600 pb-4">
  <div>
  <h3 className="text-base font-bold text-white flex items-center gap-1.5">
  <span>🧠 {t("studentProfile.aiCvCritiqueReport")}</span>
- <span className="bg-marigold-500/20 text-marigold-300 text-[8px] font-extrabold px-1.5 py-0.5 rounded uppercase border border-marigold-400/20">{t("studentProfile.pro")}</span>
+ <span style={{ background: 'rgba(245,166,35,0.15)', color: '#F5A623', border: '1px solid rgba(245,166,35,0.3)' }} className="text-[8px] font-extrabold px-1.5 py-0.5 rounded uppercase">{t("studentProfile.pro")}</span>
  </h3>
- <p className="text-[10px] text-marigold-300 font-medium mt-0.5">{t("studentProfile.verifiedScore")}</p>
+ <p style={{ color: '#F5A623' }} className="text-[10px] font-medium mt-0.5 opacity-80">{t("studentProfile.verifiedScore")}</p>
  </div>
- 
+
  {profileUser.cvReviewReport && (
  <div className="flex items-center space-x-3 text-right">
  <div>
- <p className="text-[9px] uppercase font-bold text-marigold-300">{t("studentProfile.qualityScore")}</p>
- <p className="text-2xl font-black text-marigold-400">{profileUser.cvReviewReport.score}/100</p>
+ <p style={{ color: '#F5A623' }} className="text-[9px] uppercase font-bold opacity-70">{t("studentProfile.qualityScore")}</p>
+ <p style={{ color: '#F5A623' }} className="text-2xl font-black">{profileUser.cvReviewReport.score}/100</p>
  </div>
- <div className="relative w-12 h-12 flex items-center justify-center rounded-full bg-white border-2 border-marigold-400">
- <span className="text-[11px] font-black">{profileUser.cvReviewReport.score}%</span>
+ <div style={{ border: '2px solid #F5A623' }} className="relative w-12 h-12 flex items-center justify-center rounded-full bg-white">
+ <span className="text-[11px] font-black text-ink-800">{profileUser.cvReviewReport.score}%</span>
  </div>
  </div>
  )}
@@ -833,7 +833,7 @@ export default function StudentProfile() {const { email} = useParams();
  </h5>
  <ul className="space-y-1.5 text-xs text-ink-300 list-disc list-inside">
  {profileUser.cvReviewReport.strengths?.map((str, idx) => (
- <li key={idx}>{str}</li>
+ <li key={idx} className="text-ink-200">{str}</li>
  ))}
  </ul>
  </div>
@@ -841,27 +841,27 @@ export default function StudentProfile() {const { email} = useParams();
  <h5 className="text-[11px] font-extrabold uppercase text-amber-400 mb-2 flex items-center gap-1.5">
  <span>⚠️ {t("studentProfile.areasOfImprovement")}</span>
  </h5>
- <ul className="space-y-1.5 text-xs text-ink-300 list-disc list-inside">
+ <ul className="space-y-1.5 text-xs list-disc list-inside">
  {profileUser.cvReviewReport.improvements?.map((imp, idx) => (
- <li key={idx}>{imp}</li>
+ <li key={idx} className="text-ink-200">{imp}</li>
  ))}
  </ul>
  </div>
  </div>
 
- <div className="bg-ink-50 border border-ink-200 p-4 rounded-xl">
- <h5 className="text-[10px] font-extrabold uppercase text-marigold-300 mb-1">{t("studentProfile.aiRecommendations")}</h5>
+ <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }} className="p-4 rounded-xl">
+ <h5 style={{ color: '#F5A623' }} className="text-[10px] font-extrabold uppercase mb-1 opacity-80">{t("studentProfile.aiRecommendations")}</h5>
  <p className="text-xs text-ink-200 leading-relaxed italic">
 "{profileUser.cvReviewReport.recommendations}"</p>
  </div>
  </div>
  ) : (
- <div className="text-center py-8 text-marigold-200/50 flex flex-col items-center">
+ <div className="text-center py-8 flex flex-col items-center">
  <span className="text-3xl mb-2">📄</span>
- <h4 className="font-bold text-sm text-marigold-300">{t("studentProfile.noCritiqueGenerated")}</h4>
- <p className="text-xs text-marigold-200/60 max-w-xs mt-1 leading-relaxed">
- {isOwner 
- ?"Go to your main Dashboard, paste your CV text details, and request an AI CV Review to generate a score!":"This student has not requested an AI CV critique score yet."}
+ <h4 style={{ color: '#F5A623' }} className="font-bold text-sm">{t("studentProfile.noCritiqueGenerated")}</h4>
+ <p className="text-xs text-ink-300 max-w-xs mt-1 leading-relaxed">
+ {isOwner
+ ? "Go to your main Dashboard, paste your CV text details, and request an AI CV Review to generate a score!" : "This student has not requested an AI CV critique score yet."}
  </p>
  </div>
  )}

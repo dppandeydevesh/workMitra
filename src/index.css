@@ -2,436 +2,216 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Google Fonts Inter is loaded via <link> in index.html for reliable preloading */
+/* =========================================================================
+   workMitra Design System — Paper + Marigold Editorial
+   ========================================================================= */
 
+/* ── Design tokens ──────────────────────────────────────────────────────── */
 :root {
-  --glass-bg: rgba(255, 255, 255, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.4);
-  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-  --text-dark: #0f172a;
-  --text-muted: #64748b;
-  --radius-lg: 24px;
+  --wm-paper:          #F6F7F4;
+  --wm-white:          #FFFFFF;
+  --wm-border:         #E1E2DC;
+  --wm-border-strong:  #C8C9C2;
+  --wm-ink-dark:       #1B2333;
+  --wm-ink-mid:        #3D4A5C;
+  --wm-ink-light:      #6B7280;
+  --wm-marigold:       #F5A623;
+  --wm-marigold-light: #FBE7C4;
+  --wm-marigold-mid:   #EFC88A;
+  --wm-marigold-dark:  #7A4F00;
+  --wm-teal:           #1D9E75;
+  --wm-teal-light:     #E1F5EE;
+  --wm-teal-dark:      #085041;
+  --wm-danger-bg:      #FCEBEB;
+  --wm-danger:         #E24B4A;
+  --wm-danger-dark:    #501313;
+  --wm-neutral-bg:     #F1EFE8;
+  --wm-radius:         12px;
+  --wm-radius-sm:      8px;
 }
 
-
-
-/* Glassmorphism Classes */
-.glass-panel {
-  background: var(--glass-bg) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  border: 1px solid var(--glass-border) !important;
-  box-shadow: var(--glass-shadow) !important;
-  border-radius: var(--radius-lg) !important;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.glass-panel:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.15) !important;
-}
-
-/* Premium Buttons */
-button {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-button:active {
-  transform: scale(0.96) !important;
-}
-
-
-
-
-/* ========================================================================= */
-/* 🌌 Animated Mesh Gradient Background (Warm Peach-Pink-Gold Theme)         */
-/* ========================================================================= */
+/* ── Base reset ─────────────────────────────────────────────────────────── */
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   width: 100%;
   overflow-x: hidden;
   min-height: 100vh;
-  color: theme('colors.ink.900');
-  background-color: theme('colors.paper.DEFAULT');
+  color: var(--wm-ink-dark);
+  background-color: var(--wm-paper);
 }
 
-html.dark body {
-  background-color: theme('colors.paper.dark');
-  color: theme('colors.slate.200'); /* Or ink-100 if preferred, but slate-200 is good for dark mode text */
+/* ── Panel — the universal container ────────────────────────────────────── */
+.wm-panel {
+  background: var(--wm-white);
+  border: 0.5px solid var(--wm-border);
+  border-radius: var(--wm-radius);
 }
 
-/* ========================================================================= */
-/* 🔮 VIEW 1: ISOMETRIC LANDING PANELS                                      */
-/* ========================================================================= */
-
-
-/* हवा में धीरे तैरने का (Floating) एनिमेशन - 4 सेकंड */
-@keyframes floatSlow {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-15px);
-  }
+/* ── Card — interactive panel with subtle hover shadow (Upgrade 3) ───────── */
+.wm-card {
+  background: var(--wm-white);
+  border: 0.5px solid var(--wm-border);
+  border-radius: var(--wm-radius);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.wm-card:hover {
+  transform: translateY(-1px);
+  border-color: var(--wm-border-strong);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* थोड़ा तेज़ तैरने का एनिमेशन - 3 सेकंड */
-@keyframes floatFast {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+/* ── Featured card — 3px marigold top stroke (Upgrade 2) ─────────────────── */
+.wm-card-featured {
+  background: var(--wm-white);
+  border: 0.5px solid var(--wm-border);
+  border-top: 3px solid var(--wm-marigold);
+  border-radius: var(--wm-radius);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.wm-card-featured:hover {
+  transform: translateY(-1px);
+  border-color: var(--wm-border-strong);
+  box-shadow: 0 4px 16px rgba(245, 166, 35, 0.12);
 }
 
-.animate-float-slow {
-  animation: floatSlow 4s ease-in-out infinite;
-}
-
-.animate-float-fast {
-  animation: floatFast 3s ease-in-out infinite;
-}
-
-/* 🎯 Logo Hook - Eye-catching sharp-border glow effect */
-.logo-hook {
+/* ── Badge variants ─────────────────────────────────────────────────────── */
+.wm-badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 20px;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 6px 10px;
-  border: 2px solid rgba(99, 102, 241, 0.4);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 0 12px rgba(99, 102, 241, 0.15), 0 2px 8px rgba(0, 0, 0, 0.06);
-  animation: logoGlow 3s ease-in-out infinite;
-  transition: all 0.3s ease;
+  gap: 4px;
+}
+.wm-badge-neutral  { background: var(--wm-neutral-bg);     color: var(--wm-ink-mid); }
+.wm-badge-marigold { background: var(--wm-marigold-light); color: var(--wm-marigold-dark); }
+.wm-badge-teal     { background: var(--wm-teal-light);     color: var(--wm-teal-dark); }
+.wm-badge-danger   { background: var(--wm-danger-bg);      color: var(--wm-danger-dark); }
+
+/* ── Buttons ────────────────────────────────────────────────────────────── */
+button {
+  transition: all 0.15s ease;
+}
+button:active {
+  transform: scale(0.97);
+}
+
+.wm-btn {
+  padding: 9px 18px;
+  border-radius: var(--wm-radius-sm);
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
+  font-family: inherit;
+  border: none;
+}
+.wm-btn-primary   { background: var(--wm-marigold); color: var(--wm-ink-dark); }
+.wm-btn-teal      { background: var(--wm-teal);     color: #fff; }
+.wm-btn-secondary { background: transparent; color: var(--wm-ink-dark); border: 0.5px solid var(--wm-border-strong); }
+.wm-btn-ghost     { background: transparent; color: var(--wm-ink-light); }
+
+/* ── Inputs ─────────────────────────────────────────────────────────────── */
+.wm-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 0.5px solid var(--wm-border-strong);
+  border-radius: var(--wm-radius-sm);
+  font-size: 13px;
+  color: var(--wm-ink-dark);
+  background: var(--wm-white);
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+.wm-input:focus {
+  border-color: var(--wm-marigold);
 }
 
-.logo-hook:hover {
-  border-color: rgba(99, 102, 241, 0.7);
-  box-shadow: 0 0 20px rgba(99, 102, 241, 0.3), 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: scale(1.05);
+/* ── Section label — small uppercase heading ────────────────────────────── */
+.wm-label {
+  margin: 0 0 14px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--wm-ink-light);
 }
 
-html.dark .logo-hook {
-  background: rgba(15, 23, 42, 0.8);
-  border-color: rgba(129, 140, 248, 0.4);
-  box-shadow: 0 0 12px rgba(129, 140, 248, 0.2), 0 2px 8px rgba(0, 0, 0, 0.3);
+/* ── Stat card ──────────────────────────────────────────────────────────── */
+.wm-stat {
+  background: var(--wm-white);
+  border: 0.5px solid var(--wm-border);
+  border-radius: var(--wm-radius);
+  padding: 16px 18px;
+}
+.wm-stat-label { margin: 0 0 4px; font-size: 12px; color: var(--wm-ink-light); }
+.wm-stat-value { margin: 0 0 3px; font-size: 24px; font-weight: 500; color: var(--wm-ink-dark); }
+.wm-stat-sub   { margin: 0; font-size: 12px; color: var(--wm-teal); }
+
+/* ── Notification row ───────────────────────────────────────────────────── */
+.wm-notif-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 20px;
+  border-bottom: 0.5px solid var(--wm-border);
+}
+.wm-notif-row:last-child { border-bottom: none; }
+
+/* ── Skeleton loader (kept from previous system) ────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+.skeleton-loader {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(to right, #F1EFE8 4%, #E1E2DC 25%, #F1EFE8 36%);
+  background-size: 1000px 100%;
+  border-radius: var(--wm-radius-sm);
 }
 
-html.dark .logo-hook:hover {
-  border-color: rgba(129, 140, 248, 0.7);
-  box-shadow: 0 0 24px rgba(129, 140, 248, 0.4), 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-@keyframes logoGlow {
-  0%, 100% {
-    box-shadow: 0 0 12px rgba(99, 102, 241, 0.15), 0 2px 8px rgba(0, 0, 0, 0.06);
-  }
-  50% {
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3), 0 4px 16px rgba(99, 102, 241, 0.1);
-  }
-}
-
-/* ✈️ Airplane fly-across animation: left→right, bottom→top */
-@keyframes airplaneFly {
-  0% {
-    transform: translateX(0) translateY(0);
-    opacity: 0;
-  }
-  5% {
-    opacity: 0.8;
-  }
-  50% {
-    opacity: 0.9;
-  }
-  95% {
-    opacity: 0.6;
-  }
-  100% {
-    transform: translateX(calc(100vw + 120px)) translateY(-180px);
-    opacity: 0;
-  }
-}
-
-.airplane-fly {
-  animation: airplaneFly 6s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
-}
-
-/* फ्रंट पेज के एलिमेंट्स को स्मूथली लोड करने का एंट्री इफ़ेक्ट */
-@keyframes fadeIn {
-  from { 
-    opacity: 0; 
-    transform: scale(0.98); 
-  }
-  to { 
-    opacity: 1; 
-    transform: scale(1); 
-  }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
-}
-
-/* ========================================================================= */
-/* 🔑 VIEW 2: SLIDING AUTH PANELS (लॉगिन / साइनअप ट्रांजिशन्स)             */
-/* ========================================================================= */
-
+/* ── Auth panel sliding transitions (preserved) ─────────────────────────── */
 @media (min-width: 768px) {
-  /* 1. डिफ़ॉल्ट स्टेट्स (Normal State - Sign In सामने रहेगा) */
-  .sign-in-panel {
-    transform: translateX(0);
-    opacity: 1;
-    transition: all 0.7s ease-in-out;
-  }
+  .sign-in-panel  { transform: translateX(0); opacity: 1; transition: all 0.7s ease-in-out; }
+  .sign-up-panel  { transform: translateX(0); opacity: 0; pointer-events: none; transition: all 0.7s ease-in-out; z-index: 1; }
+  .overlay-panel  { transition: all 0.7s ease-in-out; }
+  .overlay-content { transition: all 0.7s ease-in-out; }
+  .content-left   { transform: translateX(-200%); transition: all 0.7s ease-in-out; }
+  .content-right  { transform: translateX(0); transition: all 0.7s ease-in-out; }
 
-  .sign-up-panel {
-    transform: translateX(0);
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.7s ease-in-out;
-    z-index: 1;
-  }
+  .auth-container.active .sign-in-panel  { transform: translateX(100%); opacity: 0; pointer-events: none; }
+  .auth-container.active .sign-up-panel  { transform: translateX(100%); opacity: 1; pointer-events: auto; z-index: 5; animation: showSignUpForm 0.7s; }
+  .auth-container.active .overlay-panel  { transform: translateX(-100%); border-radius: 0 150px 100px 0; }
+  .auth-container.active .overlay-content { transform: translateX(50%); }
+  .auth-container.active .content-left   { transform: translateX(0); }
+  .auth-container.active .content-right  { transform: translateX(200%); }
 
-  .overlay-panel {
-    transition: all 0.7s ease-in-out;
-  }
-
-  .overlay-content {
-    transition: all 0.7s ease-in-out;
-  }
-
-  .content-left {
-    transform: translateX(-200%);
-    transition: all 0.7s ease-in-out;
-  }
-
-  .content-right {
-    transform: translateX(0);
-    transition: all 0.7s ease-in-out;
-  }
-
-  /* 2. एक्टिव स्टेट्स (Active State - जब 'Sign Up' बटन दबेगा) */
-  .auth-container.active .sign-in-panel {
-    transform: translateX(100%);
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .auth-container.active .sign-up-panel {
-    transform: translateX(100%);
-    opacity: 1;
-    pointer-events: auto;
-    z-index: 5;
-    animation: showSignUpForm 0.7s;
-  }
-
-  .auth-container.active .overlay-panel {
-    transform: translateX(-100%);
-    border-radius: 0 150px 100px 0;
-  }
-
-  .auth-container.active .overlay-content {
-    transform: translateX(50%);
-  }
-
-  .auth-container.active .content-left {
-    transform: translateX(0);
-  }
-
-  .auth-container.active .content-right {
-    transform: translateX(200%);
-  }
-
-  /* 🔄 हाफ-वे मार्क पर साइनअप फॉर्म को सही से डिस्प्ले करने के लिए की-फ्रेम */
   @keyframes showSignUpForm {
-    0%, 49.99% {
-      opacity: 0;
-      z-index: 1;
-    }
-    50%, 100% {
-      opacity: 1;
-      z-index: 5;
-    }
+    0%, 49.99% { opacity: 0; z-index: 1; }
+    50%, 100%  { opacity: 1; z-index: 5; }
   }
 }
 
-/* 🍞 Toast Animation Keyframes */
+/* ── Toast slide-in (functional animation, preserved) ───────────────────── */
 @keyframes slideInRight {
-  from {
-    transform: translateX(120%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  from { transform: translateX(120%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
 }
-
 .animate-slide-in-right {
   animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes slideInUp {
-  from {
-    transform: translateY(2rem);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+/* ── Fade-in (subtle page entrance) ─────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
-
-.animate-slide-in-up {
-  animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* 🌓 Global Dark Mode Theme Overrides */
-html.dark {
-  --glass-bg: rgba(30, 30, 45, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-}
-
-html.dark body {
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%) !important;
-  color: #f1f5f9 !important;
-}
-
-html.dark nav,
-html.dark .bg-white {
-  background-color: #1e293b !important;
-  color: #f1f5f9 !important;
-  border-color: #334155 !important;
-}
-
-html.dark .text-gray-800,
-html.dark .text-gray-900,
-html.dark .text-slate-900,
-html.dark h1,
-html.dark h2,
-html.dark h3,
-html.dark h4 {
-  color: #f8fafc !important;
-}
-
-html.dark .text-gray-600,
-html.dark .text-gray-500,
-html.dark .text-slate-500 {
-  color: #94a3b8 !important;
-}
-
-html.dark input,
-html.dark textarea,
-html.dark select {
-  background-color: #0f172a !important;
-  color: #f1f5f9 !important;
-  border-color: #334155 !important;
-}
-
-html.dark .bg-gray-50,
-html.dark .bg-gray-100,
-html.dark .bg-slate-50,
-html.dark .bg-gray-55\/40 {
-  background-color: #0f172a !important;
-}
-
-html.dark .border-gray-100,
-html.dark body {
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%) !important;
-  color: #f1f5f9 !important;
-}
-
-html.dark nav,
-html.dark .bg-white {
-  background-color: #1e293b !important;
-  color: #f1f5f9 !important;
-  border-color: #334155 !important;
-}
-
-html.dark .text-gray-800,
-html.dark .text-gray-900,
-html.dark .text-slate-900,
-html.dark h1,
-html.dark h2,
-html.dark h3,
-html.dark h4 {
-  color: #f8fafc !important;
-}
-
-html.dark .text-gray-600,
-html.dark .text-gray-500,
-html.dark .text-slate-500 {
-  color: #94a3b8 !important;
-}
-
-html.dark input,
-html.dark textarea,
-html.dark select {
-  background-color: #0f172a !important;
-  color: #f1f5f9 !important;
-  border-color: #334155 !important;
-}
-
-html.dark .bg-gray-50,
-html.dark .bg-gray-100,
-html.dark .bg-slate-50,
-html.dark .bg-gray-55\/40 {
-  background-color: #0f172a !important;
-}
-
-html.dark .border-gray-100,
-html.dark .border-gray-200,
-html.dark .border-slate-100 {
-  border-color: #334155 !important;
-}
-
-html.dark .shadow-xl,
-html.dark .shadow-md,
-html.dark .shadow-sm {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5) !important;
-}
-
-/* ========================================================================= */
-/* ✨ Premium UI Tokens (Phase 1 Upgrades)                                    */
-/* ========================================================================= */
-
-/* Skeleton Loader Shimmer */
-@keyframes shimmer {
-  0% { background-position: -1000px 0; }
-  100% { background-position: 1000px 0; }
-}
-
-.skeleton-loader {
-  animation: shimmer 2s infinite linear;
-  background: linear-gradient(to right, #f1f5f9 4%, #e2e8f0 25%, #f1f5f9 36%);
-  background-size: 1000px 100%;
-}
-
-html.dark .skeleton-loader {
-  background: linear-gradient(to right, #1e293b 4%, #334155 25%, #1e293b 36%);
-  background-size: 1000px 100%;
-}
-
-/* Interactive Floating Label Input */
-.floating-input:focus ~ .floating-label,
-.floating-input:not(:placeholder-shown) ~ .floating-label {
-  transform: translateY(-1.5rem) scale(0.85);
-  color: var(--primary);
-}
-
-/* Premium Card Hover */
-.premium-card-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.premium-card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+.animate-fade-in {
+  animation: fadeIn 0.15s ease-out forwards;
 }

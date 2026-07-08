@@ -1,215 +1,191 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "../config";
-import { useToast } from "../components/Toast";
-import { useTranslation } from "react-i18next";
+import { useState, useEffect} from"react";
+import { useNavigate} from"react-router-dom";
+import { API_BASE_URL} from"../config";
+import { useToast} from"../components/Toast";
+import { useTranslation} from"react-i18next";
 
-export default function CalendarView() {
-  const navigate = useNavigate();
-  const toast = useToast();
-  const { t } = useTranslation();
+export default function CalendarView() {const navigate = useNavigate();
+ const toast = useToast();
+ const { t} = useTranslation();
 
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDay, setSelectedDay] = useState(null);
+ const [projects, setProjects] = useState([]);
+ const [loading, setLoading] = useState(true);
+ const [currentDate, setCurrentDate] = useState(new Date());
+ const [selectedDay, setSelectedDay] = useState(null);
 
-  const MONTH_NAMES = [
-    t("calendar.months.january"), t("calendar.months.february"), t("calendar.months.march"), t("calendar.months.april"),
-    t("calendar.months.may"), t("calendar.months.june"), t("calendar.months.july"), t("calendar.months.august"),
-    t("calendar.months.september"), t("calendar.months.october"), t("calendar.months.november"), t("calendar.months.december")
-  ];
-  const DAY_NAMES = [
-    t("calendar.days.sun"), t("calendar.days.mon"), t("calendar.days.tue"), t("calendar.days.wed"),
-    t("calendar.days.thu"), t("calendar.days.fri"), t("calendar.days.sat")
-  ];
+ const MONTH_NAMES = [
+ t("calendar.months.january"), t("calendar.months.february"), t("calendar.months.march"), t("calendar.months.april"),
+ t("calendar.months.may"), t("calendar.months.june"), t("calendar.months.july"), t("calendar.months.august"),
+ t("calendar.months.september"), t("calendar.months.october"), t("calendar.months.november"), t("calendar.months.december")
+ ];
+ const DAY_NAMES = [
+ t("calendar.days.sun"), t("calendar.days.mon"), t("calendar.days.tue"), t("calendar.days.wed"),
+ t("calendar.days.thu"), t("calendar.days.fri"), t("calendar.days.sat")
+ ];
 
-  useEffect(() => {
-    const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
-    if (!savedUser.email || savedUser.userRole !== "company") {
-      toast.error(t("calendar.corporateSessionRequired"));
-      navigate("/login");
-      return;
-    }
-    fetchProjects(savedUser.email);
-  }, []);
+ useEffect(() => {const savedUser = JSON.parse(localStorage.getItem("user") ||"{}");
+ if (!savedUser.email || savedUser.userRole !=="company") {toast.error(t("calendar.corporateSessionRequired"));
+ navigate("/login");
+ return;
+}
+ fetchProjects(savedUser.email);
+}, []);
 
-  const fetchProjects = async (email) => {
-    setLoading(true);
-    try {
-            const res = await fetch(`${API_BASE_URL}/api/projects/company/${email}`, { credentials: "include",
-        headers: {  }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setProjects(data);
-      }
-    } catch (err) {
-      console.error("Failed to load projects for calendar:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+ const fetchProjects = async (email) => {setLoading(true);
+ try {const res = await fetch(`${API_BASE_URL}/api/projects/company/${email}`, { credentials:"include",
+ headers: {}
+});
+ if (res.ok) {const data = await res.json();
+ setProjects(data);
+}
+} catch (err) {console.error("Failed to load projects for calendar:", err);
+} finally {setLoading(false);
+}
+};
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const firstDayOfWeek = new Date(year, month, 1).getDay();
+ const year = currentDate.getFullYear();
+ const month = currentDate.getMonth();
+ const daysInMonth = new Date(year, month + 1, 0).getDate();
+ const firstDayOfWeek = new Date(year, month, 1).getDay();
 
-  const today = new Date();
-  const isToday = (day) =>
-    today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
+ const today = new Date();
+ const isToday = (day) =>
+ today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
 
-  const getProjectsForDay = (day) => {
-    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    return projects.filter(p => {
-      if (!p.deadline) return false;
-      const dl = new Date(p.deadline);
-      const dlStr = `${dl.getFullYear()}-${String(dl.getMonth() + 1).padStart(2, "0")}-${String(dl.getDate()).padStart(2, "0")}`;
-      return dlStr === dateStr;
-    });
-  };
+ const getProjectsForDay = (day) => {const dateStr =`${year}-${String(month + 1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+ return projects.filter(p => {if (!p.deadline) return false;
+ const dl = new Date(p.deadline);
+ const dlStr =`${dl.getFullYear()}-${String(dl.getMonth() + 1).padStart(2,"0")}-${String(dl.getDate()).padStart(2,"0")}`;
+ return dlStr === dateStr;
+});
+};
 
-  const handlePrevMonth = () => {
-    setCurrentDate(new Date(year, month - 1, 1));
-    setSelectedDay(null);
-  };
+ const handlePrevMonth = () => {setCurrentDate(new Date(year, month - 1, 1));
+ setSelectedDay(null);
+};
 
-  const handleNextMonth = () => {
-    setCurrentDate(new Date(year, month + 1, 1));
-    setSelectedDay(null);
-  };
+ const handleNextMonth = () => {setCurrentDate(new Date(year, month + 1, 1));
+ setSelectedDay(null);
+};
 
-  // Build calendar cells
-  const cells = [];
-  for (let i = 0; i < firstDayOfWeek; i++) {
-    cells.push(null);
-  }
-  for (let d = 1; d <= daysInMonth; d++) {
-    cells.push(d);
-  }
+ // Build calendar cells
+ const cells = [];
+ for (let i = 0; i < firstDayOfWeek; i++) {cells.push(null);
+}
+ for (let d = 1; d <= daysInMonth; d++) {cells.push(d);
+}
 
-  const selectedDayProjects = selectedDay ? getProjectsForDay(selectedDay) : [];
+ const selectedDayProjects = selectedDay ? getProjectsForDay(selectedDay) : [];
 
-  return (
-    <div className="min-h-screen bg-transparent font-sans py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        <button
-          onClick={() => navigate("/company-dashboard")}
-          className="mb-6 px-4 py-2 bg-white dark:bg-ink-900/80 hover:bg-white dark:bg-ink-900 text-ink-600 dark:text-ink-300 rounded-xl text-xs font-bold transition shadow-sm border border-ink-100 dark:border-ink-800 flex items-center gap-1.5"
-        >
-          ← {t("calendar.backToCommandCenter")}
-        </button>
+ return (
+ <div className="min-h-screen bg-transparent font-sans py-8">
+ <div className="max-w-4xl mx-auto px-4">
+ <button
+ onClick={() => navigate("/company-dashboard")}
+ className="mb-6 px-4 py-2 bg-white hover:bg-white text-ink-600 rounded-xl text-xs font-bold transition shadow-sm border border-ink-100 flex items-center gap-1.5">
+ ← {t("calendar.backToCommandCenter")}
+ </button>
 
-        <div className="bg-white dark:bg-ink-900 rounded-3xl shadow-xl border border-ink-100 dark:border-ink-800/50 overflow-hidden">
-          {/* Calendar Header */}
-          <div className="bg-gradient-to-r from-marigold-600 to-purple-600 px-6 py-5 flex justify-between items-center">
-            <button
-              onClick={handlePrevMonth}
-              className="px-3 py-1.5 bg-white dark:bg-ink-900/20 dark:bg-ink-900/20 hover:bg-white dark:bg-ink-900/30 dark:bg-ink-900/30 text-white rounded-xl text-xs font-bold transition backdrop-blur-sm"
-            >
-              ← {t("calendar.prev")}
-            </button>
-            <h2 className="text-white font-black text-lg sm:text-xl tracking-tight">
-              📅 {MONTH_NAMES[month]} {year}
-            </h2>
-            <button
-              onClick={handleNextMonth}
-              className="px-3 py-1.5 bg-white dark:bg-ink-900/20 dark:bg-ink-900/20 hover:bg-white dark:bg-ink-900/30 dark:bg-ink-900/30 text-white rounded-xl text-xs font-bold transition backdrop-blur-sm"
-            >
-              {t("calendar.next")} →
-            </button>
-          </div>
+ <div className="bg-white rounded-xl shadow-sm border border-ink-100 overflow-hidden">
+ {/* Calendar Header */}
+ <div className="bg-gradient-to-r from-marigold-600 to-purple-600 px-6 py-5 flex justify-between items-center">
+ <button
+ onClick={handlePrevMonth}
+ className="px-3 py-1.5 bg-white hover:bg-white text-white rounded-xl text-xs font-bold transition">
+ ← {t("calendar.prev")}
+ </button>
+ <h2 className="text-white font-black text-lg sm:text-xl tracking-tight">
+ 📅 {MONTH_NAMES[month]} {year}
+ </h2>
+ <button
+ onClick={handleNextMonth}
+ className="px-3 py-1.5 bg-white hover:bg-white text-white rounded-xl text-xs font-bold transition">
+ {t("calendar.next")} →
+ </button>
+ </div>
 
-          {loading ? (
-            <div className="text-center py-16 text-ink-400 font-medium animate-pulse flex flex-col items-center gap-3">
-              <div className="w-8 h-8 border-4 border-marigold-500 border-t-transparent rounded-full animate-spin" />
-              <span>{t("calendar.loadingData")}</span>
-            </div>
-          ) : (
-            <div className="p-4 sm:p-6">
-              {/* Day headers */}
-              <div className="grid grid-cols-7 gap-1 mb-2">
-                {DAY_NAMES.map((d) => (
-                  <div key={d} className="text-center text-[10px] font-black text-ink-400 uppercase tracking-wider py-2">
-                    {d}
-                  </div>
-                ))}
-              </div>
+ {loading ? (
+ <div className="text-center py-16 text-ink-400 font-medium animate-pulse flex flex-col items-center gap-3">
+ <div className="w-8 h-8 border-4 border-marigold-500 border-t-transparent rounded-full animate-spin" />
+ <span>{t("calendar.loadingData")}</span>
+ </div>
+ ) : (
+ <div className="p-4 sm:p-6">
+ {/* Day headers */}
+ <div className="grid grid-cols-7 gap-1 mb-2">
+ {DAY_NAMES.map((d) => (
+ <div key={d} className="text-center text-[10px] font-black text-ink-400 uppercase tracking-wider py-2">
+ {d}
+ </div>
+ ))}
+ </div>
 
-              {/* Calendar grid */}
-              <div className="grid grid-cols-7 gap-1">
-                {cells.map((day, idx) => {
-                  if (day === null) {
-                    return <div key={`empty-${idx}`} className="h-14 sm:h-16" />;
-                  }
-                  const dayProjects = getProjectsForDay(day);
-                  const hasDeadline = dayProjects.length > 0;
-                  const isTodayCell = isToday(day);
-                  const isSelected = selectedDay === day;
+ {/* Calendar grid */}
+ <div className="grid grid-cols-7 gap-1">
+ {cells.map((day, idx) => {if (day === null) {return <div key={`empty-${idx}`} className="h-14 sm:h-16" />;
+}
+ const dayProjects = getProjectsForDay(day);
+ const hasDeadline = dayProjects.length > 0;
+ const isTodayCell = isToday(day);
+ const isSelected = selectedDay === day;
 
-                  return (
-                    <button
-                      key={`day-${day}`}
-                      onClick={() => setSelectedDay(isSelected ? null : day)}
-                      className={`h-14 sm:h-16 rounded-xl text-xs font-bold transition-all relative flex flex-col items-center justify-center gap-0.5 ${
-                        isSelected
-                          ? "bg-marigold-500 text-white shadow-lg scale-105"
-                          : isTodayCell
-                          ? "bg-marigold-50 text-marigold-700 ring-2 ring-marigold-400 ring-offset-1"
-                          : "bg-ink-50 dark:bg-ink-800/50 text-ink-700 dark:text-ink-200 hover:bg-ink-100 dark:bg-ink-800"
-                      }`}
-                    >
-                      <span className="text-sm font-extrabold">{day}</span>
-                      {hasDeadline && (
-                        <div className="flex gap-0.5">
-                          {dayProjects.slice(0, 3).map((_, pIdx) => (
-                            <span
-                              key={pIdx}
-                              className={`w-1.5 h-1.5 rounded-full ${
-                                isSelected ? "bg-white dark:bg-ink-900" : "bg-marigold-500"
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
+ return (
+ <button
+ key={`day-${day}`}
+ onClick={() => setSelectedDay(isSelected ? null : day)}
+ className={`h-14 sm:h-16 rounded-xl text-xs font-bold transition-all relative flex flex-col items-center justify-center gap-0.5 ${isSelected
+ ?"bg-marigold-500 text-white shadow-lg scale-105": isTodayCell
+ ?"bg-marigold-50 text-marigold-700 ring-2 ring-marigold-400 ring-offset-1":"bg-ink-50 text-ink-700 hover:bg-ink-100"
+}`}
+ >
+ <span className="text-sm font-extrabold">{day}</span>
+ {hasDeadline && (
+ <div className="flex gap-0.5">
+ {dayProjects.slice(0, 3).map((_, pIdx) => (
+ <span
+ key={pIdx}
+ className={`w-1.5 h-1.5 rounded-full ${isSelected ?"bg-white" :"bg-marigold-500"
+}`}
+ />
+ ))}
+ </div>
+ )}
+ </button>
+ );
+})}
+ </div>
 
-              {/* Selected day detail panel */}
-              {selectedDay && (
-                <div className="mt-6 border-t pt-5 animate-fade-in">
-                  <h3 className="text-sm font-black text-ink-800 dark:text-ink-200 uppercase tracking-wider mb-3">
-                    📌 {t("calendar.deadlinesOn", { month: MONTH_NAMES[month], day: selectedDay, year })}
-                  </h3>
-                  {selectedDayProjects.length === 0 ? (
-                    <p className="text-xs text-ink-400 italic">{t("calendar.noDeadlines")}</p>
-                  ) : (
-                    <div className="space-y-2">
-                      {selectedDayProjects.map((p) => (
-                        <div
-                          key={p._id}
-                          className="flex justify-between items-center bg-ink-50 dark:bg-ink-800 border border-ink-100 dark:border-ink-800 p-3.5 rounded-xl hover:bg-ink-100 dark:bg-ink-800/70 transition"
-                        >
-                          <div>
-                            <p className="text-xs font-bold text-ink-800 dark:text-ink-200">{p.title}</p>
-                            <p className="text-[10px] text-ink-400 font-semibold mt-0.5">
-                              {p.complexity || t("calendar.intermediate")} • {p.duration || t("calendar.na")} • {p.studentsNeeded || 1} {t("calendar.slots")}
-                            </p>
-                          </div>
-                          <span className="text-sm font-black text-marigold-700 font-mono">₹{p.budget?.toLocaleString()}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+ {/* Selected day detail panel */}
+ {selectedDay && (
+ <div className="mt-6 border-t pt-5 animate-fade-in">
+ <h3 className="text-sm font-black text-ink-800 uppercase tracking-wider mb-3">
+ 📌 {t("calendar.deadlinesOn", { month: MONTH_NAMES[month], day: selectedDay, year})}
+ </h3>
+ {selectedDayProjects.length === 0 ? (
+ <p className="text-xs text-ink-400 italic">{t("calendar.noDeadlines")}</p>
+ ) : (
+ <div className="space-y-2">
+ {selectedDayProjects.map((p) => (
+ <div
+ key={p._id}
+ className="flex justify-between items-center bg-ink-50 border border-ink-100 p-3.5 rounded-xl hover:bg-ink-100 transition">
+ <div>
+ <p className="text-xs font-bold text-ink-800">{p.title}</p>
+ <p className="text-[10px] text-ink-400 font-semibold mt-0.5">
+ {p.complexity || t("calendar.intermediate")} • {p.duration || t("calendar.na")} • {p.studentsNeeded || 1} {t("calendar.slots")}
+ </p>
+ </div>
+ <span className="text-sm font-black text-marigold-700 font-mono">₹{p.budget?.toLocaleString()}</span>
+ </div>
+ ))}
+ </div>
+ )}
+ </div>
+ )}
+ </div>
+ )}
+ </div>
+ </div>
+ </div>
+ );
 }

@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: "class",
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -9,52 +8,66 @@ export default {
     extend: {
       fontFamily: {
         sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
+        serif: ['"Playfair Display"', 'Georgia', 'serif'], // Editorial serif voice
       },
       colors: {
         paper: {
-          DEFAULT: '#fdfbf7', // Calm paper base
-          dark: '#0f172a', // Dark mode equivalent (using deep ink-navy)
+          DEFAULT: '#F6F7F4',
         },
         marigold: {
-          50: '#fffbeb',
-          100: '#fef3c7',
-          200: '#fde68a',
-          300: '#fcd34d',
-          400: '#fbbf24',
-          500: '#f59e0b', // Primary accent
-          600: '#d97706', // Hover accent
-          700: '#b45309',
+          50:  '#FFFDF5',
+          100: '#FBE7C4',
+          200: '#F8D69A',
+          300: '#F5C46F',
+          400: '#F5B545',
+          500: '#F5A623', // ← The single signature accent
+          600: '#D98E1A',
+          700: '#B47312',
           800: '#92400e',
-          900: '#78350f',
+          900: '#7A4F00',
           950: '#451a03',
         },
         ink: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a', // Deep ink-navy for text
-          950: '#020617', // Even deeper ink
+          50:  '#F8F9FA',
+          100: '#F1F2EE',
+          200: '#E1E2DC',
+          300: '#C8C9C2',
+          400: '#9CA3AF',
+          500: '#6B7280', // Slate / ink-light
+          600: '#3D4A5C', // Ink mid
+          700: '#2D3748',
+          800: '#1E2A3A',
+          900: '#1B2333', // Ink dark — primary text
         },
-        trustTeal: {
-          50: '#f0fdfa',
-          100: '#ccfbf1', // Verification badge background
-          200: '#99f6e4',
-          300: '#5eead4',
-          400: '#2dd4bf',
-          500: '#14b8a6',
-          600: '#0d9488', // Verification badge text/icon
-          700: '#0f766e',
-          800: '#115e59',
-          900: '#134e4a',
-          950: '#042f2e',
-        }
-      }
+        teal: {
+          50:  '#F0FDF8',
+          100: '#E1F5EE',
+          200: '#B2E8D5',
+          300: '#6DD5B5',
+          400: '#2DB88A',
+          500: '#1D9E75', // Trust / verification accent
+          600: '#178764',
+          700: '#116B50',
+          800: '#085041',
+          900: '#043D32',
+        },
+        danger: {
+          50:  '#FEF2F2',
+          100: '#FCEBEB',
+          200: '#FECACA',
+          400: '#F87171',
+          500: '#E24B4A',
+          600: '#DC2626',
+          800: '#501313',
+        },
+      },
+      borderRadius: {
+        'wm': '12px',
+        'wm-sm': '8px',
+      },
+      borderColor: {
+        DEFAULT: '#E1E2DC',
+      },
     },
   },
   plugins: [],

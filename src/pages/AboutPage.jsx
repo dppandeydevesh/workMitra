@@ -1,154 +1,138 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "../components/Toast";
-import { useTranslation } from "react-i18next";
+import { useState} from"react";
+import { useNavigate} from"react-router-dom";
+import { useToast} from"../components/Toast";
+import { useTranslation} from"react-i18next";
 
-export default function AboutPage() {
-  const navigate = useNavigate();
-  const toast = useToast();
-  const { t } = useTranslation();
+export default function AboutPage() {const navigate = useNavigate();
+ const toast = useToast();
+ const { t} = useTranslation();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+ const [name, setName] = useState("");
+ const [email, setEmail] = useState("");
+ const [message, setMessage] = useState("");
+ const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!name || !email || !message) {
-      toast.error(t("about.toastFillAll"));
-      return;
-    }
-    setSubmitting(true);
-    setTimeout(() => {
-      toast.success(t("about.toastTicketCreated"));
-      setName("");
-      setEmail("");
-      setMessage("");
-      setSubmitting(false);
-    }, 1200);
-  };
+ const handleSubmit = (e) => {e.preventDefault();
+ if (!name || !email || !message) {toast.error(t("about.toastFillAll"));
+ return;
+}
+ setSubmitting(true);
+ setTimeout(() => {toast.success(t("about.toastTicketCreated"));
+ setName("");
+ setEmail("");
+ setMessage("");
+ setSubmitting(false);
+}, 1200);
+};
 
-  return (
-    <div className="min-h-screen bg-transparent font-sans py-12 px-4 select-none">
-      <div className="max-w-4xl mx-auto bg-white dark:bg-ink-900 rounded-3xl shadow-xl p-6 sm:p-10 border border-ink-100 dark:border-ink-800">
-        
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-6 mb-8 gap-4">
-          <div>
-            <div className="logo-hook" onClick={() => navigate("/")}>
-              <img 
-                src="/logo.png" 
-                alt="workMitra Logo" 
-                className="h-8 object-contain"
-              />
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-ink-800 dark:text-ink-200 tracking-tight mt-3">
-              {t("about.pageTitle")}
-            </h1>
-            <p className="text-xs text-ink-400 mt-1 font-semibold uppercase tracking-wider">
-              {t("about.pageSubtitle")}
-            </p>
-          </div>
-          <button
-            onClick={() => navigate("/")}
-            className="px-4 py-2 bg-ink-100 dark:bg-ink-800 hover:bg-ink-200 text-ink-700 dark:text-ink-200 rounded-xl text-xs font-bold transition shadow-sm border border-ink-100 dark:border-ink-800/50"
-          >
-            ← {t("about.backToHome")}
-          </button>
-        </div>
+ return (
+ <div className="min-h-screen bg-transparent font-sans py-12 px-4 select-none">
+ <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-sm p-6 sm:p-10 border border-ink-100">
+ 
+ {/* Header */}
+ <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-6 mb-8 gap-4">
+ <div>
+ <div className="logo-hook" onClick={() => navigate("/")}>
+ <img 
+ src="/logo.png"alt="workMitra Logo"className="h-8 object-contain"/>
+ </div>
+ <h1 className="text-2xl sm:text-3xl font-black text-ink-800 tracking-tight mt-3">
+ {t("about.pageTitle")}
+ </h1>
+ <p className="text-xs text-ink-400 mt-1 font-semibold uppercase tracking-wider">
+ {t("about.pageSubtitle")}
+ </p>
+ </div>
+ <button
+ onClick={() => navigate("/")}
+ className="px-4 py-2 bg-ink-100 hover:bg-ink-200 text-ink-700 rounded-xl text-xs font-bold transition shadow-sm border border-ink-100">
+ ← {t("about.backToHome")}
+ </button>
+ </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-          {/* Mission & Identity */}
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-sm font-black text-ink-800 dark:text-ink-200 uppercase tracking-wider mb-2.5">🚀 {t("about.missionHeading")}</h3>
-              <p className="text-sm text-ink-600 dark:text-ink-300 leading-relaxed">
-                {t("about.missionBody")}
-              </p>
-            </div>
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+ {/* Mission & Identity */}
+ <div className="space-y-6">
+ <div>
+ <h3 className="text-sm font-black text-ink-800 uppercase tracking-wider mb-2.5">🚀 {t("about.missionHeading")}</h3>
+ <p className="text-sm text-ink-600 leading-relaxed">
+ {t("about.missionBody")}
+ </p>
+ </div>
 
-            <div>
-              <h3 className="text-sm font-black text-ink-800 dark:text-ink-200 uppercase tracking-wider mb-2.5">🎓 {t("about.studentsHeading")}</h3>
-              <p className="text-sm text-ink-600 dark:text-ink-300 leading-relaxed">
-                {t("about.studentsBody")}
-              </p>
-            </div>
+ <div>
+ <h3 className="text-sm font-black text-ink-800 uppercase tracking-wider mb-2.5">🎓 {t("about.studentsHeading")}</h3>
+ <p className="text-sm text-ink-600 leading-relaxed">
+ {t("about.studentsBody")}
+ </p>
+ </div>
 
-            <div>
-              <h3 className="text-sm font-black text-ink-800 dark:text-ink-200 uppercase tracking-wider mb-2.5">🏢 {t("about.corporateHeading")}</h3>
-              <p className="text-sm text-ink-600 dark:text-ink-300 leading-relaxed">
-                {t("about.corporateBody")}
-              </p>
-            </div>
-          </div>
+ <div>
+ <h3 className="text-sm font-black text-ink-800 uppercase tracking-wider mb-2.5">🏢 {t("about.corporateHeading")}</h3>
+ <p className="text-sm text-ink-600 leading-relaxed">
+ {t("about.corporateBody")}
+ </p>
+ </div>
+ </div>
 
-          {/* Interactive Help Desk Form */}
-          <div className="bg-ink-55/40 border border-ink-100 dark:border-ink-800 p-6 rounded-2xl shadow-inner">
-            <h3 className="text-sm font-black text-ink-800 dark:text-ink-200 uppercase tracking-wider mb-1">📬 {t("about.contactHeading")}</h3>
-            <p className="text-xs text-ink-400 mb-4">{t("about.contactDescription")}</p>
+ {/* Interactive Help Desk Form */}
+ <div className="bg-ink-55/40 border border-ink-100 p-6 rounded-xl shadow-inner">
+ <h3 className="text-sm font-black text-ink-800 uppercase tracking-wider mb-1">📬 {t("about.contactHeading")}</h3>
+ <p className="text-xs text-ink-400 mb-4">{t("about.contactDescription")}</p>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("about.nameLabel")}</label>
-                <input
-                  type="text"
-                  placeholder={t("about.namePlaceholder")}
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"
-                />
-              </div>
+ <form onSubmit={handleSubmit} className="space-y-4">
+ <div>
+ <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("about.nameLabel")}</label>
+ <input
+ type="text"placeholder={t("about.namePlaceholder")}
+ value={name}
+ onChange={(e) => setName(e.target.value)}
+ className="w-full bg-white border border-ink-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"/>
+ </div>
 
-              <div>
-                <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("about.emailLabel")}</label>
-                <input
-                  type="email"
-                  placeholder={t("about.emailPlaceholder")}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"
-                />
-              </div>
+ <div>
+ <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("about.emailLabel")}</label>
+ <input
+ type="email"placeholder={t("about.emailPlaceholder")}
+ value={email}
+ onChange={(e) => setEmail(e.target.value)}
+ className="w-full bg-white border border-ink-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"/>
+ </div>
 
-              <div>
-                <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("about.queryLabel")}</label>
-                <textarea
-                  rows="4"
-                  placeholder={t("about.queryPlaceholder")}
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  className="w-full bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400 resize-none"
-                />
-              </div>
+ <div>
+ <label className="block text-[10px] font-bold text-ink-400 uppercase mb-1">{t("about.queryLabel")}</label>
+ <textarea
+ rows="4"placeholder={t("about.queryPlaceholder")}
+ value={message}
+ onChange={(e) => setMessage(e.target.value)}
+ className="w-full bg-white border border-ink-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400 resize-none"/>
+ </div>
 
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full py-2.5 bg-gradient-to-r from-marigold-600 to-marigold-600 hover:from-marigold-700 hover:to-marigold-700 text-white rounded-xl text-xs font-black transition shadow disabled:opacity-50"
-              >
-                {submitting ? t("about.submitting") : t("about.submitButton")}
-              </button>
-            </form>
-          </div>
-        </div>
+ <button
+ type="submit"disabled={submitting}
+ className="w-full py-2.5 bg-gradient-to-r from-marigold-600 to-marigold-600 hover:from-marigold-700 hover:to-marigold-700 text-white rounded-xl text-xs font-black transition shadow disabled:opacity-50">
+ {submitting ? t("about.submitting") : t("about.submitButton")}
+ </button>
+ </form>
+ </div>
+ </div>
 
-        {/* Corporate Address & Contact Cards */}
-        <div className="border-t pt-8 grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs text-ink-500">
-          <div>
-            <h4 className="font-extrabold text-ink-800 dark:text-ink-200 uppercase tracking-wider mb-1">🏢 {t("about.officeHeading")}</h4>
-            <p>{t("about.officeName")}</p>
-            <p className="mt-0.5">{t("about.officeAddress")}</p>
-            <p>{t("about.officeCity")}</p>
-          </div>
-          <div>
-            <h4 className="font-extrabold text-ink-800 dark:text-ink-200 uppercase tracking-wider mb-1">✉️ {t("about.assistanceHeading")}</h4>
-            <p>{t("about.primarySupport")} <span className="font-bold text-marigold-500">supportworkmitra@gmail.com</span></p>
-            <p className="mt-0.5">{t("about.responseTime")}</p>
-            <p>{t("about.operatingHours")}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+ {/* Corporate Address & Contact Cards */}
+ <div className="border-t pt-8 grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs text-ink-500">
+ <div>
+ <h4 className="font-extrabold text-ink-800 uppercase tracking-wider mb-1">🏢 {t("about.officeHeading")}</h4>
+ <p>{t("about.officeName")}</p>
+ <p className="mt-0.5">{t("about.officeAddress")}</p>
+ <p>{t("about.officeCity")}</p>
+ </div>
+ <div>
+ <h4 className="font-extrabold text-ink-800 uppercase tracking-wider mb-1">✉️ {t("about.assistanceHeading")}</h4>
+ <p>{t("about.primarySupport")} <span className="font-bold text-marigold-500">supportworkmitra@gmail.com</span></p>
+ <p className="mt-0.5">{t("about.responseTime")}</p>
+ <p>{t("about.operatingHours")}</p>
+ </div>
+ </div>
+ </div>
+ </div>
+ );
 }

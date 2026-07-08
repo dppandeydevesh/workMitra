@@ -850,8 +850,8 @@ export default function StudentProfile() {const { email} = useParams();
  </h5>
  <ul className="space-y-1.5 text-xs list-disc list-inside">
  {cvReport.strengths.length > 0
-  ? cvReport.strengths.map((str, idx) => <li key={idx} className="text-ink-200">{str}</li>)
-  : <li className="text-ink-400 list-none italic text-[11px]">No strengths data available</li>
+  ? cvReport.strengths.map((str, idx) => <li key={idx} style={{ color: '#E1E2DC' }}>{str}</li>)
+  : <li style={{ color: '#C8C9C2' }} className="list-none italic text-[11px]">No strengths data available</li>
  }
  </ul>
  </div>
@@ -861,8 +861,8 @@ export default function StudentProfile() {const { email} = useParams();
  </h5>
  <ul className="space-y-1.5 text-xs list-disc list-inside">
  {cvReport.improvements.length > 0
-  ? cvReport.improvements.map((imp, idx) => <li key={idx} className="text-ink-200">{imp}</li>)
-  : <li className="text-ink-400 list-none italic text-[11px]">No improvement data available</li>
+  ? cvReport.improvements.map((imp, idx) => <li key={idx} style={{ color: '#E1E2DC' }}>{imp}</li>)
+  : <li style={{ color: '#C8C9C2' }} className="list-none italic text-[11px]">No improvement data available</li>
  }
  </ul>
  </div>
@@ -871,7 +871,7 @@ export default function StudentProfile() {const { email} = useParams();
  {cvReport.recommendations && (
  <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }} className="p-4 rounded-xl">
  <h5 style={{ color: '#F5A623' }} className="text-[10px] font-extrabold uppercase mb-1 opacity-80">{t("studentProfile.aiRecommendations")}</h5>
- <p className="text-xs text-ink-200 leading-relaxed italic">"{cvReport.recommendations}"</p>
+ <p style={{ color: '#E1E2DC' }} className="text-xs leading-relaxed italic">"{cvReport.recommendations}"</p>
  </div>
  )}
  </div>

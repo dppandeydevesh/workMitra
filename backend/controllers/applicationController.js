@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Project = require('../models/Project');
 const Application = require('../models/Application');
 const swot = require('swot-node');
+const { notifyUser } = require('../utils/notify');
 
 function calculateSimilarity(str1, str2) {
   if (!str1 || !str2) return 0;
@@ -224,28 +225,18 @@ exports.updateStatus = async (req, res) => {
     await application.save();
 
     // Push live real-time notification alert if student is online
-    try {
-      const receiverSocket = global.req.app.locals.wsClients?.get(application.studentEmail);
-      const ws = require("ws");
-      if (receiverSocket && receiverSocket.readyState === ws.OPEN) {
-        receiverSocket.send(
-          JSON.stringify({
-            type: "notification",
-            statusUpdate: true,
-            message: {
-              id: application._id,
-              title: status === "Approved" ? "🎉 Proposal Approved!" : "😞 Application Update",
-              message: status === "Approved"
-                ? `Your application for "${application.projectId.title}" was approved by the company.`
-                : `Your application for "${application.projectId.title}" was rejected.`,
-              type: status === "Approved" ? "success" : "danger"
-            }
-          })
-        );
+    notifyUser(application.studentEmail, {
+      type: "notification",
+      statusUpdate: true,
+      message: {
+        id: application._id,
+        title: status === "Approved" ? "🎉 Proposal Approved!" : "😞 Application Update",
+        message: status === "Approved"
+          ? `Your application for "${application.projectId.title}" was approved by the company.`
+          : `Your application for "${application.projectId.title}" was rejected.`,
+        type: status === "Approved" ? "success" : "danger"
       }
-    } catch (wsErr) {
-      console.error("Failed to push real-time status update socket alert:", wsErr.message);
-    }
+    });
 
     res.status(200).json({ message: `Application status updated to ${status}.`, application });
   } catch (err) {
@@ -462,21 +453,16 @@ exports.reviewExtension = async (req, res) => {
     await application.save();
 
     // Trigger real-time alert via WebSocket if student is connected
-    const studentSocket = global.req.app.locals.wsClients?.get(application.studentEmail);
-    if (studentSocket && studentSocket.readyState === ws.OPEN) {
-      studentSocket.send(
-        JSON.stringify({
-          type: "notification",
-          statusUpdate: true,
-          message: {
-            title: `Deadline Extension ${status}!`,
-            message: status === "Approved"
-              ? `Your extension request was approved. New deadline: ${new Date(application.extendedDeadline).toLocaleDateString()}`
-              : `Your extension request was rejected by the recruiter.`
-          }
-        })
-      );
-    }
+    notifyUser(application.studentEmail, {
+      type: "notification",
+      statusUpdate: true,
+      message: {
+        title: `Deadline Extension ${status}!`,
+        message: status === "Approved"
+          ? `Your extension request was approved. New deadline: ${new Date(application.extendedDeadline).toLocaleDateString()}`
+          : `Your extension request was rejected by the recruiter.`
+      }
+    });
 
     res.status(200).json({ message: `Extension request has been ${status.toLowerCase()}.`, application });
   } catch (err) {
@@ -536,26 +522,16 @@ exports.completeApplication = async (req, res) => {
     }
 
     // Push live real-time notification alert if student is online
-    try {
-      const receiverSocket = global.req.app.locals.wsClients?.get(application.studentEmail);
-      const ws = require("ws");
-      if (receiverSocket && receiverSocket.readyState === ws.OPEN) {
-        receiverSocket.send(
-          JSON.stringify({
-            type: "notification",
-            statusUpdate: true,
-            message: {
-              id: application._id,
-              title: "🏆 Gig Completed!",
-              message: `Your work for "${application.projectId.title}" has been reviewed, approved, and marked completed.`,
-              type: "success"
-            }
-          })
-        );
+    notifyUser(application.studentEmail, {
+      type: "notification",
+      statusUpdate: true,
+      message: {
+        id: application._id,
+        title: "🏆 Gig Completed!",
+        message: `Your work for "${application.projectId.title}" has been reviewed, approved, and marked completed.`,
+        type: "success"
       }
-    } catch (wsErr) {
-      console.error("Failed to push real-time task complete socket alert:", wsErr.message);
-    }
+    });
 
     res.status(200).json({ message: "Work approved and marked as Completed.", application });
   } catch (err) {
@@ -587,26 +563,16 @@ exports.requestRevision = async (req, res) => {
     await application.save();
 
     // Push live WS alert
-    try {
-      const receiverSocket = global.req.app.locals.wsClients?.get(application.studentEmail);
-      const ws = require("ws");
-      if (receiverSocket && receiverSocket.readyState === ws.OPEN) {
-        receiverSocket.send(
-          JSON.stringify({
-            type: "notification",
-            statusUpdate: true,
-            message: {
-              id: application._id,
-              title: "🔄 Revision Requested",
-              message: `Recruiter requested revision for "${application.projectId.title}".`,
-              type: "warning"
-            }
-          })
-        );
+    notifyUser(application.studentEmail, {
+      type: "notification",
+      statusUpdate: true,
+      message: {
+        id: application._id,
+        title: "🔄 Revision Requested",
+        message: `Recruiter requested revision for "${application.projectId.title}".`,
+        type: "warning"
       }
-    } catch (wsErr) {
-      console.error("Failed to push revision request socket alert:", wsErr.message);
-    }
+    });
 
     res.status(200).json({ message: "Revision requested successfully.", application });
   } catch (err) {
@@ -727,19 +693,14 @@ exports.offerPlacement = async (req, res) => {
     await studentUser.save();
 
     // Trigger real-time alert via WebSocket
-    const studentSocket = global.wsClients.get(studentUser.email);
-    if (studentSocket && studentSocket.readyState === ws.OPEN) {
-      studentSocket.send(
-        JSON.stringify({
-          type: "notification",
-          statusUpdate: true,
-          message: {
-            title: "💼 Career Offer Extended!",
-            message: `Congratulations! ${recruiterUser.companyName || "A company recruiter"} has extended a job placement offer.`
-          }
-        })
-      );
-    }
+    notifyUser(studentUser.email, {
+      type: "notification",
+      statusUpdate: true,
+      message: {
+        title: "💼 Career Offer Extended!",
+        message: `Congratulations! ${recruiterUser.companyName || "A company recruiter"} has extended a job placement offer.`
+      }
+    });
 
     const sanitizedStudent = studentUser.toObject();
     delete sanitizedStudent.password;

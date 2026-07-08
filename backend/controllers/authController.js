@@ -490,6 +490,117 @@ const me = async (req, res) => {
   }
 };
 
+// =========================================================================
+// 👤 Get user profile by email (used by student profiles, recruiter views)
+// =========================================================================
+const getUserByEmail = async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const user = await User.findOne({ email: req.params.email }, '-password');
+    if (!user) {
+      return res.status(404).json({ error: 'Student profile not found.' });
+    }
+    // Restrict private profiles — owners and company/admin roles can always view
+    if (user.isProfilePrivate && req.user.email !== req.params.email && req.user.userRole !== 'company' && req.user.userRole !== 'admin') {
+      return res.status(403).json({ error: 'This profile has been marked private by the student.' });
+    }
+    const userObj = user.toObject();
+    let isEndorsed = false;
+    if (user.collegeName) {
+      const collegeAdmin = await User.findOne({ userRole: 'college', collegeName: user.collegeName });
+      if (collegeAdmin && collegeAdmin.collegeEndorsedStudents) {
+        isEndorsed = collegeAdmin.collegeEndorsedStudents.includes(user.email);
+      }
+    }
+    userObj.isEndorsed = isEndorsed;
+    res.status(200).json(userObj);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to read profile details.' });
+  }
+};
+
+// =========================================================================
+// 🔗 Get user profile by vanity username
+// =========================================================================
+const getVanityProfile = async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const user = await User.findOne({ vanityUsername: req.params.username }, '-password');
+    if (!user) {
+      return res.status(404).json({ error: 'Student profile username not found.' });
+    }
+    if (user.isProfilePrivate && req.user.email !== user.email && req.user.userRole !== 'company' && req.user.userRole !== 'admin') {
+      return res.status(403).json({ error: 'This profile has been marked private by the student.' });
+    }
+    const userObj = user.toObject();
+    let isEndorsed = false;
+    if (user.collegeName) {
+      const collegeAdmin = await User.findOne({ userRole: 'college', collegeName: user.collegeName });
+      if (collegeAdmin && collegeAdmin.collegeEndorsedStudents) {
+        isEndorsed = collegeAdmin.collegeEndorsedStudents.includes(user.email);
+      }
+    }
+    userObj.isEndorsed = isEndorsed;
+    res.status(200).json(userObj);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to read vanity profile.' });
+  }
+};
+
+// =========================================================================
+// 🔒 Lock onboarding profile flag (so the form won't re-appear on next login)
+// =========================================================================
+const completeProfile = async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: 'User email parameter is required.' });
+    }
+    if (req.user.email !== email) {
+      return res.status(403).json({ error: 'Unauthorized profile update request.' });
+    }
+    await User.findOneAndUpdate({ email }, { hasCompletedProfile: true });
+    res.status(200).json({ message: 'Profile onboarding flag locked successfully.' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to lock profile onboarding state.' });
+  }
+};
+
+// =========================================================================
+// ⚙️ Update company profile settings
+// =========================================================================
+const updateCompanyProfile = async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const { companyBio, companyLogoUrl, companyWebsite, companyLinkedin, industryVertical, teamSize, defaultComplexity, autoApproveApplications } = req.body;
+    const user = await User.findOne({ email: req.user.email });
+    if (!user) {
+      return res.status(404).json({ error: 'User account not found.' });
+    }
+    if (user.userRole !== 'company') {
+      return res.status(403).json({ error: 'Only company accounts can update company profiles.' });
+    }
+    if (companyBio !== undefined) user.companyBio = companyBio;
+    if (companyLogoUrl !== undefined) user.companyLogoUrl = companyLogoUrl;
+    if (companyWebsite !== undefined) user.companyWebsite = companyWebsite;
+    if (companyLinkedin !== undefined) user.companyLinkedin = companyLinkedin;
+    if (industryVertical !== undefined) user.industryVertical = industryVertical;
+    if (teamSize !== undefined) user.teamSize = teamSize;
+    if (defaultComplexity !== undefined) user.defaultComplexity = defaultComplexity;
+    if (autoApproveApplications !== undefined) user.autoApproveApplications = autoApproveApplications;
+    await user.save();
+    const sanitizedUser = user.toObject();
+    delete sanitizedUser.password;
+    delete sanitizedUser.resetPasswordToken;
+    delete sanitizedUser.resetPasswordExpires;
+    res.status(200).json({ message: 'Company profile updated successfully.', user: sanitizedUser });
+  } catch (err) {
+    console.error('Company profile update error:', err.message);
+    res.status(500).json({ error: 'Failed to update company profile.' });
+  }
+};
+
 module.exports = {
   register,
   verifyOtp,
@@ -497,5 +608,10 @@ module.exports = {
   forgotPassword,
   resetPassword,
   logout,
-  me
+  me,
+  getUserByEmail,
+  getVanityProfile,
+  completeProfile,
+  updateCompanyProfile,
 };
+

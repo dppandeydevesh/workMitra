@@ -172,7 +172,8 @@ exports.getCompanyApplications = async (req, res) => {
         submittedAt: app.submittedAt || null,
         feedbackText: app.feedbackText || null,
         rating: app.rating || null,
-        ratingReview: app.ratingReview || null
+        ratingReview: app.ratingReview || null,
+        collegeName: studentUser?.collegeName || null
       };
     });
 

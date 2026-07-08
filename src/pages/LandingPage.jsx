@@ -54,7 +54,7 @@ export default function LandingPage() {const navigate = useNavigate();
     <span className="wm-badge wm-badge-marigold uppercase tracking-wider text-[10px] font-semibold">
       ✨ {t("landing.heroBadge")}
     </span>
-    <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif italic font-normal text-ink-900 tracking-tight mt-6 leading-tight">
+    <h1 style={{ fontFamily: "Georgia, 'Times New Roman', serif" }} className="text-4xl sm:text-6xl lg:text-7xl font-serif italic font-normal text-ink-900 tracking-tight mt-6 leading-tight">
       {t("landing.heroTitlePart1")} <br className="hidden sm:inline" />
       <span className="text-marigold-500 not-italic font-medium">{t("landing.heroTitleHighlight")}</span>
     </h1>

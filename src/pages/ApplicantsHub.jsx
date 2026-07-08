@@ -439,6 +439,24 @@ export default function ApplicantsHub() {const navigate = useNavigate();
  <p className="text-xs text-ink-400 font-medium">
  {isBlindMode ? t("applicantsHub.mockEmail") : app.studentEmail}
  </p>
+ {!isBlindMode && app.collegeName && (
+    <div className="mt-2 select-none" style={{
+      display: 'inline-flex', alignItems: 'center', gap: 10,
+      background: '#E1F5EE', border: '0.5px solid #1D9E75',
+      borderRadius: 10, padding: '8px 14px'
+    }}>
+      <div style={{
+        width: 22, height: 22, borderRadius: '50%', background: '#1D9E75',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+      }}>
+        <span style={{ color: '#fff', fontSize: 13, fontWeight: 700 }}>✓</span>
+      </div>
+      <div className="text-left">
+        <p style={{ margin: 0, fontSize: 11, fontWeight: 600, color: '#085041', lineHeight: 1.3 }}>College verified</p>
+        <p style={{ margin: 0, fontSize: 11, color: '#1D9E75', lineHeight: 1.3 }}>{app.collegeName}</p>
+      </div>
+    </div>
+  )}
  </div>
 
  <div>

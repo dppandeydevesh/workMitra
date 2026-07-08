@@ -884,21 +884,24 @@ export default function Dashboard() {const navigate = useNavigate();
  ) : aiTopPicks.length > 0 ? (
  <div className="flex space-x-4 overflow-x-auto pb-4 hide-scrollbar py-2">
  {aiTopPicks.map(project => (
- <motion.div key={project._id} onClick={() => navigate(`/project/${project._id}`)} className="min-w-[280px] sm:min-w-[320px] bg-white rounded-xl border border-purple-100 p-5 shadow-[0_0_15px_rgba(168,85,247,0.15)] hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] transition cursor-pointer flex flex-col justify-between wm-panel wm-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
- <div>
- <div className="flex justify-between items-start mb-2">
- <h4 className="font-bold text-ink-900 text-sm truncate pr-2">{project.title}</h4>
- <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm">
- {t("dashboard.topMatch")}
- </span>
- </div>
- <p className="text-xs text-ink-600 line-clamp-2 mb-3">{project.description}</p>
- </div>
- <div className="flex justify-between items-center mt-2 border-t pt-3">
- <span className="font-bold text-green-600 text-xs">₹{project.budget?.toLocaleString() || 0}</span>
- <span className="text-marigold-500 font-bold text-[10px] flex items-center gap-0.5">{t("dashboard.viewDetails")} <ChevronRight className="w-3 h-3" /></span>
- </div>
- </motion.div>
+  <motion.div key={project._id} onClick={() => navigate(`/project/${project._id}`)} className="min-w-[280px] sm:min-w-[320px] transition cursor-pointer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }} style={{ borderRadius: 12, overflow: 'hidden', border: '0.5px solid #E1E2DC' }}>
+  <div style={{ height: 3, background: '#F5A623' }} />
+  <div style={{ background: '#FFFFFF', padding: '18px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 'calc(100% - 3px)' }}>
+  <div>
+  <div className="flex justify-between items-start mb-2">
+  <h4 className="font-bold text-ink-900 text-sm truncate pr-2">{project.title}</h4>
+  <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+  {t("dashboard.topMatch")}
+  </span>
+  </div>
+  <p className="text-xs text-ink-600 line-clamp-2 mb-3">{project.description}</p>
+  </div>
+  <div className="flex justify-between items-center mt-2 border-t pt-3">
+  <span className="font-bold text-green-600 text-xs">₹{project.budget?.toLocaleString() || 0}</span>
+  <span className="text-marigold-500 font-bold text-[10px] flex items-center gap-0.5">{t("dashboard.viewDetails")} <ChevronRight className="w-3 h-3" /></span>
+  </div>
+  </div>
+  </motion.div>
  ))}
  </div>
  ) : (

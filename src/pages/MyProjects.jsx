@@ -276,7 +276,7 @@ export default function MyProjects() {const navigate = useNavigate();
  <div 
  key={proj._id} 
  onClick={() => handleInspectApplicants(proj)}
- className={`p-5 rounded-xl border bg-white shadow-sm cursor-pointer transition transform hover:-tranink-y-0.5 ${selectedProject?._id === proj._id ?"ring-2 ring-marigold-500 border-transparent" :"hover:border-marigold-300"}`}
+ className={`wm-card cursor-pointer transition transform hover:-translate-y-0.5 ${selectedProject?._id === proj._id ?"ring-2 ring-marigold-500 border-transparent" :"hover:border-marigold-300"}`}
  >
  <h4 className="font-bold text-ink-900 text-sm mb-1">{proj.title}</h4>
  <p className="text-[11px] text-ink-500 line-clamp-2 leading-relaxed mb-3">{proj.description}</p>

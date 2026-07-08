@@ -117,7 +117,7 @@ export default function FacultyDashboard() {const { t} = useTranslation();
       <p className="text-red-700 font-bold">{errorMessage}</p>
       <button 
         onClick={() => fetchFacultyProjects(user.email)} 
-        className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-sm"
+        style={{ background: "#F5A623", color: "#1B2333" }} className="px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm"
       >
         Retry
       </button>
@@ -300,7 +300,7 @@ export default function FacultyDashboard() {const { t} = useTranslation();
 
  <button 
  type="submit"disabled={posting}
- className="w-full bg-marigold-500 hover:bg-marigold-600 text-white font-black py-4 rounded-xl transition shadow-lg shadow-marigold-200">
+ style={{ background: "#F5A623", color: "#1B2333" }} className="w-full font-black py-4 rounded-xl transition shadow-lg shadow-marigold-200">
  {posting ?"Publishing to Network..." :"Publish Academic Project 🚀"}
  </button>
  </form>

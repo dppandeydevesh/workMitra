@@ -225,7 +225,7 @@ export default function MyProjects() {const navigate = useNavigate();
  <h1 className="text-xl sm:text-2xl font-bold text-ink-800">{t("myProjects.title")}</h1>
  <p className="text-[11px] sm:text-xs text-ink-500 mt-0.5">{t("myProjects.subtitle")}</p>
  </div>
- <button onClick={() => navigate("/company-dashboard")} className="w-full sm:w-auto text-center text-xs font-bold bg-marigold-500 hover:bg-marigold-600 text-white px-4 py-2.5 rounded-xl transition shadow-sm">
+ <button onClick={() => navigate("/company-dashboard")} style={{ background: "#F5A623", color: "#1B2333" }} className="w-full sm:w-auto text-center text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-sm">
  ← {t("myProjects.backToCommandCenter")}
  </button>
  </div>
@@ -429,7 +429,7 @@ export default function MyProjects() {const navigate = useNavigate();
  <span className="text-[11px] text-marigold-500 font-semibold">{t("myProjects.working")}</span>
  )}
  {app.status ==="Submitted" && (
- <button onClick={() => handleOpenReviewModal(app)} className="text-[10px] font-bold bg-marigold-500 hover:bg-marigold-600 text-white px-2.5 py-1 rounded transition shadow-sm">
+ <button onClick={() => handleOpenReviewModal(app)} style={{ background: "#F5A623", color: "#1B2333" }} className="text-[10px] font-bold px-2.5 py-1 rounded transition shadow-sm">
  {t("myProjects.reviewWork")}
  </button>
  )}
@@ -611,7 +611,7 @@ export default function MyProjects() {const navigate = useNavigate();
  </button>
  <button
  type="submit"disabled={submittingEdit}
- className="px-4 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-md">
+ style={{ background: "#F5A623", color: "#1B2333" }} className="px-4 py-2 rounded-xl text-xs font-bold transition shadow-md">
  {submittingEdit ? t("myProjects.saving") : t("myProjects.saveChanges")}
  </button>
  </div>

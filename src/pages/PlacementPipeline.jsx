@@ -169,7 +169,7 @@ export default function PlacementPipeline() {const { t} = useTranslation();
      <p className="text-red-700 font-bold">{errorMessage}</p>
      <button 
        onClick={() => fetchApplications(currentUser)} 
-       className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-sm"
+       style={{ background: "#F5A623", color: "#1B2333" }} className="px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm"
      >
        Retry
      </button>
@@ -275,7 +275,7 @@ export default function PlacementPipeline() {const { t} = useTranslation();
  </button>
  <button
  type="submit"disabled={submittingOffer}
- className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-md">
+ style={{ background: "#F5A623", color: "#1B2333" }} className="px-5 py-2 rounded-xl text-xs font-bold transition shadow-md">
  {submittingOffer ? t("pipeline.sending") : t("pipeline.extendOffer")}
  </button>
  </div>

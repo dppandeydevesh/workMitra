@@ -192,7 +192,7 @@ export default function StudentProfile() {const { email} = useParams();
     </button>
     <button 
     onClick={() => fetchUserProfile()} 
-    className="px-4 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-sm">
+    style={{ background: "#F5A623", color: "#1B2333" }} className="px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm hover:opacity-90">
     Retry
     </button>
   </div>
@@ -249,7 +249,8 @@ export default function StudentProfile() {const { email} = useParams();
  {isOwner && !isEditing && (
  <button
  onClick={() => setIsEditing(true)}
- className="px-4 py-2.5 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-md">
+ style={{ background: '#F5A623', color: '#1B2333', border: 'none' }}
+ className="px-4 py-2.5 rounded-xl text-xs font-bold transition shadow-md hover:opacity-90 flex items-center gap-1.5">
  ✏️ {t("studentProfile.editPortfolio")}
  </button>
  )}
@@ -492,7 +493,7 @@ export default function StudentProfile() {const { email} = useParams();
  </button>
  <button
  type="submit"disabled={saving}
- className="px-4 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-md">
+ style={{ background: "#F5A623", color: "#1B2333" }} className="px-4 py-2 rounded-xl text-xs font-bold transition shadow-md hover:opacity-90">
  {saving ?"Saving..." :"Save Details"}
  </button>
  </div>
@@ -758,7 +759,7 @@ export default function StudentProfile() {const { email} = useParams();
  setVouchComment("");
  setShowVouchModal(true);
 }}
- className="px-2.5 py-1 bg-marigold-500 hover:bg-marigold-600 text-white rounded-lg text-[9px] font-bold transition shadow-sm">
+ style={{ background: "#F5A623", color: "#1B2333" }} className="px-2.5 py-1 rounded-lg text-[9px] font-bold transition shadow-sm hover:opacity-90">
  + {t("studentProfile.vouchPeer")}
  </button>
  )}
@@ -982,7 +983,7 @@ export default function StudentProfile() {const { email} = useParams();
  </button>
  <button
  type="submit"disabled={vouching}
- className="px-4 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-black transition shadow">
+ style={{ background: "#F5A623", color: "#1B2333" }} className="px-4 py-2 rounded-xl text-xs font-black transition shadow hover:opacity-90">
  {vouching ? t("studentProfile.submitting") : t("studentProfile.submitVouch")}
  </button>
  </div>

@@ -175,7 +175,7 @@ export default function CollegeDashboard() {const navigate = useNavigate();
            <p className="text-xs text-ink-500">{errorMessage}</p>
            <button
              onClick={() => fetchDashboardData(currentUser?.collegeName || JSON.parse(localStorage.getItem("user") || "{}").collegeName)}
-             className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-sm"
+             style={{ background: "#F5A623", color: "#1B2333" }} className="px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm"
            >
              Retry
            </button>
@@ -589,7 +589,7 @@ export default function CollegeDashboard() {const navigate = useNavigate();
  </button>
  <button
  onClick={() => window.print()}
- className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition">
+ style={{ background: "#F5A623", color: "#1B2333" }} className="px-5 py-2 rounded-xl text-xs font-bold transition">
  {t("college.btnPrintReport")}
  </button>
  </div>

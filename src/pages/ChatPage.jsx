@@ -245,7 +245,7 @@ export default function ChatPage() {const { recipientEmail} = useParams();
       <p className="text-xs text-red-700 font-bold">{partnersError}</p>
       <button 
         onClick={() => fetchPartners()}
-        className="px-3.5 py-1.5 bg-marigold-500 hover:bg-marigold-600 text-white rounded-lg font-bold text-[11px] transition active:scale-95 shadow-sm"
+        style={{ background: "#F5A623", color: "#1B2333" }} className="px-3.5 py-1.5 rounded-lg font-bold text-[11px] transition active:scale-95 shadow-sm"
       >
         Retry
       </button>

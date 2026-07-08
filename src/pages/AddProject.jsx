@@ -345,7 +345,7 @@ export default function AddProject() {const navigate = useNavigate();
  {step < 6 ? (
  <button
  type="button"onClick={handleNextStep}
- className="px-5 py-2.5 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-black transition shadow">
+ style={{ background: "#F5A623", color: "#1B2333" }} className="px-5 py-2.5 rounded-xl text-xs font-black transition shadow">
  {t("addProject.nextStep")} →
  </button>
  ) : (

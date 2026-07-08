@@ -567,7 +567,7 @@ export default function ApplicantsHub() {const navigate = useNavigate();
  className="flex-1 lg:flex-initial px-3.5 py-2 border border-red-200 text-red-700 hover:bg-red-50 font-bold text-xs rounded-xl transition">{t("applicantsHub.reject")}</button>
  <button
  onClick={() => handleUpdateStatus(app.applicationId,"Approved")}
- className="flex-1 lg:flex-initial px-4 py-2 bg-marigold-500 hover:bg-marigold-600 text-white font-bold text-xs rounded-xl transition shadow-sm">{t("applicantsHub.accept")}</button>
+ style={{ background: "#F5A623", color: "#1B2333" }} className="flex-1 lg:flex-initial px-4 py-2 font-bold text-xs rounded-xl transition shadow-sm">{t("applicantsHub.accept")}</button>
  </>
  )}
 
@@ -947,7 +947,7 @@ export default function ApplicantsHub() {const navigate = useNavigate();
  onClick={() => {setShowSandbox(false);
  setFeedbackText(t("applicantsHub.sandboxPassed"));
 }}
- className="px-4 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow">{t("applicantsHub.approveSolution")}</button>
+ style={{ background: "#F5A623", color: "#1B2333" }} className="px-4 py-2 rounded-xl text-xs font-bold transition shadow">{t("applicantsHub.approveSolution")}</button>
  </div>
  </div>
 

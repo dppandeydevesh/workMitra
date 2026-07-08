@@ -105,7 +105,7 @@ const PremiumCheckoutModal = ({setShowCheckoutModal,
 }
 }}
  disabled={checkingOutPass}
- className="w-full py-3 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-black transition shadow disabled:opacity-50">
+ style={{ background: "#F5A623", color: "#1B2333" }} className="w-full py-3 rounded-xl text-xs font-black transition shadow disabled:opacity-50">
  {checkingOutPass ? t("dashboard.openingRazorpay") : t("dashboard.payViaRazorpay")}
  </button>
  <p className="text-[10px] text-center text-ink-400 font-medium">

@@ -162,7 +162,7 @@ export default function ProjectDetails() {const { projectId} = useParams();
  </button>
  <button
  onClick={() => fetchProjectAndAppState(currentUser?.email || JSON.parse(localStorage.getItem("user") || "{}").email)}
- className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-sm">
+ style={{ background: "#F5A623", color: "#1B2333" }} className="px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm">
  Retry
  </button>
  </div>
@@ -389,7 +389,7 @@ export default function ProjectDetails() {const { projectId} = useParams();
  setShowNdaModal(false);
  handleApply();
 }}
- className={`px-5 py-2.5 rounded-xl text-xs font-black transition shadow ${applying ?"bg-marigold-400 cursor-not-allowed text-white" :"bg-marigold-500 hover:bg-marigold-600 text-white"
+ className={`px-5 py-2.5 rounded-xl text-xs font-black transition shadow ${applying ?"bg-marigold-400 cursor-not-allowed text-white" :"marigold-btn-inline"
 }`}
  >
  {applying ? t("projectDetails.submitting") : t("projectDetails.completeApplication")}
@@ -460,7 +460,7 @@ export default function ProjectDetails() {const { projectId} = useParams();
  setShowQuizModal(false);
  handleApply();
 }}
- className={`px-5 py-2.5 rounded-xl text-xs font-black transition shadow ${applying ?"bg-marigold-400 cursor-not-allowed text-white" :"bg-marigold-500 hover:bg-marigold-600 text-white"
+ className={`px-5 py-2.5 rounded-xl text-xs font-black transition shadow ${applying ?"bg-marigold-400 cursor-not-allowed text-white" :"marigold-btn-inline"
 }`}
  >
  {applying ? t("projectDetails.submitting") : t("projectDetails.submitAnswers")}

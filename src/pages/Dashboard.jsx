@@ -512,7 +512,7 @@ export default function Dashboard() {const navigate = useNavigate();
  onClick={() => {setCheckoutStep(1);
  setShowCheckoutModal(true);
 }}
- className="px-2.5 py-1 bg-marigold-500 hover:bg-marigold-600 text-white rounded-lg text-[9px] font-bold transition shadow-sm">
+ style={{ background: "#F5A623", color: "#1B2333" }} className="px-2.5 py-1 rounded-lg text-[9px] font-bold transition shadow-sm">
  {t("dashboard.upgradePlan")}
  </button>
  </div>
@@ -636,7 +636,7 @@ export default function Dashboard() {const navigate = useNavigate();
  {(app.status ==="Approved" || app.status ==="Revision Requested") && (
  <button
  onClick={(e) => { e.stopPropagation(); setActiveAppToSubmit(app); setShowSubmitModal(true);}}
- className="bg-marigold-500 hover:bg-marigold-600 text-white font-bold text-xs px-3.5 py-1.5 rounded-lg transition shadow-sm animate-fade-in">
+ style={{ background: "#F5A623", color: "#1B2333" }} className="font-bold text-xs px-3.5 py-1.5 rounded-lg transition shadow-sm animate-fade-in">
  {app.status ==="Approved" ? t("dashboard.submitWork") : t("dashboard.submitRevision")}
  </button>
  )}
@@ -1102,7 +1102,7 @@ export default function Dashboard() {const navigate = useNavigate();
  <button 
  onClick={(e) => { e.stopPropagation(); navigate(`/project/${project._id}`);}}
  className={`font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm flex items-center justify-center gap-1.5 ${isAlreadyApplied 
- ?"bg-emerald-100 text-emerald-700 border border-emerald-200 hover:bg-emerald-200/50":"bg-marigold-500 hover:bg-marigold-600 text-white"
+ ?"bg-emerald-100 text-emerald-700 border border-emerald-200 hover:bg-emerald-200/50":"marigold-btn-inline"
 }`}
  >
  {isAlreadyApplied ? <><CheckCircle className="w-3.5 h-3.5" /> {t("dashboard.appliedDetails")}</> : t("dashboard.viewDetailsBtn")}
@@ -1318,7 +1318,7 @@ export default function Dashboard() {const navigate = useNavigate();
  </button>
  <button
  type="submit"disabled={requestingExtension}
- className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-md">
+ style={{ background: "#F5A623", color: "#1B2333" }} className="px-5 py-2 rounded-xl text-xs font-bold transition shadow-md">
  {requestingExtension ? t("dashboard.requesting") : t("dashboard.submitRequest")}
  </button>
  </div>

@@ -222,15 +222,15 @@ export default function StudentProfile() {const { email} = useParams();
  </a>
  )}
  </div>
-  <div className="flex items-start gap-2.5 mt-3 select-none">
-    <div className="w-5 h-5 rounded-full bg-teal-500 flex items-center justify-center text-white shrink-0 mt-0.5 shadow-sm">
-      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+  <div className="flex items-center gap-3 mt-3 select-none bg-[#E1F5EE] border border-[#1D9E75] rounded-[10px] p-[8px_14px] w-fit">
+    <div className="w-[22px] h-[22px] rounded-full bg-[#1D9E75] flex items-center justify-center text-white shrink-0 shadow-sm">
+      <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
     </div>
-    <div>
-      <p className="text-xs font-bold text-ink-900 tracking-tight leading-none uppercase">
+    <div className="text-left">
+      <p className="text-[11px] font-semibold text-[#085041] leading-tight">
         {t("College verified")}
       </p>
-      <p className="text-[10px] text-ink-500 mt-1 font-medium leading-none">
+      <p className="text-[11px] text-[#1D9E75] leading-tight mt-0.5 font-medium">
         {profileUser.collegeName || "GLA University, Mathura"}
       </p>
     </div>

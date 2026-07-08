@@ -142,15 +142,9 @@ export default function AdminDashboard() {const toast = useToast();
 }
 };
 
- const containerVariants = {hidden: { opacity: 0},
- show: {opacity: 1,
- transition: { staggerChildren: 0.1}
-}
-};
+ const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.15 } } };
 
- const itemVariants = {hidden: { opacity: 0, y: 20},
- show: { opacity: 1, y: 0, transition: { duration: 0.5}}
-};
+ const itemVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.15 } } };
 
  if (loading && !metrics) {return (
  <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10">
@@ -169,13 +163,11 @@ export default function AdminDashboard() {const toast = useToast();
 }
 
  return (
- <motion.div 
- initial="hidden"animate="show"variants={containerVariants}
- className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 select-none relative z-10">
+ <motion.div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 select-none relative z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="max-w-7xl mx-auto space-y-10">
  
  {/* Header Title Section - Glass Panel */}
- <motion.div variants={itemVariants} className="wm-panel wm-card p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
+ <motion.div className="wm-panel wm-card p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-marigold-500/20 rounded-full blur-3xl pointer-events-none"></div>
  <div className="relative z-10 flex items-center gap-4">
  <div className="p-3 bg-marigold-500/10 rounded-xl shadow-inner border border-marigold-500/20">
@@ -197,8 +189,8 @@ export default function AdminDashboard() {const toast = useToast();
 
  {/* Dashboard KPIs Grid */}
  {metrics && (
- <motion.div variants={containerVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
- <motion.div variants={itemVariants} className="glass-card wm-card p-6 rounded-xl flex flex-col justify-between group relative overflow-hidden bg-white/40 border border-white/40 shadow-sm">
+ <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
+ <motion.div className="glass-card wm-card p-6 rounded-xl flex flex-col justify-between group relative overflow-hidden bg-white/40 border border-white/40 shadow-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="absolute -right-4 -top-4 w-16 h-16 bg-marigold-500/10 rounded-full blur-2xl group-hover:bg-marigold-500/20 transition-all"></div>
  <div className="flex justify-between items-start mb-2 relative z-10">
  <span className="text-xs font-black text-ink-500 uppercase tracking-wider">{t("admin.kpi.total_students")}</span>
@@ -207,7 +199,7 @@ export default function AdminDashboard() {const toast = useToast();
  <span className="text-4xl font-black text-ink-800 drop-shadow-sm relative z-10">{metrics.totalStudents}</span>
  </motion.div>
  
- <motion.div variants={itemVariants} className="glass-card wm-card p-6 rounded-xl flex flex-col justify-between group relative overflow-hidden bg-white/40 border border-white/40 shadow-sm">
+ <motion.div className="glass-card wm-card p-6 rounded-xl flex flex-col justify-between group relative overflow-hidden bg-white/40 border border-white/40 shadow-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="absolute -right-4 -top-4 w-16 h-16 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all"></div>
  <div className="flex justify-between items-start mb-2 relative z-10">
  <span className="text-xs font-black text-ink-500 uppercase tracking-wider">{t("admin.kpi.verified_recruiters")}</span>
@@ -216,7 +208,7 @@ export default function AdminDashboard() {const toast = useToast();
  <span className="text-4xl font-black text-ink-800 drop-shadow-sm relative z-10">{metrics.totalCompanies}</span>
  </motion.div>
  
- <motion.div variants={itemVariants} className="glass-card wm-card p-6 rounded-xl flex flex-col justify-between group relative overflow-hidden bg-white/40 border border-white/40 shadow-sm">
+ <motion.div className="glass-card wm-card p-6 rounded-xl flex flex-col justify-between group relative overflow-hidden bg-white/40 border border-white/40 shadow-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="absolute -right-4 -top-4 w-16 h-16 bg-pink-500/10 rounded-full blur-2xl group-hover:bg-pink-500/20 transition-all"></div>
  <div className="flex justify-between items-start mb-2 relative z-10">
  <span className="text-xs font-black text-ink-500 uppercase tracking-wider">{t("admin.kpi.total_gigs")}</span>
@@ -225,7 +217,7 @@ export default function AdminDashboard() {const toast = useToast();
  <span className="text-4xl font-black text-ink-800 drop-shadow-sm relative z-10">{metrics.totalProjects}</span>
  </motion.div>
  
- <motion.div variants={itemVariants} className="glass-card wm-card p-6 rounded-xl flex flex-col justify-between border-l-4 border-l-marigold-500 group relative overflow-hidden bg-white/40 shadow-sm">
+ <motion.div className="glass-card wm-card p-6 rounded-xl flex flex-col justify-between border-l-4 border-l-marigold-500 group relative overflow-hidden bg-white/40 shadow-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="absolute -right-4 -top-4 w-16 h-16 bg-marigold-500/10 rounded-full blur-2xl group-hover:bg-marigold-500/20 transition-all"></div>
  <div className="flex justify-between items-start mb-2 relative z-10">
  <span className="text-xs font-black text-marigold-500 uppercase tracking-wider">{t("admin.kpi.locked_escrow")}</span>
@@ -234,7 +226,7 @@ export default function AdminDashboard() {const toast = useToast();
  <span className="text-3xl font-black text-ink-800 drop-shadow-sm relative z-10">₹{metrics.lockedEscrow.toLocaleString()}</span>
  </motion.div>
  
- <motion.div variants={itemVariants} className="glass-card wm-card p-6 rounded-xl flex flex-col justify-between border-l-4 border-l-emerald-500 group relative overflow-hidden bg-white/40 shadow-sm">
+ <motion.div className="glass-card wm-card p-6 rounded-xl flex flex-col justify-between border-l-4 border-l-emerald-500 group relative overflow-hidden bg-white/40 shadow-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="absolute -right-4 -top-4 w-16 h-16 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
  <div className="flex justify-between items-start mb-2 relative z-10">
  <span className="text-xs font-black text-emerald-600 uppercase tracking-wider">{t("admin.kpi.completed_payouts")}</span>
@@ -243,7 +235,7 @@ export default function AdminDashboard() {const toast = useToast();
  <span className="text-3xl font-black text-ink-800 drop-shadow-sm relative z-10">₹{metrics.completedEscrow.toLocaleString()}</span>
  </motion.div>
  
- <motion.div variants={itemVariants} className="glass-card wm-card p-6 rounded-xl flex flex-col justify-between border-l-4 border-l-rose-500 group relative overflow-hidden bg-white/40 shadow-sm">
+ <motion.div className="glass-card wm-card p-6 rounded-xl flex flex-col justify-between border-l-4 border-l-rose-500 group relative overflow-hidden bg-white/40 shadow-sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="absolute -right-4 -top-4 w-16 h-16 bg-rose-500/10 rounded-full blur-2xl group-hover:bg-rose-500/20 transition-all"></div>
  <div className="flex justify-between items-start mb-2 relative z-10">
  <span className="text-xs font-black text-rose-600 uppercase tracking-wider">{t("admin.kpi.disputed_balance")}</span>
@@ -255,7 +247,7 @@ export default function AdminDashboard() {const toast = useToast();
  )}
 
  {/* Disputes Manager Section */}
- <motion.div variants={itemVariants} className="wm-panel wm-card p-8 relative overflow-hidden">
+ <motion.div className="wm-panel wm-card p-8 relative overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="absolute -left-20 -top-20 w-64 h-64 bg-rose-500/5 rounded-full blur-3xl pointer-events-none"></div>
  
  <div className="border-b border-ink-200/50 pb-5 mb-6 relative z-10 flex items-center gap-4">
@@ -327,7 +319,7 @@ export default function AdminDashboard() {const toast = useToast();
  </motion.div>
 
  {/* Recruiters Verifications Section */}
- <motion.div variants={itemVariants} className="wm-panel wm-card p-8 relative overflow-hidden">
+ <motion.div className="wm-panel wm-card p-8 relative overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-marigold-500/5 rounded-full blur-3xl pointer-events-none"></div>
  
  <div className="border-b border-ink-200/50 pb-5 mb-6 relative z-10 flex items-center gap-4">
@@ -403,7 +395,7 @@ export default function AdminDashboard() {const toast = useToast();
  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
  
  {/* Configuration Form settings */}
- <motion.div variants={itemVariants} className="wm-panel wm-card p-8 relative overflow-hidden">
+ <motion.div className="wm-panel wm-card p-8 relative overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
  
  <div className="border-b border-ink-200/50 pb-4 mb-6 relative z-10 flex items-center gap-4">
@@ -460,7 +452,7 @@ export default function AdminDashboard() {const toast = useToast();
  </motion.div>
 
  {/* Database Backup & System Logs */}
- <motion.div variants={itemVariants} className="wm-panel wm-card p-8 relative overflow-hidden flex flex-col">
+ <motion.div className="wm-panel wm-card p-8 relative overflow-hidden flex flex-col" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="absolute top-0 left-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
  
  <div className="border-b border-ink-200/50 pb-4 mb-6 relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

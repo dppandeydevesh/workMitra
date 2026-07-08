@@ -196,11 +196,7 @@ export default function ChatPage() {const { recipientEmail} = useParams();
  if (!loggedInUser) return null;
 
  return (
- <motion.div
- initial={{ opacity: 0, y: 20}}
- animate={{ opacity: 1, y: 0}}
- transition={{ duration: 0.5}}
- className="min-h-screen w-full flex flex-col p-4 sm:p-6 lg:p-8 z-0 relative font-sans">
+ <motion.div className="min-h-screen w-full flex flex-col p-4 sm:p-6 lg:p-8 z-0 relative font-sans" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  {/* 🧭 TOP HEADER BAR */}
  <div className="max-w-6xl w-full mx-auto wm-panel mb-6 px-5 py-4 flex justify-between items-center z-10">
  <div 
@@ -341,12 +337,7 @@ export default function ChatPage() {const { recipientEmail} = useParams();
  const showAvatar = !isOutgoing && (!prevMsg || prevMsg.sender !== msg.sender);
  
  return (
- <motion.div
- initial={{ opacity: 0, x: 10}}
- animate={{ opacity: 1, x: 0}}
- key={msg._id || Math.random()}
- className={`flex ${isOutgoing ?"justify-end" :"justify-start"} items-end gap-2 animate-fade-in`}
- >
+ <motion.div key={msg._id || Math.random()} className={`flex ${isOutgoing ?"justify-end" :"justify-start"} items-end gap-2 animate-fade-in`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  {!isOutgoing && (
  <div className={`w-6 h-6 rounded-full bg-gradient-to-br from-marigold-500 to-purple-600 text-white font-bold flex items-center justify-center text-[10px] shadow-sm shrink-0 ${showAvatar ?"opacity-100" :"opacity-0"}`}>
  {showAvatar ? (activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || <User size={12} />) :""}
@@ -374,7 +365,7 @@ export default function ChatPage() {const { recipientEmail} = useParams();
  )}
  
  {isPartnerTyping && (
- <motion.div initial={{ opacity: 0, x: 10}} animate={{ opacity: 1, x: 0}} className="flex justify-start items-end gap-2 animate-fade-in">
+ <motion.div className="flex justify-start items-end gap-2 animate-fade-in" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-marigold-500 to-purple-600 text-white font-bold flex items-center justify-center text-[10px] shadow-sm shrink-0">
  {activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || <User size={12} />}
  </div>

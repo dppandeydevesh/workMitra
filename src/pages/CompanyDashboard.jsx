@@ -105,23 +105,15 @@ export default function CompanyDashboard() {const navigate = useNavigate();
  );
 }
 
- const containerVariants = {hidden: { opacity: 0},
- show: {opacity: 1,
- transition: { staggerChildren: 0.1}
-}
-};
+ const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.15 } } };
 
- const itemVariants = {hidden: { opacity: 0, y: 20},
- show: { opacity: 1, y: 0, transition: { duration: 0.5}}
-};
+ const itemVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.15 } } };
 
  return (
  <div className="min-h-screen bg-transparent font-sans">
- <motion.div 
- className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8"variants={containerVariants}
- initial="hidden"animate="show">
+ <motion.div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  {/* Welcome Header */}
- <motion.div variants={itemVariants} className="bg-gradient-to-r from-marigold-600 via-purple-600 to-marigold-600 rounded-xl shadow-sm p-6 sm:p-8 mb-8 text-white relative overflow-hidden">
+ <motion.div className="bg-gradient-to-r from-marigold-600 via-purple-600 to-marigold-600 rounded-xl shadow-sm p-6 sm:p-8 mb-8 text-white relative overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="absolute -top-10 -right-10 w-40 h-40 bg-white rounded-full blur-2xl" />
  <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white rounded-full blur-xl" />
  <div className="relative z-10">
@@ -147,7 +139,7 @@ export default function CompanyDashboard() {const navigate = useNavigate();
  </motion.div>
 
  {/* KPI Stats Row */}
- <motion.div variants={itemVariants} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-8">
+ <motion.div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  {[
  { label: t("companyDashboard.kpiTotalProjects"), value: stats?.totalProjects || 0, icon: <Folder className="w-4 h-4" />, color:"from-marigold-500 to-marigold-600"},
  { label: t("companyDashboard.kpiActiveApplications"), value: stats?.totalApplications || 0, icon: <Inbox className="w-4 h-4" />, color:"from-purple-500 to-purple-600"},
@@ -173,7 +165,7 @@ export default function CompanyDashboard() {const navigate = useNavigate();
  {/* Left Column: Quick Actions + Top Performers */}
  <div className="lg:col-span-1 space-y-6">
  {/* Quick Actions */}
- <motion.div variants={itemVariants} className="wm-panel p-5 rounded-xl">
+ <motion.div className="wm-panel p-5 rounded-xl" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <h3 className="text-[10px] font-black text-ink-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
  <Activity className="w-4 h-4" /> {t("companyDashboard.quickActions")}
  </h3>
@@ -199,7 +191,7 @@ export default function CompanyDashboard() {const navigate = useNavigate();
  </motion.div>
 
  {/* Top Performers */}
- <motion.div variants={itemVariants} className="wm-panel p-5 rounded-xl">
+ <motion.div className="wm-panel p-5 rounded-xl" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <h3 className="text-[10px] font-black text-ink-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
  <Trophy className="w-4 h-4" /> {t("companyDashboard.topPerformers")}
  </h3>
@@ -233,7 +225,7 @@ export default function CompanyDashboard() {const navigate = useNavigate();
 
  {/* Right Column: Recent Activity Feed */}
  <div className="lg:col-span-2 space-y-6">
- <motion.div variants={itemVariants} className="wm-panel p-5 sm:p-6 rounded-xl">
+ <motion.div className="wm-panel p-5 sm:p-6 rounded-xl" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="flex justify-between items-center mb-5">
  <h3 className="text-[10px] font-black text-ink-400 uppercase tracking-wider flex items-center gap-1.5">
  <Clock className="w-4 h-4" /> {t("companyDashboard.recentActivity")}
@@ -298,7 +290,7 @@ export default function CompanyDashboard() {const navigate = useNavigate();
 
  {/* Pipeline Status Breakdown */}
  {stats && (
- <motion.div variants={itemVariants} className="wm-panel p-5 sm:p-6 rounded-xl">
+ <motion.div className="wm-panel p-5 sm:p-6 rounded-xl" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <h3 className="text-[10px] font-black text-ink-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
  <PieChart className="w-4 h-4" /> {t("companyDashboard.applicationPipeline")}
  </h3>

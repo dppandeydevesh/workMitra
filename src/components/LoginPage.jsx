@@ -261,7 +261,7 @@ export default function LoginPage() {const navigate = useNavigate();
  {errorMessage && <div className="mb-4 px-4 py-2 bg-red-100 text-red-700 text-xs font-bold rounded-xl border border-red-200 z-50 shadow-md">⚠️ {errorMessage}</div>}
  
  {isOtpVerifying ? (
- <motion.div initial={{ opacity: 0, y: 20}} animate={{ opacity: 1, y: 0}} transition={{ duration: 0.5}} className="wm-panel wm-card w-full max-w-md bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 border border-ink-200 text-center space-y-6 animate-fade-in z-20">
+ <motion.div className="wm-panel wm-card w-full max-w-md bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 border border-ink-200 text-center space-y-6 animate-fade-in z-20" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="flex justify-center">
  <img src="/logo.png" alt="workMitra Logo" className="h-14 object-contain bg-white px-3 py-1.5 rounded-xl shadow-sm" />
  </div>
@@ -312,7 +312,7 @@ export default function LoginPage() {const navigate = useNavigate();
  </motion.div>
  ) : (
  /* Desktop/Mobile Adaptive Form Container */
- <motion.div initial={{ opacity: 0, y: 20}} animate={{ opacity: 1, y: 0}} transition={{ duration: 0.5}} className={`wm-panel wm-card auth-container ${isSignUp ?"active" :""} w-full max-w-md md:max-w-[768px] min-h-[580px] bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] overflow-hidden relative flex flex-col md:flex-row border border-ink-200`}>
+ <motion.div className={`wm-panel wm-card auth-container ${isSignUp ?"active" :""} w-full max-w-md md:max-w-[768px] min-h-[580px] bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] overflow-hidden relative flex flex-col md:flex-row border border-ink-200`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  
  {/* MOBILE ONLY NAVIGATION TABS */}
  <div className="flex md:hidden border-b border-purple-100 w-full">
@@ -495,7 +495,7 @@ export default function LoginPage() {const navigate = useNavigate();
  {/* ========================================================================= */}
  {view ==="forgot" && (
  <div className="w-full min-h-screen flex flex-col items-center justify-center p-6 z-10 animate-fade-in">
- <motion.div initial={{ opacity: 0, y: 20}} animate={{ opacity: 1, y: 0}} transition={{ duration: 0.5}} className="wm-panel wm-card bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 max-w-md w-full border border-ink-200 text-center space-y-6">
+ <motion.div className="wm-panel wm-card bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 max-w-md w-full border border-ink-200 text-center space-y-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="flex justify-center">
  <img src="/logo.png" alt="workMitra Logo" className="h-14 object-contain bg-white px-3 py-1.5 rounded-xl shadow-sm" />
  </div>

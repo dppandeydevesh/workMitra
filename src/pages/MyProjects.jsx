@@ -241,18 +241,20 @@ export default function MyProjects() {const navigate = useNavigate();
  {loadingProjects ? (
  <div className="text-center py-6 text-xs text-ink-500 font-medium animate-pulse">{t("myProjects.syncingNodes")}</div>
  ) : projects.length === 0 ? (
- <div className="bg-white p-6 border border-ink-200 rounded-xl text-center flex flex-col items-center justify-center gap-3">
- <div className="w-10 h-10 rounded-lg bg-marigold-50 flex items-center justify-center text-marigold-500 border border-marigold-100">
- <Briefcase className="w-5 h-5" />
- </div>
- <div>
- <h4 className="text-xs font-semibold text-ink-900">{t("No projects deployed yet")}</h4>
- <p className="text-[11px] text-ink-500 mt-1 max-w-xs leading-relaxed">{t("Deploy your first corporate gig to hire verified college students.")}</p>
- </div>
- <button onClick={() => navigate('/add-project')} className="wm-btn wm-btn-primary py-1.5 px-3 text-[11px] font-semibold rounded-lg shadow-sm mt-1 active:scale-95">
- {t("Deploy a project")}
- </button>
- </div>
+    <div className="wm-panel p-[48px_24px] text-center max-w-md mx-auto my-6 flex flex-col items-center justify-center">
+      <div className="w-[48px] h-[48px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm">
+        <Briefcase size={24} />
+      </div>
+      <div className="mt-4">
+        <h3 className="text-[16px] font-medium text-[#1B2333] mb-[6px]">{t("No projects deployed yet")}</h3>
+        <p className="text-[13px] text-[#6B7280] leading-[1.65] max-w-[260px] mx-auto">
+          {t("Deploy your first corporate gig to hire verified college students.")}
+        </p>
+      </div>
+      <button onClick={() => navigate('/add-project')} className="wm-btn wm-btn-primary mt-[20px] active:scale-95">
+        {t("Deploy a project")}
+      </button>
+    </div>
  ) : (
  projects.map((proj) => (
  <div 
@@ -314,15 +316,17 @@ export default function MyProjects() {const navigate = useNavigate();
  {loadingApplicants ? (
  <div className="text-center py-12 text-xs text-ink-500 font-medium animate-pulse">{t("myProjects.parsingApplicants")}</div>
  ) : applicants.length === 0 ? (
- <div className="bg-white border border-ink-200 rounded-xl p-8 text-center flex flex-col items-center justify-center gap-3">
- <div className="w-10 h-10 rounded-lg bg-marigold-50 flex items-center justify-center text-marigold-500 border border-marigold-100">
- <Users className="w-5 h-5" />
- </div>
- <div>
- <h4 className="text-xs font-semibold text-ink-900">{t("No applicants yet")}</h4>
- <p className="text-[11px] text-ink-500 mt-1 max-w-xs leading-relaxed">{t("No students have applied to this project yet. Share it with your network to attract candidates.")}</p>
- </div>
- </div>
+    <div className="wm-panel p-[48px_24px] text-center max-w-md mx-auto my-6 flex flex-col items-center justify-center">
+      <div className="w-[48px] h-[48px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm">
+        <Users size={24} />
+      </div>
+      <div className="mt-4">
+        <h3 className="text-[16px] font-medium text-[#1B2333] mb-[6px]">{t("No applicants yet")}</h3>
+        <p className="text-[13px] text-[#6B7280] leading-[1.65] max-w-[260px] mx-auto">
+          {t("No students have applied to this project yet. Share it with your network to attract candidates.")}
+        </p>
+      </div>
+    </div>
  ) : (
  <div className="overflow-x-auto">
  <table className="w-full text-left text-xs text-ink-600">

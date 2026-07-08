@@ -6,7 +6,6 @@
    workMitra Design System — Paper + Marigold Editorial
    ========================================================================= */
 
-/* ── Design tokens ──────────────────────────────────────────────────────── */
 :root {
   --wm-paper:          #F6F7F4;
   --wm-white:          #FFFFFF;
@@ -25,12 +24,9 @@
   --wm-danger-bg:      #FCEBEB;
   --wm-danger:         #E24B4A;
   --wm-danger-dark:    #501313;
-  --wm-neutral-bg:     #F1EFE8;
   --wm-radius:         12px;
-  --wm-radius-sm:      8px;
 }
 
-/* ── Base reset ─────────────────────────────────────────────────────────── */
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   margin: 0;
@@ -43,42 +39,51 @@ body {
   background-color: var(--wm-paper);
 }
 
-/* ── Panel — the universal container ────────────────────────────────────── */
+/* ── Phase 0 Utility Classes ── */
+
 .wm-panel {
-  background: var(--wm-white);
-  border: 0.5px solid var(--wm-border);
-  border-radius: var(--wm-radius);
+  background: #FFFFFF;
+  border: 0.5px solid #E1E2DC;
+  border-radius: 12px;
+  padding: 18px 20px;
 }
 
-/* ── Card — interactive panel with subtle hover shadow (Upgrade 3) ───────── */
 .wm-card {
-  background: var(--wm-white);
-  border: 0.5px solid var(--wm-border);
-  border-radius: var(--wm-radius);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  background: #FFFFFF;
+  border: 0.5px solid #E1E2DC;
+  border-radius: 12px;
+  padding: 18px 20px;
+  transition: box-shadow 150ms ease-out, border-color 150ms ease-out, transform 150ms ease-out;
 }
+
 .wm-card:hover {
-  transform: translateY(-1px);
-  border-color: var(--wm-border-strong);
+  border-color: #C8C9C2;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-/* ── Featured card — 3px marigold top stroke (Upgrade 2) ─────────────────── */
-.wm-card-featured {
-  background: var(--wm-white);
-  border: 0.5px solid var(--wm-border);
-  border-top: 3px solid var(--wm-marigold);
-  border-radius: var(--wm-radius);
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-.wm-card-featured:hover {
   transform: translateY(-1px);
-  border-color: var(--wm-border-strong);
-  box-shadow: 0 4px 16px rgba(245, 166, 35, 0.12);
 }
 
-/* ── Badge variants ─────────────────────────────────────────────────────── */
+.wm-card-featured {
+  background: #FFFFFF;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 0.5px solid #E1E2DC;
+  transition: box-shadow 150ms ease-out, border-color 150ms ease-out, transform 150ms ease-out;
+}
+
+.wm-card-featured::before {
+  content: '';
+  display: block;
+  height: 3px;
+  background: #F5A623;
+}
+
+.wm-card-featured:hover {
+  border-color: #C8C9C2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+/* ── Notification / Badges ── */
 .wm-badge {
   font-size: 11px;
   font-weight: 500;
@@ -88,12 +93,12 @@ body {
   align-items: center;
   gap: 4px;
 }
-.wm-badge-neutral  { background: var(--wm-neutral-bg);     color: var(--wm-ink-mid); }
-.wm-badge-marigold { background: var(--wm-marigold-light); color: var(--wm-marigold-dark); }
-.wm-badge-teal     { background: var(--wm-teal-light);     color: var(--wm-teal-dark); }
-.wm-badge-danger   { background: var(--wm-danger-bg);      color: var(--wm-danger-dark); }
+.wm-badge-neutral  { background: #F1EFE8; color: var(--wm-ink-mid); }
+.wm-badge-marigold { background: #FBE7C4; color: var(--wm-marigold-dark); }
+.wm-badge-teal     { background: #E1F5EE; color: var(--wm-teal-dark); }
+.wm-badge-danger   { background: #FCEBEB; color: var(--wm-danger-dark); }
 
-/* ── Buttons ────────────────────────────────────────────────────────────── */
+/* ── Buttons ── */
 button {
   transition: all 0.15s ease;
 }
@@ -103,68 +108,19 @@ button:active {
 
 .wm-btn {
   padding: 9px 18px;
-  border-radius: var(--wm-radius-sm);
+  border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   font-family: inherit;
   border: none;
 }
-.wm-btn-primary   { background: var(--wm-marigold); color: var(--wm-ink-dark); }
-.wm-btn-teal      { background: var(--wm-teal);     color: #fff; }
-.wm-btn-secondary { background: transparent; color: var(--wm-ink-dark); border: 0.5px solid var(--wm-border-strong); }
+.wm-btn-primary   { background: #F5A623; color: #1B2333; }
+.wm-btn-teal      { background: #1D9E75; color: #FFFFFF; }
+.wm-btn-secondary { background: transparent; color: #1B2333; border: 0.5px solid #C8C9C2; }
 .wm-btn-ghost     { background: transparent; color: var(--wm-ink-light); }
 
-/* ── Inputs ─────────────────────────────────────────────────────────────── */
-.wm-input {
-  width: 100%;
-  padding: 9px 12px;
-  border: 0.5px solid var(--wm-border-strong);
-  border-radius: var(--wm-radius-sm);
-  font-size: 13px;
-  color: var(--wm-ink-dark);
-  background: var(--wm-white);
-  font-family: inherit;
-  outline: none;
-  box-sizing: border-box;
-  transition: border-color 0.15s ease;
-}
-.wm-input:focus {
-  border-color: var(--wm-marigold);
-}
-
-/* ── Section label — small uppercase heading ────────────────────────────── */
-.wm-label {
-  margin: 0 0 14px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--wm-ink-light);
-}
-
-/* ── Stat card ──────────────────────────────────────────────────────────── */
-.wm-stat {
-  background: var(--wm-white);
-  border: 0.5px solid var(--wm-border);
-  border-radius: var(--wm-radius);
-  padding: 16px 18px;
-}
-.wm-stat-label { margin: 0 0 4px; font-size: 12px; color: var(--wm-ink-light); }
-.wm-stat-value { margin: 0 0 3px; font-size: 24px; font-weight: 500; color: var(--wm-ink-dark); }
-.wm-stat-sub   { margin: 0; font-size: 12px; color: var(--wm-teal); }
-
-/* ── Notification row ───────────────────────────────────────────────────── */
-.wm-notif-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 13px 20px;
-  border-bottom: 0.5px solid var(--wm-border);
-}
-.wm-notif-row:last-child { border-bottom: none; }
-
-/* ── Skeleton loader (kept from previous system) ────────────────────────── */
+/* ── Skeleton loader ── */
 @keyframes shimmer {
   0%   { background-position: -1000px 0; }
   100% { background-position: 1000px 0; }
@@ -173,10 +129,28 @@ button:active {
   animation: shimmer 2s infinite linear;
   background: linear-gradient(to right, #F1EFE8 4%, #E1E2DC 25%, #F1EFE8 36%);
   background-size: 1000px 100%;
-  border-radius: var(--wm-radius-sm);
+  border-radius: 8px;
 }
 
-/* ── Auth panel sliding transitions (preserved) ─────────────────────────── */
+/* ── Toast slide-in ── */
+@keyframes slideInRight {
+  from { transform: translateX(120%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+.animate-slide-in-right {
+  animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Fade-in ── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fadeIn 0.15s ease-out forwards;
+}
+
+/* ── Auth panel transition (Mobile-responsive) ── */
 @media (min-width: 768px) {
   .sign-in-panel  { transform: translateX(0); opacity: 1; transition: all 0.7s ease-in-out; }
   .sign-up-panel  { transform: translateX(0); opacity: 0; pointer-events: none; transition: all 0.7s ease-in-out; z-index: 1; }
@@ -196,22 +170,4 @@ button:active {
     0%, 49.99% { opacity: 0; z-index: 1; }
     50%, 100%  { opacity: 1; z-index: 5; }
   }
-}
-
-/* ── Toast slide-in (functional animation, preserved) ───────────────────── */
-@keyframes slideInRight {
-  from { transform: translateX(120%); opacity: 0; }
-  to   { transform: translateX(0); opacity: 1; }
-}
-.animate-slide-in-right {
-  animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* ── Fade-in (subtle page entrance) ─────────────────────────────────────── */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-.animate-fade-in {
-  animation: fadeIn 0.15s ease-out forwards;
 }

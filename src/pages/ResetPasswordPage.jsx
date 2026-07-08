@@ -65,11 +65,7 @@ export default function ResetPasswordPage() {const { token} = useParams();
 
  return (
  <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 font-sans flex items-center justify-center p-4">
- <motion.div 
- initial={{ opacity: 0, y: 20}} 
- animate={{ opacity: 1, y: 0}} 
- transition={{ duration: 0.5}}
- className="wm-panel wm-card bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 max-w-md w-full border border-ink-200 text-center space-y-6">
+ <motion.div className="wm-panel wm-card bg-white rounded-[40px] shadow-[0_30px_60px_rgba(100,50,150,0.15)] p-8 max-w-md w-full border border-ink-200 text-center space-y-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="flex justify-center">
  <img src="/logo.png" alt="workMitra Logo" className="h-20 object-contain filter drop-shadow-md mix-blend-multiply" />
  </div>

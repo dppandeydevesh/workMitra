@@ -284,11 +284,7 @@ export default function ApplicantsHub() {const navigate = useNavigate();
 });
 
  return (
- <motion.div 
- className="min-h-screen bg-transparent font-sans"initial={{ opacity: 0, y: 20}}
- animate={{ opacity: 1, y: 0}}
- transition={{ duration: 0.5}}
- >
+ <motion.div className="min-h-screen bg-transparent font-sans" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  {/* Main Container */}
  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
  <div className="wm-panel rounded-xl shadow-sm p-4 sm:p-6 lg:p-8">

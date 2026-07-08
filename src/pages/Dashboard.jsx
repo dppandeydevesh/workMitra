@@ -17,16 +17,9 @@ export default function Dashboard() {const navigate = useNavigate();
  const toast = useToast();
  const { t} = useTranslation();
 
- const containerVariants = {hidden: { opacity: 0, y: 20},
- visible: {opacity: 1, 
- y: 0,
- transition: { duration: 0.5, staggerChildren: 0.1}
-}
-};
+ const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.15 } } };
 
- const itemVariants = {hidden: { opacity: 0, y: 15},
- visible: { opacity: 1, y: 0}
-};
+ const itemVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.15 } } };
 
 
 
@@ -462,9 +455,7 @@ export default function Dashboard() {const navigate = useNavigate();
 });
 
  return (
- <motion.div 
- variants={containerVariants}
- initial="hidden"animate="visible"className="min-h-screen bg-transparent">
+ <motion.div className="min-h-screen bg-transparent" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  {/* Dashboard Content */}
  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
  <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 lg:p-8 wm-panel">
@@ -558,15 +549,11 @@ export default function Dashboard() {const navigate = useNavigate();
  <span>{t("dashboard.noGigsYet")}</span>
  </div>
  ) : (
- <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-1 md:grid-cols-2 gap-6">
+ <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  {myApplications.map((app) => {const project = app.projectId;
  if (!project) return null;
  return (
- <motion.div 
- variants={itemVariants}
- key={app._id} 
- onClick={() => navigate(`/project/${project._id}`)}
- className="bg-white rounded-xl border border-ink-200 p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition cursor-pointer wm-panel wm-card">
+ <motion.div key={app._id} onClick={() => navigate(`/project/${project._id}`)} className="bg-white rounded-xl border border-ink-200 p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition cursor-pointer wm-panel wm-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div>
  <div className="flex justify-between items-center mb-3">
  <span className="bg-marigold-50 text-marigold-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase flex items-center gap-1.5">
@@ -854,11 +841,7 @@ export default function Dashboard() {const navigate = useNavigate();
  ) : aiTopPicks.length > 0 ? (
  <div className="flex space-x-4 overflow-x-auto pb-4 hide-scrollbar py-2">
  {aiTopPicks.map(project => (
- <motion.div 
- variants={itemVariants}
- initial="hidden"animate="visible"key={project._id}
- onClick={() => navigate(`/project/${project._id}`)}
- className="min-w-[280px] sm:min-w-[320px] bg-white rounded-xl border border-purple-100 p-5 shadow-[0_0_15px_rgba(168,85,247,0.15)] hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] transition cursor-pointer flex flex-col justify-between wm-panel wm-card">
+ <motion.div key={project._id} onClick={() => navigate(`/project/${project._id}`)} className="min-w-[280px] sm:min-w-[320px] bg-white rounded-xl border border-purple-100 p-5 shadow-[0_0_15px_rgba(168,85,247,0.15)] hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] transition cursor-pointer flex flex-col justify-between wm-panel wm-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div>
  <div className="flex justify-between items-start mb-2">
  <h4 className="font-bold text-ink-900 text-sm truncate pr-2">{project.title}</h4>
@@ -1001,15 +984,11 @@ export default function Dashboard() {const navigate = useNavigate();
       </button>
     </div>
  ) : (
- <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+ <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  {filteredProjects.map((project) => {// Standardize check against string tracking records
  const isAlreadyApplied = appliedProjectIds.includes(project._id.toString());
  return (
- <motion.div 
- variants={itemVariants}
- key={project._id}
- onClick={() => navigate(`/project/${project._id}`)}
- className="bg-white rounded-xl border border-ink-200 p-4 sm:p-6 shadow-sm flex flex-col justify-between hover:border-marigold-400 hover:shadow-md transition-all duration-300 cursor-pointer wm-panel wm-card">
+ <motion.div key={project._id} onClick={() => navigate(`/project/${project._id}`)} className="bg-white rounded-xl border border-ink-200 p-4 sm:p-6 shadow-sm flex flex-col justify-between hover:border-marigold-400 hover:shadow-md transition-all duration-300 cursor-pointer wm-panel wm-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div>
  <div className="flex justify-between items-center mb-3">
  <span className="bg-marigold-50 text-marigold-700 text-xs font-bold px-2.5 py-1 rounded-md flex items-center gap-1.5">

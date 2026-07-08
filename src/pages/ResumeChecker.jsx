@@ -83,10 +83,7 @@ const ResumeChecker = () => {const { t} = useTranslation();
  width: 100%;
  max-width: 700px;
 }
- html.dark .wm-panel {background: rgba(255, 255, 255, 0.03);
- border: 1px solid rgba(255, 255, 255, 0.08);
- box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-}
+ 
 
  .title {font-size: 2.2rem;
  font-weight: 800;
@@ -102,8 +99,7 @@ const ResumeChecker = () => {const { t} = useTranslation();
  margin-bottom: 2.5rem;
  font-size: 1.1rem;
 }
- html.dark .subtitle {color: #94a3b8;
-}
+ 
 
  .form-group {margin-bottom: 1.5rem;
 }
@@ -114,8 +110,7 @@ const ResumeChecker = () => {const { t} = useTranslation();
  color: #334155;
  font-size: 0.95rem;
 }
- html.dark .label {color: #e2e8f0;
-}
+ 
 
  .input-field {width: 100%;
  background: rgba(0, 0, 0, 0.03);
@@ -128,10 +123,7 @@ const ResumeChecker = () => {const { t} = useTranslation();
  transition: all 0.3s ease;
  box-sizing: border-box;
 }
- html.dark .input-field {background: rgba(255, 255, 255, 0.04);
- border: 1px solid rgba(255, 255, 255, 0.1);
- color: white;
-}
+ 
 
  .input-field:focus {border-color: #f59e0b;
  background: rgba(255, 255, 255, 0.08);
@@ -145,9 +137,7 @@ const ResumeChecker = () => {const { t} = useTranslation();
  transition: all 0.3s ease;
  background: rgba(0, 0, 0, 0.02);
 }
- html.dark .dropzone {border-color: rgba(255, 255, 255, 0.15);
- background: rgba(255, 255, 255, 0.02);
-}
+ 
 
  .dropzone:hover {border-color: #f59e0b;
 }
@@ -221,8 +211,7 @@ const ResumeChecker = () => {const { t} = useTranslation();
  align-items: center;
  position: relative;
 }
- html.dark .score-circle {background: conic-gradient(#10b981 var(--score), rgba(255,255,255,0.05) 0deg);
-}
+ 
  
  .score-inner {width: 156px;
  height: 156px;
@@ -234,8 +223,7 @@ const ResumeChecker = () => {const { t} = useTranslation();
  align-items: center;
  z-index: 10;
 }
- html.dark .score-inner {background: #171825;
-}
+ 
 
  .score-value {font-size: 3.5rem;
  font-weight: 800;
@@ -249,8 +237,7 @@ const ResumeChecker = () => {const { t} = useTranslation();
  text-transform: uppercase;
  letter-spacing: 1px;
 }
- html.dark .score-label {color: #94a3b8;
-}
+ 
 
  .feedback-section {background: rgba(0, 0, 0, 0.03);
  border: 1px solid rgba(0, 0, 0, 0.05);
@@ -258,9 +245,7 @@ const ResumeChecker = () => {const { t} = useTranslation();
  padding: 1.5rem;
  margin-bottom: 1.5rem;
 }
- html.dark .feedback-section {background: rgba(255, 255, 255, 0.02);
- border: 1px solid rgba(255, 255, 255, 0.05);
-}
+ 
  
  .feedback-title {font-size: 1.1rem;
  font-weight: 600;
@@ -270,8 +255,7 @@ const ResumeChecker = () => {const { t} = useTranslation();
  align-items: center;
  gap: 0.5rem;
 }
- html.dark .feedback-title {color: #e2e8f0;
-}
+ 
 
  .keywords-list {display: flex;
  flex-wrap: wrap;
@@ -292,15 +276,13 @@ const ResumeChecker = () => {const { t} = useTranslation();
  color: #475569;
  margin-bottom: 1rem;
 }
- html.dark .feedback-text {color: #94a3b8;
-}
+ 
  
  .feedback-list li {position: relative;
  color: #475569;
  line-height: 1.5;
 }
- html.dark .feedback-list li {color: #cbd5e1;
-}
+ 
  
  .back-btn {background: transparent;
  border: 1px solid #cbd5e1;

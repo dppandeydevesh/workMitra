@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../config";
@@ -32,11 +33,79 @@ export default function Dashboard() {
     requestingExtension, aiTopPicks, loadingAiPicks, totalPages, errorMessage,
     handleSubmitWork, handleUploadCVFile, handleUpdateResumeDetails,
     handleReviewCV, handleRequestExtension, saveDraft,
-    renderStepper, scrollToSection, initializeDashboardData,
+    scrollToSection, initializeDashboardData,
     searchTerm, setSearchTerm, showSearchSuggestions, setShowSearchSuggestions,
     skillFilter, setSkillFilter, workTypeFilter, setWorkTypeFilter,
     maxBudgetFilter, setMaxBudgetFilter, sortBy, setSortBy, page, setPage, limit, setLimit,
   } = useDashboard();
+
+  const renderStepper = useCallback(
+    (status) => {
+      const steps = [
+        { label: t('dashboard.appliedStatus'), statusVal: 'Pending' },
+        { label: t('dashboard.approvedStatus'), statusVal: 'Approved' },
+        { label: t('dashboard.submittedStatus'), statusVal: 'Submitted' },
+        { label: t('dashboard.completedStatus'), statusVal: 'Completed' },
+      ];
+
+      if (status === 'Rejected') {
+        return (
+          <span className="bg-red-100 text-red-800 text-[9px] font-bold px-2 py-0.5 rounded border border-red-200">
+            {t('dashboard.rejectedStatus')}
+          </span>
+        );
+      }
+
+      if (status === 'Disputed') {
+        return (
+          <span className="bg-rose-100 text-rose-800 text-[9px] font-black px-2.5 py-0.5 rounded-lg border border-rose-200 uppercase tracking-wider animate-pulse flex items-center gap-1">
+            <AlertTriangle className="w-3 h-3" /> {t('dashboard.flaggedDisputedStatus')}
+          </span>
+        );
+      }
+
+      let activeIdx = 0;
+      if (status === 'Approved') activeIdx = 1;
+      if (status === 'Submitted') activeIdx = 2;
+      if (status === 'Completed') activeIdx = 3;
+
+      return (
+        <div className="flex items-center space-x-1 text-[8px] sm:text-[9px]">
+          {steps.map((step, idx) => {
+            const isCompleted = idx <= activeIdx;
+            const isActive = idx === activeIdx;
+            return (
+              <div key={idx} className="flex items-center space-x-1">
+                <span
+                  className={`px-1.5 py-0.5 rounded font-extrabold transition-all uppercase ${
+                    isActive
+                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-sm'
+                      : isCompleted
+                      ? 'bg-purple-100 text-purple-700 font-semibold'
+                      : 'bg-ink-100 text-ink-400 font-normal'
+                  }`}
+                >
+                  {step.label}
+                </span>
+                {idx < steps.length - 1 && (
+                  <span
+                    className={
+                      isCompleted
+                        ? 'text-purple-400 font-bold flex items-center'
+                        : 'text-ink-300 flex items-center'
+                    }
+                  >
+                    <ChevronRight className="w-3 h-3" />
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      );
+    },
+    [t]
+  );
 
   const itemVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.15 } } };
 

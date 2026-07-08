@@ -600,15 +600,15 @@ export default function StudentProfile() {const { email} = useParams();
  {/* WorkMitra Readiness Score */}
  <div className="text-xs border-t pt-3 flex flex-col items-center text-center">
  <span className="text-[10px] uppercase font-bold text-ink-400 block mb-2">{t("studentProfile.readinessScore")}</span>
- <div className="relative w-24 h-24 flex items-center justify-center rounded-full border-4 border-marigold-100 bg-marigold-50/20">
+ <div style={{ border: '4px solid #F5E6C8', background: 'rgba(245,230,200,0.15)' }} className="relative w-24 h-24 flex items-center justify-center rounded-full">
  <div className="text-center">
- <span className="text-xl font-black text-marigold-700 block">
+ <span style={{ color: '#C17C2A' }} className="text-xl font-black block">
  {Math.min(
  1000,
  Math.round(
- 200 + 
- (completedTasks.length * 150) + 
- (avgRating ? parseFloat(avgRating) * 80 : 0) + 
+ 200 +
+ (completedTasks.length * 150) +
+ (avgRating ? parseFloat(avgRating) * 80 : 0) +
  (([
  profileUser.fullName, profileUser.mobile, profileUser.collegeName,
  profileUser.enrollmentNumber, profileUser.targetSkills, profileUser.bio,
@@ -617,7 +617,7 @@ export default function StudentProfile() {const { email} = useParams();
  )
  )}
  </span>
- <span className="text-[8px] font-bold text-marigold-400 uppercase tracking-widest">/ 1000</span>
+ <span style={{ color: '#F5A623' }} className="text-[8px] font-bold uppercase tracking-widest">/ 1000</span>
  </div>
  </div>
  <p className="text-[9px] text-ink-400 mt-2 font-medium">{t("studentProfile.readinessDescription")}</p>
@@ -627,7 +627,8 @@ export default function StudentProfile() {const { email} = useParams();
  <div className="pt-4 border-t print:hidden">
  <button
  onClick={() => window.print()}
- className="w-full py-2 bg-ink-900 hover:bg-ink-800 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5">
+ style={{ background: '#1B2333', color: '#FFFFFF' }}
+ className="w-full py-2 rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5 hover:opacity-90">
  📄 {t("studentProfile.downloadPdf")}
  </button>
  </div>

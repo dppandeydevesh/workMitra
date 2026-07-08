@@ -98,7 +98,7 @@ export default function CompanyPreferences() {const navigate = useNavigate();
 };
 
  return (
- <div className="min-h-screen w-full bg-transparent flex flex-col items-center py-12 px-4 select-none font-sans">
+ <div className="min-h-screen w-full bg-transparent flex flex-col items-center py-12 px-4 font-sans">
  <div className="w-full max-w-3xl bg-white rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-8 border border-ink-100 space-y-8">
  
  <div className="text-center">

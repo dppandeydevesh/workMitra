@@ -171,3 +171,20 @@ button:active {
     50%, 100%  { opacity: 1; z-index: 5; }
   }
 }
+
+/* ── Hardware-accelerated CSS Airplane Fly Animation ── */
+@keyframes airplaneFly {
+  0%   { left: -10%; }
+  100% { left: 110%; }
+}
+.airplane-fly {
+  animation: airplaneFly 24s linear infinite;
+  will-change: left;
+}
+
+/* ── Print Media Helpers (Purges modal dialog controls from paper layout) ── */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

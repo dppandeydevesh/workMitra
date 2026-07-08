@@ -43,12 +43,6 @@ export default function LoginPage() {const navigate = useNavigate();
  const [isOtpVerifying, setIsOtpVerifying] = useState(false);
  const [emailOtpInput, setEmailOtpInput] = useState("");
 
- const [airplanePos, setAirplanePos] = useState(-10);
- useEffect(() => {const interval = setInterval(() => {setAirplanePos((prev) => (prev >= 110 ? -10 : prev + 0.5));
-}, 30);
- return () => clearInterval(interval);
-}, []);
-
 
  // ==========================================
  // 🧠 Password Strength Checker Logic
@@ -184,44 +178,45 @@ export default function LoginPage() {const navigate = useNavigate();
 };
 
  return (
- <div className="min-h-screen w-full bg-paper flex items-center justify-center relative overflow-hidden select-none p-4">
- 
- {/* 🌌 Background Decorative Flow Elements */}
- <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
- {/* Soft background glow spheres */}
- <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-white/20 rounded-full blur-[80px]"></div>
- <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-300/20 rounded-full blur-[100px]"></div>
+  <div className="min-h-screen w-full bg-paper flex items-center justify-center relative overflow-hidden p-4">
+  
+  {/* 🌌 Background Decorative Flow Elements */}
+  <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+  {/* Soft background glow spheres */}
+  <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-white/20 rounded-full blur-[80px]"></div>
+  <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-300/20 rounded-full blur-[100px]"></div>
 
- {/* Floating Ambient Badges */}
- {view ==="landing" && (
- <>
- <div className="hidden md:block absolute top-12 left-12 bg-white/40 border border-purple-300/50 px-6 py-3 rounded-xl text-purple-900 text-sm font-bold animate-float-slow shadow-sm">
- 🖥️ {t("login.agentServer")}
- </div>
- <div className="hidden md:block absolute top-24 right-20 bg-white/50 border border-pink-300/50 px-6 py-4 rounded-xl text-pink-900 font-extrabold text-base animate-float-fast shadow-sm">
- 🧠 {t("login.aiEngine")}
- </div>
- <div className="hidden md:block absolute bottom-24 left-16 bg-white/40 border border-marigold-300/50 px-5 py-3 rounded-xl text-marigold-900 text-sm font-bold animate-float-slow shadow-sm">
- 📦 {t("login.mediaServer")}
- </div>
- </>
- )}
+  {/* Floating Ambient Badges */}
+  {view ==="landing" && (
+  <>
+  <div className="hidden md:block absolute top-12 left-12 bg-white/40 border border-purple-300/50 px-6 py-3 rounded-xl text-purple-900 text-sm font-bold animate-float-slow shadow-sm">
+  🖥️ {t("login.agentServer")}
+  </div>
+  <div className="hidden md:block absolute top-24 right-20 bg-white/50 border border-pink-300/50 px-6 py-4 rounded-xl text-pink-900 font-extrabold text-base animate-float-fast shadow-sm">
+  🧠 {t("login.aiEngine")}
+  </div>
+  <div className="hidden md:block absolute bottom-24 left-16 bg-white/40 border border-marigold-300/50 px-5 py-3 rounded-xl text-marigold-900 text-sm font-bold animate-float-slow shadow-sm">
+  📦 {t("login.mediaServer")}
+  </div>
+  </>
+  )}
 
- {/* ✈️ Aeroplane Motion Background Theme Elements */}
- <div 
- className="absolute z-10 transition-all duration-75"style={{left:`${airplanePos}%`, 
- top:'20%',
- transform:'translateY(-50%)'
-}}
- >
- <div className="text-4xl md:text-5xl opacity-35 animate-pulse">✈️</div>
- {/* Trail effect */}
- <div className="absolute -z-10 w-24 md:w-32 h-1 bg-gradient-to-r from-transparent to-purple-500/20 right-full top-1/2" />
- </div>
+  {/* ✈️ Aeroplane Motion Background Theme Elements */}
+  <div 
+  className="absolute z-10 airplane-fly"
+  style={{
+    top: '20%',
+    transform: 'translateY(-50%)'
+  }}
+  >
+  <div className="text-4xl md:text-5xl opacity-35 animate-pulse">✈️</div>
+  {/* Trail effect */}
+  <div className="absolute -z-10 w-24 md:w-32 h-1 bg-gradient-to-r from-transparent to-purple-500/20 right-full top-1/2" />
+  </div>
 
- {/* Moving line path */}
- <div className="absolute top-[20%] left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-purple-300/20 to-transparent" />
- </div>
+  {/* Moving line path */}
+  <div className="absolute top-[20%] left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-purple-300/20 to-transparent" />
+  </div>
 
  {/* ========================================================================= */}
  {/* 🔮 VIEW 1: Paths / Landing Screen */}

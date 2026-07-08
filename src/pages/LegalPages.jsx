@@ -5,7 +5,7 @@ import { useTranslation} from"react-i18next";
 function LegalLayout({ title, subtitle, children}) {const navigate = useNavigate();
  const { t} = useTranslation();
  return (
- <div className="min-h-screen bg-transparent font-sans py-12 px-4 select-none">
+ <div className="min-h-screen bg-transparent font-sans py-12 px-4">
  <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-sm p-6 sm:p-10 border border-ink-100">
  {/* Navigation header */}
  <div className="flex justify-between items-center border-b pb-6 mb-8 gap-4">

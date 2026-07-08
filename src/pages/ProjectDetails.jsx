@@ -350,7 +350,7 @@ export default function ProjectDetails() {const { projectId} = useParams();
  {/* 🔒 Digital NDA Verification Modal Overlay */}
  {showNdaModal && (
  <div className="fixed inset-0 bg-ink-900/60 z-50 flex items-center justify-center p-4">
- <div className="bg-white rounded-xl max-w-lg w-full shadow-sm p-6 border text-left flex flex-col animate-fade-in select-none">
+ <div className="bg-white rounded-xl max-w-lg w-full shadow-sm p-6 border text-left flex flex-col animate-fade-in">
  <div className="flex justify-between items-center border-b pb-3 mb-4">
  <h3 className="font-black text-ink-800 text-sm uppercase tracking-wider">🔒 {t("projectDetails.ndaModalTitle")}</h3>
  <button onClick={() => setShowNdaModal(false)} className="text-ink-400 hover:text-ink-600 text-lg">×</button>
@@ -402,7 +402,7 @@ export default function ProjectDetails() {const { projectId} = useParams();
  {/* 📝 Pre-Test MCQ Screening Overlay Modal */}
  {showQuizModal && project.preTestQuestions && project.preTestQuestions.length > 0 && (
  <div className="fixed inset-0 bg-ink-900/60 z-50 flex items-center justify-center p-4">
- <div className="bg-white rounded-xl max-w-lg w-full shadow-sm p-6 border text-left flex flex-col animate-fade-in select-none">
+ <div className="bg-white rounded-xl max-w-lg w-full shadow-sm p-6 border text-left flex flex-col animate-fade-in">
  <div className="flex justify-between items-center border-b pb-3 mb-4">
  <h3 className="font-black text-ink-800 text-sm uppercase tracking-wider">📝 {t("projectDetails.quizModalTitle")}</h3>
  <button onClick={() => setShowQuizModal(false)} className="text-ink-400 hover:text-ink-600 text-lg">×</button>

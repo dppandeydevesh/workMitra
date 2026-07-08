@@ -23,7 +23,7 @@ export default function LandingPage() {const navigate = useNavigate();
 };
 
  return (
-    <div className="min-h-screen bg-paper font-sans text-ink-900 flex flex-col select-none">
+    <div className="min-h-screen bg-paper font-sans text-ink-900 flex flex-col">
     
     {/* 🚀 Sticky Header */}
     <header className="bg-white sticky top-0 z-50 border-b border-ink-200">

@@ -185,7 +185,7 @@ export default function AdminDashboard() {const toast = useToast();
 }
 
  return (
- <motion.div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 select-none relative z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
+ <motion.div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 relative z-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  <div className="max-w-7xl mx-auto space-y-10">
  
  {/* Header Title Section - Glass Panel */}

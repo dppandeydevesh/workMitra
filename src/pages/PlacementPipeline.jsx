@@ -122,7 +122,7 @@ export default function PlacementPipeline() {const { t} = useTranslation();
  const placedRate = totalApplicants > 0 ? Math.round((placedCount / totalApplicants) * 100) : 0;
 
  return (
- <div className="min-h-screen bg-transparent pb-12 select-none transition-colors duration-250">
+ <div className="min-h-screen bg-transparent pb-12 transition-colors duration-250">
  {/* Upper Navigation Header */}
  <div className="bg-white border-b sticky top-0 z-35 px-6 py-4 flex justify-between items-center transition-colors duration-250">
  <div>

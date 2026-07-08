@@ -26,7 +26,7 @@ export default function AboutPage() {const navigate = useNavigate();
 };
 
  return (
- <div className="min-h-screen bg-transparent font-sans py-12 px-4 select-none">
+ <div className="min-h-screen bg-transparent font-sans py-12 px-4">
  <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-sm p-6 sm:p-10 border border-ink-100">
  
  {/* Header */}

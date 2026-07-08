@@ -119,7 +119,7 @@ export default function AddProject() {const navigate = useNavigate();
 };
 
  return (
- <div className="min-h-screen bg-transparent flex flex-col items-center py-12 px-4 font-sans select-none">
+ <div className="min-h-screen bg-transparent flex flex-col items-center py-12 px-4 font-sans">
  <div className="w-full max-w-2xl bg-white rounded-xl shadow-sm p-6 sm:p-8 border border-ink-100">
  
  {/* Header Section */}

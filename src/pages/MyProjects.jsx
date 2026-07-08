@@ -216,7 +216,7 @@ export default function MyProjects() {const navigate = useNavigate();
 };
 
  return (
- <div className="min-h-screen bg-transparent py-8 font-sans select-none">
+ <div className="min-h-screen bg-transparent py-8 font-sans">
  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
  
  {/* Navigation back home Header */}

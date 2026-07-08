@@ -154,11 +154,18 @@ export default function ProjectDetails() {const { projectId} = useParams();
  <span className="text-4xl mb-4 block">⚠️</span>
  <h2 className="text-lg font-bold text-ink-800 mb-2">{t("projectDetails.failedToLoadTitle")}</h2>
  <p className="text-sm text-ink-500 mb-6">{errorMessage || t("projectDetails.couldNotBeFound")}</p>
+ <div className="flex justify-center gap-3">
  <button
  onClick={() => navigate("/dashboard")}
- className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow">
+ className="px-5 py-2 bg-ink-100 hover:bg-ink-200 text-ink-700 rounded-xl text-xs font-bold transition shadow">
  {t("projectDetails.backToMarketplace")}
  </button>
+ <button
+ onClick={() => fetchProjectAndAppState(currentUser?.email || JSON.parse(localStorage.getItem("user") || "{}").email)}
+ className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-sm">
+ Retry
+ </button>
+ </div>
  </div>
  </div>
  );
@@ -273,7 +280,7 @@ export default function ProjectDetails() {const { projectId} = useParams();
  </div>
  </div>
 
- <div className="bg-gradient-to-br from-marigold-50/50 to-marigold-50/50 border border-marigold-100/50 p-5 rounded-xl">
+ <div className="bg-marigold-50/50 border border-marigold-100/50 p-5 rounded-xl">
  <h3 className="text-sm font-black text-marigold-900/50 uppercase tracking-wider mb-2.5">{t("projectDetails.aiSkillsMatchRating")}</h3>
  <div className="flex items-center gap-4">
  <div className="relative w-16 h-16 flex items-center justify-center bg-white rounded-full shadow-sm border border-marigold-100">

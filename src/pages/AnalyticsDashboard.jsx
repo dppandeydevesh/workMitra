@@ -117,10 +117,16 @@ export default function AnalyticsDashboard() {const { t} = useTranslation();
  </div>
 
  {errorMessage && (
- <div className="p-4 mb-6 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-xl shadow-sm">
- ⚠️ {errorMessage}
- </div>
- )}
+  <div className="p-4 mb-6 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-xl shadow-sm flex justify-between items-center">
+  <span>⚠️ {errorMessage}</span>
+  <button 
+    onClick={() => fetchAnalyticsData(JSON.parse(localStorage.getItem("user") || "{}").email)} 
+    className="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-800 rounded-lg text-[10px] font-extrabold uppercase transition shadow-inner border border-red-300"
+  >
+    Retry
+  </button>
+  </div>
+  )}
 
  {loading ? (
  <div className="text-center py-16 text-ink-500 font-medium animate-pulse flex flex-col items-center justify-center space-y-3">

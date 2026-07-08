@@ -35,6 +35,7 @@ export default function PlacementPipeline() {const { t} = useTranslation();
  const [selectedApp, setSelectedApp] = useState(null);
  const [offerText, setOfferText] = useState("");
  const [submittingOffer, setSubmittingOffer] = useState(false);
+ const [errorMessage, setErrorMessage] = useState("");
 
  useEffect(() => {const userObj = JSON.parse(localStorage.getItem("user") ||"{}");
  setCurrentUser(userObj);
@@ -48,22 +49,25 @@ export default function PlacementPipeline() {const { t} = useTranslation();
 }, [navigate]);
 
  const fetchApplications = async (user) => {setLoading(true);
- try {let url =`${API_BASE_URL}/api/applications`;
- if (user.userRole ==="company") {url =`${API_BASE_URL}/api/applications/company/${user.email}`;
+  setErrorMessage("");
+  try {let url =`${API_BASE_URL}/api/applications`;
+  if (user.userRole ==="company") {url =`${API_BASE_URL}/api/applications/company/${user.email}`;
+ }
+  
+  const res = await fetch(url, { credentials:"include",
+  headers: { Authorization:`Bearer`}
+ });
+  const data = await res.json();
+  if (res.ok) {// Set default pipelineStage if missing
+  const list = (data.applications || data || []).map(app => ({...app,
+  pipelineStage: app.pipelineStage || (app.status ==="Completed" ?"Placed" : app.status ==="Approved" ?"Offered" :"Applied")
+ }));
+  setApplications(list);
+} else {
+  setErrorMessage(t("pipeline.loadApplicantsFailed"));
 }
- 
- const res = await fetch(url, { credentials:"include",
- headers: { Authorization:`Bearer`}
-});
- const data = await res.json();
- if (res.ok) {// Set default pipelineStage if missing
- const list = (data.applications || data || []).map(app => ({...app,
- pipelineStage: app.pipelineStage || (app.status ==="Completed" ?"Placed" : app.status ==="Approved" ?"Offered" :"Applied")
-}));
- setApplications(list);
-} else {toast.error(t("pipeline.loadApplicantsFailed"));
-}
-} catch (err) {toast.error(t("pipeline.loadNetworkError"));
+} catch (err) {
+  setErrorMessage(t("pipeline.loadNetworkError"));
 } finally {setLoading(false);
 }
 };
@@ -159,6 +163,17 @@ export default function PlacementPipeline() {const { t} = useTranslation();
  <div className="text-center py-20 text-ink-400 font-bold animate-pulse">
  🔄 {t("pipeline.loading")}
  </div>
+ ) : errorMessage ? (
+   <div className="bg-white rounded-xl shadow-sm p-8 text-center space-y-4 border border-ink-200 max-w-md mx-auto my-12">
+     <span className="text-4xl block">⚠️</span>
+     <p className="text-red-700 font-bold">{errorMessage}</p>
+     <button 
+       onClick={() => fetchApplications(currentUser)} 
+       className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-sm"
+     >
+       Retry
+     </button>
+   </div>
  ) : (
  /* Kanban Board Grid */
  <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-start overflow-x-auto">

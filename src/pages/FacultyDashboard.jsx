@@ -23,6 +23,7 @@ export default function FacultyDashboard() {const { t} = useTranslation();
  budget:"",
 });
  const [posting, setPosting] = useState(false);
+ const [errorMessage, setErrorMessage] = useState("");
 
  useEffect(() => {const savedUser = JSON.parse(localStorage.getItem("user") ||"null");
  if (!savedUser || savedUser.userRole !=="faculty") {navigate("/login");
@@ -33,17 +34,20 @@ export default function FacultyDashboard() {const { t} = useTranslation();
 }, []);
 
  const fetchFacultyProjects = async (email) => {setLoading(true);
- try {const res = await fetch(`${API_BASE_URL}/api/projects/company/${email}`, {credentials:"include",
- headers: {}
-});
- if (res.ok) {const data = await res.json();
- setProjects(data);
-} else {toast.error("Failed to load academic projects.");
-}
-} catch (error) {toast.error("Network error while fetching projects.");
-} finally {setLoading(false);
-}
-};
+   setErrorMessage("");
+   try {const res = await fetch(`${API_BASE_URL}/api/projects/company/${email}`, {credentials:"include",
+   headers: {}
+  });
+   if (res.ok) {const data = await res.json();
+   setProjects(data);
+ } else {
+   setErrorMessage("Failed to load academic projects.");
+ }
+ } catch (error) {
+   setErrorMessage("Network error while fetching projects.");
+ } finally {setLoading(false);
+ }
+ };
 
  const fetchApplicantsForProject = async (projectId) => {try {const res = await fetch(`${API_BASE_URL}/api/projects/${projectId}/applicants`, {credentials:"include",
  headers: {}
@@ -106,13 +110,25 @@ export default function FacultyDashboard() {const { t} = useTranslation();
  if (!user) return null;
 
  return (
- <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 animate-fade-in">
- 
- {/* Header Profile Section */}
+  <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 animate-fade-in">
+  {errorMessage ? (
+    <div className="wm-panel p-8 text-center space-y-4">
+      <span className="text-4xl block">⚠️</span>
+      <p className="text-red-700 font-bold">{errorMessage}</p>
+      <button 
+        onClick={() => fetchFacultyProjects(user.email)} 
+        className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-sm"
+      >
+        Retry
+      </button>
+    </div>
+  ) : (
+    <>
+      {/* Header Profile Section */}
  <div className="wm-panel p-8 relative overflow-hidden flex flex-col md:flex-row items-center gap-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] (255,255,255,0.02)]">
  <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-marigold-500/10 rounded-full blur-3xl pointer-events-none"></div>
  
- <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-marigold-500 to-purple-600 shadow-sm flex items-center justify-center text-4xl font-bold text-white shrink-0 relative z-10">
+ <div className="w-24 h-24 rounded-xl bg-[#F5A623] shadow-sm flex items-center justify-center text-4xl font-bold text-white shrink-0 relative z-10">
  {user.companyName ? user.companyName.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
  </div>
  
@@ -364,8 +380,9 @@ export default function FacultyDashboard() {const { t} = useTranslation();
  )}
  </div>
  )}
-
  </div>
+ </>
+ )}
  </div>
  );
-}
+ }

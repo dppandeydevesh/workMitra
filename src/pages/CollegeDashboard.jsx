@@ -13,6 +13,7 @@ export default function CollegeDashboard() {const navigate = useNavigate();
  const [students, setStudents] = useState([]);
  const [companies, setCompanies] = useState([]);
  const [loading, setLoading] = useState(true);
+ const [errorMessage, setErrorMessage] = useState("");
  const [activeTab, setActiveTab] = useState("roster"); // roster | leaderboard | vetting | onboarding
 
  // Bulk onboarding states
@@ -34,24 +35,27 @@ export default function CollegeDashboard() {const navigate = useNavigate();
  fetchDashboardData(savedUser.collegeName);
 }, []);
 
- const fetchDashboardData = async (collegeName) => {setLoading(true);
- try {const [studentsRes, companiesRes] = await Promise.all([
- fetch(`${API_BASE_URL}/api/college/students/${encodeURIComponent(collegeName)}`, { credentials:"include",
- headers: {}
-}),
- fetch(`${API_BASE_URL}/api/college/companies`, { credentials:"include",
- headers: {}
-})
- ]);
+  const fetchDashboardData = async (collegeName) => {setLoading(true);
+  setErrorMessage("");
+  try {const [studentsRes, companiesRes] = await Promise.all([
+  fetch(`${API_BASE_URL}/api/college/students/${encodeURIComponent(collegeName)}`, { credentials:"include",
+  headers: {}
+ }),
+  fetch(`${API_BASE_URL}/api/college/companies`, { credentials:"include",
+  headers: {}
+ })
+  ]);
 
- if (studentsRes.ok) {const studentsData = await studentsRes.json();
- setStudents(studentsData);
+  if (studentsRes.ok && companiesRes.ok) {const studentsData = await studentsRes.json();
+  setStudents(studentsData);
+  const companiesData = await companiesRes.json();
+  setCompanies(companiesData);
+} else {
+  setErrorMessage(t("college.errorAcademicDb"));
 }
- if (companiesRes.ok) {const companiesData = await companiesRes.json();
- setCompanies(companiesData);
-}
-} catch (err) {console.error("Failed to fetch college stats:", err);
- toast.error(t("college.errorAcademicDb"));
+} catch (err) {
+  setErrorMessage(t("college.errorAcademicDb"));
+  console.error("Failed to fetch college stats:", err);
 } finally {setLoading(false);
 }
 };
@@ -162,7 +166,25 @@ export default function CollegeDashboard() {const navigate = useNavigate();
  window.location.href ="/login";
 };
 
- if (loading) {return (
+ if (errorMessage) {
+     return (
+       <div className="min-h-screen bg-transparent flex items-center justify-center px-4 font-sans">
+         <div className="max-w-md w-full bg-white rounded-xl shadow-sm p-8 border border-ink-100 text-center space-y-4">
+           <span className="text-4xl block">⚠️</span>
+           <h2 className="text-lg font-bold text-ink-800">{t("college.errorAcademicDb")}</h2>
+           <p className="text-xs text-ink-500">{errorMessage}</p>
+           <button
+             onClick={() => fetchDashboardData(currentUser?.collegeName || JSON.parse(localStorage.getItem("user") || "{}").collegeName)}
+             className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-sm"
+           >
+             Retry
+           </button>
+         </div>
+       </div>
+     );
+   }
+
+   if (loading) {return (
  <div className="min-h-screen bg-transparent flex items-center justify-center font-sans">
  <div className="text-center text-ink-500 font-medium animate-pulse flex flex-col items-center gap-3">
  <div className="w-10 h-10 border-4 border-marigold-500 border-t-transparent rounded-full animate-spin" />

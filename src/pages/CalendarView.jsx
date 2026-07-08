@@ -10,6 +10,7 @@ export default function CalendarView() {const navigate = useNavigate();
 
  const [projects, setProjects] = useState([]);
  const [loading, setLoading] = useState(true);
+ const [errorMessage, setErrorMessage] = useState("");
  const [currentDate, setCurrentDate] = useState(new Date());
  const [selectedDay, setSelectedDay] = useState(null);
 
@@ -32,13 +33,18 @@ export default function CalendarView() {const navigate = useNavigate();
 }, []);
 
  const fetchProjects = async (email) => {setLoading(true);
+ setErrorMessage("");
  try {const res = await fetch(`${API_BASE_URL}/api/projects/company/${email}`, { credentials:"include",
  headers: {}
 });
  if (res.ok) {const data = await res.json();
  setProjects(data);
+} else {
+ setErrorMessage(t("calendar.failedToLoad") || "Failed to load projects for calendar.");
 }
-} catch (err) {console.error("Failed to load projects for calendar:", err);
+} catch (err) {
+ setErrorMessage(t("calendar.failedToLoad") || "Failed to load projects for calendar.");
+ console.error("Failed to load projects for calendar:", err);
 } finally {setLoading(false);
 }
 };
@@ -107,12 +113,23 @@ export default function CalendarView() {const navigate = useNavigate();
  </div>
 
  {loading ? (
- <div className="text-center py-16 text-ink-400 font-medium animate-pulse flex flex-col items-center gap-3">
- <div className="w-8 h-8 border-4 border-marigold-500 border-t-transparent rounded-full animate-spin" />
- <span>{t("calendar.loadingData")}</span>
- </div>
- ) : (
- <div className="p-4 sm:p-6">
+  <div className="text-center py-16 text-ink-400 font-medium animate-pulse flex flex-col items-center gap-3">
+  <div className="w-8 h-8 border-4 border-marigold-500 border-t-transparent rounded-full animate-spin" />
+  <span>{t("calendar.loadingData")}</span>
+  </div>
+  ) : errorMessage ? (
+    <div className="p-8 text-center space-y-4 max-w-md mx-auto my-12">
+      <span className="text-4xl block">⚠️</span>
+      <p className="text-red-700 font-bold">{errorMessage}</p>
+      <button 
+        onClick={() => fetchProjects(JSON.parse(localStorage.getItem("user") || "{}").email)} 
+        className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-sm"
+      >
+        Retry
+      </button>
+    </div>
+  ) : (
+  <div className="p-4 sm:p-6">
  {/* Day headers */}
  <div className="grid grid-cols-7 gap-1 mb-2">
  {DAY_NAMES.map((d) => (

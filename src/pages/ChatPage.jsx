@@ -15,6 +15,8 @@ export default function ChatPage() {const { recipientEmail} = useParams();
 
  // State Management
  const [partners, setPartners] = useState([]);
+ const [loadingPartners, setLoadingPartners] = useState(true);
+ const [partnersError, setPartnersError] = useState("");
  const [activePartner, setActivePartner] = useState(null);
  const [messages, setMessages] = useState([]);
  const [messageInput, setMessageInput] = useState("");
@@ -38,34 +40,42 @@ export default function ChatPage() {const { recipientEmail} = useParams();
 
  // Fetch recent chat partners
  const fetchPartners = async () => {if (!loggedInUser) return;
- try {const res = await fetch(`${API_BASE_URL}/api/chat/partners/${loggedInUser.email}`, { credentials:"include",
- headers: {}
-});
- if (res.ok) {const data = await res.json();
- setPartners(data);
+  setLoadingPartners(true);
+  setPartnersError("");
+  try {const res = await fetch(`${API_BASE_URL}/api/chat/partners/${loggedInUser.email}`, { credentials:"include",
+  headers: {}
+ });
+  if (res.ok) {const data = await res.json();
+  setPartners(data);
 
- // If recipientEmail was passed in route parameters, check if they exist in partners.
- // If not, fetch their details so we can add them to the partner list view dynamically.
- if (recipientEmail && recipientEmail !== loggedInUser.email) {const partnerExists = data.some(p => p.email === recipientEmail);
- if (!partnerExists) {const userRes = await fetch(`${API_BASE_URL}/api/auth/user/${recipientEmail}`, { credentials:"include",
- headers: {}
-});
- if (userRes.ok) {const userData = await userRes.json();
- setPartners(prev => [userData, ...prev]);
- setActivePartner(userData);
- setShowMobileChat(true);
-}
-} else {const partnerObj = data.find(p => p.email === recipientEmail);
- setActivePartner(partnerObj);
- setShowMobileChat(true);
-}
-} else if (data.length > 0 && !activePartnerRef.current) {// Default to first chat partner if none selected
- setActivePartner(data[0]);
-}
-}
-} catch (err) {console.error("Error fetching chat partners:", err);
-}
-};
+  // If recipientEmail was passed in route parameters, check if they exist in partners.
+  // If not, fetch their details so we can add them to the partner list view dynamically.
+  if (recipientEmail && recipientEmail !== loggedInUser.email) {const partnerExists = data.some(p => p.email === recipientEmail);
+  if (!partnerExists) {const userRes = await fetch(`${API_BASE_URL}/api/auth/user/${recipientEmail}`, { credentials:"include",
+  headers: {}
+ });
+  if (userRes.ok) {const userData = await userRes.json();
+  setPartners(prev => [userData, ...prev]);
+  setActivePartner(userData);
+  setShowMobileChat(true);
+ }
+ } else {const partnerObj = data.find(p => p.email === recipientEmail);
+  setActivePartner(partnerObj);
+  setShowMobileChat(true);
+ }
+ } else if (data.length > 0 && !activePartnerRef.current) {// Default to first chat partner if none selected
+  setActivePartner(data[0]);
+ }
+ } else {
+  setPartnersError(t("chat.failedToLoadPartners"));
+ }
+ } catch (err) {
+  setPartnersError(t("chat.failedToLoadPartners"));
+  console.error("Error fetching chat partners:", err);
+ } finally {
+  setLoadingPartners(false);
+ }
+ };
 
  useEffect(() => {fetchPartners();
  // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -224,19 +234,35 @@ export default function ChatPage() {const { recipientEmail} = useParams();
  </div>
  
  <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
- {partners.length === 0 ? (
-     <div className="wm-panel p-[24px_16px] text-center max-w-sm mx-auto my-4 flex flex-col items-center justify-center">
-       <div className="w-[40px] h-[40px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-3">
-         <MessageSquare className="w-5 h-5" />
-       </div>
-       <div>
-         <h3 className="text-[14px] font-semibold text-[#1B2333] mb-[4px]">{t("chat.noConversations")}</h3>
-         <p className="text-[12px] text-[#6B7280] leading-normal max-w-[200px] mx-auto">
-           No messages active. Match with projects or contact recruiters to begin a conversation.
-         </p>
-       </div>
-     </div>
-   ) : (
+  {loadingPartners ? (
+    <div className="space-y-3">
+      {[1, 2, 3].map(i => (
+        <div key={i} className="h-16 rounded-xl border border-white/20 skeleton-loader wm-panel"></div>
+      ))}
+    </div>
+  ) : partnersError ? (
+    <div className="p-4 text-center space-y-2.5">
+      <p className="text-xs text-red-700 font-bold">{partnersError}</p>
+      <button 
+        onClick={() => fetchPartners()}
+        className="px-3.5 py-1.5 bg-marigold-500 hover:bg-marigold-600 text-white rounded-lg font-bold text-[11px] transition active:scale-95 shadow-sm"
+      >
+        Retry
+      </button>
+    </div>
+  ) : partners.length === 0 ? (
+      <div className="wm-panel p-[24px_16px] text-center max-w-sm mx-auto my-4 flex flex-col items-center justify-center">
+        <div className="w-[40px] h-[40px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-3">
+          <MessageSquare className="w-5 h-5" />
+        </div>
+        <div>
+          <h3 className="text-[14px] font-semibold text-[#1B2333] mb-[4px]">{t("chat.noConversations")}</h3>
+          <p className="text-[12px] text-[#6B7280] leading-normal max-w-[200px] mx-auto">
+            No messages active. Match with projects or contact recruiters to begin a conversation.
+          </p>
+        </div>
+      </div>
+    ) : (
  partners.map((partner) => {const isActive = activePartner?.email === partner.email;
  return (
  <button
@@ -250,7 +276,7 @@ export default function ChatPage() {const { recipientEmail} = useParams();
 }`}
  >
  <div className="relative">
- <div className="w-11 h-11 rounded-full bg-gradient-to-br from-marigold-500 to-purple-600 text-white font-bold flex items-center justify-center text-lg shadow-md">
+ <div className="w-11 h-11 rounded-full bg-[#F5A623] text-white font-bold flex items-center justify-center text-lg shadow-md">
  {partner.fullName ? partner.fullName.charAt(0).toUpperCase() : partner.companyName?.charAt(0).toUpperCase() || <User size={20} />}
  </div>
  </div>
@@ -292,7 +318,7 @@ export default function ChatPage() {const { recipientEmail} = useParams();
  ◀
  </button>
  <div className="relative">
- <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-marigold-500 to-purple-600 text-white font-bold flex items-center justify-center text-sm shadow-md ring-2 ring-white/50">
+ <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#F5A623] text-white font-bold flex items-center justify-center text-sm shadow-md ring-2 ring-white/50">
  {activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || <User size={20} />}
  </div>
  {/* Seamless online status dot */}
@@ -347,14 +373,14 @@ export default function ChatPage() {const { recipientEmail} = useParams();
  return (
  <motion.div key={msg._id || Math.random()} className={`flex ${isOutgoing ?"justify-end" :"justify-start"} items-end gap-2 animate-fade-in`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  {!isOutgoing && (
- <div className={`w-6 h-6 rounded-full bg-gradient-to-br from-marigold-500 to-purple-600 text-white font-bold flex items-center justify-center text-[10px] shadow-sm shrink-0 ${showAvatar ?"opacity-100" :"opacity-0"}`}>
+ <div className={`w-6 h-6 rounded-full bg-[#F5A623] text-white font-bold flex items-center justify-center text-[10px] shadow-sm shrink-0 ${showAvatar ?"opacity-100" :"opacity-0"}`}>
  {showAvatar ? (activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || <User size={12} />) :""}
  </div>
  )}
  
  <div
  className={`max-w-[75%] px-4 py-3 shadow-sm text-[13px] leading-relaxed relative group ${isOutgoing
- ?"bg-gradient-to-br from-marigold-600 to-marigold-600 text-white rounded-xl rounded-br-sm":"bg-white/90 text-ink-800 border border-ink-200 rounded-xl rounded-bl-sm"
+ ?"bg-[#F5A623] text-white rounded-xl rounded-br-sm":"bg-white/90 text-ink-800 border border-ink-200 rounded-xl rounded-bl-sm"
 }`}
  >
  <p className="whitespace-pre-wrap">{msg.text}</p>
@@ -374,7 +400,7 @@ export default function ChatPage() {const { recipientEmail} = useParams();
  
  {isPartnerTyping && (
  <motion.div className="flex justify-start items-end gap-2 animate-fade-in" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
- <div className="w-6 h-6 rounded-full bg-gradient-to-br from-marigold-500 to-purple-600 text-white font-bold flex items-center justify-center text-[10px] shadow-sm shrink-0">
+ <div className="w-6 h-6 rounded-full bg-[#F5A623] text-white font-bold flex items-center justify-center text-[10px] shadow-sm shrink-0">
  {activePartner.fullName ? activePartner.fullName.charAt(0).toUpperCase() : activePartner.companyName?.charAt(0).toUpperCase() || <User size={12} />}
  </div>
  <div className="bg-white/90 border border-ink-200 rounded-xl rounded-bl-sm px-4 py-3.5 shadow-sm">

@@ -180,7 +180,7 @@ export default function LoginPage() {const navigate = useNavigate();
 };
 
  return (
- <div className="min-h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center relative overflow-hidden select-none p-4">
+ <div className="min-h-screen w-full bg-paper flex items-center justify-center relative overflow-hidden select-none p-4">
  
  {/* 🌌 Background Decorative Flow Elements */}
  <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">

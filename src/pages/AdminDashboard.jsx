@@ -31,6 +31,7 @@ export default function AdminDashboard() {const toast = useToast();
  const [disputes, setDisputes] = useState([]);
  const [companies, setCompanies] = useState([]);
  const [loading, setLoading] = useState(true);
+ const [errorMessage, setErrorMessage] = useState("");
  const [resolvingId, setResolvingId] = useState(null);
  const [verifyingEmail, setVerifyingEmail] = useState(null);
 
@@ -79,26 +80,29 @@ export default function AdminDashboard() {const toast = useToast();
 }, []);
 
  const fetchAdminData = async () => {setLoading(true);
- try {const headers = {};
+  setErrorMessage("");
+  try {const headers = {};
 
- // 1. Fetch KPI metrics
- const metricsRes = await fetch(`${API_BASE_URL}/api/admin/metrics`, { credentials:"include", headers});
- const metricsData = await metricsRes.json();
- 
- // 2. Fetch disputes
- const disputesRes = await fetch(`${API_BASE_URL}/api/admin/disputes`, { credentials:"include", headers});
- const disputesData = await disputesRes.json();
+  // 1. Fetch KPI metrics
+  const metricsRes = await fetch(`${API_BASE_URL}/api/admin/metrics`, { credentials:"include", headers});
+  const metricsData = await metricsRes.json();
+  
+  // 2. Fetch disputes
+  const disputesRes = await fetch(`${API_BASE_URL}/api/admin/disputes`, { credentials:"include", headers});
+  const disputesData = await disputesRes.json();
 
- // 3. Fetch company accounts
- const companiesRes = await fetch(`${API_BASE_URL}/api/admin/companies`, { credentials:"include", headers});
- const companiesData = await companiesRes.json();
+  // 3. Fetch company accounts
+  const companiesRes = await fetch(`${API_BASE_URL}/api/admin/companies`, { credentials:"include", headers});
+  const companiesData = await companiesRes.json();
 
- if (metricsRes.ok && disputesRes.ok && companiesRes.ok) {setMetrics(metricsData);
- setDisputes(disputesData);
- setCompanies(companiesData);
-} else {toast.error(t("admin.toast.load_failed"));
+  if (metricsRes.ok && disputesRes.ok && companiesRes.ok) {setMetrics(metricsData);
+  setDisputes(disputesData);
+  setCompanies(companiesData);
+} else {
+  setErrorMessage(t("admin.toast.load_failed"));
 }
-} catch (err) {toast.error(t("admin.toast.auth_error"));
+} catch (err) {
+  setErrorMessage(t("admin.toast.auth_error"));
 } finally {setLoading(false);
 }
 };
@@ -146,7 +150,25 @@ export default function AdminDashboard() {const toast = useToast();
 
  const itemVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.15 } } };
 
- if (loading && !metrics) {return (
+ if (errorMessage) {
+     return (
+       <div className="min-h-screen bg-transparent flex items-center justify-center px-4">
+         <div className="max-w-md w-full bg-white rounded-xl shadow-sm p-8 border border-ink-100 text-center space-y-4">
+           <span className="text-4xl block">⚠️</span>
+           <h2 className="text-lg font-bold text-ink-800">{t("admin.toast.load_failed")}</h2>
+           <p className="text-xs text-ink-500">{errorMessage}</p>
+           <button
+             onClick={fetchAdminData}
+             className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-sm"
+           >
+             Retry
+           </button>
+         </div>
+       </div>
+     );
+   }
+
+   if (loading && !metrics) {return (
  <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10">
  <div className="wm-panel p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 skeleton-loader h-32 rounded-xl"></div>
  

@@ -17,6 +17,7 @@ export default function CompanyDashboard() {const navigate = useNavigate();
  const [stats, setStats] = useState(null);
  const [recentActivity, setRecentActivity] = useState([]);
  const [loading, setLoading] = useState(true);
+ const [errorMessage, setErrorMessage] = useState("");
 
  useEffect(() => {const savedUser = JSON.parse(localStorage.getItem("user") ||"{}");
  setCurrentUser(savedUser);
@@ -29,23 +30,27 @@ export default function CompanyDashboard() {const navigate = useNavigate();
  fetchDashboardData(savedUser.email);
 }, []);
 
- const fetchDashboardData = async (email) => {setLoading(true);
- try {const [statsRes, activityRes] = await Promise.all([
- fetch(`${API_BASE_URL}/api/dashboard/company-stats/${email}`, { credentials:"include",
- headers: {}
-}),
- fetch(`${API_BASE_URL}/api/dashboard/recent-activity/${email}`, { credentials:"include",
- headers: {}
-})
- ]);
+  const fetchDashboardData = async (email) => {setLoading(true);
+  setErrorMessage("");
+  try {const [statsRes, activityRes] = await Promise.all([
+  fetch(`${API_BASE_URL}/api/dashboard/company-stats/${email}`, { credentials:"include",
+  headers: {}
+ }),
+  fetch(`${API_BASE_URL}/api/dashboard/recent-activity/${email}`, { credentials:"include",
+  headers: {}
+ })
+  ]);
 
- if (statsRes.ok) {const statsData = await statsRes.json();
- setStats(statsData);
+  if (statsRes.ok && activityRes.ok) {const statsData = await statsRes.json();
+  setStats(statsData);
+  const activityData = await activityRes.json();
+  setRecentActivity(activityData);
+} else {
+  setErrorMessage(t("companyDashboard.toastFailedToLoadDashboard"));
 }
- if (activityRes.ok) {const activityData = await activityRes.json();
- setRecentActivity(activityData);
-}
-} catch (err) {console.error("Failed to load dashboard data:", err);
+} catch (err) {
+  setErrorMessage(t("companyDashboard.toastFailedToLoadDashboard"));
+  console.error("Failed to load dashboard data:", err);
 } finally {setLoading(false);
 }
 };
@@ -84,7 +89,25 @@ export default function CompanyDashboard() {const navigate = useNavigate();
  return t("companyDashboard.timeDaysAgo", { days});
 };
 
- if (loading) {return (
+ if (errorMessage) {
+     return (
+       <div className="min-h-screen bg-transparent flex items-center justify-center px-4">
+         <div className="max-w-md w-full bg-white rounded-xl shadow-sm p-8 border border-ink-100 text-center space-y-4">
+           <span className="text-4xl block">⚠️</span>
+           <h2 className="text-lg font-bold text-ink-800">{t("companyDashboard.toastFailedToLoadDashboard")}</h2>
+           <p className="text-xs text-ink-500">{errorMessage}</p>
+           <button
+             onClick={() => fetchDashboardData(currentUser?.email || JSON.parse(localStorage.getItem("user") || "{}").email)}
+             className="px-5 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-sm"
+           >
+             Retry
+           </button>
+         </div>
+       </div>
+     );
+   }
+
+   if (loading) {return (
  <div className="min-h-screen bg-transparent p-6 sm:p-8 max-w-7xl mx-auto space-y-8">
  <div className="h-40 skeleton-loader rounded-xl w-full" />
  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">

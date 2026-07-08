@@ -184,11 +184,18 @@ export default function StudentProfile() {const { email} = useParams();
  <div className="bg-white rounded-xl shadow-sm p-8 text-center space-y-4">
  <div className="text-red-500 text-3xl">⚠️</div>
  <p className="text-red-700 font-bold">{errorMessage}</p>
- <button 
- onClick={() => navigate(-1)} 
- className="px-4 py-2 bg-ink-100 hover:bg-ink-200 text-ink-700 rounded-xl text-xs font-bold transition">
- ← {t("studentProfile.goBack")}
- </button>
+  <div className="flex justify-center gap-3">
+    <button 
+    onClick={() => navigate(-1)} 
+    className="px-4 py-2 bg-ink-100 hover:bg-ink-200 text-ink-700 rounded-xl text-xs font-bold transition">
+    ← {t("studentProfile.goBack")}
+    </button>
+    <button 
+    onClick={() => fetchUserProfile()} 
+    className="px-4 py-2 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold transition shadow-sm">
+    Retry
+    </button>
+  </div>
  </div>
  ) : (
  <div className="space-y-6">

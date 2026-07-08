@@ -83,7 +83,7 @@ const AIAssistant = () => {const { t} = useTranslation();
  <div className="mb-4 w-80 sm:w-96 h-[500px] max-h-[70vh] flex flex-col rounded-xl overflow-hidden shadow-sm bg-white/70 border border-white/20 transition-all duration-300">
  
  {/* Header */}
- <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-marigold-600 to-marigold-600 text-white shadow-md">
+ <div style={{ background: '#1B2333' }} className="flex items-center justify-between px-4 py-3 text-white shadow-md">
  <div className="flex items-center gap-2">
  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,8 +113,11 @@ const AIAssistant = () => {const { t} = useTranslation();
  className={`flex ${msg.sender ==='user' ?'justify-end' :'justify-start'}`}
  >
  <div 
- className={`max-w-[85%] rounded-xl px-4 py-2 ${msg.sender ==='user'?'bg-marigold-500 text-white rounded-tr-sm shadow-md':'bg-white/90 text-ink-800 rounded-tl-sm shadow-sm border border-ink-100'
-}`}
+ className={`max-w-[85%] rounded-xl px-4 py-2 ${msg.sender === 'user'
+ ? 'rounded-tr-sm shadow-md'
+ : 'bg-white/90 text-ink-800 rounded-tl-sm shadow-sm border border-ink-100'
+ }`}
+ style={msg.sender === 'user' ? { background: '#1B2333', color: '#FFFFFF' } : {}}
  >
  {msg.sender ==='ai' ? (
  <div className="prose prose-sm prose-p:my-1 prose-ul:my-1 max-w-none break-words">

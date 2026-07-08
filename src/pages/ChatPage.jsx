@@ -380,8 +380,9 @@ export default function ChatPage() {const { recipientEmail} = useParams();
  
  <div
  className={`max-w-[75%] px-4 py-3 shadow-sm text-[13px] leading-relaxed relative group ${isOutgoing
- ?"bg-[#F5A623] text-white rounded-xl rounded-br-sm":"bg-white/90 text-ink-800 border border-ink-200 rounded-xl rounded-bl-sm"
+ ? 'rounded-xl rounded-br-sm' : 'bg-white/90 text-ink-800 border border-ink-200 rounded-xl rounded-bl-sm'
 }`}
+ style={isOutgoing ? { background: '#1B2333', color: '#FFFFFF' } : {}}
  >
  <p className="whitespace-pre-wrap">{msg.text}</p>
  <span

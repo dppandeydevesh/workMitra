@@ -88,18 +88,20 @@ export default function CalendarView() {const navigate = useNavigate();
 
  <div className="bg-white rounded-xl shadow-sm border border-ink-100 overflow-hidden">
  {/* Calendar Header */}
- <div className="bg-gradient-to-r from-marigold-600 to-purple-600 px-6 py-5 flex justify-between items-center">
+ <div className="bg-white border-b border-[#E1E2DC] px-6 py-5 flex justify-between items-center">
  <button
  onClick={handlePrevMonth}
- className="px-3 py-1.5 bg-white hover:bg-white text-white rounded-xl text-xs font-bold transition">
+ style={{ background: 'transparent', color: '#6B7280' }}
+ className="px-3 py-1.5 hover:text-[#1B2333] text-xs font-bold transition">
  ← {t("calendar.prev")}
  </button>
- <h2 className="text-white font-black text-lg sm:text-xl tracking-tight">
+ <h2 className="text-[#1B2333] font-medium text-lg sm:text-xl tracking-tight">
  📅 {MONTH_NAMES[month]} {year}
  </h2>
  <button
  onClick={handleNextMonth}
- className="px-3 py-1.5 bg-white hover:bg-white text-white rounded-xl text-xs font-bold transition">
+ style={{ background: 'transparent', color: '#6B7280' }}
+ className="px-3 py-1.5 hover:text-[#1B2333] text-xs font-bold transition">
  {t("calendar.next")} →
  </button>
  </div>
@@ -114,7 +116,7 @@ export default function CalendarView() {const navigate = useNavigate();
  {/* Day headers */}
  <div className="grid grid-cols-7 gap-1 mb-2">
  {DAY_NAMES.map((d) => (
- <div key={d} className="text-center text-[10px] font-black text-ink-400 uppercase tracking-wider py-2">
+ <div key={d} style={{ fontSize: '13px', fontWeight: 500, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.06em' }} className="text-center py-2">
  {d}
  </div>
  ))}
@@ -133,19 +135,22 @@ export default function CalendarView() {const navigate = useNavigate();
  <button
  key={`day-${day}`}
  onClick={() => setSelectedDay(isSelected ? null : day)}
- className={`h-14 sm:h-16 rounded-xl text-xs font-bold transition-all relative flex flex-col items-center justify-center gap-0.5 ${isSelected
- ?"bg-marigold-500 text-white shadow-lg scale-105": isTodayCell
- ?"bg-marigold-50 text-marigold-700 ring-2 ring-marigold-400 ring-offset-1":"bg-ink-50 text-ink-700 hover:bg-ink-100"
-}`}
+ style={{ 
+   background: isSelected ? '#F5A623' : isTodayCell ? '#FBE7C4' : '#FFFFFF', 
+   color: isSelected ? '#1B2333' : isTodayCell ? '#7A4F00' : '#1B2333', 
+   border: '0.5px solid #E1E2DC', 
+   fontWeight: (isSelected || isTodayCell) ? 500 : 'normal' 
+ }}
+ className="h-14 sm:h-16 rounded-xl text-xs relative flex flex-col items-center justify-center gap-0.5 hover:bg-ink-50 transition"
  >
- <span className="text-sm font-extrabold">{day}</span>
+ <span className="text-sm">{day}</span>
  {hasDeadline && (
  <div className="flex gap-0.5">
  {dayProjects.slice(0, 3).map((_, pIdx) => (
  <span
  key={pIdx}
- className={`w-1.5 h-1.5 rounded-full ${isSelected ?"bg-white" :"bg-marigold-500"
-}`}
+ style={{ background: '#E24B4A' }}
+ className="w-1.5 h-1.5 rounded-full"
  />
  ))}
  </div>

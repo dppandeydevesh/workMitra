@@ -6,6 +6,25 @@ import { useTranslation} from"react-i18next";
 
 const STAGES = ["Applied","Shortlisted","Interviewing","Offered","Placed"];
 
+const getStageStyle = (stage) => {
+  switch(stage) {
+    case "Applied":
+      return { borderTop: '3px solid #C8C9C2', backgroundColor: '#F9F9F8' };
+    case "Shortlisted": // under review
+      return { borderTop: '3px solid #F5A623', backgroundColor: '#F9F9F8' };
+    case "Interviewing": // interview
+      return { borderTop: '3px solid #1D9E75', backgroundColor: '#F9F9F8' };
+    case "Offered": // offer / green Strong fill
+      return { borderTop: '3px solid #1D9E75', backgroundColor: '#E1F5EE' };
+    case "Placed": // placed / green Strong fill
+      return { borderTop: '3px solid #1D9E75', backgroundColor: '#E1F5EE' };
+    case "Rejected":
+      return { borderTop: '3px solid #E24B4A', backgroundColor: '#FFF0F0' };
+    default:
+      return { borderTop: '3px solid #C8C9C2', backgroundColor: '#F9F9F8' };
+  }
+};
+
 export default function PlacementPipeline() {const { t} = useTranslation();
  const navigate = useNavigate();
  const toast = useToast();
@@ -146,17 +165,17 @@ export default function PlacementPipeline() {const { t} = useTranslation();
  {STAGES.map((stage) => {const stageApps = applications.filter(app => app.pipelineStage === stage);
 
  return (
- <div key={stage} className="bg-ink-100 p-3 rounded-xl border border-ink-200/50 flex flex-col gap-3 min-h-[450px]">
+ <div key={stage} style={getStageStyle(stage)} className="p-3 rounded-xl border border-ink-200/50 flex flex-col gap-3 min-h-[450px]">
  <div className="flex justify-between items-center px-1">
  <span className="text-xs font-black text-ink-700 uppercase tracking-wide">{stage}</span>
- <span className="px-2 py-0.5 bg-ink-200 text-[10px] font-black rounded-lg text-ink-500">
+ <span style={{ background: '#F1EFE8', color: '#3D4A5C', fontSize: '11px', fontWeight: 500, padding: '2px 8px', borderRadius: '20px' }}>
  {stageApps.length}
  </span>
  </div>
 
  <div className="space-y-3 flex-1 overflow-y-auto">
  {stageApps.map((app) => (
- <div key={app._id} className="bg-white p-4 rounded-xl border border-ink-200 shadow-sm flex flex-col gap-3 hover:shadow transition duration-150 text-left">
+ <div key={app._id} className="wm-card flex flex-col gap-3 text-left">
  <div>
  <h4 className="font-extrabold text-xs text-ink-900 leading-tight">
  {app.studentName || app.studentEmail.split("@")[0].toUpperCase()}

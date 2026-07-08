@@ -212,27 +212,27 @@ export default function AnalyticsDashboard() {const { t} = useTranslation();
  <PieChart>
  <Pie
  data={[
- { name: t("analytics.statusCompleted"), value: statusCounts.Completed, color:'#10b981'},
- { name: t("analytics.statusApproved"), value: statusCounts.Approved, color:'#3b82f6'},
- { name: t("analytics.statusSubmitted"), value: statusCounts.Submitted, color:'#f59e0b'},
- { name: t("analytics.statusPending"), value: statusCounts.Pending, color:'#9ca3af'},
- { name: t("analytics.statusRejected"), value: statusCounts.Rejected, color:'#ef4444'}
+ { name: t("analytics.statusCompleted"), value: statusCounts.Completed, color:'#1D9E75'},
+ { name: t("analytics.statusApproved"), value: statusCounts.Approved, color:'#F5A623'},
+ { name: t("analytics.statusSubmitted"), value: statusCounts.Submitted, color:'#F5A623'},
+ { name: t("analytics.statusPending"), value: statusCounts.Pending, color:'#C8C9C2'},
+ { name: t("analytics.statusRejected"), value: statusCounts.Rejected, color:'#C8C9C2'}
  ].filter(entry => entry.value > 0)}
  cx="50%"cy="50%"innerRadius={60}
  outerRadius={80}
  dataKey="value"stroke="none">
  {[
- { name: t("analytics.statusCompleted"), value: statusCounts.Completed, color:'#10b981'},
- { name: t("analytics.statusApproved"), value: statusCounts.Approved, color:'#3b82f6'},
- { name: t("analytics.statusSubmitted"), value: statusCounts.Submitted, color:'#f59e0b'},
- { name: t("analytics.statusPending"), value: statusCounts.Pending, color:'#9ca3af'},
- { name: t("analytics.statusRejected"), value: statusCounts.Rejected, color:'#ef4444'}
+ { name: t("analytics.statusCompleted"), value: statusCounts.Completed, color:'#1D9E75'},
+ { name: t("analytics.statusApproved"), value: statusCounts.Approved, color:'#F5A623'},
+ { name: t("analytics.statusSubmitted"), value: statusCounts.Submitted, color:'#F5A623'},
+ { name: t("analytics.statusPending"), value: statusCounts.Pending, color:'#C8C9C2'},
+ { name: t("analytics.statusRejected"), value: statusCounts.Rejected, color:'#C8C9C2'}
  ].filter(entry => entry.value > 0).map((entry, index) => (
  <Cell key={`cell-${index}`} fill={entry.color} />
  ))
-}
+ }
  </Pie>
- <RechartsTooltip />
+ <RechartsTooltip contentStyle={{ backgroundColor: '#FFFFFF', border: '0.5px solid #E1E2DC', borderRadius: '8px', color: '#1B2333', fontSize: '12px' }} />
  </PieChart>
  </ResponsiveContainer>
  {/* Inner center text overlay */}
@@ -245,24 +245,24 @@ export default function AnalyticsDashboard() {const { t} = useTranslation();
  {/* Color Coded Legends */}
  <div className="w-full grid grid-cols-2 gap-x-4 gap-y-2.5 text-[11px] font-bold text-ink-600 mt-2">
  <div className="flex items-center gap-1.5">
- <span className="w-2.5 h-2.5 bg-[#10b981] rounded-full inline-block"></span>
+ <span className="w-2.5 h-2.5 bg-[#1D9E75] rounded-full inline-block"></span>
  <span>{t("analytics.statusCompleted")}: {statusCounts.Completed}</span>
  </div>
  <div className="flex items-center gap-1.5">
- <span className="w-2.5 h-2.5 bg-[#3b82f6] rounded-full inline-block"></span>
+ <span className="w-2.5 h-2.5 bg-[#F5A623] rounded-full inline-block"></span>
  <span>{t("analytics.statusApproved")}: {statusCounts.Approved}</span>
  </div>
  <div className="flex items-center gap-1.5">
- <span className="w-2.5 h-2.5 bg-[#f59e0b] rounded-full inline-block"></span>
+ <span className="w-2.5 h-2.5 bg-[#F5A623] rounded-full inline-block"></span>
  <span>{t("analytics.legendAudit")}: {statusCounts.Submitted}</span>
  </div>
  <div className="flex items-center gap-1.5">
- <span className="w-2.5 h-2.5 bg-[#9ca3af] rounded-full inline-block"></span>
+ <span className="w-2.5 h-2.5 bg-[#C8C9C2] rounded-full inline-block"></span>
  <span>{t("analytics.statusPending")}: {statusCounts.Pending}</span>
  </div>
  {statusCounts.Rejected > 0 && (
  <div className="flex items-center gap-1.5 col-span-2 justify-center mt-1 border-t pt-2 border-dashed border-ink-100">
- <span className="w-2.5 h-2.5 bg-[#ef4444] rounded-full inline-block"></span>
+ <span className="w-2.5 h-2.5 bg-[#C8C9C2] rounded-full inline-block"></span>
  <span>{t("analytics.legendRejectedSolutions")}: {statusCounts.Rejected}</span>
  </div>
  )}
@@ -320,11 +320,11 @@ export default function AnalyticsDashboard() {const { t} = useTranslation();
  <div className="w-full h-48">
  <ResponsiveContainer width="100%" height="100%">
  <BarChart data={topSkillsList.map(([skill, count]) => ({ name: skill, count: count}))} layout="vertical" margin={{ top: 0, right: 0, left: 0, bottom: 0}}>
- <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+ <CartesianGrid stroke="#E1E2DC" strokeDasharray="3 3" horizontal={false} />
  <XAxis type="number" hide />
- <YAxis dataKey="name" type="category" width={80} tick={{fontSize: 10}} axisLine={false} tickLine={false} />
- <RechartsTooltip cursor={{fill:'#f3f4f6'}} contentStyle={{fontSize:'12px', borderRadius:'8px'}} />
- <Bar dataKey="count" fill="#4f46e5" radius={[0, 4, 4, 0]} barSize={12} />
+ <YAxis dataKey="name" type="category" width={80} tick={{fill: '#6B7280', fontSize: 10}} axisLine={false} tickLine={false} />
+ <RechartsTooltip cursor={{fill:'transparent'}} contentStyle={{backgroundColor: '#FFFFFF', border: '0.5px solid #E1E2DC', borderRadius: '8px', color: '#1B2333', fontSize: '12px'}} />
+ <Bar dataKey="count" fill="#F5A623" radius={[0, 4, 4, 0]} barSize={12} />
  </BarChart>
  </ResponsiveContainer>
  </div>

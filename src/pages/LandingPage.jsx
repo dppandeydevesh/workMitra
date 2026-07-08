@@ -58,22 +58,24 @@ export default function LandingPage() {const navigate = useNavigate();
       {t("landing.heroTitlePart1")} <br className="hidden sm:inline" />
       <span className="text-marigold-500 not-italic font-medium">{t("landing.heroTitleHighlight")}</span>
     </h1>
-    <p className="text-ink-500 mt-6 text-sm sm:text-base lg:text-lg max-w-2xl leading-relaxed">
-      {t("landing.heroDescription")}
+    <p style={{ fontSize: '16px', color: '#6B7280', lineHeight: 1.75 }} className="mt-6 max-w-2xl">
+    {t("landing.heroDescription")}
     </p>
     <div className="flex gap-4 mt-8">
-      <button 
-        onClick={() => navigate("/login")} 
-        className="wm-btn wm-btn-primary px-6 py-3 text-xs sm:text-sm font-semibold active:scale-95 shadow-sm"
-      >
-        {t("landing.getStarted")}
-      </button>
-      <button 
-        onClick={() => navigate("/about")} 
-        className="wm-btn wm-btn-secondary px-6 py-3 text-xs sm:text-sm font-medium active:scale-95 bg-white"
-      >
-        {t("landing.exploreSupportDesk")}
-      </button>
+    <button 
+    onClick={() => navigate("/login")} 
+    style={{ background: '#F5A623', color: '#1B2333', borderRadius: '8px', padding: '10px 24px', fontWeight: 500 }}
+    className="active:scale-95 transition shadow-sm text-xs sm:text-sm"
+    >
+    {t("landing.getStarted")}
+    </button>
+    <button 
+    onClick={() => navigate("/about")} 
+    style={{ background: 'transparent', border: '0.5px solid #C8C9C2', color: '#1B2333', borderRadius: '8px', padding: '10px 24px' }}
+    className="active:scale-95 transition text-xs sm:text-sm"
+    >
+    {t("landing.exploreSupportDesk")}
+    </button>
     </div>
   </section>
 
@@ -85,10 +87,10 @@ export default function LandingPage() {const navigate = useNavigate();
  </h2>
  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
  {/* Student Side */}
- <div className="bg-gradient-to-br from-marigold-50/50 to-marigold-50/50 border border-marigold-100/50 p-6 sm:p-8 rounded-xl shadow-sm">
- <span className="text-2xl">🎓</span>
- <h3 className="text-lg font-black text-marigold-900 mt-3 mb-2">{t("landing.studentCardTitle")}</h3>
- <p className="text-xs text-ink-500 mb-6 leading-relaxed">{t("landing.studentCardDescription")}</p>
+ <div className="wm-card bg-white text-left">
+ <span className="text-2xl text-[#F5A623]">🎓</span>
+ <h3 style={{ fontSize: '15px', fontWeight: 500, color: '#1B2333' }} className="mt-3 mb-2">{t("landing.studentCardTitle")}</h3>
+ <p style={{ fontSize: '13px', color: '#6B7280', lineHeight: 1.65 }} className="mb-6">{t("landing.studentCardDescription")}</p>
  <div className="space-y-4">
  <div className="flex items-start gap-3 text-xs">
  <span className="bg-marigold-100 text-marigold-700 font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">1</span>
@@ -106,10 +108,10 @@ export default function LandingPage() {const navigate = useNavigate();
  </div>
 
  {/* Recruiter Side */}
- <div className="bg-gradient-to-br from-pink-50/50 to-purple-50/50 border border-purple-100/50 p-6 sm:p-8 rounded-xl shadow-sm">
- <span className="text-2xl">🏢</span>
- <h3 className="text-lg font-black text-purple-900 mt-3 mb-2">{t("landing.recruiterCardTitle")}</h3>
- <p className="text-xs text-ink-500 mb-6 leading-relaxed">{t("landing.recruiterCardDescription")}</p>
+ <div className="wm-card bg-white text-left">
+ <span className="text-2xl text-[#F5A623]">🏢</span>
+ <h3 style={{ fontSize: '15px', fontWeight: 500, color: '#1B2333' }} className="mt-3 mb-2">{t("landing.recruiterCardTitle")}</h3>
+ <p style={{ fontSize: '13px', color: '#6B7280', lineHeight: 1.65 }} className="mb-6">{t("landing.recruiterCardDescription")}</p>
  <div className="space-y-4">
  <div className="flex items-start gap-3 text-xs">
  <span className="bg-purple-100 text-purple-700 font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">1</span>
@@ -161,7 +163,7 @@ export default function LandingPage() {const navigate = useNavigate();
  </section>
 
  {/* 🚪 Footer */}
- <footer className="bg-ink-900 text-ink-400 py-12 px-4 mt-auto border-t border-ink-800">
+ <footer style={{ background: '#1B2333', color: '#6B7280' }} className="py-12 px-4 mt-auto border-t border-ink-800">
  <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8 text-xs">
  <div>
  <h4 className="font-extrabold text-white uppercase tracking-wider mb-3">workMitra</h4>
@@ -170,16 +172,16 @@ export default function LandingPage() {const navigate = useNavigate();
  <div>
  <h4 className="font-extrabold text-white uppercase tracking-wider mb-3">{t("landing.footerProduct")}</h4>
  <ul className="space-y-2">
- <li><button onClick={() => navigate("/login")} className="hover:text-white transition text-left">{t("landing.footerLoginPortal")}</button></li>
- <li><button onClick={() => navigate("/about")} className="hover:text-white transition text-left">{t("landing.footerSupportDesk")}</button></li>
+ <li><button onClick={() => navigate("/login")} className="hover:text-[#F5A623] transition text-left">{t("landing.footerLoginPortal")}</button></li>
+ <li><button onClick={() => navigate("/about")} className="hover:text-[#F5A623] transition text-left">{t("landing.footerSupportDesk")}</button></li>
  </ul>
  </div>
  <div>
  <h4 className="font-extrabold text-white uppercase tracking-wider mb-3">{t("landing.footerTrustLegal")}</h4>
  <ul className="space-y-2">
- <li><button onClick={() => navigate("/terms")} className="hover:text-white transition text-left">{t("landing.footerTerms")}</button></li>
- <li><button onClick={() => navigate("/privacy")} className="hover:text-white transition text-left">{t("landing.footerPrivacy")}</button></li>
- <li><button onClick={() => navigate("/refund")} className="hover:text-white transition text-left">{t("landing.footerRefund")}</button></li>
+ <li><button onClick={() => navigate("/terms")} className="hover:text-[#F5A623] transition text-left">{t("landing.footerTerms")}</button></li>
+ <li><button onClick={() => navigate("/privacy")} className="hover:text-[#F5A623] transition text-left">{t("landing.footerPrivacy")}</button></li>
+ <li><button onClick={() => navigate("/refund")} className="hover:text-[#F5A623] transition text-left">{t("landing.footerRefund")}</button></li>
  </ul>
  </div>
  <div>

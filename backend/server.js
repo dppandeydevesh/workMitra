@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 const jwt = require('jsonwebtoken');
 const swot = require('swot-node');
 const cookieParser = require('cookie-parser');
@@ -56,7 +58,9 @@ app.use(realIP);
 
 // Security Middlewares
 app.use(helmet({ contentSecurityPolicy: false }));
+app.use(xss());
 app.use(mongoSanitize());
+app.use(hpp());
 
 // Middleware Setup
 const allowedOrigins = process.env.CORS_ORIGINS 

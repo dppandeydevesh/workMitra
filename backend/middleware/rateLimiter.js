@@ -19,7 +19,11 @@ if (UPSTASH_URL && UPSTASH_TOKEN) {
     });
 
     store = new RedisStore({
-      sendCommand: (...args) => redis.sendCommand(args),
+      sendCommand: async (...args) => {
+        const res = await redis.client.request({ body: args });
+        if (res.error) throw new Error(res.error);
+        return res.result;
+      },
       prefix: 'wm_rl:', // namespace all keys — avoids collisions
     });
 

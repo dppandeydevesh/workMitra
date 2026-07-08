@@ -825,17 +825,34 @@ export default function StudentProfile() {const { email} = useParams();
  )}
  </div>
 
- {profileUser.cvReviewReport ? (
+ {profileUser.cvReviewReport ? (() => {
+ // Normalize any shape Gemini may have returned
+ const raw = profileUser.cvReviewReport;
+ const cvReport = {
+  score: raw.score ?? raw.cv_score ?? raw.cvScore ?? 0,
+  strengths: Array.isArray(raw.strengths) ? raw.strengths
+   : Array.isArray(raw.Strengths) ? raw.Strengths
+   : typeof raw.strengths === 'string' ? raw.strengths.split(',').map(s => s.trim()).filter(Boolean)
+   : [],
+  improvements: Array.isArray(raw.improvements) ? raw.improvements
+   : Array.isArray(raw.Improvements) ? raw.Improvements
+   : Array.isArray(raw.areas_of_improvement) ? raw.areas_of_improvement
+   : typeof raw.improvements === 'string' ? raw.improvements.split(',').map(s => s.trim()).filter(Boolean)
+   : [],
+  recommendations: raw.recommendations ?? raw.Recommendations ?? raw.recommendation ?? '',
+ };
+ return (
  <div className="space-y-6">
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  <div>
  <h5 className="text-[11px] font-extrabold uppercase text-green-400 mb-2 flex items-center gap-1.5">
  <span>✓ {t("studentProfile.strengths")}</span>
  </h5>
- <ul className="space-y-1.5 text-xs text-ink-300 list-disc list-inside">
- {profileUser.cvReviewReport.strengths?.map((str, idx) => (
- <li key={idx} className="text-ink-200">{str}</li>
- ))}
+ <ul className="space-y-1.5 text-xs list-disc list-inside">
+ {cvReport.strengths.length > 0
+  ? cvReport.strengths.map((str, idx) => <li key={idx} className="text-ink-200">{str}</li>)
+  : <li className="text-ink-400 list-none italic text-[11px]">No strengths data available</li>
+ }
  </ul>
  </div>
  <div>
@@ -843,20 +860,23 @@ export default function StudentProfile() {const { email} = useParams();
  <span>⚠️ {t("studentProfile.areasOfImprovement")}</span>
  </h5>
  <ul className="space-y-1.5 text-xs list-disc list-inside">
- {profileUser.cvReviewReport.improvements?.map((imp, idx) => (
- <li key={idx} className="text-ink-200">{imp}</li>
- ))}
+ {cvReport.improvements.length > 0
+  ? cvReport.improvements.map((imp, idx) => <li key={idx} className="text-ink-200">{imp}</li>)
+  : <li className="text-ink-400 list-none italic text-[11px]">No improvement data available</li>
+ }
  </ul>
  </div>
  </div>
 
+ {cvReport.recommendations && (
  <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }} className="p-4 rounded-xl">
  <h5 style={{ color: '#F5A623' }} className="text-[10px] font-extrabold uppercase mb-1 opacity-80">{t("studentProfile.aiRecommendations")}</h5>
- <p className="text-xs text-ink-200 leading-relaxed italic">
-"{profileUser.cvReviewReport.recommendations}"</p>
+ <p className="text-xs text-ink-200 leading-relaxed italic">"{cvReport.recommendations}"</p>
  </div>
+ )}
  </div>
- ) : (
+ );
+ })() : (
  <div className="text-center py-8 flex flex-col items-center">
  <span className="text-3xl mb-2">📄</span>
  <h4 style={{ color: '#F5A623' }} className="font-bold text-sm">{t("studentProfile.noCritiqueGenerated")}</h4>

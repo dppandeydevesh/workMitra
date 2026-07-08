@@ -7,6 +7,7 @@ import { fetchWithAuth} from"../services/apiClient";
 import { motion} from"framer-motion";
 import { Mail, Lock, User, Building, Phone, Hash, BookOpen} from"lucide-react";
 import { Turnstile } from "@marsidev/react-turnstile";
+import { identifyUser, capture, resetPostHog } from '../lib/posthog';
 
 export default function LoginPage() {const navigate = useNavigate();
  const toast = useToast();
@@ -89,6 +90,8 @@ export default function LoginPage() {const navigate = useNavigate();
  const data = await response.json();
 
  if (response.ok) {if (data.user) {localStorage.setItem("user", JSON.stringify(data.user));
+ identifyUser(); // 📊 PostHog: attribute all events to this user
+ capture('user_logged_in', { role: data.user.userRole });
  
  if (data.user.userRole ==="company") {navigate("/company-dashboard");} else if (data.user.userRole ==="admin") {navigate("/admin-dashboard");
 } else if (data.user.userRole ==="college") {navigate("/college-dashboard");
@@ -152,6 +155,8 @@ export default function LoginPage() {const navigate = useNavigate();
  const data = await response.json();
  if (response.ok) {toast.success(t("login.registrationSuccessful"));
  localStorage.setItem("user", JSON.stringify(data.user));
+ identifyUser(); // 📊 PostHog: identify newly registered user
+ capture('user_registered', { role: data.user.userRole });
  
 
  // Reset registration fields

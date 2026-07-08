@@ -4,6 +4,11 @@ import'./index.css'
 import App from"./App"
 import'./i18n.js'
 import { API_BASE_URL} from'./config'
+import { initPostHog, identifyUser } from './lib/posthog'
+
+// 📊 Analytics — init PostHog and identify returning user immediately
+initPostHog();
+identifyUser();
 
 // 🔒 Intercept window.fetch to automatically append JWT Token to Authorization headers
 const originalFetch = window.fetch;

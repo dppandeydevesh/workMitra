@@ -1,5 +1,6 @@
-import React, { Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import React, { Suspense, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { trackPageView } from './lib/posthog';
 import LoginPage from "./components/LoginPage"; // 👈 सीधे हमारा मुख्य पेज लोड होगा
 const Preferences = React.lazy(() => import("./pages/Preferences"));
 const CompanyPreferences = React.lazy(() => import("./pages/CompanyPreferences"));
@@ -31,6 +32,15 @@ import { ThemeProvider } from "./components/ThemeContext";
 import AIAssistant from "./components/AIAssistant";
 const ResumeChecker = React.lazy(() => import("./pages/ResumeChecker"));
 const FacultyDashboard = React.lazy(() => import("./pages/FacultyDashboard"));
+
+/** Fires a PostHog $pageview event on every route change */
+function RouteTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    trackPageView(location.pathname + location.search);
+  }, [location]);
+  return null;
+}
 
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const savedUser = localStorage.getItem("user");
@@ -68,6 +78,7 @@ function App() {
       <div className="min-h-screen bg-transparent dark:text-ink-100 transition-colors duration-200">
         <WebSocketProvider>
             <BrowserRouter>
+              <RouteTracker />
               <Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-transparent text-marigold-500 font-bold tracking-widest text-sm uppercase">Loading Platform...</div>}>
           <Routes>
                 <Route path="/" element={<LandingPage />} />

@@ -5,6 +5,7 @@ import { useToast} from"./Toast";
 import { useWebSocket} from"./WebSocketContext";
 import { useTheme} from"./ThemeContext";
 import { useTranslation} from"react-i18next";
+import { resetPostHog } from '../lib/posthog';
 
 export default function Navbar() {const navigate = useNavigate();
  const location = useLocation();
@@ -70,6 +71,7 @@ export default function Navbar() {const navigate = useNavigate();
 
  const handleLogout = async () => {try {await fetch(`${API_BASE_URL}/api/auth/logout`, { method:'POST', credentials:'include'});
 } catch (e) { console.error(e);}
+ resetPostHog(); // 📊 PostHog: clear identity on logout
  localStorage.clear();
  window.location.href ='/login';
 };

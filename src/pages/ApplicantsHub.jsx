@@ -305,10 +305,18 @@ export default function ApplicantsHub() {const navigate = useNavigate();
  </div>
 
  {errorMessage && (
- <div className="p-4 mb-6 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-xl shadow-sm flex items-center gap-2">
- <AlertCircle className="w-4 h-4" /> {errorMessage}
- </div>
- )}
+     <div className="p-4 mb-6 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-xl shadow-sm flex flex-col sm:flex-row justify-between items-center gap-3">
+       <div className="flex items-center gap-2">
+         <AlertCircle className="w-4 h-4" /> {errorMessage}
+       </div>
+       <button 
+         onClick={() => fetchCompanyApplications(currentUser?.email || JSON.parse(localStorage.getItem("user") || "{}").email)}
+         className="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold text-[11px] transition active:scale-95 whitespace-nowrap"
+       >
+         Retry
+       </button>
+     </div>
+   )}
 
  {/* Search and Filters panel */}
  <div className="wm-panel p-5 rounded-xl mb-8 grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -387,11 +395,18 @@ export default function ApplicantsHub() {const navigate = useNavigate();
  ))}
  </div>
  ) : filteredApps.length === 0 ? (
- <div className="text-center py-16 border-2 border-dashed border-ink-200 rounded-xl text-ink-400 font-medium bg-ink-50 flex flex-col items-center gap-3">
- <Folder className="w-10 h-10 text-ink-300" />
- <span>{t("applicantsHub.noCandidates")}</span>
- </div>
- ) : (
+     <div className="wm-panel p-[40px_24px] text-center max-w-md mx-auto my-6 flex flex-col items-center justify-center">
+       <div className="w-[48px] h-[48px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-4">
+         <Folder className="w-6 h-6" />
+       </div>
+       <div>
+         <h3 className="text-[16px] font-medium text-[#1B2333] mb-[6px]">{t("applicantsHub.noCandidates")}</h3>
+         <p className="text-[13px] text-[#6B7280] leading-[1.65] max-w-[260px] mx-auto">
+           No students have applied to this project yet. Share it with your network to attract candidates.
+         </p>
+       </div>
+     </div>
+   ) : (
  <div className="space-y-4">
  {filteredApps.map((app) => (
  <div

@@ -196,8 +196,16 @@ export default function CompanyDashboard() {const navigate = useNavigate();
  <Trophy className="w-4 h-4" /> {t("companyDashboard.topPerformers")}
  </h3>
  {(!stats?.topPerformers || stats.topPerformers.length === 0) ? (
- <p className="text-xs text-ink-400 italic">{t("companyDashboard.noTopPerformers")}</p>
- ) : (
+     <div className="p-6 text-center flex flex-col items-center justify-center">
+       <div className="w-[40px] h-[40px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-3">
+         <Trophy size={20} />
+       </div>
+       <p className="text-[12px] font-medium text-[#1B2333] mb-[2px]">{t("companyDashboard.noTopPerformers")}</p>
+       <p className="text-[11px] text-[#6B7280] leading-normal max-w-[200px] mx-auto">
+         Complete gigs to rank high-performing students on your roster.
+       </p>
+     </div>
+   ) : (
  <div className="space-y-3">
  {stats.topPerformers.map((perf, idx) => (
  <div
@@ -238,12 +246,18 @@ export default function CompanyDashboard() {const navigate = useNavigate();
  </div>
 
  {recentActivity.length === 0 ? (
- <div className="text-center py-12 wm-panel border-dashed rounded-xl text-ink-400">
- <Inbox className="w-12 h-12 mx-auto mb-3 text-ink-300" />
- <p className="text-xs font-medium">{t("companyDashboard.noRecentActivity")}</p>
- <p className="text-[10px] text-ink-300 mt-1">{t("companyDashboard.deployFirstProject")}</p>
- </div>
- ) : (
+     <div className="wm-panel p-[32px_16px] text-center max-w-sm mx-auto my-4 flex flex-col items-center justify-center">
+       <div className="w-[40px] h-[40px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-3">
+         <Inbox size={20} />
+       </div>
+       <div>
+         <h4 className="text-[14px] font-semibold text-[#1B2333] mb-[4px]">{t("companyDashboard.noRecentActivity")}</h4>
+         <p className="text-[12px] text-[#6B7280] leading-normal max-w-[200px] mx-auto">
+           {t("companyDashboard.deployFirstProject")}
+         </p>
+       </div>
+     </div>
+   ) : (
  <div className="space-y-3">
  {recentActivity.map((event, idx) => (
  <div

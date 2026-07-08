@@ -4,7 +4,7 @@ import { API_BASE_URL} from"../config";
 import { useWebSocket} from"../components/WebSocketContext";
 import { useTranslation} from"react-i18next";
 import { motion} from"framer-motion";
-import { Send, User, Paperclip, Search} from"lucide-react";
+import { Send, User, Paperclip, Search, MessageSquare} from "lucide-react";
 
 export default function ChatPage() {const { recipientEmail} = useParams();
  const navigate = useNavigate();
@@ -225,10 +225,18 @@ export default function ChatPage() {const { recipientEmail} = useParams();
  
  <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2">
  {partners.length === 0 ? (
- <div className="text-center py-12 text-xs text-ink-500 font-medium">
- 💬 {t("chat.noConversations")}
- </div>
- ) : (
+     <div className="wm-panel p-[24px_16px] text-center max-w-sm mx-auto my-4 flex flex-col items-center justify-center">
+       <div className="w-[40px] h-[40px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-3">
+         <MessageSquare className="w-5 h-5" />
+       </div>
+       <div>
+         <h3 className="text-[14px] font-semibold text-[#1B2333] mb-[4px]">{t("chat.noConversations")}</h3>
+         <p className="text-[12px] text-[#6B7280] leading-normal max-w-[200px] mx-auto">
+           No messages active. Match with projects or contact recruiters to begin a conversation.
+         </p>
+       </div>
+     </div>
+   ) : (
  partners.map((partner) => {const isActive = activePartner?.email === partner.email;
  return (
  <button

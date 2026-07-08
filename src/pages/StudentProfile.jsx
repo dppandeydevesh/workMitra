@@ -4,6 +4,7 @@ import { API_BASE_URL} from"../config";
 import { useToast} from"../components/Toast";
 import { useTranslation} from"react-i18next";
 import ActivityHeatmap from"../components/ActivityHeatmap";
+import { Award, CheckCircle } from "lucide-react";
 
 export default function StudentProfile() {const { email} = useParams();
  const navigate = useNavigate();
@@ -757,8 +758,18 @@ export default function StudentProfile() {const { email} = useParams();
  </div>
 
  {!profileUser.softSkillsVouches || profileUser.softSkillsVouches.length === 0 ? (
- <p className="text-xs text-ink-400 italic">{t("studentProfile.noEndorsementsYet")}</p>
- ) : (
+     <div className="wm-panel p-[24px_16px] text-center max-w-sm mx-auto my-4 flex flex-col items-center justify-center">
+       <div className="w-[40px] h-[40px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-3">
+         <Award className="w-5 h-5" />
+       </div>
+       <div>
+         <h4 className="text-[14px] font-semibold text-[#1B2333] mb-[4px]">{t("studentProfile.noEndorsementsYet")}</h4>
+         <p className="text-[12px] text-[#6B7280] leading-normal max-w-[200px] mx-auto">
+           No peer endorsements posted. Peer vouching helps highlight soft skills.
+         </p>
+       </div>
+     </div>
+   ) : (
  <div className="space-y-3.5 max-h-60 overflow-y-auto pr-1">
  {profileUser.softSkillsVouches.map((vouch, idx) => (
  <div key={idx} className="bg-ink-50 border p-3 rounded-xl space-y-1.5 text-left">
@@ -855,8 +866,18 @@ export default function StudentProfile() {const { email} = useParams();
  </h3>
 
  {ratingsList.length === 0 ? (
- <p className="text-xs text-ink-400 italic">{t("studentProfile.noReviewsYet")}</p>
- ) : (
+     <div className="wm-panel p-[24px_16px] text-center max-w-sm mx-auto my-4 flex flex-col items-center justify-center">
+       <div className="w-[40px] h-[40px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-3">
+         <CheckCircle className="w-5 h-5" />
+       </div>
+       <div>
+         <h4 className="text-[14px] font-semibold text-[#1B2333] mb-[4px]">{t("studentProfile.noReviewsYet")}</h4>
+         <p className="text-[12px] text-[#6B7280] leading-normal max-w-[200px] mx-auto">
+           No reviews or ratings posted yet. Completed projects will trigger client reviews here.
+         </p>
+       </div>
+     </div>
+   ) : (
  <div className="space-y-4 divide-y divide-ink-100">
  {ratingsList.map((app) => (
  <div key={app.applicationId || app._id} className="pt-3 first:pt-0 space-y-1">

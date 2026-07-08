@@ -17,44 +17,64 @@ const AIAssistant = () => {const { t} = useTranslation();
  useEffect(() => {scrollToBottom();
 }, [messages, isTyping]);
 
- const toggleChat = () => {setIsOpen(!isOpen);
- // Add welcome message if opening for first time and empty
- if (!isOpen && messages.length === 0) {setMessages([{ sender:'ai', text: t('Hi there! I am your AI Assistant. How can I help you today?')}]);
-}
-};
+  const toggleChat = () => {
+    setIsOpen(!isOpen);
+    if (!isOpen && messages.length === 0) {
+      const currentUser = JSON.parse(localStorage.getItem('user'));
+      const name = currentUser?.fullName?.split(" ")[0] || "Devesh";
+      setMessages([{ sender: 'ai', text: t("dashboard.aiAssistantGreeting", { name }) }]);
+    }
+  };
 
- const handleSendMessage = async (e) => {e.preventDefault();
- if (!inputText.trim()) return;
+  const sendMessageText = async (text) => {
+    if (isTyping) return;
+    const userMessage = { sender: 'user', text };
+    setMessages((prev) => [...prev, userMessage]);
+    setIsTyping(true);
 
- const userMessage = { sender:'user', text: inputText};
- setMessages((prev) => [...prev, userMessage]);
- setInputText('');
- setIsTyping(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/ai/chat`, {
+        credentials: "include",
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: userMessage.text,
+          history: messages,
+          context: {
+            path: window.location.pathname,
+            name: JSON.parse(localStorage.getItem('user'))?.fullName || 'User'
+          }
+        })
+      });
 
- try {const response = await fetch(`${API_BASE_URL}/api/ai/chat`, {credentials:"include",
- method:'POST',
- headers: {
-'Content-Type':'application/json'
-},
- body: JSON.stringify({message: userMessage.text,
- history: messages,
- context: {path: window.location.pathname,
- name: JSON.parse(localStorage.getItem('user'))?.fullName ||'User'
-}
-})
-});
+      const data = await response.json();
 
- const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to get response from AI');
+      }
 
- if (!response.ok) {throw new Error(data.error ||'Failed to get response from AI');
-}
- 
- setMessages((prev) => [...prev, { sender:'ai', text: data.text || data.reply || data.message || t('Sorry, I could not process that.')}]);
-} catch (error) {console.error('Error in AI Assistant chat:', error);
- setMessages((prev) => [...prev, { sender:'ai', text:`⚠️ ${error.message}`}]);
-} finally {setIsTyping(false);
-}
-};
+      setMessages((prev) => [...prev, { sender: 'ai', text: data.text || data.reply || data.message || t('Sorry, I could not process that.') }]);
+    } catch (error) {
+      console.error('Error in AI Assistant chat:', error);
+      setMessages((prev) => [...prev, { sender: 'ai', text: `⚠️ ${error.message}` }]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!inputText.trim()) return;
+    const text = inputText;
+    setInputText('');
+    await sendMessageText(text);
+  };
+
+  const handleChipClick = (chipText) => {
+    sendMessageText(chipText);
+  };
 
  return (
  <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
@@ -99,6 +119,20 @@ const AIAssistant = () => {const { t} = useTranslation();
  {msg.sender ==='ai' ? (
  <div className="prose prose-sm prose-p:my-1 prose-ul:my-1 max-w-none break-words">
  <ReactMarkdown>{msg.text}</ReactMarkdown>
+ {index === 0 && (
+    <div className="flex flex-wrap gap-2 mt-3 select-none">
+      {[t("dashboard.chipFindGigs"), t("dashboard.chipReviewProfile"), t("dashboard.chipInterviewTips")].map((chipText) => (
+        <button
+          key={chipText}
+          type="button"
+          onClick={() => handleChipClick(chipText)}
+          className="border border-[#E1E2DC] rounded-[20px] px-3.5 py-1 text-[11px] text-[#3D4A5C] bg-white hover:bg-[#F6F7F4] active:scale-95 cursor-pointer shadow-sm font-medium transition"
+        >
+          {chipText}
+        </button>
+      ))}
+    </div>
+  )}
  </div>
  ) : (
  <p className="text-sm whitespace-pre-wrap break-words">{msg.text}</p>

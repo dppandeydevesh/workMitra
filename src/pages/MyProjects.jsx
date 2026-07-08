@@ -230,7 +230,19 @@ export default function MyProjects() {const navigate = useNavigate();
  </button>
  </div>
 
- {errorMessage && <div className="p-4 mb-6 bg-red-50 text-red-700 text-xs font-bold rounded-xl border border-red-100">⚠️ {errorMessage}</div>}
+ {errorMessage && (
+     <div className="p-4 mb-6 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3">
+       <div className="flex items-center gap-2">
+         <span>⚠️</span> {errorMessage}
+       </div>
+       <button 
+         onClick={() => fetchCompanyData()}
+         className="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold text-[11px] transition active:scale-95 whitespace-nowrap"
+       >
+         Retry
+       </button>
+     </div>
+   )}
 
  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
  
@@ -239,8 +251,12 @@ export default function MyProjects() {const navigate = useNavigate();
  <h3 className="text-sm font-bold text-ink-700 uppercase tracking-wider mb-2 px-1">{t("myProjects.activeDeployments")}</h3>
  
  {loadingProjects ? (
- <div className="text-center py-6 text-xs text-ink-500 font-medium animate-pulse">{t("myProjects.syncingNodes")}</div>
- ) : projects.length === 0 ? (
+     <div className="space-y-3">
+       {[1, 2, 3].map(i => (
+         <div key={i} className="rounded-xl border border-ink-200 p-5 shadow-sm h-24 skeleton-loader wm-panel"></div>
+       ))}
+     </div>
+   ) : projects.length === 0 ? (
     <div className="wm-panel p-[48px_24px] text-center max-w-md mx-auto my-6 flex flex-col items-center justify-center">
       <div className="w-[48px] h-[48px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm">
         <Briefcase size={24} />
@@ -314,8 +330,12 @@ export default function MyProjects() {const navigate = useNavigate();
  </div>
 
  {loadingApplicants ? (
- <div className="text-center py-12 text-xs text-ink-500 font-medium animate-pulse">{t("myProjects.parsingApplicants")}</div>
- ) : applicants.length === 0 ? (
+     <div className="space-y-3 col-span-2">
+       {[1, 2, 3].map(i => (
+         <div key={i} className="rounded-xl border border-[#E1E2DC] p-5 shadow-sm h-24 skeleton-loader wm-panel"></div>
+       ))}
+     </div>
+   ) : applicants.length === 0 ? (
     <div className="wm-panel p-[48px_24px] text-center max-w-md mx-auto my-6 flex flex-col items-center justify-center">
       <div className="w-[48px] h-[48px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm">
         <Users size={24} />

@@ -164,68 +164,80 @@ export default function Dashboard() {const navigate = useNavigate();
  localStorage.setItem(`workmitra_draft_${activeAppToSubmit._id}`, JSON.stringify(newDraft));
 };
 
- useEffect(() => {// 1. Get logged-in user context
- const savedUser = localStorage.getItem("user");
- let userObj = null;
- if (savedUser) {userObj = JSON.parse(savedUser);
- setCurrentUser(userObj);
- setResumeUrl(userObj.resumeUrl ||"");
- setResumeText(userObj.resumeText ||"");
- setCvReport(userObj.cvReviewReport || null);
-}
+  const initializeDashboardData = async () => {
+    setLoading(true);
+    setErrorMessage("");
+    const savedUser = localStorage.getItem("user");
+    let userObj = null;
+    if (savedUser) {
+      userObj = JSON.parse(savedUser);
+      setCurrentUser(userObj);
+      setResumeUrl(userObj.resumeUrl || "");
+      setResumeText(userObj.resumeText || "");
+      setCvReport(userObj.cvReviewReport || null);
+    }
+    try {
+      if (userObj) {
+        const userRes = await fetchWithAuth(`${API_BASE_URL}/api/auth/user/${userObj.email}`);
+        if (userRes.ok) {
+          const latestUser = await userRes.json();
+          setCurrentUser(latestUser);
+          localStorage.setItem("user", JSON.stringify(latestUser));
+        }
+      }
 
- // 2. Fetch live deployed projects AND student application state concurrently
- const initializeDashboardData = async () => {setLoading(true);
- try {if (userObj) {const userRes = await fetchWithAuth(`${API_BASE_URL}/api/auth/user/${userObj.email}`);
- if (userRes.ok) {const latestUser = await userRes.json();
- setCurrentUser(latestUser);
- localStorage.setItem("user", JSON.stringify(latestUser));
-}
-}
+      const isStudent = userObj && userObj.userRole === "student";
+      const projectsUrl = isStudent 
+        ? `${API_BASE_URL}/api/projects/recommended?page=${page}&limit=${limit}`
+        : `${API_BASE_URL}/api/projects/all?page=${page}&limit=${limit}`;
 
- // 🚀 UPDATED: Fetching from our fresh global project collection route
- const isStudent = userObj && userObj.userRole ==="student";
- const projectsUrl = isStudent 
- ?`${API_BASE_URL}/api/projects/recommended?page=${page}&limit=${limit}`:`${API_BASE_URL}/api/projects/all?page=${page}&limit=${limit}`;
+      const projectsRes = await fetchWithAuth(projectsUrl);
+      const projectsData = await projectsRes.json();
+      
+      if (projectsRes.ok) {
+        const list = projectsData.projects || projectsData;
+        if (isStudent) {
+          const unpacked = list.map(item => ({...item.project, aiRecommendationScore: item.score }));
+          setProjects(unpacked);
+        } else {
+          setProjects(list);
+        }
+        if (projectsData.totalPages) setTotalPages(projectsData.totalPages);
+      } else {
+        setErrorMessage(projectsData.error || t("dashboard.loadProjectsFail"));
+      }
 
- const projectsRes = await fetchWithAuth(projectsUrl);
- const projectsData = await projectsRes.json();
- 
- if (projectsRes.ok) {const list = projectsData.projects || projectsData; // fallback
- if (isStudent) {const unpacked = list.map(item => ({...item.project,
- aiRecommendationScore: item.score
-}));
- setProjects(unpacked);
-} else {setProjects(list);
-}
- if (projectsData.totalPages) setTotalPages(projectsData.totalPages);
-} else {setErrorMessage(projectsData.error || t("dashboard.loadProjectsFail"));
-}
+      if (userObj && userObj.userRole !== "company") {
+        const appsRes = await fetchWithAuth(`${API_BASE_URL}/api/applications/student/${userObj.email}`);
+        if (appsRes.ok) {
+          const appliedIds = await appsRes.json();
+          setAppliedProjectIds(appliedIds);
+        }
+        await fetchApplications(userObj.email);
 
- // If logged-in user is a student, fetch their tracking list of existing applications
- if (userObj && userObj.userRole !=="company") {const appsRes = await fetchWithAuth(`${API_BASE_URL}/api/applications/student/${userObj.email}`);
- if (appsRes.ok) {const appliedIds = await appsRes.json();
- setAppliedProjectIds(appliedIds);
-}
- await fetchApplications(userObj.email);
+        setLoadingAiPicks(true);
+        try {
+          const aiRes = await fetchWithAuth(`${API_BASE_URL}/api/projects/recommendations/${userObj.email}`);
+          if (aiRes.ok) {
+            const aiData = await aiRes.json();
+            setAiTopPicks(aiData);
+          }
+        } catch (e) {
+          console.error("Failed to load AI recommendations:", e);
+        } finally {
+          setLoadingAiPicks(false);
+        }
+      }
+    } catch (err) {
+      setErrorMessage(t("dashboard.connectServerFail"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
- // Fetch AI Recommendations
- setLoadingAiPicks(true);
- try {const aiRes = await fetchWithAuth(`${API_BASE_URL}/api/projects/recommendations/${userObj.email}`);
- if (aiRes.ok) {const aiData = await aiRes.json();
- setAiTopPicks(aiData);
-}
-} catch (e) {console.error("Failed to load AI recommendations:", e);
-} finally {setLoadingAiPicks(false);
-}
-}
-} catch (err) {setErrorMessage(t("dashboard.connectServerFail"));
-} finally {setLoading(false);
-}
-};
-
- initializeDashboardData();
-}, [page, limit]);
+  useEffect(() => {
+    initializeDashboardData();
+  }, [page, limit]);
 
  const handleUploadCVFile = async (e) => {const file = e.target.files[0];
  if (!file) return;
@@ -544,11 +556,24 @@ export default function Dashboard() {const navigate = useNavigate();
  <p className="text-sm text-ink-500 mb-6">{t("dashboard.trackAppsDesc")}</p>
 
  {myApplications.length === 0 ? (
- <div className="text-center py-8 border border-dashed border-ink-200 rounded-xl text-ink-400 font-medium bg-ink-50 flex flex-col items-center justify-center gap-2">
- <Inbox className="w-8 h-8 text-ink-300" />
- <span>{t("dashboard.noGigsYet")}</span>
- </div>
- ) : (
+    <div className="wm-panel p-[40px_24px] text-center max-w-md mx-auto my-6 flex flex-col items-center justify-center">
+      <div className="w-[48px] h-[48px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-4">
+        <Briefcase size={24} />
+      </div>
+      <div>
+        <h3 className="text-[16px] font-medium text-[#1B2333] mb-[6px]">{t("dashboard.noApplicationsYetHeadline")}</h3>
+        <p className="text-[13px] text-[#6B7280] leading-[1.65] max-w-[260px] mx-auto">
+          {t("dashboard.noApplicationsYetBody")}
+        </p>
+      </div>
+      <button
+        onClick={() => document.getElementById('projects-section')?.scrollIntoView({ behavior: 'smooth' })}
+        className="wm-btn wm-btn-primary mt-[20px] active:scale-95"
+      >
+        {t("dashboard.browseMarketplace")}
+      </button>
+    </div>
+  ) : (
  <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
  {myApplications.map((app) => {const project = app.projectId;
  if (!project) return null;
@@ -708,112 +733,130 @@ export default function Dashboard() {const navigate = useNavigate();
  </div>
 
  {/* Right Panel: Quality Report Display */}
- <div className="lg:col-span-2 bg-white border border-ink-200 text-white p-4 sm:p-6 rounded-xl shadow-sm flex flex-col justify-between min-h-[250px] sm:min-h-[350px]">
- {loadingReview ? (
- <div className="flex flex-col items-center justify-center h-full my-auto space-y-4">
- <div className="w-12 h-12 border-4 border-marigold-400 border-t-transparent rounded-full animate-spin"></div>
- <p className="text-xs text-marigold-200 font-bold animate-pulse uppercase tracking-wider">{t("dashboard.aiAnalyzing")}</p>
- </div>
- ) : cvReport ? (
- <div className="space-y-6">
- {/* Header: Score Ring */}
- <div className="flex justify-between items-center border-b border-ink-200 pb-4">
- <div>
- <h4 className="text-base font-bold text-white">{t("dashboard.aiQualityReport")}</h4>
- <p className="text-[10px] text-marigold-300 font-medium mt-0.5">{t("dashboard.poweredBy")}</p>
- </div>
- <div className="flex items-center space-x-3 text-right">
- <div>
- <p className="text-[9px] uppercase font-bold text-marigold-300">{t("dashboard.qualityScore")}</p>
- <p className="text-2xl font-black text-marigold-400">{cvReport.score}/100</p>
- </div>
- <div className="relative w-12 h-12 flex items-center justify-center rounded-full bg-white border-2 border-marigold-400">
- <span className="text-[11px] font-black">{cvReport.score}%</span>
- </div>
- </div>
- </div>
+  <div className="lg:col-span-2 bg-white border border-[#E1E2DC] text-[#1B2333] p-4 sm:p-6 rounded-xl shadow-sm flex flex-col justify-between min-h-[250px] sm:min-h-[350px]">
+    {loadingReview ? (
+      <div className="space-y-6">
+        <div className="space-y-3 animate-pulse">
+          <div className="h-[16px] bg-[#E1E2DC] rounded-[4px] w-3/4"></div>
+          <div className="h-[16px] bg-[#E1E2DC] rounded-[4px] w-5/6"></div>
+          <div className="h-[16px] bg-[#E1E2DC] rounded-[4px] w-2/3"></div>
+          <div className="h-[16px] bg-[#E1E2DC] rounded-[4px] w-4/5"></div>
+        </div>
+        <div className="space-y-3 animate-pulse pt-4">
+          <div className="h-[16px] bg-[#E1E2DC] rounded-[4px] w-3/4"></div>
+          <div className="h-[16px] bg-[#E1E2DC] rounded-[4px] w-5/6"></div>
+          <div className="h-[16px] bg-[#E1E2DC] rounded-[4px] w-2/3"></div>
+          <div className="h-[16px] bg-[#E1E2DC] rounded-[4px] w-4/5"></div>
+        </div>
+      </div>
+    ) : cvReport ? (
+      <div className="space-y-6 text-[#1B2333]">
+        {/* Header: Score Ring */}
+        <div className="flex justify-between items-center border-b border-[#E1E2DC] pb-4">
+          <div>
+            <h4 className="text-[16px] font-semibold text-[#1B2333]">{t("dashboard.aiQualityReport")}</h4>
+            <p className="text-[11px] text-[#6B7280] font-medium mt-0.5">{t("dashboard.poweredBy")}</p>
+          </div>
+          <div className="flex items-center space-x-3 text-right">
+            <div>
+              <p className="text-[10px] uppercase font-bold text-[#6B7280]">{t("dashboard.qualityScore")}</p>
+              <p className="text-2xl font-black text-[#F5A623]">{cvReport.score}/100</p>
+            </div>
+            <div className="relative w-12 h-12 flex items-center justify-center rounded-full bg-white border-2 border-[#F5A623]">
+              <span className="text-[11px] font-black text-[#1B2333]">{cvReport.score}%</span>
+            </div>
+          </div>
+        </div>
 
- {/* Content Grid */}
- <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
- <div>
- <h5 className="text-[11px] font-extrabold uppercase text-green-400 mb-2 flex items-center gap-1.5">
- <Check className="w-3 h-3" /> <span>{t("dashboard.strengths")}</span>
- </h5>
- <ul className="space-y-1.5 text-xs text-ink-300 list-disc list-inside">
- {cvReport.strengths?.map((str, idx) => (
- <li key={idx}>{str}</li>
- ))}
- </ul>
- </div>
- <div>
- <h5 className="text-[11px] font-extrabold uppercase text-amber-400 mb-2 flex items-center gap-1.5">
- <AlertTriangle className="w-3 h-3" /> <span>{t("dashboard.areasOfImprovement")}</span>
- </h5>
- <ul className="space-y-1.5 text-xs text-ink-300 list-disc list-inside">
- {cvReport.improvements?.map((imp, idx) => (
- <li key={idx}>{imp}</li>
- ))}
- </ul>
- </div>
- </div>
+        {/* Content Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+          <div>
+            <h5 className="text-[12px] font-bold uppercase text-[#1B2333] mb-2 flex items-center gap-1.5">
+              <span className="text-[#1D9E75]">✓</span> <span className="tracking-wider">{t("dashboard.strengths")}</span>
+            </h5>
+            <ul className="text-[13px] text-[#3D4A5C]">
+              {cvReport.strengths?.map((str, idx) => (
+                <li key={idx} className="py-2 border-b border-[#E1E2DC] last:border-b-0 leading-tight">
+                  <span className="text-[#1D9E75] font-bold mr-1.5">✓</span>{str}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h5 className="text-[12px] font-bold uppercase text-[#1B2333] mb-2 flex items-center gap-1.5">
+              <span className="text-[#F5A623]">!</span> <span className="tracking-wider">{t("dashboard.areasOfImprovement")}</span>
+            </h5>
+            <ul className="text-[13px] text-[#3D4A5C]">
+              {cvReport.improvements?.map((imp, idx) => (
+                <li key={idx} className="py-2 border-b border-[#E1E2DC] last:border-b-0 leading-tight">
+                  <span className="text-[#F5A623] font-bold mr-1.5">!</span>{imp}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
 
- {/* Recommendations Alert Box */}
- <div className="bg-ink-50 border border-ink-200 p-4 rounded-xl">
- <h5 className="text-[10px] font-extrabold uppercase text-marigold-300 mb-1">{t("dashboard.actionableRecommendations")}</h5>
- <p className="text-xs text-ink-200 leading-relaxed italic">
-"{cvReport.recommendations}"</p>
- </div>
+        {/* Recommendations Alert Box */}
+        <div className="bg-[#FBE7C4] border border-[#EFC88A] p-4 rounded-xl text-left">
+          <h5 className="text-[11px] font-bold uppercase text-[#7A4F00] mb-1">{t("dashboard.actionableRecommendations")}</h5>
+          <p className="text-xs text-[#3D4A5C] leading-relaxed italic">
+            "{cvReport.recommendations}"
+          </p>
+        </div>
 
- {/* Skill Gap Analyzer */}
- <div className="bg-ink-50 border border-ink-200 p-4 rounded-xl text-left">
- <h5 className="text-[10px] font-extrabold uppercase text-marigold-300 mb-2 flex items-center gap-1.5 justify-between">
- <span className="flex items-center gap-1.5"><Search className="w-3 h-3" /> {t("dashboard.skillGapAnalyzer")}</span>
- <span className="bg-marigold-500/20 text-marigold-300 text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1"><TrendingUp className="w-3 h-3" /> {t("dashboard.liveDemands")}</span>
- </h5>
- {(() => {const userSkills = new Set(
- (currentUser?.preferredTechStack || [])
- .concat((currentUser?.targetSkills ||"").split(","))
- .map(s => s.trim().toLowerCase())
- .filter(Boolean)
- );
- const gapCounts = {};
- projects.forEach(p => {(p.requiredSkills || []).forEach(s => {const skillLower = s.trim().toLowerCase();
- if (!userSkills.has(skillLower)) {gapCounts[s.trim()] = (gapCounts[s.trim()] || 0) + 1;
-}
-});
-});
- const sortedGaps = Object.entries(gapCounts)
- .sort((a, b) => b[1] - a[1])
- .slice(0, 4);
+        {/* Skill Gap Analyzer */}
+        <div className="bg-[#F6F7F4] border border-[#E1E2DC] p-4 rounded-xl text-left">
+          <h5 className="text-[11px] font-bold uppercase text-[#1B2333] mb-2 flex items-center gap-1.5 justify-between">
+            <span className="flex items-center gap-1.5"><Search className="w-3.5 h-3.5 text-[#3D4A5C]" /> {t("dashboard.skillGapAnalyzer")}</span>
+            <span className="bg-[#FBE7C4] text-[#7A4F00] text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1"><TrendingUp className="w-3 h-3" /> {t("dashboard.liveDemands")}</span>
+          </h5>
+          {(() => {
+            const userSkills = new Set(
+              (currentUser?.preferredTechStack || [])
+                .concat((currentUser?.targetSkills || "").split(","))
+                .map(s => s.trim().toLowerCase())
+                .filter(Boolean)
+            );
+            const gapCounts = {};
+            projects.forEach(p => {
+              (p.requiredSkills || []).forEach(s => {
+                const skillLower = s.trim().toLowerCase();
+                if (!userSkills.has(skillLower)) {
+                  gapCounts[s.trim()] = (gapCounts[s.trim()] || 0) + 1;
+                }
+              });
+            });
+            const sortedGaps = Object.entries(gapCounts)
+              .sort((a, b) => b[1] - a[1])
+              .slice(0, 4);
 
- if (sortedGaps.length === 0) {return <p className="text-[10px] text-ink-400 italic">{t("dashboard.noSkillGaps")}</p>;
-}
+            if (sortedGaps.length === 0) {
+              return <p className="text-[11px] text-[#6B7280] italic">{t("dashboard.noSkillGaps")}</p>;
+            }
 
- return (
- <div className="space-y-2">
- <p className="text-[10px] text-ink-300 leading-normal">
- {t("dashboard.missingSkills")}
- </p>
- <div className="flex flex-wrap gap-2 pt-1">
- {sortedGaps.map(([skill, count]) => (
- <span key={skill} className="bg-ink-900 border border-ink-700/30 text-marigold-300 text-[10px] font-extrabold px-2.5 py-1 rounded-lg flex items-center gap-1.5" title={`${count} active projects require this`}>
- {skill}
- <span className="bg-marigold-900/60 text-marigold-400 text-[8px] font-black px-1 py-0.5 rounded">+{count} {t("dashboard.gigs")}</span>
- </span>
- ))}
- </div>
- </div>
- );
-})()}
- </div>
- </div>
- ) : (
- <div className="flex flex-col items-center justify-center h-full my-auto text-center p-8">
- <FileText className="w-12 h-12 text-ink-500 mb-3" />
- <h4 className="text-base font-bold text-marigold-200 mb-1">{t("dashboard.noQualityReport")}</h4>
- <p className="text-xs text-ink-400 max-w-sm leading-relaxed">{t("dashboard.pasteResumeToReview")}</p>
- </div>
- )}
+            return (
+              <div className="space-y-2">
+                <p className="text-[11px] text-[#3D4A5C] leading-normal">
+                  {t("dashboard.missingSkills")}
+                </p>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {sortedGaps.map(([skill, count]) => (
+                    <span key={skill} className="bg-white border border-[#E1E2DC] text-[#3D4A5C] text-[11px] font-medium px-2.5 py-1 rounded-lg flex items-center gap-1.5" title={`${count} active projects require this`}>
+                      {skill}
+                      <span className="bg-[#E1F5EE] text-[#085041] text-[9px] font-bold px-1.5 py-0.5 rounded-full">+{count} {t("dashboard.gigs")}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      </div>
+    ) : (
+      <div className="flex flex-col items-center justify-center h-full my-auto text-center p-8">
+        <p className="text-[13px] text-[#6B7280] font-medium">Upload your CV to see strengths and improvement areas</p>
+      </div>
+    )}
  </div>
  </div>
  )}
@@ -859,10 +902,18 @@ export default function Dashboard() {const navigate = useNavigate();
  ))}
  </div>
  ) : (
- <div className="text-[11px] text-ink-400 bg-ink-50 border border-ink-100 rounded-xl p-4 text-center">
- {t("dashboard.noAiRecommendations")}
- </div>
- )}
+     <div className="wm-panel p-[24px_16px] text-center max-w-sm mx-auto flex flex-col items-center justify-center">
+       <div className="w-[40px] h-[40px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-3">
+         <Sparkles size={20} />
+       </div>
+       <div>
+         <h4 className="text-[14px] font-semibold text-[#1B2333] mb-[4px]">{t("dashboard.noAiRecommendations")}</h4>
+         <p className="text-[12px] text-[#6B7280] leading-normal max-w-[200px] mx-auto">
+           Set your preferred tech stack in settings to generate personalized AI recommendations.
+         </p>
+       </div>
+     </div>
+   )}
  </div>
  )}
 
@@ -954,10 +1005,18 @@ export default function Dashboard() {const navigate = useNavigate();
  </div>
 
  {errorMessage && (
- <div className="p-4 mb-6 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-xl">
- {"⚠️" + errorMessage}
- </div>
- )}
+     <div className="p-4 mb-6 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3">
+       <div className="flex items-center gap-2">
+         <span>⚠️</span> {errorMessage}
+       </div>
+       <button 
+         onClick={() => initializeDashboardData()}
+         className="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold text-[11px] transition active:scale-95 whitespace-nowrap"
+       >
+         Retry
+       </button>
+     </div>
+   )}
 
  {loading ? (
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -3,6 +3,7 @@ import { useNavigate} from"react-router-dom";
 import { API_BASE_URL} from"../config";
 import { useToast} from"../components/Toast";
 import { useTranslation} from"react-i18next";
+import { Users, Trophy, Building2 } from "lucide-react";
 
 export default function CollegeDashboard() {const navigate = useNavigate();
  const toast = useToast();
@@ -260,12 +261,18 @@ export default function CollegeDashboard() {const navigate = useNavigate();
  {activeTab ==="roster" && (
  <div className="bg-white rounded-xl shadow-sm border border-ink-100 overflow-hidden">
  {students.length === 0 ? (
- <div className="text-center py-16 text-ink-400">
- <span className="text-4xl block mb-3">📭</span>
- <p className="text-xs font-medium">{t("college.noStudentsYet")}</p>
- <p className="text-[10px] text-ink-300 mt-1">{t("college.useBulkOnboarding")}</p>
- </div>
- ) : (
+     <div className="wm-panel p-[40px_24px] text-center max-w-md mx-auto my-6 flex flex-col items-center justify-center">
+       <div className="w-[48px] h-[48px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-4">
+         <Users size={24} />
+       </div>
+       <div>
+         <h3 className="text-[16px] font-medium text-[#1B2333] mb-[6px]">{t("college.noStudentsYet")}</h3>
+         <p className="text-[13px] text-[#6B7280] leading-[1.65] max-w-[260px] mx-auto">
+           {t("college.useBulkOnboarding")}
+         </p>
+       </div>
+     </div>
+   ) : (
  <div className="overflow-x-auto">
  <table className="w-full text-left border-collapse">
  <thead>
@@ -341,8 +348,16 @@ export default function CollegeDashboard() {const navigate = useNavigate();
  <div className="bg-white rounded-xl shadow-sm border border-ink-100 p-6">
  <h3 className="text-sm font-black text-ink-800 uppercase tracking-wider mb-4">🏆 {t("college.deptRankings")}</h3>
  {leaderboard.length === 0 ? (
- <p className="text-xs text-ink-400 italic">{t("college.noDeptData")}</p>
- ) : (
+     <div className="p-6 text-center flex flex-col items-center justify-center">
+       <div className="w-[40px] h-[40px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-3">
+         <Trophy size={20} />
+       </div>
+       <p className="text-[12px] font-medium text-[#1B2333] mb-[2px]">{t("college.noDeptData")}</p>
+       <p className="text-[11px] text-[#6B7280] leading-normal max-w-[200px] mx-auto">
+         No student credits have been tracked to rank departments.
+       </p>
+     </div>
+   ) : (
  <div className="space-y-4">
  {leaderboard.map((dept, idx) => (
  <div
@@ -375,11 +390,18 @@ export default function CollegeDashboard() {const navigate = useNavigate();
  {activeTab ==="vetting" && (
  <div className="bg-white rounded-xl shadow-sm border border-ink-100 overflow-hidden">
  {companies.length === 0 ? (
- <div className="text-center py-16 text-ink-400">
- <span className="text-4xl block mb-3">🏢</span>
- <p className="text-xs font-medium">{t("college.noRecruitersYet")}</p>
- </div>
- ) : (
+     <div className="wm-panel p-[40px_24px] text-center max-w-md mx-auto my-6 flex flex-col items-center justify-center">
+       <div className="w-[48px] h-[48px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-4">
+         <Building2 size={24} />
+       </div>
+       <div>
+         <h3 className="text-[16px] font-medium text-[#1B2333] mb-[6px]">{t("college.noRecruitersYet")}</h3>
+         <p className="text-[13px] text-[#6B7280] leading-[1.65] max-w-[260px] mx-auto">
+           No corporate affiliates have requested placement access.
+         </p>
+       </div>
+     </div>
+   ) : (
  <div className="overflow-x-auto">
  <table className="w-full text-left border-collapse">
  <thead>

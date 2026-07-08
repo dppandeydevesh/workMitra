@@ -4,8 +4,8 @@ import { useTranslation} from"react-i18next";
 import { API_BASE_URL} from"../config";
 import { useToast} from"../components/Toast";
 import { useWebSocket} from"../components/WebSocketContext";
-import"./FacultyDashboard.css"; // Reuse existing css for global layout if needed
-
+import "./FacultyDashboard.css";
+import { Briefcase, Users } from "lucide-react";
 export default function FacultyDashboard() {const { t} = useTranslation();
  const navigate = useNavigate();
  const toast = useToast();
@@ -195,11 +195,18 @@ export default function FacultyDashboard() {const { t} = useTranslation();
  {loading ? (
  <div className="text-center py-12 text-ink-400 font-bold">{t("facultyDashboard.loading") ||"Loading your projects..."}</div>
  ) : projects.length === 0 ? (
- <div className="text-center py-12 border-2 border-dashed border-ink-200 rounded-xl">
- <span className="text-4xl mb-3 block">📭</span>
- <p className="font-bold text-ink-500">No projects posted yet.</p>
- </div>
- ) : (
+     <div className="wm-panel p-[40px_24px] text-center max-w-md mx-auto my-6 flex flex-col items-center justify-center">
+       <div className="w-[48px] h-[48px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-4">
+         <Briefcase size={24} />
+       </div>
+       <div>
+         <h3 className="text-[16px] font-medium text-[#1B2333] mb-[6px]">No projects posted yet</h3>
+         <p className="text-[13px] text-[#6B7280] leading-[1.65] max-w-[260px] mx-auto">
+           Post research tasks or class gig deployments to invite student submissions.
+         </p>
+       </div>
+     </div>
+   ) : (
  <div className="space-y-4">
  {projects.map(project => (
  <div key={project._id} className="border border-ink-100 rounded-xl p-5 hover:bg-ink-50 transition">
@@ -297,10 +304,18 @@ export default function FacultyDashboard() {const { t} = useTranslation();
  {loading ? (
  <div className="text-center py-12 text-ink-400 font-bold">Loading applicants...</div>
  ) : applicants.length === 0 ? (
- <div className="text-center py-12 border-2 border-dashed border-ink-200 rounded-xl">
- <p className="font-bold text-ink-500">No students have applied to this project yet.</p>
- </div>
- ) : (
+     <div className="wm-panel p-[40px_24px] text-center max-w-md mx-auto my-6 flex flex-col items-center justify-center">
+       <div className="w-[48px] h-[48px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-4">
+         <Users size={24} />
+       </div>
+       <div>
+         <h3 className="text-[16px] font-medium text-[#1B2333] mb-[6px]">No applicants yet</h3>
+         <p className="text-[13px] text-[#6B7280] leading-[1.65] max-w-[260px] mx-auto">
+           Students will appear here once they submit their interest or quiz results for review.
+         </p>
+       </div>
+     </div>
+   ) : (
  <div className="space-y-4">
  {applicants.map(app => (
  <div key={app.applicationId} className="border border-ink-100 rounded-xl p-5">

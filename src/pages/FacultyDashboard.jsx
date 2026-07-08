@@ -308,14 +308,7 @@ export default function FacultyDashboard() {const { t} = useTranslation();
  )}
 
  {/* APPLICANTS TAB */}
- {activeTab ==="applicants" && (
- <div className="wm-panel p-6 sm:p-8">
- <div className="flex justify-between items-center mb-6">
- <h2 className="text-xl font-black text-ink-800">Student Applicants</h2>
- <button onClick={() => setActiveTab("my-projects")} className="text-marigold-500 font-bold text-sm hover:underline">
- ← Back to Projects
- </button>
- </div>
+  {activeTab ==="applicants" && (
   <div className="wm-panel p-6 sm:p-8">
   <div className="flex justify-between items-center mb-6">
   <h2 className="text-xl font-black text-ink-800">{t("facultyDashboard.studentApplicants") || "Student Applicants"}</h2>

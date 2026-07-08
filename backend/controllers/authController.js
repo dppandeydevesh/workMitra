@@ -417,7 +417,14 @@ const forgotPassword = async (req, res) => {
     }
     const resetLink = `${frontendUrl}/reset-password/${token}`;
 
-    await sendResetPasswordEmail(user.email, resetLink);
+    const emailSuccess = await sendResetPasswordEmail(user.email, resetLink);
+    if (!emailSuccess) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn(`[DEVELOPMENT] Resend delivery failed. Generated reset link for local testing: ${resetLink}`);
+      } else {
+        return res.status(502).json({ error: "Failed to dispatch password recovery email. Please try again later." });
+      }
+    }
 
     const responsePayload = {
       message: "Reset token generated successfully.",

@@ -74,10 +74,14 @@ export default function LoginPage() {const navigate = useNavigate();
  // ==========================================
  // ⚡ API Pipeline Operations
  // ==========================================
- const handleLoginSubmit = async (e) => {e.preventDefault();
- setErrorMessage("");
- setIsLoggingIn(true);
- try {const response = await fetchWithAuth(`${API_BASE_URL}/api/auth/login`, { credentials:"include",
+  const handleLoginSubmit = async (e) => {e.preventDefault();
+  if (!turnstileToken) {
+    setErrorMessage("Please complete the security challenge verification.");
+    return;
+  }
+  setErrorMessage("");
+  setIsLoggingIn(true);
+  try {const response = await fetchWithAuth(`${API_BASE_URL}/api/auth/login`, { credentials:"include",
  method:"POST",
  headers: {"Content-Type":"application/json"},
  body: JSON.stringify({ email, password, portalRole: userRole, turnstileToken })
@@ -337,6 +341,10 @@ export default function LoginPage() {const navigate = useNavigate();
 }`}>
  <form 
  className="w-full space-y-3"onSubmit={async (e) => {e.preventDefault();
+  if (!turnstileToken) {
+    setErrorMessage("Please complete the security challenge verification.");
+    return;
+  }
  if (passwordStrength.score < 4) {setErrorMessage(t("login.strongerPasswordRequired"));
  return;
 }

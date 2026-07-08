@@ -212,7 +212,11 @@ const register = async (req, res) => {
 
     const emailSuccess = await sendEmailOtp(email, emailOtp);
     if (!emailSuccess) {
-      return res.status(400).json({ error: "Failed to deliver OTP. Please check your email address and try again." });
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[DEVELOPMENT] Resend not configured. Bypassed OTP dispatch. Generated OTP for ${email}: ${emailOtp}`);
+      } else {
+        return res.status(400).json({ error: "Failed to deliver OTP. Please check your email address and try again." });
+      }
     }
 
     const salt = await bcrypt.genSalt(10);

@@ -115,7 +115,18 @@ exports.routeHandler3 = async (req, res) => {
         throw new Error(`Supabase upload failed: ${error.message}`);
       }
     } else {
-      console.warn("⚠️ Warning: Supabase Storage is not configured. Bypassing upload step.");
+      if (process.env.NODE_ENV === 'production') {
+        return res.status(500).json({ error: "Storage service is offline. File upload failed." });
+      } else {
+        const fs = require('fs');
+        const path = require('path');
+        const dir = path.join(__dirname, '../uploads/resumes');
+        if (!fs.existsSync(dir)){
+          fs.mkdirSync(dir, { recursive: true });
+        }
+        fs.writeFileSync(path.join(dir, filename), fileBuffer);
+        console.warn("⚠️ Warning: Supabase Storage is not configured. Bypassed to local disk storage in development.");
+      }
     }
 
     const fileUrl = `/api/files/resumes/${filename}`;

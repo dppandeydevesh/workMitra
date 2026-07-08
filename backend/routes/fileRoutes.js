@@ -40,6 +40,15 @@ router.get('/resumes/:filename', authenticateToken, async (req, res) => {
       res.set('Content-Type', 'application/pdf');
       res.send(Buffer.from(arrayBuffer));
     } else {
+      if (process.env.NODE_ENV !== 'production') {
+        const fs = require('fs');
+        const path = require('path');
+        const filePath = path.join(__dirname, '../uploads/resumes', filename);
+        if (fs.existsSync(filePath)) {
+          res.set('Content-Type', 'application/pdf');
+          return res.sendFile(filePath);
+        }
+      }
       console.warn("⚠️ Warning: Supabase storage is not configured. Bypassing download.");
       res.status(404).json({ error: 'Supabase storage is not configured.' });
     }

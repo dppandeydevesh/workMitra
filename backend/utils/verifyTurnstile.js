@@ -6,7 +6,7 @@ const verifyTurnstile = async (token, ip) => {
   }
 
   try {
-    const response = await fetch('https://challenges.cloudflare.com/turnstile/v1/siteverify', {
+    const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

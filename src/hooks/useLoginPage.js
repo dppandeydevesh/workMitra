@@ -2,8 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '../components/Toast';
+import { identifyUser, capture } from '../lib/posthog';
 import { track, identify } from '../utils/analytics';
-import { login, forgotPassword, verifyOtp, registerUser } from '../services/authService';
+import {
+  login,
+  forgotPassword,
+  verifyOtp,
+  registerUser,
+} from '../services/authService';
 
 /**
  * useLoginPage — Hook to manage login/signup/forgot-password/OTP states and api pipeline flows.
@@ -71,7 +77,8 @@ export function useLoginPage() {
         t('login.addSpecialChars') +
         ')';
     if (score === 4)
-      text = t('login.passwordStrengthStrong') + ' 🔥' + t('login.perfectStructure');
+      text =
+        t('login.passwordStrengthStrong') + ' 🔥' + t('login.perfectStructure');
 
     setPasswordStrength({ score, text });
   };
@@ -85,7 +92,12 @@ export function useLoginPage() {
     setErrorMessage('');
     setIsLoggingIn(true);
     try {
-      const { ok, data } = await login(email, password, userRole, turnstileToken);
+      const { ok, data } = await login(
+        email,
+        password,
+        userRole,
+        turnstileToken
+      );
 
       if (ok) {
         if (data.user) {
@@ -187,9 +199,7 @@ export function useLoginPage() {
         setErrorMessage(data.error || t('login.registrationSystemError'));
       }
     } catch (err) {
-      setErrorMessage(
-        t('login.registrationError', { message: err.message })
-      );
+      setErrorMessage(t('login.registrationError', { message: err.message }));
     } finally {
       setIsRegistering(false);
     }
@@ -264,7 +274,8 @@ export function useLoginPage() {
       } else {
         setErrorMessage(data.error || t('login.verificationFailed'));
       }
-    } catch (err) { console.error(err);
+    } catch (err) {
+      console.error(err);
       setErrorMessage(t('login.serverPortalError'));
     } finally {
       setIsVerifying(false);
@@ -272,34 +283,52 @@ export function useLoginPage() {
   };
 
   return {
-    view, setView,
-    userRole, setUserRole,
-    isSignUp, setIsSignUp,
+    view,
+    setView,
+    userRole,
+    setUserRole,
+    isSignUp,
+    setIsSignUp,
 
     // field states
-    email, setEmail,
-    password, setPassword,
-    mobile, setMobile,
-    fullName, setFullName,
-    companyName, setCompanyName,
-    collegeName, setCollegeName,
-    enrollmentNumber, setEnrollmentNumber,
-    departmentName, setDepartmentName,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    mobile,
+    setMobile,
+    fullName,
+    setFullName,
+    companyName,
+    setCompanyName,
+    collegeName,
+    setCollegeName,
+    enrollmentNumber,
+    setEnrollmentNumber,
+    departmentName,
+    setDepartmentName,
 
     // strength
-    passwordStrength, setPasswordStrength,
-    errorMessage, setErrorMessage,
-    turnstileToken, setTurnstileToken,
+    passwordStrength,
+    setPasswordStrength,
+    errorMessage,
+    setErrorMessage,
+    turnstileToken,
+    setTurnstileToken,
 
     // loading state
-    isRegistering, setIsRegistering,
+    isRegistering,
+    setIsRegistering,
     isLoggingIn,
     isVerifying,
-    isOtpVerifying, setIsOtpVerifying,
-    emailOtpInput, setEmailOtpInput,
+    isOtpVerifying,
+    setIsOtpVerifying,
+    emailOtpInput,
+    setEmailOtpInput,
 
     // recovery state
-    recoveryEmail, setRecoveryEmail,
+    recoveryEmail,
+    setRecoveryEmail,
     recoveryMessage,
     generatedResetLink,
     sendingRecovery,

@@ -8,4 +8,4 @@ const pendingUserSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now, expires: 600 } // Auto-deletes after 10 minutes
 });
 
-module.exports = mongoose.model("PendingUser", pendingUserSchema);
+module.exports = mongoose.models.PendingUser || mongoose.model("PendingUser", pendingUserSchema);

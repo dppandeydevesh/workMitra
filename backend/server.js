@@ -107,16 +107,17 @@ const PORT = process.env.PORT || 5000;
 const seedAdmin = require('./utils/seedAdmin');
 const dbURI = process.env.MONGO_URI;
 
-mongoose.connect(dbURI)
-  .then(() => {
-    console.log('🔌 Connected to MongoDB Successfully!');
-    seedAdmin();
-  })
-  .catch((err) => {
-    console.error('❌ MongoDB connection error:', err.message);
-    process.exit(1); // Fail fast — DB is required for the app to function
-  });
-
+if (process.env.NODE_ENV !== 'test') {
+  mongoose.connect(dbURI)
+    .then(() => {
+      console.log('🔌 Connected to MongoDB Successfully!');
+      seedAdmin();
+    })
+    .catch((err) => {
+      console.error('❌ MongoDB connection error:', err.message);
+      process.exit(1); // Fail fast — DB is required for the app to function
+    });
+}
 
 
 // =========================================================================
@@ -132,13 +133,16 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
+if (process.env.NODE_ENV !== 'test') {
+  const server = app.listen(PORT, () => {
+      console.log(`🚀 Server running smoothly on http://localhost:${PORT}`);
+  });
 
-const server = app.listen(PORT, () => {
-    console.log(`🚀 Server running smoothly on http://localhost:${PORT}`);
-});
+  // =========================================================================
+  // 💬 WEBSOCKET CHAT ENGINE (Real-time Messaging Gateway)
+  // =========================================================================
+  const initWebSocketServer = require('./services/websocketService');
+  initWebSocketServer(server, JWT_SECRET);
+}
 
-// =========================================================================
-// 💬 WEBSOCKET CHAT ENGINE (Real-time Messaging Gateway)
-// =========================================================================
-const initWebSocketServer = require('./services/websocketService');
-initWebSocketServer(server, JWT_SECRET);
+module.exports = app;

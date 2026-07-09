@@ -115,4 +115,4 @@ UserSchema.index(
 );
 
 UserSchema.index({ userRole: 1 });
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.models.User || mongoose.model('User', UserSchema);

@@ -197,7 +197,7 @@ const register = async (req, res) => {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: "Email already registered." });
+      return res.status(409).json({ error: "Email already registered." });
     }
 
     if (mobile) {
@@ -345,7 +345,7 @@ const login = async (req, res) => {
 
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ error: "Invalid email or account password." });
+            return res.status(401).json({ error: "Invalid email or account password." });
         }
 
         // Allow admins to login through any portal to access their dashboard

@@ -10,7 +10,7 @@
     "start": "node backend/server.js",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "JWT_SECRET=test MONGO_URI=test ADMIN_EMAIL=test ADMIN_PASSWORD=test CORS_ORIGINS=test GEMINI_API_KEY=test FRONTEND_URL=test vitest run"
   },
   "dependencies": {
     "@eslint/js": "^9.39.4",
@@ -43,6 +43,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "jsdom": "^29.1.1",
-    "vitest": "^4.1.9"
+    "supertest": "^7.2.2",
+    "vitest": "^4.1.10"
   }
 }

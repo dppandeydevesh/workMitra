@@ -4,41 +4,44 @@ const User = require('../models/User');
 exports.handleWebhook = async (req, res) => {
   try {
     const signature = req.headers['x-razorpay-signature'];
-    if (!signature) {
-      return res.status(400).json({ error: 'Missing signature' });
+
+    if (!process.env.RAZORPAY_WEBHOOK_SECRET) {
+      console.error('RAZORPAY_WEBHOOK_SECRET is missing');
+      return res.status(500).send('Webhook secret missing');
     }
 
-    // req.body is the raw buffer due to express.raw()
+    const rawBody = req.body.toString('utf8');
+
     const expectedSignature = crypto
       .createHmac('sha256', process.env.RAZORPAY_WEBHOOK_SECRET)
-      .update(req.body)
+      .update(rawBody)
       .digest('hex');
 
     if (signature !== expectedSignature) {
       return res.status(400).json({ error: 'Invalid signature' });
     }
 
-    const payload = JSON.parse(req.body.toString());
-    const event = payload.event;
-    const payment = payload.payload.payment.entity;
+    const parsedBody = JSON.parse(rawBody);
+    const event = parsedBody.event;
+    const payment = parsedBody.payload.payment.entity;
 
     if (event === 'payment.captured') {
-      await User.findOneAndUpdate(
-        { razorpayOrderId: payment.order_id },
-        { hasPaidPass: true }
-      );
+      const orderId = payment.order_id;
+      if (orderId) {
+        await User.findOneAndUpdate(
+          { razorpayOrderId: orderId },
+          { hasPaidPass: true }
+        );
+        console.log(`Payment captured for order ${orderId}. Pass activated.`);
+      }
+    } else if (event === 'payment.failed') {
+      console.log(`Payment failed for order ${payment.order_id}`);
+      // Handle failed payment if needed
     }
 
-    if (event === 'payment.failed') {
-      await User.findOneAndUpdate(
-        { razorpayOrderId: payment.order_id },
-        { hasPaidPass: false }
-      );
-    }
-
-    res.status(200).json({ received: true });
-  } catch (error) {
-    console.error('Webhook error:', error);
-    res.status(500).json({ error: 'Webhook processing failed' });
+    res.status(200).json({ status: 'ok' });
+  } catch (err) {
+    console.error('Razorpay Webhook Error:', err);
+    res.status(500).send('Server Error');
   }
 };

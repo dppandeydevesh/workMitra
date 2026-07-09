@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  baseURL: API_BASE_URL,
   withCredentials: true,
 });
 
@@ -15,19 +16,21 @@ let isRefreshing = false;
 let failedQueue = [];
 
 const processQueue = (error, token = null) => {
-  failedQueue.forEach(prom => error ? prom.reject(error) : prom.resolve(token));
+  failedQueue.forEach((prom) =>
+    error ? prom.reject(error) : prom.resolve(token)
+  );
   failedQueue = [];
 };
 
 api.interceptors.response.use(
-  res => res,
+  (res) => res,
   async (error) => {
     const original = error.config;
     if (error.response?.status === 401 && !original._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
-        }).then(token => {
+        }).then((token) => {
           original.headers.Authorization = `Bearer ${token}`;
           return api(original);
         });
@@ -36,7 +39,7 @@ api.interceptors.response.use(
       isRefreshing = true;
       try {
         const { data } = await axios.post(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/auth/refresh`,
+          `${API_BASE_URL}/api/auth/refresh`,
           {},
           { withCredentials: true }
         );
@@ -62,16 +65,20 @@ api.interceptors.response.use(
 export const fetchWithAuth = async (endpoint, options = {}) => {
   try {
     const response = await api({
-      url: endpoint.replace(import.meta.env.VITE_API_URL || 'http://localhost:3000/api', ''),
+      url: endpoint.replace(API_BASE_URL, ''),
       method: options.method || 'GET',
-      data: options.body ? (typeof options.body === 'string' ? JSON.parse(options.body) : options.body) : undefined,
+      data: options.body
+        ? typeof options.body === 'string'
+          ? JSON.parse(options.body)
+          : options.body
+        : undefined,
       headers: options.headers,
     });
     return {
       ok: true,
       status: response.status,
       json: async () => response.data,
-      text: async () => JSON.stringify(response.data)
+      text: async () => JSON.stringify(response.data),
     };
   } catch (error) {
     if (error.response) {
@@ -79,7 +86,7 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
         ok: false,
         status: error.response.status,
         json: async () => error.response.data,
-        text: async () => JSON.stringify(error.response.data)
+        text: async () => JSON.stringify(error.response.data),
       };
     }
     throw error;

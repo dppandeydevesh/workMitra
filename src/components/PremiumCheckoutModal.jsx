@@ -85,7 +85,7 @@ const PremiumCheckoutModal = ({setShowCheckoutModal,
  localStorage.setItem("hasPaidPass","true");
  setCurrentUser(updatedUser);
  setShowCheckoutModal(false);
- track('payment_completed', { plan: 'premium_annual', amount: 999 });
+ track('payment_completed', { plan: 'premium_annual', amount: order.amount / 100 });
  toast.success("🎉" + t("dashboard.premiumUnlocked"));
 } else {toast.error(verifyData.error ||"Payment verification failed.");
 }

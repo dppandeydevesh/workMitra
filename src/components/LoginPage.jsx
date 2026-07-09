@@ -265,7 +265,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={isVerifying}
-                  className={`w-full py-3.5 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition mt-2 ${isVerifying ? 'bg-ink-400 cursor-not-allowed' : 'bg-[#F5A623] hover:bg-[#E0941F] hover:opacity-95'}`}
+                  className={`w-full py-3.5 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition mt-2 ${isVerifying ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#F5A623] hover:bg-[#E0941F] hover:opacity-95'}`}
                 >
                   {isVerifying
                     ? t('login.verifying')
@@ -519,7 +519,7 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={passwordStrength.score < 4 || isRegistering}
-                    className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3 rounded-xl shadow-md mt-1 transition flex justify-center items-center ${passwordStrength.score === 4 && !isRegistering ? 'bg-[#F5A623] hover:bg-[#E0941F] hover:opacity-95 cursor-pointer' : 'bg-ink-400 cursor-not-allowed'}`}
+                    className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3 rounded-xl shadow-md mt-1 transition flex justify-center items-center ${passwordStrength.score === 4 && !isRegistering ? 'bg-[#F5A623] hover:bg-[#E0941F] hover:opacity-95 cursor-pointer' : 'bg-gray-400 cursor-not-allowed'}`}
                   >
                     {isRegistering ? (
                       <>
@@ -622,7 +622,7 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     disabled={isLoggingIn}
-                    className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3.5 rounded-xl shadow-md mt-1 transition flex justify-center items-center ${isLoggingIn ? 'bg-ink-400 cursor-not-allowed' : 'bg-[#F5A623] hover:bg-[#E0941F] hover:opacity-95'}`}
+                    className={`w-full text-white text-xs font-bold uppercase tracking-wider py-3.5 rounded-xl shadow-md mt-1 transition flex justify-center items-center ${isLoggingIn ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#F5A623] hover:bg-[#E0941F] hover:opacity-95'}`}
                   >
                     {isLoggingIn ? (
                       <>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '../components/Toast';
-import { identifyUser, capture } from '../lib/posthog';
+import { track, identify } from '../utils/analytics';
 import { login, forgotPassword, verifyOtp, registerUser } from '../services/authService';
 
 /**
@@ -90,8 +90,8 @@ export function useLoginPage() {
       if (ok) {
         if (data.user) {
           localStorage.setItem('user', JSON.stringify(data.user));
-          identifyUser(); // 📊 PostHog identification
-          capture('user_logged_in', { role: data.user.userRole });
+          identify(data.user._id, { role: data.user.userRole }); // PostHog identification
+          track('user_logged_in', { role: data.user.userRole });
 
           if (data.user.userRole === 'company') {
             navigate('/company-dashboard');

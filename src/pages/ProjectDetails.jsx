@@ -4,6 +4,7 @@ import { API_BASE_URL} from"../config";
 import { useToast} from"../components/Toast";
 import { fetchWithAuth} from"../services/apiClient";
 import { useTranslation} from"react-i18next";
+import { track } from"../utils/analytics";
 
 export default function ProjectDetails() {const { projectId} = useParams();
  const navigate = useNavigate();
@@ -59,6 +60,7 @@ export default function ProjectDetails() {const { projectId} = useParams();
 }, [projectId, fetchProjectAndAppState]);
 
  const handleApply = () => {if (!currentUser) return;
+ track('application_started', { projectId });
 
  // Calculate readiness score
  const profileCompleteness = [
@@ -112,6 +114,7 @@ export default function ProjectDetails() {const { projectId} = useParams();
 
  const data = await res.json();
  if (res.ok) {toast.success(t("projectDetails.applicationSubmitted"));
+ track('application_submitted', { projectId, role: 'student' });
  setApplicationStatus("Pending");
 } else {toast.error(data.error || t("projectDetails.failedToSubmit"));
 }

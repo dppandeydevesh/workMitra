@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../config';
 import { useToast } from '../components/Toast';
+import { track } from '../utils/analytics';
 
 /**
  * useStudentProfile — Custom hook to manage student profile states,
@@ -164,6 +165,7 @@ export function useStudentProfile() {
       const data = await res.json();
       if (res.ok) {
         toast.success(t('studentProfile.portfolioUpdated'));
+        track('profile_completed', { role: 'student', hasCV: !!resumeUrl });
         setProfileUser(data.user);
         setIsEditing(false);
         // If this is the logged-in student, update their cached context in localStorage

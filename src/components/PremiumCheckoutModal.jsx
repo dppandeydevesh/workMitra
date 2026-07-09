@@ -2,6 +2,7 @@ import React, { useState} from'react';
 import { useToast} from'./Toast';
 import { useTranslation} from'react-i18next';
 import { fetchWithAuth} from'../services/apiClient';
+import { track } from'../utils/analytics';
 
 const PremiumCheckoutModal = ({setShowCheckoutModal, 
  currentUser, 
@@ -45,6 +46,7 @@ const PremiumCheckoutModal = ({setShowCheckoutModal,
 
  <button
  onClick={async () => {try {setCheckingOutPass(true);
+ track('payment_initiated', { plan: 'premium_annual' });
  const orderRes = await fetchWithAuth(`${API_BASE_URL}/api/payments/create-order`, {method:"POST",
  headers: {"Content-Type":"application/json"},
  body: JSON.stringify({ planId:"premium"})
@@ -83,6 +85,7 @@ const PremiumCheckoutModal = ({setShowCheckoutModal,
  localStorage.setItem("hasPaidPass","true");
  setCurrentUser(updatedUser);
  setShowCheckoutModal(false);
+ track('payment_completed', { plan: 'premium_annual', amount: 999 });
  toast.success("🎉" + t("dashboard.premiumUnlocked"));
 } else {toast.error(verifyData.error ||"Payment verification failed.");
 }

@@ -3,6 +3,7 @@ import { API_BASE_URL} from"../config";
 import { useNavigate} from"react-router-dom";
 import { useToast} from"../components/Toast";
 import { useTranslation} from"react-i18next";
+import { track } from"../utils/analytics";
 
 export default function AddProject() {const navigate = useNavigate();
  const toast = useToast();
@@ -110,6 +111,7 @@ export default function AddProject() {const navigate = useNavigate();
 });
 
  if (response.ok) {toast.success(t("addProject.successMessage", { status}));
+ track('project_posted', { role: 'company' });
  navigate("/company-dashboard");
 } else {const data = await response.json();
  setErrorMessage(data.error || t("addProject.deployFailed"));

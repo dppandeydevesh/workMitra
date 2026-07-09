@@ -18,6 +18,13 @@ global.wsClients = new Map(); // Global WebSocket client registry
 
 const app = express();
 
+const Sentry = require('@sentry/node');
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.NODE_ENV,
+  tracesSampleRate: 0.2,
+});
+app.use(Sentry.Handlers.requestHandler());
 
 // Configure trust proxy for Cloudflare
 app.set('trust proxy', [
@@ -93,6 +100,7 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/files', fileRoutes);
 
+app.use(Sentry.Handlers.errorHandler());
 const errorHandler = require('./middleware/errorHandler');
 // Global error handler must be last
 app.use(errorHandler);

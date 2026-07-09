@@ -4,11 +4,19 @@ import'./index.css'
 import App from"./App"
 import'./i18n.js'
 import { API_BASE_URL} from'./config'
-import { initPostHog, identifyUser } from './lib/posthog'
+import * as Sentry from '@sentry/react';
+import posthog from 'posthog-js';
 
-// 📊 Analytics — init PostHog and identify returning user immediately
-initPostHog();
-identifyUser();
+Sentry.init({
+  dsn: import.meta.env.VITE_SENTRY_DSN,
+  environment: import.meta.env.MODE,
+  tracesSampleRate: 0.2,
+});
+
+posthog.init(import.meta.env.VITE_POSTHOG_KEY, {
+  api_host: 'https://app.posthog.com',
+  autocapture: false,
+});
 
 // 🔒 Intercept window.fetch to automatically append JWT Token to Authorization headers
 const originalFetch = window.fetch;

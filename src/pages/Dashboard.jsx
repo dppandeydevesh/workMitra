@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../config";
 import { useDashboard } from "../hooks/useDashboard";
+import { track } from "../utils/analytics";
 import PremiumCheckoutModal from "../components/PremiumCheckoutModal";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
@@ -16,6 +17,11 @@ import {
 export default function Dashboard() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  const handleProjectClick = (project) => {
+    track('project_viewed', { projectId: project._id, company: project.companyName });
+    navigate(`/project/${project._id}`);
+  };
 
   const {
     projects, loading, currentUser, setCurrentUser, myApplications, appliedProjectIds,
@@ -271,7 +277,7 @@ export default function Dashboard() {
                     const project = app.projectId;
                     if (!project) return null;
                     return (
-                      <motion.div key={app._id} onClick={() => navigate(`/project/${project._id}`)} className="bg-white rounded-xl border border-ink-200 p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition cursor-pointer wm-panel wm-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
+                      <motion.div key={app._id} onClick={() => handleProjectClick(project)} className="bg-white rounded-xl border border-ink-200 p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition cursor-pointer wm-panel wm-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
                         <div>
                           <div className="flex justify-between items-center mb-3">
                             <span className="bg-marigold-50 text-marigold-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase flex items-center gap-1.5">
@@ -569,7 +575,7 @@ export default function Dashboard() {
                 ) : aiTopPicks.length > 0 ? (
                   <div className="flex space-x-4 overflow-x-auto pb-4 hide-scrollbar py-2">
                     {aiTopPicks.map(project => (
-                      <motion.div key={project._id} onClick={() => navigate(`/project/${project._id}`)} className="min-w-[280px] sm:min-w-[320px] transition cursor-pointer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }} style={{ borderRadius: 12, overflow: 'hidden', border: '0.5px solid #E1E2DC' }}>
+                      <motion.div key={project._id} onClick={() => handleProjectClick(project)} className="min-w-[280px] sm:min-w-[320px] transition cursor-pointer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }} style={{ borderRadius: 12, overflow: 'hidden', border: '0.5px solid #E1E2DC' }}>
                         <div style={{ height: 3, background: '#F5A623' }} />
                         <div style={{ background: '#FFFFFF', padding: '18px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 'calc(100% - 3px)' }}>
                           <div>
@@ -722,7 +728,7 @@ export default function Dashboard() {
                 {filteredProjects.map((project) => {
                   const isAlreadyApplied = appliedProjectIds.includes(project._id.toString());
                   return (
-                    <motion.div key={project._id} onClick={() => navigate(`/project/${project._id}`)} className="bg-white rounded-xl border border-ink-200 p-4 sm:p-6 shadow-sm flex flex-col justify-between hover:border-marigold-400 hover:shadow-md transition-all duration-300 cursor-pointer wm-panel wm-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
+                    <motion.div key={project._id} onClick={() => handleProjectClick(project)} className="bg-white rounded-xl border border-ink-200 p-4 sm:p-6 shadow-sm flex flex-col justify-between hover:border-marigold-400 hover:shadow-md transition-all duration-300 cursor-pointer wm-panel wm-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
                       <div>
                         <div className="flex justify-between items-center mb-3">
                           <span className="bg-marigold-50 text-marigold-700 text-xs font-bold px-2.5 py-1 rounded-md flex items-center gap-1.5">
@@ -764,7 +770,7 @@ export default function Dashboard() {
                               </button>
                             ) : (
                               <button
-                                onClick={(e) => { e.stopPropagation(); navigate(`/project/${project._id}`); }}
+                                onClick={(e) => { e.stopPropagation(); handleProjectClick(project); }}
                                 className={`font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm flex items-center justify-center gap-1.5 ${isAlreadyApplied ? "bg-emerald-100 text-emerald-700 border border-emerald-200 hover:bg-emerald-200/50" : "marigold-btn-inline"}`}>
                                 {isAlreadyApplied ? <><CheckCircle className="w-3.5 h-3.5" /> {t("dashboard.appliedDetails")}</> : t("dashboard.viewDetailsBtn")}
                               </button>

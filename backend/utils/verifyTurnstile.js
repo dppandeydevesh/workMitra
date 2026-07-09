@@ -6,14 +6,14 @@ const verifyTurnstile = async (token, ip) => {
   }
 
   try {
+    const formData = new URLSearchParams();
+    formData.append('secret', process.env.CF_TURNSTILE_SECRET_KEY);
+    formData.append('response', token);
+    if (ip) formData.append('remoteip', ip);
+
     const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        secret: process.env.CF_TURNSTILE_SECRET_KEY,
-        response: token,
-        remoteip: ip,
-      }),
+      body: formData,
     });
     const data = await response.json();
     return !!data.success;

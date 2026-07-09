@@ -72,8 +72,13 @@ app.use(cors({
 }));
 
 app.use(cookieParser());
-// Request body size limit
-app.use(express.json({ limit: '1mb' }));
+// Request body size limit (skip for webhook so express.raw works)
+app.use((req, res, next) => {
+  if (req.originalUrl.includes('/webhook')) {
+    return next();
+  }
+  express.json({ limit: '1mb' })(req, res, next);
+});
 
 const prerender = require('prerender-node');
 app.use(prerender.set('prerenderToken', process.env.PRERENDER_TOKEN));

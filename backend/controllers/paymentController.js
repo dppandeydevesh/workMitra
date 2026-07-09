@@ -30,6 +30,12 @@ exports.createOrder = async (req, res) => {
 
         const order = await razorpayInstance.orders.create(options);
         
+        // Save the pending order ID to the user so the webhook can find them later
+        await User.findOneAndUpdate(
+            { email: req.user.email },
+            { razorpayOrderId: order.id }
+        );
+
         res.status(200).json(order);
     } catch (err) {
         console.error("Razorpay Create Order Error:", err);
@@ -56,17 +62,9 @@ exports.verifyPayment = async (req, res) => {
             return res.status(400).json({ error: "Invalid payment signature. Payment verification failed." });
         }
         
-        // Upgrade user to paid pass
-        const user = await User.findOneAndUpdate(
-            { email: req.user.email },
-            { hasPaidPass: true },
-            { new: true }
-        );
-        
-        const sanitized = user.toObject();
-        delete sanitized.password;
-        
-        res.status(200).json({ success: true, message: "Payment verified, pass activated!", user: sanitized });
+        // The DB update is now handled strictly by the secure webhook. 
+        // We just tell the frontend that signature matches.
+        res.status(200).json({ success: true, message: "Payment verified successfully! Background webhook will activate pass." });
     } catch (err) {
         console.error("Razorpay Verify Error:", err);
         res.status(500).json({ error: "Payment verification failed." });

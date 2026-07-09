@@ -48,6 +48,7 @@ const UserSchema = new mongoose.Schema({
 
     // 💳 Payment / Premium Pass
     hasPaidPass: { type: Boolean, default: false },
+    razorpayOrderId: { type: String, default: null },
 
     // 🚀 NEW FEATURE: Boolean tracking flag for single-time form onboarding
     hasCompletedProfile: { type: Boolean, default: false },

@@ -2,15 +2,8 @@ const { Queue, Worker } = require('bullmq');
 const IORedis = require('ioredis');
 const AiService = require('../services/AiService');
 
-let redisUrl = process.env.REDIS_URL || '';
-// Upstash non-ACL databases reject the 'default' username from IORedis connection strings
-if (redisUrl.includes('rediss://default:')) {
-  redisUrl = redisUrl.replace('rediss://default:', 'rediss://:');
-}
-
-const connection = new IORedis(redisUrl, {
+const connection = new IORedis(process.env.REDIS_URL, {
   maxRetriesPerRequest: null,
-  tls: redisUrl.startsWith('rediss://') ? { rejectUnauthorized: false } : undefined,
 });
 
 const aiQueue = new Queue('ai-tasks', { connection });

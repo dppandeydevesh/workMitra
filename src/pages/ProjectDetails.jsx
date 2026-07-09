@@ -41,9 +41,10 @@ export default function ProjectDetails() {const { projectId} = useParams();
  if (existingApp) {setApplicationStatus(existingApp.status);
 }
 }
-} catch (err) {setErrorMessage(t("projectDetails.errorConnecting"));
+} catch (err) { console.error(err);setErrorMessage(t("projectDetails.errorConnecting"));
 } finally {setLoading(false);
 }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [projectId]);
 
  useEffect(() => {const savedUser = JSON.parse(localStorage.getItem("user") ||"null");
@@ -54,6 +55,7 @@ export default function ProjectDetails() {const { projectId} = useParams();
 }
 
  fetchProjectAndAppState(savedUser.email);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [projectId, fetchProjectAndAppState]);
 
  const handleApply = () => {if (!currentUser) return;
@@ -113,7 +115,7 @@ export default function ProjectDetails() {const { projectId} = useParams();
  setApplicationStatus("Pending");
 } else {toast.error(data.error || t("projectDetails.failedToSubmit"));
 }
-} catch (err) {toast.error(t("projectDetails.errorCommunicating"));
+} catch (err) { console.error(err);toast.error(t("projectDetails.errorCommunicating"));
 } finally {setApplying(false);
  setShowNdaModal(false);
  setShowQuizModal(false);
@@ -133,7 +135,7 @@ export default function ProjectDetails() {const { projectId} = useParams();
  setApplicationStatus("Withdrawn");
 } else {toast.error(data.error || t("projectDetails.failedToWithdraw"));
 }
-} catch (err) {toast.error(t("projectDetails.errorCommunicating"));
+} catch (err) { console.error(err);toast.error(t("projectDetails.errorCommunicating"));
 } finally {setApplying(false);
 }
 };

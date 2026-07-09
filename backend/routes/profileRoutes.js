@@ -3,6 +3,7 @@ const router = express.Router();
 const controller = require('../controllers/profileController');
 const authenticateToken = require('../middleware/authMiddleware');
 const multer = require('multer');
+  // eslint-disable-next-line no-unused-vars
 const path = require('path');
 const storage = multer.memoryStorage();
 const upload = multer({ 

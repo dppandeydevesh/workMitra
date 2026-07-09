@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Project = require('../models/Project');
 const Application = require('../models/Application');
+  // eslint-disable-next-line no-unused-vars
 const swot = require('swot-node');
 const { notifyUser } = require('../utils/notify');
 
@@ -16,7 +17,7 @@ function calculateSimilarity(str1, str2) {
 }
 
 // Stub for future GitHub linter integration (not currently wired)
-// eslint-disable-next-line no-unused-vars
+ 
 function _runGithubLinter(githubUrl, fileTypes) {
   let score = 95;
   let issues = ["No syntax errors found.", "Variables well named."];
@@ -90,7 +91,7 @@ exports.applyForProject = async (req, res) => {
 
     await newApplication.save();
     res.status(201).json({ message: "Application submitted successfully!" });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to process project application." });
   }
 };
@@ -106,7 +107,7 @@ exports.getStudentApplications = async (req, res) => {
     const apps = await Application.find({ studentEmail: req.params.email });
     const appliedProjectIds = apps.map(app => app.projectId.toString());
     res.status(200).json(appliedProjectIds);
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to fetch student application logs." });
   }
 };
@@ -182,7 +183,7 @@ exports.getCompanyApplications = async (req, res) => {
     });
 
     res.status(200).json(enrichedApps);
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to load corporate applications." });
   }
 };
@@ -199,7 +200,7 @@ exports.getStudentDetails = async (req, res) => {
       .populate("projectId")
       .sort({ appliedAt: -1 });
     res.status(200).json(apps);
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to load candidate application timelines." });
   }
 };
@@ -242,7 +243,7 @@ exports.updateStatus = async (req, res) => {
     });
 
     res.status(200).json({ message: `Application status updated to ${status}.`, application });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to modify application status." });
   }
 };
@@ -513,7 +514,7 @@ exports.completeApplication = async (req, res) => {
     });
 
     res.status(200).json({ message: "Work approved and marked as Completed.", application });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to approve solution node." });
   }
 };
@@ -554,7 +555,7 @@ exports.requestRevision = async (req, res) => {
     });
 
     res.status(200).json({ message: "Revision requested successfully.", application });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to request task revision." });
   }
 };
@@ -629,7 +630,7 @@ exports.fileDispute = async (req, res) => {
     }
 
     res.status(200).json({ message: "Task solution disputed successfully.", application });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to dispute solution node." });
   }
 };
@@ -779,7 +780,7 @@ exports.updatePipelineStatus = async (req, res) => {
     await application.save();
 
     res.status(200).json({ message: "Placement pipeline stage updated.", application });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to update pipeline stage." });
   }
 };

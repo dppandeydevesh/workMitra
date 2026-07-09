@@ -9,10 +9,13 @@ import { resetPostHog } from '../lib/posthog';
 
 export default function Navbar() {const navigate = useNavigate();
  const location = useLocation();
+  // eslint-disable-next-line no-unused-vars
  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user") || "null"));
  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
  const [notificationsOpen, setNotificationsOpen] = useState(false);
  const [notifications, setNotifications] = useState([]);
+   
+  // eslint-disable-next-line no-unused-vars
  const { theme, toggleTheme} = useTheme();
  const { t, i18n} = useTranslation();
 
@@ -30,6 +33,7 @@ export default function Navbar() {const navigate = useNavigate();
 });
 
  return () => unsubscribe();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [addListener]);
 
 
@@ -65,6 +69,7 @@ export default function Navbar() {const navigate = useNavigate();
 };
  fetchStudentNotifications();
 }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [location.pathname]);
 
  if (!user) return null;

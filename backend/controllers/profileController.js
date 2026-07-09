@@ -1,3 +1,4 @@
+  // eslint-disable-next-line no-unused-vars
 const fsSync = require('fs');
 const pdfParse = require('pdf-parse');
 
@@ -19,7 +20,7 @@ exports.routeHandler0 = async (req, res) => {
       { new: true, upsert: true, runValidators: true }
     );
     res.status(201).json({ message: "Company profile saved successfully!", profile });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to save company profile." });
   }
 };
@@ -31,7 +32,7 @@ exports.routeHandler1 = async (req, res) => {
       return res.status(404).json({ error: "Company profile not found." });
     }
     res.status(200).json(profile);
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to retrieve company profile." });
   }
 };
@@ -69,7 +70,7 @@ exports.routeHandler2 = async (req, res) => {
         cvReviewReport: updatedUser.cvReviewReport
       }
     });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to update candidate resume details." });
   }
 };
@@ -104,6 +105,7 @@ exports.routeHandler3 = async (req, res) => {
     const filename = `${Date.now()}-${req.file.originalname}`;
     
     if (supabase) {
+  // eslint-disable-next-line no-unused-vars
       const { data, error } = await supabase.storage
         .from('resumes')
         .upload(filename, fileBuffer, {
@@ -186,7 +188,7 @@ exports.routeHandler4 = async (req, res) => {
     delete sanitizedStudent.resetPasswordExpires;
 
     res.status(200).json({ message: "Vouch endorsement submitted successfully!", student: sanitizedStudent });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to submit vouch endorsement." });
   }
 };
@@ -233,7 +235,7 @@ exports.routeHandler5 = async (req, res) => {
     delete sanitized.resetPasswordExpires;
 
     res.status(200).json({ user: sanitized });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to update profile parameters." });
   }
 };

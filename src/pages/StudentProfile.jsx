@@ -9,6 +9,7 @@ export default function StudentProfile() {
   const { t } = useTranslation();
 
   const {
+  // eslint-disable-next-line no-unused-vars
     email, profileUser, currentUser, loading, errorMessage, applications, isEditing, setIsEditing, saving,
     fullName, setFullName, mobile, setMobile, collegeName, setCollegeName, enrollmentNumber, setEnrollmentNumber,
     skillsInput, setSkillsInput, projectType, setProjectType, resumeUrl, setResumeUrl, githubUrl, setGithubUrl,

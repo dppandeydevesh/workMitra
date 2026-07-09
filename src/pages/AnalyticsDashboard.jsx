@@ -10,6 +10,7 @@ export default function AnalyticsDashboard() {const { t} = useTranslation();
  const [applications, setApplications] = useState([]);
  const [loading, setLoading] = useState(true);
  const [errorMessage, setErrorMessage] = useState("");
+  // eslint-disable-next-line no-unused-vars
  const [currentUser, setCurrentUser] = useState(null);
 
  useEffect(() => {const savedUser = JSON.parse(localStorage.getItem("user") ||"{}");
@@ -21,6 +22,7 @@ export default function AnalyticsDashboard() {const { t} = useTranslation();
 }
 
  fetchAnalyticsData(savedUser.email);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
 
  const fetchAnalyticsData = async (companyEmail) => {setLoading(true);
@@ -37,7 +39,7 @@ export default function AnalyticsDashboard() {const { t} = useTranslation();
  setApplications(appsData);
 } else {setErrorMessage(t("analytics.syncFailed"));
 }
-} catch (err) {setErrorMessage(t("analytics.serverError"));
+} catch (err) { console.error(err);setErrorMessage(t("analytics.serverError"));
 } finally {setLoading(false);
 }
 };

@@ -40,7 +40,7 @@ export default function MyProjects() {const navigate = useNavigate();
       });
       const data = await response.json();
       if (response.ok) setProjects(data);
-    } catch (err) {
+    } catch (err) { console.error(err);
       setErrorMessage(t("myProjects.failedSync"));
     } finally {
       setLoadingProjects(false);
@@ -58,6 +58,7 @@ export default function MyProjects() {const navigate = useNavigate();
     }
 
     fetchCompanyData(companyEmail);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
  const handleInspectApplicants = async (project) => {setSelectedProject(project);
@@ -67,7 +68,7 @@ export default function MyProjects() {const navigate = useNavigate();
 });
  const data = await response.json();
  if (response.ok) setApplicants(data);
-} catch (err) {toast.error(t("myProjects.errorAnalytics"));
+} catch (err) { console.error(err);toast.error(t("myProjects.errorAnalytics"));
 } finally {setLoadingApplicants(false);
 }
 };
@@ -85,7 +86,7 @@ export default function MyProjects() {const navigate = useNavigate();
 }
 } else {toast.error(data.error || t("myProjects.failedAccept"));
 }
-} catch (err) {toast.error(t("myProjects.errorStatusPayload"));
+} catch (err) { console.error(err);toast.error(t("myProjects.errorStatusPayload"));
 }
 };
 
@@ -102,7 +103,7 @@ export default function MyProjects() {const navigate = useNavigate();
 }
 } else {toast.error(data.error || t("myProjects.failedReject"));
 }
-} catch (err) {toast.error(t("myProjects.errorStatusPayload"));
+} catch (err) { console.error(err);toast.error(t("myProjects.errorStatusPayload"));
 }
 };
 
@@ -130,7 +131,7 @@ export default function MyProjects() {const navigate = useNavigate();
 }
 } else {toast.error(data.error || t("myProjects.failedComplete"));
 }
-} catch (err) {toast.error(t("myProjects.errorCompletionPayload"));
+} catch (err) { console.error(err);toast.error(t("myProjects.errorCompletionPayload"));
 }
 };
 
@@ -151,7 +152,7 @@ export default function MyProjects() {const navigate = useNavigate();
 }
 } else {toast.error(t("myProjects.failedDeleteProject"));
 }
-} catch (err) {toast.error(t("myProjects.errorDeletePayload"));
+} catch (err) { console.error(err);toast.error(t("myProjects.errorDeletePayload"));
 }
 };
 
@@ -173,7 +174,7 @@ export default function MyProjects() {const navigate = useNavigate();
 }
 } else {toast.error(t("myProjects.failedArchiveProject"));
 }
-} catch (err) {toast.error(t("myProjects.errorArchivePayload"));
+} catch (err) { console.error(err);toast.error(t("myProjects.errorArchivePayload"));
 }
 };
 
@@ -218,7 +219,7 @@ export default function MyProjects() {const navigate = useNavigate();
 }
 } else {toast.error(t("myProjects.failedUpdateProject"));
 }
-} catch (err) {toast.error(t("myProjects.errorSavingProject"));
+} catch (err) { console.error(err);toast.error(t("myProjects.errorSavingProject"));
 } finally {setSubmittingEdit(false);
 }
 };

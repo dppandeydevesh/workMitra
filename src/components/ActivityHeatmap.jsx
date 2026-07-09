@@ -46,7 +46,7 @@ export default function ActivityHeatmap({ applications = []}) {// Let's create a
  <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
  {weeks.map((week, wIdx) => (
  <div key={wIdx} className="flex flex-col gap-1.5 shrink-0">
- {week.map((day, dIdx) => (
+ {week.map((day) => (
  <div
  key={day.date}
  title={`${day.date}: ${day.count} activities`}

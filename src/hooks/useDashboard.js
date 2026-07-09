@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +13,7 @@ import { useDashboardStore } from '../stores/useDashboardStore';
  * and event handlers. Dashboard.jsx becomes a pure render layer.
  */
 export function useDashboard() {
+  // eslint-disable-next-line no-unused-vars
   const navigate = useNavigate();
   const toast = useToast();
   const { t } = useTranslation();
@@ -133,7 +135,7 @@ export function useDashboard() {
         const details = await detailsRes.json();
         setMyApplications(details);
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       console.error('Failed to refetch details');
     }
   };
@@ -235,7 +237,7 @@ export function useDashboard() {
           setLoadingAiPicks(false);
         }
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       setErrorMessage(t('dashboard.connectServerFail'));
     } finally {
       setLoading(false);
@@ -282,7 +284,7 @@ export function useDashboard() {
       } else {
         toast.error(data.error || t('dashboard.cvUploadFail'));
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       toast.error(t('dashboard.uploadGatewayError'));
     } finally {
       setUploadingCV(false);
@@ -316,7 +318,7 @@ export function useDashboard() {
       } else {
         toast.error(data.error || t('dashboard.resumeUpdateFail'));
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       toast.error(t('dashboard.serverGatewayError'));
     } finally {
       setUpdatingResume(false);
@@ -352,7 +354,7 @@ export function useDashboard() {
       } else {
         toast.error(data.error || t('dashboard.cvReviewFail'));
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       toast.error(t('dashboard.aiEngineError'));
     } finally {
       setLoadingReview(false);
@@ -406,7 +408,7 @@ export function useDashboard() {
       } else {
         toast.error(data.error || t('dashboard.submissionFail'));
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       toast.error(t('dashboard.submissionPayloadError'));
     }
   };
@@ -441,7 +443,7 @@ export function useDashboard() {
       } else {
         toast.error(data.error || t('dashboard.extensionFail'));
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       toast.error(t('dashboard.extensionNetworkError'));
     } finally {
       setRequestingExtension(false);

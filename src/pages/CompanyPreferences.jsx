@@ -93,7 +93,7 @@ export default function CompanyPreferences() {const navigate = useNavigate();
  navigate("/company-dashboard");
 } else {setErrorMessage(data.error || t("companyPreferences.errorSave"));
 }
-} catch (err) {setErrorMessage(t("companyPreferences.errorServer"));
+} catch (err) { console.error(err);setErrorMessage(t("companyPreferences.errorServer"));
 }
 };
 

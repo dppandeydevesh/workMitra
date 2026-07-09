@@ -33,6 +33,7 @@ export default function CollegeDashboard() {const navigate = useNavigate();
 }
 
  fetchDashboardData(savedUser.collegeName);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
 
   const fetchDashboardData = async (collegeName) => {setLoading(true);
@@ -72,7 +73,7 @@ export default function CollegeDashboard() {const navigate = useNavigate();
  fetchDashboardData(currentUser.collegeName);
 } else {toast.error(t("college.errorUpdateEndorsement"));
 }
-} catch (err) {toast.error(t("college.networkErrorEndorsement"));
+} catch (err) { console.error(err);toast.error(t("college.networkErrorEndorsement"));
 }
 };
 
@@ -88,7 +89,7 @@ export default function CollegeDashboard() {const navigate = useNavigate();
  fetchDashboardData(currentUser.collegeName);
 } else {toast.error(t("college.errorUpdatePermissions"));
 }
-} catch (err) {toast.error(t("college.networkErrorCompanyStatus"));
+} catch (err) { console.error(err);toast.error(t("college.networkErrorCompanyStatus"));
 }
 };
 
@@ -134,7 +135,7 @@ export default function CollegeDashboard() {const navigate = useNavigate();
  fetchDashboardData(currentUser.collegeName);
 } else {toast.error(data.error || t("college.errorBulkImport"));
 }
-} catch (err) {toast.error(t("college.networkErrorBulkImport"));
+} catch (err) { console.error(err);toast.error(t("college.networkErrorBulkImport"));
 } finally {setImporting(false);
 }
 };

@@ -264,7 +264,7 @@ export function useLoginPage() {
       } else {
         setErrorMessage(data.error || t('login.verificationFailed'));
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       setErrorMessage(t('login.serverPortalError'));
     } finally {
       setIsVerifying(false);

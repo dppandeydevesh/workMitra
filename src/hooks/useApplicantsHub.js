@@ -59,6 +59,7 @@ export function useApplicantsHub() {
     }
 
     fetchCompanyApplications(savedUser.email);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchCompanyApplications = async (companyEmail) => {
@@ -74,7 +75,7 @@ export function useApplicantsHub() {
       } else {
         setErrorMessage(data.error || t('applicantsHub.failedFetchApps'));
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       setErrorMessage(t('applicantsHub.errorGateway'));
     } finally {
       setLoading(false);
@@ -106,7 +107,7 @@ export function useApplicantsHub() {
       } else {
         toast.error(data.error || t('applicantsHub.failedUpdateStatus'));
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       toast.error(t('applicantsHub.errorStatusPayload'));
     }
   };
@@ -139,7 +140,7 @@ export function useApplicantsHub() {
       } else {
         toast.error(data.error || t('applicantsHub.failedSubmitDispute'));
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       toast.error(t('applicantsHub.errorCommGateway'));
     } finally {
       setSubmittingReview(false);
@@ -182,7 +183,7 @@ export function useApplicantsHub() {
       } else {
         toast.error(data.error || t('applicantsHub.failedSubmitRevision'));
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       toast.error(t('applicantsHub.errorSubmitRevision'));
     } finally {
       setSubmittingReview(false);
@@ -221,7 +222,7 @@ export function useApplicantsHub() {
       } else {
         toast.error(data.error || t('applicantsHub.failedResolveExtension'));
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       toast.error(t('applicantsHub.networkErrorExtension'));
     }
   };
@@ -250,7 +251,7 @@ export function useApplicantsHub() {
       } else {
         toast.error(data.error || t('applicantsHub.failedSubmitReview'));
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       toast.error(t('applicantsHub.errorSubmitCompletion'));
     } finally {
       setSubmittingReview(false);

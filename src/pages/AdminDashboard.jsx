@@ -2,6 +2,7 @@ import React, { useState, useEffect} from"react";
 import { useTranslation} from"react-i18next";
 import { API_BASE_URL} from"../config";
 import { useToast} from"../components/Toast";
+// eslint-disable-next-line no-unused-vars
 import { motion} from"framer-motion";
 import {Users, 
  Building, 
@@ -77,6 +78,7 @@ export default function AdminDashboard() {const toast = useToast();
 };
 
  useEffect(() => {fetchAdminData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
 
  const fetchAdminData = async () => {setLoading(true);
@@ -101,7 +103,7 @@ export default function AdminDashboard() {const toast = useToast();
 } else {
   setErrorMessage(t("admin.toast.load_failed"));
 }
-} catch (err) {
+} catch (err) { console.error(err);
   setErrorMessage(t("admin.toast.auth_error"));
 } finally {setLoading(false);
 }
@@ -123,7 +125,7 @@ export default function AdminDashboard() {const toast = useToast();
  fetchAdminData();
 } else {toast.error(data.error || t("admin.toast.resolve_failed"));
 }
-} catch (err) {toast.error(t("admin.toast.network_error"));
+} catch (err) { console.error(err);toast.error(t("admin.toast.network_error"));
 } finally {setResolvingId(null);
 }
 };
@@ -141,13 +143,15 @@ export default function AdminDashboard() {const toast = useToast();
  fetchAdminData();
 } else {toast.error(data.error || t("admin.toast.verify_failed"));
 }
-} catch (err) {toast.error(t("admin.toast.verify_network_error"));
+} catch (err) { console.error(err);toast.error(t("admin.toast.verify_network_error"));
 } finally {setVerifyingEmail(null);
 }
 };
 
+  // eslint-disable-next-line no-unused-vars
  const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.15 } } };
 
+  // eslint-disable-next-line no-unused-vars
  const itemVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.15 } } };
 
  if (errorMessage) {

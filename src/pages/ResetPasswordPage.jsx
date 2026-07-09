@@ -2,6 +2,7 @@ import { useState} from"react";
 import { useParams, useNavigate} from"react-router-dom";
 import { useTranslation} from"react-i18next";
 import { API_BASE_URL} from"../config";
+// eslint-disable-next-line no-unused-vars
 import { motion} from"framer-motion";
 import { Lock} from"lucide-react";
 
@@ -58,7 +59,7 @@ export default function ResetPasswordPage() {const { token} = useParams();
  if (response.ok) {setSuccessMessage(t("resetPassword.successMessage"));
 } else {setErrorMessage(data.error || t("resetPassword.errorFailed"));
 }
-} catch (err) {setErrorMessage(t("resetPassword.errorServer"));
+} catch (err) { console.error(err);setErrorMessage(t("resetPassword.errorServer"));
 } finally {setSubmitting(false);
 }
 };

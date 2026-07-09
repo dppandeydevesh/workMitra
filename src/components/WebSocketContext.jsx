@@ -3,7 +3,7 @@ import { API_BASE_URL} from"../config";
 
 const WebSocketContext = createContext(null);
 
-// eslint-disable-next-line react-refresh/only-export-components
+ 
 export function useWebSocket() {return useContext(WebSocketContext);
 }
 

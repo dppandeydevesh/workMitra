@@ -10,6 +10,7 @@ import { useToast } from '../components/Toast';
  */
 export function useStudentProfile() {
   const { email } = useParams();
+  // eslint-disable-next-line no-unused-vars
   const navigate = useNavigate();
   const toast = useToast();
   const { t } = useTranslation();
@@ -57,6 +58,7 @@ export function useStudentProfile() {
     const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
     setCurrentUser(savedUser);
     fetchUserProfile();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [email]);
 
   const fetchUserProfile = async () => {
@@ -111,7 +113,7 @@ export function useStudentProfile() {
         const appsData = await appsRes.json();
         setApplications(appsData);
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       setErrorMessage(t('studentProfile.errorConnectingToGateway'));
     } finally {
       setLoading(false);
@@ -188,7 +190,7 @@ export function useStudentProfile() {
           data.error || t('studentProfile.failedToUpdateProfile')
         );
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       setErrorMessage(t('studentProfile.errorCommunicatingWithServer'));
     } finally {
       setSaving(false);
@@ -224,7 +226,7 @@ export function useStudentProfile() {
       } else {
         toast.error(data.error || t('studentProfile.failedToSubmitVouch'));
       }
-    } catch (err) {
+    } catch (err) { console.error(err);
       toast.error(t('studentProfile.connectionErrorVouch'));
     } finally {
       setVouching(false);

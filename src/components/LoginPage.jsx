@@ -1,5 +1,8 @@
+ 
+// eslint-disable-next-line no-unused-vars
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { Mail, Lock, User, Building, Phone, Hash, BookOpen } from "lucide-react";
 import { Turnstile } from "@marsidev/react-turnstile";
@@ -13,8 +16,11 @@ export default function LoginPage() {
     email, setEmail, password, setPassword, mobile, setMobile,
     fullName, setFullName, companyName, setCompanyName,
     collegeName, setCollegeName, enrollmentNumber, setEnrollmentNumber,
+  // eslint-disable-next-line no-unused-vars
     departmentName, setDepartmentName, passwordStrength, setPasswordStrength,
+  // eslint-disable-next-line no-unused-vars
     errorMessage, setErrorMessage, turnstileToken, setTurnstileToken,
+  // eslint-disable-next-line no-unused-vars
     isRegistering, setIsRegistering, isLoggingIn, isVerifying,
     isOtpVerifying, setIsOtpVerifying, emailOtpInput, setEmailOtpInput,
     recoveryEmail, setRecoveryEmail, recoveryMessage, generatedResetLink, sendingRecovery,

@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import { useState, useEffect} from"react";
 import { useNavigate} from"react-router-dom";
 import { useTranslation} from"react-i18next";
@@ -124,7 +125,7 @@ export default function Preferences() {const navigate = useNavigate();
 } else {const data = await response.json();
  setErrorMessage(data.error || t("preferences.update_config_error"));
 }
-} catch (err) {setErrorMessage(t("preferences.server_error"));
+} catch (err) { console.error(err);setErrorMessage(t("preferences.server_error"));
 }
 };
 

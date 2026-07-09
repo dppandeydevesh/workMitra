@@ -256,6 +256,7 @@ const register = async (req, res) => {
 const verifyOtp = async (req, res) => {
   try {
     // Accept either emailOtp or otp field for frontend compatibility
+  // eslint-disable-next-line no-unused-vars
     const { email, emailOtp, otp, mobileOtp } = req.body;
     const submittedOtp = emailOtp || otp;
 
@@ -485,7 +486,7 @@ const me = async (req, res) => {
     const user = await User.findOne({ email: req.user.email }).select("-password -__v");
     if (!user) return res.status(404).json({ error: "User not found" });
     res.json(user);
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 };
@@ -514,7 +515,7 @@ const getUserByEmail = async (req, res) => {
     }
     userObj.isEndorsed = isEndorsed;
     res.status(200).json(userObj);
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: 'Failed to read profile details.' });
   }
 };
@@ -542,7 +543,7 @@ const getVanityProfile = async (req, res) => {
     }
     userObj.isEndorsed = isEndorsed;
     res.status(200).json(userObj);
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: 'Failed to read vanity profile.' });
   }
 };
@@ -562,7 +563,7 @@ const completeProfile = async (req, res) => {
     }
     await User.findOneAndUpdate({ email }, { hasCompletedProfile: true });
     res.status(200).json({ message: 'Profile onboarding flag locked successfully.' });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: 'Failed to lock profile onboarding state.' });
   }
 };

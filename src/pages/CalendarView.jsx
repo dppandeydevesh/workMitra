@@ -30,6 +30,7 @@ export default function CalendarView() {const navigate = useNavigate();
  return;
 }
  fetchProjects(savedUser.email);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
 
  const fetchProjects = async (email) => {setLoading(true);

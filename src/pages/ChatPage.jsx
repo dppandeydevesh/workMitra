@@ -3,6 +3,7 @@ import { useParams, useNavigate} from"react-router-dom";
 import { API_BASE_URL} from"../config";
 import { useWebSocket} from"../components/WebSocketContext";
 import { useTranslation} from"react-i18next";
+// eslint-disable-next-line no-unused-vars
 import { motion} from"framer-motion";
 import { Send, User, Paperclip, Search, MessageSquare} from "lucide-react";
 

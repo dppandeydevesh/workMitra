@@ -109,6 +109,7 @@ Return ONLY a valid JSON array of strings (the 3 project IDs). No markdown, no e
     if (result?.text) {
       try {
         recommendedIds = JSON.parse(result.text.trim());
+// eslint-disable-next-line no-unused-vars
       } catch (e) {
         console.error('Failed to parse Gemini recommendations response:', result.text);
       }
@@ -230,6 +231,7 @@ ${textToAnalyze}`;
     let reviewReport;
     try {
       reviewReport = JSON.parse(result.text.trim());
+// eslint-disable-next-line no-unused-vars
     } catch (parseErr) {
       reviewReport = {
         score: 70,
@@ -247,7 +249,7 @@ ${textToAnalyze}`;
       message: 'CV reviewed successfully by workMitra AI!',
       report: reviewReport
     });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: 'Failed to execute AI resume scan.' });
   }
 };
@@ -300,6 +302,7 @@ ${resumeText}`;
     let atsReport;
     try {
       atsReport = JSON.parse(result.text.trim());
+// eslint-disable-next-line no-unused-vars
     } catch (parseErr) {
       return res.status(500).json({ error: 'Failed to parse AI response into JSON.' });
     }

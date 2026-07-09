@@ -3,6 +3,7 @@ import { useNavigate} from"react-router-dom";
 import { useTranslation} from"react-i18next";
 import { API_BASE_URL} from"../config";
 import { useToast} from"../components/Toast";
+// eslint-disable-next-line no-unused-vars
 import { useWebSocket} from"../components/WebSocketContext";
 import "./FacultyDashboard.css";
 import { Briefcase, Users } from "lucide-react";
@@ -31,6 +32,7 @@ export default function FacultyDashboard() {const { t} = useTranslation();
 }
  setUser(savedUser);
  fetchFacultyProjects(savedUser.email);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
 
  const fetchFacultyProjects = async (email) => {setLoading(true);
@@ -43,7 +45,7 @@ export default function FacultyDashboard() {const { t} = useTranslation();
  } else {
    setErrorMessage("Failed to load academic projects.");
  }
- } catch (error) {
+ } catch (error) { console.error(error);
    setErrorMessage("Network error while fetching projects.");
  } finally {setLoading(false);
  }
@@ -89,7 +91,7 @@ export default function FacultyDashboard() {const { t} = useTranslation();
 } else {const errorData = await res.json();
  toast.error(`Error: ${errorData.message ||"Failed to post"}`);
 }
-} catch (error) {toast.error("Error posting academic project. Please try again.");
+} catch (error) { console.error(error);toast.error("Error posting academic project. Please try again.");
 } finally {setPosting(false);
 }
 };
@@ -103,7 +105,7 @@ export default function FacultyDashboard() {const { t} = useTranslation();
  setApplicants(prev => prev.map(app => app.applicationId === appId ? { ...app, status: newStatus} : app));
 } else {toast.error("Failed to update status");
 }
-} catch (err) {toast.error("Network error");
+} catch (err) { console.error(err);toast.error("Network error");
 }
 };
 

@@ -31,7 +31,7 @@ exports.routeHandler0 = async (req, res) => {
       const messages = await query.sort({ timestamp: 1 });
       res.status(200).json(messages);
     }
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to load chat history." });
   }
 };
@@ -72,7 +72,7 @@ exports.routeHandler1 = async (req, res) => {
     );
     
     res.status(200).json(partnersWithUnread);
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to load recent chat partners." });
   }
 };
@@ -89,7 +89,7 @@ exports.routeHandler2 = async (req, res) => {
       { $set: { read: true } }
     );
     res.status(200).json({ success: true });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to mark messages as read." });
   }
 };

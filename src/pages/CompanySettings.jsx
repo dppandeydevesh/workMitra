@@ -28,6 +28,7 @@ export default function CompanySettings() {const navigate = useNavigate();
  return;
 }
  fetchProfile(savedUser.email);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
 
  const fetchProfile = async (email) => {setLoading(true);
@@ -45,7 +46,7 @@ export default function CompanySettings() {const navigate = useNavigate();
  setDefaultComplexity(data.defaultComplexity ||"Intermediate");
  setAutoApproveApplications(data.autoApproveApplications || false);
 }
-} catch (err) {toast.error(t("companySettings.loadProfileFailed"));
+} catch (err) { console.error(err);toast.error(t("companySettings.loadProfileFailed"));
 } finally {setLoading(false);
 }
 };
@@ -72,7 +73,7 @@ export default function CompanySettings() {const navigate = useNavigate();
 } else {const data = await res.json();
  toast.error(data.error || t("companySettings.saveFailed"));
 }
-} catch (err) {toast.error(t("companySettings.networkError"));
+} catch (err) { console.error(err);toast.error(t("companySettings.networkError"));
 } finally {setSaving(false);
 }
 };

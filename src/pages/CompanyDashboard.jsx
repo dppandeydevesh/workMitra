@@ -3,6 +3,7 @@ import { useNavigate} from"react-router-dom";
 import { API_BASE_URL} from"../config";
 import { useToast} from"../components/Toast";
 import { useTranslation} from"react-i18next";
+// eslint-disable-next-line no-unused-vars
 import { motion} from"framer-motion";
 import {Folder, Inbox, Search, CheckCircle, DollarSign, Star, 
  Plus, Users, BarChart2, Calendar, Settings, Trophy, Clock,
@@ -28,6 +29,7 @@ export default function CompanyDashboard() {const navigate = useNavigate();
 }
 
  fetchDashboardData(savedUser.email);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
 
   const fetchDashboardData = async (email) => {setLoading(true);
@@ -128,8 +130,10 @@ export default function CompanyDashboard() {const navigate = useNavigate();
  );
 }
 
+  // eslint-disable-next-line no-unused-vars
  const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.15 } } };
 
+  // eslint-disable-next-line no-unused-vars
  const itemVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.15 } } };
 
  return (

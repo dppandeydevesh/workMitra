@@ -54,7 +54,7 @@ exports.endorseStudent = async (req, res) => {
     
     await collegeUser.save();
     res.status(200).json({ message: `Student ${endorse ? 'endorsed' : 'un-endorsed'} successfully.`, endorsedList: collegeUser.collegeEndorsedStudents });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to update endorsement status." });
   }
 };
@@ -71,6 +71,7 @@ exports.getCompanies = async (req, res) => {
     const allCompanies = await User.find({ userRole: "company" }).select("-password");
     
     const companyStats = await Promise.all(allCompanies.map(async (company) => {
+  // eslint-disable-next-line no-unused-vars
       const companyIdStr = company._id.toString();
       const projects = await Project.find({ companyId: company._id });
       
@@ -102,7 +103,7 @@ exports.getCompanies = async (req, res) => {
       approved: collegeUser.collegeApprovedCompanies || [],
       blocked: collegeUser.collegeBlockedCompanies || []
     });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to fetch companies." });
   }
 };
@@ -123,7 +124,7 @@ exports.toggleCompanyStatus = async (req, res) => {
 
     await collegeUser.save();
     res.status(200).json({ message: `Company status updated to ${status}` });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to update company status." });
   }
 };
@@ -190,7 +191,7 @@ exports.bulkImportStudents = async (req, res) => {
       failedCount,
       errors 
     });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to process bulk import." });
   }
 };

@@ -15,7 +15,7 @@ exports.getMetrics = async (req, res) => {
     const disputedEscrow = applications.filter(app => app.status === "Disputed").reduce((sum, app) => sum + (app.projectId?.budget || 0), 0);
 
     res.status(200).json({ totalStudents, totalCompanies, totalProjects, lockedEscrow, completedEscrow, disputedEscrow });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to load admin statistics." });
   }
 };
@@ -25,7 +25,7 @@ exports.getDisputes = async (req, res) => {
   try {
     const disputes = await Application.find({ status: "Disputed" }).populate("projectId");
     res.status(200).json(disputes);
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to load disputes." });
   }
 };
@@ -42,7 +42,7 @@ exports.resolveDispute = async (req, res) => {
     app.timeline.push({ status: "Resolved", comment: `Admin Resolution: ${resolution}. Refund: ${refundPercentage}%. Notes: ${adminNotes}`, date: new Date() });
     await app.save();
     res.status(200).json({ message: "Dispute resolved successfully.", application: app });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to resolve dispute." });
   }
 };
@@ -52,7 +52,7 @@ exports.getCompanies = async (req, res) => {
   try {
     const companies = await User.find({ userRole: "company" }).select("-password");
     res.status(200).json(companies);
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to load companies." });
   }
 };
@@ -65,7 +65,7 @@ exports.verifyCompany = async (req, res) => {
     const company = await User.findOneAndUpdate({ email: companyEmail, userRole: "company" }, { isVerified }, { new: true });
     if (!company) return res.status(404).json({ error: "Company not found." });
     res.status(200).json({ message: `Company ${isVerified ? 'verified' : 'unverified'} successfully.`, company });
-  } catch (err) {
+  } catch (err) { console.error(err);
     res.status(500).json({ error: "Failed to verify company." });
   }
 };

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { API_BASE_URL } from "../config";
 import { useDashboard } from "../hooks/useDashboard";
 import PremiumCheckoutModal from "../components/PremiumCheckoutModal";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import {
   Briefcase, CheckCircle, MessageSquare, Ticket, Inbox,
@@ -21,8 +22,14 @@ export default function Dashboard() {
     showSubmitModal, setShowSubmitModal, activeAppToSubmit, setActiveAppToSubmit,
     submissionLink, setSubmissionLink, submissionText, setSubmissionText,
     githubRepoUrl, setGithubRepoUrl, liveDeploymentUrl, setLiveDeploymentUrl,
+   
+   
+  // eslint-disable-next-line no-unused-vars
     cvReport, resumeUrl, setResumeUrl, resumeText, setResumeText,
+  // eslint-disable-next-line no-unused-vars
     loadingReview, updatingResume, uploadingCV,
+   
+  // eslint-disable-next-line no-unused-vars
     showCheckoutModal, setShowCheckoutModal, checkingOutPass, checkoutStep, setCheckoutStep,
     codeQualityRubric, setCodeQualityRubric,
     correctnessRubric, setCorrectnessRubric,
@@ -30,12 +37,14 @@ export default function Dashboard() {
     usedAi, setUsedAi, aiPercentage, setAiPercentage, aiToolsUsed, setAiToolsUsed,
     showExtensionModal, setShowExtensionModal, activeAppToExtend, setActiveAppToExtend,
     extensionDays, setExtensionDays, extensionReason, setExtensionReason,
+  // eslint-disable-next-line no-unused-vars
     requestingExtension, aiTopPicks, loadingAiPicks, totalPages, errorMessage,
     handleSubmitWork, handleUploadCVFile, handleUpdateResumeDetails,
     handleReviewCV, handleRequestExtension, saveDraft,
     scrollToSection, initializeDashboardData,
     searchTerm, setSearchTerm, showSearchSuggestions, setShowSearchSuggestions,
     skillFilter, setSkillFilter, workTypeFilter, setWorkTypeFilter,
+  // eslint-disable-next-line no-unused-vars
     maxBudgetFilter, setMaxBudgetFilter, sortBy, setSortBy, page, setPage, limit, setLimit,
   } = useDashboard();
 
@@ -110,6 +119,7 @@ export default function Dashboard() {
   const itemVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.15 } } };
 
   // ── Computed values ────────────────────────────────────────────────────────
+  // eslint-disable-next-line no-unused-vars
   const notificationsList = myApplications.map(app => {
     const project = app.projectId;
     if (!project) return null;

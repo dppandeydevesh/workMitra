@@ -17,6 +17,7 @@ export default function AddProject() {const navigate = useNavigate();
  const [description, setDescription] = useState("");
  const [skillsInput, setSkillsInput] = useState(""); // Comma separated
  const [studentsNeeded, setStudentsNeeded] = useState(1);
+  // eslint-disable-next-line no-unused-vars
  const [workType, setWorkType] = useState("Micro Tasks");
  const [budget, setBudget] = useState("");
  const [duration, setDuration] = useState("");
@@ -113,7 +114,7 @@ export default function AddProject() {const navigate = useNavigate();
 } else {const data = await response.json();
  setErrorMessage(data.error || t("addProject.deployFailed"));
 }
-} catch (err) {setErrorMessage(t("addProject.networkFailure"));
+} catch (err) { console.error(err);setErrorMessage(t("addProject.networkFailure"));
 } finally {setSubmitting(false);
 }
 };

@@ -46,6 +46,7 @@ export default function PlacementPipeline() {const { t} = useTranslation();
 }
 
  fetchApplications(userObj);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [navigate]);
 
  const fetchApplications = async (user) => {setLoading(true);
@@ -66,7 +67,7 @@ export default function PlacementPipeline() {const { t} = useTranslation();
 } else {
   setErrorMessage(t("pipeline.loadApplicantsFailed"));
 }
-} catch (err) {
+} catch (err) { console.error(err);
   setErrorMessage(t("pipeline.loadNetworkError"));
 } finally {setLoading(false);
 }
@@ -86,7 +87,7 @@ export default function PlacementPipeline() {const { t} = useTranslation();
 } else {const data = await res.json();
  toast.error(data.error || t("pipeline.updateStageFailed"));
 }
-} catch (err) {toast.error(t("pipeline.updateStageError"));
+} catch (err) { console.error(err);toast.error(t("pipeline.updateStageError"));
 }
 };
 
@@ -110,7 +111,7 @@ export default function PlacementPipeline() {const { t} = useTranslation();
 } else {const data = await res.json();
  toast.error(data.error || t("pipeline.sendContractFailed"));
 }
-} catch (err) {toast.error(t("pipeline.extendOfferError"));
+} catch (err) { console.error(err);toast.error(t("pipeline.extendOfferError"));
 } finally {setSubmittingOffer(false);
 }
 };

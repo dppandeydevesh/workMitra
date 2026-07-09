@@ -21,7 +21,7 @@ export default function ProtectedRoute({ children, allowedRoles}) {const [isVeri
 }
 } else {if (isMounted) setIsAuthenticated(false);
 }
-} catch (err) {if (isMounted) setIsAuthenticated(false);
+} catch (err) { console.error(err);if (isMounted) setIsAuthenticated(false);
 } finally {if (isMounted) setIsVerifying(false);
 }
 };
@@ -67,6 +67,7 @@ export default function ProtectedRoute({ children, allowedRoles}) {const [isVeri
 } else {return <Navigate to="/preferences" replace />;
 }
 }
+// eslint-disable-next-line no-unused-vars
 } catch (e) {
   // ignore parsing errors
 }

@@ -10,7 +10,8 @@
     "start": "node backend/server.js",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "JWT_SECRET=test MONGO_URI=test ADMIN_EMAIL=test ADMIN_PASSWORD=test CORS_ORIGINS=test GEMINI_API_KEY=test FRONTEND_URL=test vitest run"
+    "test": "JWT_SECRET=test MONGO_URI=test ADMIN_EMAIL=test ADMIN_PASSWORD=test CORS_ORIGINS=test GEMINI_API_KEY=test FRONTEND_URL=test vitest run",
+    "prepare": "husky"
   },
   "dependencies": {
     "@eslint/js": "^9.39.4",
@@ -43,10 +44,22 @@
     "vite": "^8.0.4",
     "zustand": "^5.0.14"
   },
+  "lint-staged": {
+    "src/**/*.{js,jsx}": [
+      "eslint --fix --max-warnings=0",
+      "prettier --write"
+    ],
+    "backend/**/*.js": [
+      "eslint --fix --max-warnings=0"
+    ]
+  },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "husky": "^9.1.7",
     "jsdom": "^29.1.1",
+    "lint-staged": "^17.0.8",
+    "prettier": "^3.9.4",
     "supertest": "^7.2.2",
     "vitest": "^4.1.10"
   }

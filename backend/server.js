@@ -75,6 +75,9 @@ app.use(cookieParser());
 // Request body size limit
 app.use(express.json({ limit: '1mb' }));
 
+const prerender = require('prerender-node');
+app.use(prerender.set('prerenderToken', process.env.PRERENDER_TOKEN));
+
 // =========================================================================
 // 🛣️  ROUTE MOUNTING
 // All domain routers are required and mounted here in dependency order.

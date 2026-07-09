@@ -52,12 +52,39 @@ const ResumeChecker = () => {const { t} = useTranslation();
  if (!response.ok) {throw new Error(t('Failed to analyze resume'));
 }
 
- const data = await response.json();
- setResult(data);
-} catch (err) {setError(err.message || t('Something went wrong'));
-} finally {setIsLoading(false);
-}
-};
+      const data = await response.json();
+      
+      if (data.jobId) {
+        const pollInterval = setInterval(async () => {
+          try {
+            const statusRes = await fetch(`/api/ai/resume-check/${data.jobId}`);
+            if (!statusRes.ok) throw new Error(t('Failed to check job status'));
+            const statusData = await statusRes.json();
+            
+            if (statusData.status === 'completed') {
+              clearInterval(pollInterval);
+              setResult(statusData.result);
+              setIsLoading(false);
+            } else if (statusData.status === 'failed') {
+              clearInterval(pollInterval);
+              setError(t('AI Job failed: ') + (statusData.error || 'Unknown error'));
+              setIsLoading(false);
+            }
+          } catch (e) {
+            clearInterval(pollInterval);
+            setError(e.message);
+            setIsLoading(false);
+          }
+        }, 2000);
+      } else {
+        setResult(data);
+        setIsLoading(false);
+      }
+    } catch (err) {
+      setError(err.message || t('Something went wrong'));
+      setIsLoading(false);
+    }
+  };
 
  return (
  <div className="resume-checker-container">

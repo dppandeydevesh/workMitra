@@ -10,6 +10,7 @@ const Project = require('../models/Project');
 const AiService = require('../services/AiService');
 const pdfParse = require('pdf-parse');
 const { matchProjectsForStudent, backfillAllProjects } = require('../utils/pinecone');
+const { aiQueue } = require('../queues/aiQueue');
 
 // =========================================================================
 // 🧠 Pinecone semantic match — top projects for a student
@@ -279,37 +280,32 @@ exports.resumeCheck = async (req, res) => {
       return res.status(400).json({ error: 'Could not extract text from the provided PDF.' });
     }
 
-    const prompt = `You are an expert Applicant Tracking System (ATS).
-Review the following resume text against the job role: "${jobRole}".
-Provide your response strictly in the following JSON format without any surrounding markdown formatting or code blocks.
+    const job = await aiQueue.add('resume-check', {
+      type: 'resume-check',
+      payload: { resumeText, jobRole }
+    });
 
-JSON Structure:
-{
-  "score": 85,
-  "missingKeywords": ["Docker", "Kubernetes", "Agile"],
-  "feedback": "The candidate has strong backend skills but lacks cloud deployment experience required for this role."
-}
-
-Resume Text:
-${resumeText}`;
-
-    const result = await AiService.callGemini(prompt, { responseMimeType: 'application/json', temperature: 0.2 });
-
-    if (!result?.text) {
-      return res.status(500).json({ error: 'Empty response from AI engine.' });
-    }
-
-    let atsReport;
-    try {
-      atsReport = JSON.parse(result.text.trim());
-// eslint-disable-next-line no-unused-vars
-    } catch (parseErr) {
-      return res.status(500).json({ error: 'Failed to parse AI response into JSON.' });
-    }
-
-    res.status(200).json(atsReport);
+    res.status(200).json({ jobId: job.id, status: 'processing' });
   } catch (err) {
     console.error('ATS Resume Check error:', err.message);
     res.status(500).json({ error: 'Failed to execute ATS resume check.' });
+  }
+};
+
+// =========================================================================
+// 🕒 Check job status
+// =========================================================================
+exports.getJobStatus = async (req, res) => {
+  try {
+    const { Job } = require('bullmq');
+    const job = await Job.fromId(aiQueue, req.params.jobId);
+    if (!job) return res.status(404).json({ error: 'Job not found' });
+    const state = await job.getState();
+    const result = state === 'completed' ? job.returnvalue : null;
+    const error = state === 'failed' ? job.failedReason : null;
+    res.json({ status: state, result, error });
+  } catch (err) {
+    console.error('Job status check error:', err.message);
+    res.status(500).json({ error: 'Failed to check job status.' });
   }
 };

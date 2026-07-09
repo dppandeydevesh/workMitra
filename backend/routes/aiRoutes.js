@@ -34,4 +34,7 @@ router.post('/review-cv', authenticateToken, aiController.reviewCV);
 // ATS resume check (PDF file upload via memory multer)
 router.post('/resume-check', authenticateToken, memoryUpload.single('resume'), aiController.resumeCheck);
 
+// Job status polling endpoint
+router.get('/resume-check/:jobId', authenticateToken, aiController.getJobStatus);
+
 module.exports = router;

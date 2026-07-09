@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
+import { fetchWithAuth } from '../services/apiClient';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../config';
@@ -65,7 +66,7 @@ export function useApplicantsHub() {
   const fetchCompanyApplications = async (companyEmail) => {
     setLoading(true);
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `${API_BASE_URL}/api/applications/company/${companyEmail}`,
         { credentials: 'include', headers: {} }
       );
@@ -91,7 +92,7 @@ export function useApplicantsHub() {
     }
 
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `${API_BASE_URL}/api/applications/${applicationId}/status`,
         {
           credentials: 'include',
@@ -123,7 +124,7 @@ export function useApplicantsHub() {
 
     setSubmittingReview(true);
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `${API_BASE_URL}/api/applications/${activeAppToReview._id}/dispute`,
         {
           credentials: 'include',
@@ -166,7 +167,7 @@ export function useApplicantsHub() {
     setSubmittingReview(true);
 
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `${API_BASE_URL}/api/applications/${activeAppToReview._id}/revision`,
         {
           credentials: 'include',
@@ -201,7 +202,7 @@ export function useApplicantsHub() {
     }
 
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `${API_BASE_URL}/api/applications/${applicationId}/review-extension`,
         {
           credentials: 'include',
@@ -234,7 +235,7 @@ export function useApplicantsHub() {
     setSubmittingReview(true);
 
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `${API_BASE_URL}/api/applications/${activeAppToReview._id}/complete`,
         {
           credentials: 'include',

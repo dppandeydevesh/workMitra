@@ -6,6 +6,7 @@ import { useTranslation} from"react-i18next";
 // eslint-disable-next-line no-unused-vars
 import { motion} from"framer-motion";
 import { Send, User, Paperclip, Search, MessageSquare} from "lucide-react";
+import { fetchWithAuth } from '../services/apiClient';
 
 export default function ChatPage() {const { recipientEmail} = useParams();
  const navigate = useNavigate();
@@ -43,7 +44,7 @@ export default function ChatPage() {const { recipientEmail} = useParams();
  const fetchPartners = async () => {if (!loggedInUser) return;
   setLoadingPartners(true);
   setPartnersError("");
-  try {const res = await fetch(`${API_BASE_URL}/api/chat/partners/${loggedInUser.email}`, { credentials:"include",
+  try {const res = await fetchWithAuth(`${API_BASE_URL}/api/chat/partners/${loggedInUser.email}`, { credentials:"include",
   headers: {}
  });
   if (res.ok) {const data = await res.json();
@@ -52,7 +53,7 @@ export default function ChatPage() {const { recipientEmail} = useParams();
   // If recipientEmail was passed in route parameters, check if they exist in partners.
   // If not, fetch their details so we can add them to the partner list view dynamically.
   if (recipientEmail && recipientEmail !== loggedInUser.email) {const partnerExists = data.some(p => p.email === recipientEmail);
-  if (!partnerExists) {const userRes = await fetch(`${API_BASE_URL}/api/auth/user/${recipientEmail}`, { credentials:"include",
+  if (!partnerExists) {const userRes = await fetchWithAuth(`${API_BASE_URL}/api/auth/user/${recipientEmail}`, { credentials:"include",
   headers: {}
  });
   if (userRes.ok) {const userData = await userRes.json();
@@ -86,7 +87,7 @@ export default function ChatPage() {const { recipientEmail} = useParams();
  useEffect(() => {const fetchHistory = async () => {if (!loggedInUser || !activePartner) return;
  setLoadingHistory(true);
  try {// 1. Mark existing partner messages as read
- await fetch(`${API_BASE_URL}/api/chat/read`, { credentials:"include",
+ await fetchWithAuth(`${API_BASE_URL}/api/chat/read`, { credentials:"include",
  method:"POST",
  headers: {
 "Content-Type":"application/json",
@@ -95,7 +96,7 @@ export default function ChatPage() {const { recipientEmail} = useParams();
 });
  
  // 2. Refresh partners list to clear local unread counts immediately
- const partnerRes = await fetch(`${API_BASE_URL}/api/chat/partners/${loggedInUser.email}`, { credentials:"include",
+ const partnerRes = await fetchWithAuth(`${API_BASE_URL}/api/chat/partners/${loggedInUser.email}`, { credentials:"include",
  headers: {}
 });
  if (partnerRes.ok) {const updatedPartners = await partnerRes.json();
@@ -103,7 +104,7 @@ export default function ChatPage() {const { recipientEmail} = useParams();
 }
 
  // 3. Fetch conversation logs
- const res = await fetch(
+ const res = await fetchWithAuth(
 `${API_BASE_URL}/api/chat/history/${loggedInUser.email}/${activePartner.email}`, { credentials:"include",
  headers: {}
 }
@@ -137,7 +138,7 @@ export default function ChatPage() {const { recipientEmail} = useParams();
  ) {setMessages((prev) => [...prev, data]);
  
  // Mark incoming active partner messages as read immediately
- if (data.sender === currentActivePartner?.email) {fetch(`${API_BASE_URL}/api/chat/read`, { credentials:"include",
+ if (data.sender === currentActivePartner?.email) {fetchWithAuth(`${API_BASE_URL}/api/chat/read`, { credentials:"include",
  method:"POST",
  headers: {
 "Content-Type":"application/json",

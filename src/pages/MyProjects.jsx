@@ -4,6 +4,7 @@ import { API_BASE_URL } from '../config';
 import { useToast } from '../components/Toast';
 import { useTranslation } from 'react-i18next';
 import { Briefcase, Users } from 'lucide-react';
+import { fetchWithAuth } from '../services/apiClient';
 
 export default function MyProjects() {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ export default function MyProjects() {
   const fetchCompanyData = async (companyEmail) => {
     if (!companyEmail) return;
     try {
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `${API_BASE_URL}/api/projects/company/${companyEmail}`,
         {
           credentials: 'include',
@@ -70,7 +71,7 @@ export default function MyProjects() {
     setSelectedProject(project);
     setLoadingApplicants(true);
     try {
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `${API_BASE_URL}/api/projects/${project._id}/applicants`,
         { credentials: 'include', headers: {} }
       );
@@ -87,7 +88,7 @@ export default function MyProjects() {
   const handleAcceptApplicant = async (applicationId) => {
     if (!window.confirm(t('myProjects.confirmApprove'))) return;
     try {
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `${API_BASE_URL}/api/applications/${applicationId}/status`,
         {
           credentials: 'include',
@@ -114,7 +115,7 @@ export default function MyProjects() {
   const handleRejectApplicant = async (applicationId) => {
     if (!window.confirm(t('myProjects.confirmReject'))) return;
     try {
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `${API_BASE_URL}/api/applications/${applicationId}/status`,
         {
           credentials: 'include',
@@ -151,7 +152,7 @@ export default function MyProjects() {
     if (!activeAppToReview) return;
 
     try {
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `${API_BASE_URL}/api/applications/${activeAppToReview.applicationId}/complete`,
         {
           credentials: 'include',
@@ -180,7 +181,7 @@ export default function MyProjects() {
   const handleDeleteProject = async (projectId) => {
     if (!window.confirm(t('myProjects.confirmDelete'))) return;
     try {
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `${API_BASE_URL}/api/projects/${projectId}`,
         { credentials: 'include', method: 'DELETE', headers: {} }
       );
@@ -190,7 +191,7 @@ export default function MyProjects() {
         // Refresh project list
         const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
         if (savedUser.email) {
-          const res = await fetch(
+          const res = await fetchWithAuth(
             `${API_BASE_URL}/api/projects/company/${savedUser.email}`,
             { credentials: 'include', headers: {} }
           );
@@ -209,7 +210,7 @@ export default function MyProjects() {
   const handleArchiveProject = async (projectId) => {
     if (!window.confirm(t('myProjects.confirmArchive'))) return;
     try {
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `${API_BASE_URL}/api/projects/archive/${projectId}`,
         { credentials: 'include', method: 'PUT', headers: {} }
       );
@@ -217,7 +218,7 @@ export default function MyProjects() {
         toast.success(t('myProjects.projectArchived'));
         const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
         if (savedUser.email) {
-          const res = await fetch(
+          const res = await fetchWithAuth(
             `${API_BASE_URL}/api/projects/company/${savedUser.email}`,
             { credentials: 'include', headers: {} }
           );
@@ -265,7 +266,7 @@ export default function MyProjects() {
     };
 
     try {
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `${API_BASE_URL}/api/projects/${selectedProject._id}`,
         {
           credentials: 'include',
@@ -282,7 +283,7 @@ export default function MyProjects() {
         // Refresh project list
         const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
         if (savedUser.email) {
-          const res = await fetch(
+          const res = await fetchWithAuth(
             `${API_BASE_URL}/api/projects/company/${savedUser.email}`,
             { credentials: 'include', headers: {} }
           );

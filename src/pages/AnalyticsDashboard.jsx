@@ -14,6 +14,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useTranslation } from 'react-i18next';
+import { fetchWithAuth } from '../services/apiClient';
 
 export default function AnalyticsDashboard() {
   const { t } = useTranslation();
@@ -44,8 +45,8 @@ export default function AnalyticsDashboard() {
     try {
       // Fetch both projects and applications concurrently
       const [projectsRes, appsRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/projects/company/${companyEmail}`),
-        fetch(`${API_BASE_URL}/api/applications/company/${companyEmail}`),
+        fetchWithAuth(`${API_BASE_URL}/api/projects/company/${companyEmail}`),
+        fetchWithAuth(`${API_BASE_URL}/api/applications/company/${companyEmail}`),
       ]);
 
       const projectsData = await projectsRes.json();

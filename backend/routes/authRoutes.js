@@ -27,6 +27,7 @@ router.post('/login', loginLimiter, authController.login);
 router.post('/forgot-password', forgotPasswordLimiter, authController.forgotPassword);
 router.post('/reset-password/:token', resetPasswordLimiter, authController.resetPassword);
 router.post('/logout', authController.logout);
+router.post('/refresh', authController.refreshAccessToken);
 router.get('/me', authenticateToken, authController.me);
 
 // Profile routes (migrated from server.js inline handlers)

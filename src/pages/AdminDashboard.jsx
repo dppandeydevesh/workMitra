@@ -1,3 +1,4 @@
+import { fetchWithAuth } from '../services/apiClient';
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../config';
@@ -97,21 +98,21 @@ export default function AdminDashboard() {
       const headers = {};
 
       // 1. Fetch KPI metrics
-      const metricsRes = await fetch(`${API_BASE_URL}/api/admin/metrics`, {
+      const metricsRes = await fetchWithAuth(`${API_BASE_URL}/api/admin/metrics`, {
         credentials: 'include',
         headers,
       });
       const metricsData = await metricsRes.json();
 
       // 2. Fetch disputes
-      const disputesRes = await fetch(`${API_BASE_URL}/api/admin/disputes`, {
+      const disputesRes = await fetchWithAuth(`${API_BASE_URL}/api/admin/disputes`, {
         credentials: 'include',
         headers,
       });
       const disputesData = await disputesRes.json();
 
       // 3. Fetch company accounts
-      const companiesRes = await fetch(`${API_BASE_URL}/api/admin/companies`, {
+      const companiesRes = await fetchWithAuth(`${API_BASE_URL}/api/admin/companies`, {
         credentials: 'include',
         headers,
       });
@@ -148,7 +149,7 @@ export default function AdminDashboard() {
 
     setResolvingId(applicationId);
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `${API_BASE_URL}/api/admin/disputes/${applicationId}/resolve`,
         {
           credentials: 'include',
@@ -188,7 +189,7 @@ export default function AdminDashboard() {
 
     setVerifyingEmail(companyEmail);
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `${API_BASE_URL}/api/admin/companies/${companyEmail}/verify`,
         { credentials: 'include', method: 'POST', headers: {} }
       );

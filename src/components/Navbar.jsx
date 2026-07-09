@@ -6,6 +6,7 @@ import { useWebSocket} from"./WebSocketContext";
 import { useTheme} from"./ThemeContext";
 import { useTranslation} from"react-i18next";
 import { resetPostHog } from '../lib/posthog';
+import { fetchWithAuth } from '../services/apiClient';
 
 export default function Navbar() {const navigate = useNavigate();
  const location = useLocation();
@@ -41,7 +42,7 @@ export default function Navbar() {const navigate = useNavigate();
  const savedUser = user;
 
  if (savedUser && savedUser.userRole ==="student") {// Fetch student applications to extract status updates as notifications
- const fetchStudentNotifications = async () => {try {const res = await fetch(`${API_BASE_URL}/api/applications/student-details/${savedUser.email}`, { credentials:"include",
+ const fetchStudentNotifications = async () => {try {const res = await fetchWithAuth(`${API_BASE_URL}/api/applications/student-details/${savedUser.email}`, { credentials:"include",
  headers: {}
 });
  if (res.ok) {const apps = await res.json();
@@ -74,7 +75,7 @@ export default function Navbar() {const navigate = useNavigate();
 
  if (!user) return null;
 
- const handleLogout = async () => {try {await fetch(`${API_BASE_URL}/api/auth/logout`, { method:'POST', credentials:'include'});
+ const handleLogout = async () => {try {await fetchWithAuth(`${API_BASE_URL}/api/auth/logout`, { method:'POST', credentials:'include'});
 } catch (e) { console.error(e);}
  resetPostHog(); // 📊 PostHog: clear identity on logout
  localStorage.clear();

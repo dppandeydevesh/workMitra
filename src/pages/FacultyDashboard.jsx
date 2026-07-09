@@ -7,6 +7,7 @@ import { useToast } from '../components/Toast';
 import { useWebSocket } from '../components/WebSocketContext';
 import './FacultyDashboard.css';
 import { Briefcase, Users } from 'lucide-react';
+import { fetchWithAuth } from '../services/apiClient';
 export default function FacultyDashboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ export default function FacultyDashboard() {
     setLoading(true);
     setErrorMessage('');
     try {
-      const res = await fetch(`${API_BASE_URL}/api/projects/company/${email}`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/projects/company/${email}`, {
         credentials: 'include',
         headers: {},
       });
@@ -63,7 +64,7 @@ export default function FacultyDashboard() {
 
   const fetchApplicantsForProject = async (projectId) => {
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `${API_BASE_URL}/api/projects/${projectId}/applicants`,
         { credentials: 'include', headers: {} }
       );
@@ -91,7 +92,7 @@ export default function FacultyDashboard() {
     setPosting(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/projects`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/projects`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -126,7 +127,7 @@ export default function FacultyDashboard() {
 
   const handleApplicationStatus = async (appId, newStatus) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/applications/${appId}`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/applications/${appId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

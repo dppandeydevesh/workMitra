@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/Toast';
 import { useTranslation } from 'react-i18next';
 import { track } from '../utils/analytics';
+import { fetchWithAuth } from '../services/apiClient';
 
 export default function AddProject() {
   const navigate = useNavigate();
@@ -118,7 +119,7 @@ export default function AddProject() {
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/projects`, {
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/projects`, {
         credentials: 'include',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

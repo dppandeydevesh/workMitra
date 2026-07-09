@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../config';
 import { useToast } from '../components/Toast';
+import { fetchWithAuth } from '../services/apiClient';
 
 export default function CompanySettings() {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ export default function CompanySettings() {
   const fetchProfile = async (email) => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/user/${email}`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/auth/user/${email}`, {
         credentials: 'include',
         headers: {},
       });
@@ -65,7 +66,7 @@ export default function CompanySettings() {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/company-profile`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/auth/company-profile`, {
         credentials: 'include',
         method: 'PUT',
         headers: {

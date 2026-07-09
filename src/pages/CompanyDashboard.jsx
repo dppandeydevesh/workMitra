@@ -1,3 +1,4 @@
+import { fetchWithAuth } from '../services/apiClient';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
@@ -55,11 +56,11 @@ export default function CompanyDashboard() {
     setErrorMessage('');
     try {
       const [statsRes, activityRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/dashboard/company-stats/${email}`, {
+        fetchWithAuth(`${API_BASE_URL}/api/dashboard/company-stats/${email}`, {
           credentials: 'include',
           headers: {},
         }),
-        fetch(`${API_BASE_URL}/api/dashboard/recent-activity/${email}`, {
+        fetchWithAuth(`${API_BASE_URL}/api/dashboard/recent-activity/${email}`, {
           credentials: 'include',
           headers: {},
         }),

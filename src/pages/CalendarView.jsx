@@ -3,6 +3,7 @@ import { useNavigate} from"react-router-dom";
 import { API_BASE_URL} from"../config";
 import { useToast} from"../components/Toast";
 import { useTranslation} from"react-i18next";
+import { fetchWithAuth } from '../services/apiClient';
 
 export default function CalendarView() {const navigate = useNavigate();
  const toast = useToast();
@@ -35,7 +36,7 @@ export default function CalendarView() {const navigate = useNavigate();
 
  const fetchProjects = async (email) => {setLoading(true);
  setErrorMessage("");
- try {const res = await fetch(`${API_BASE_URL}/api/projects/company/${email}`, { credentials:"include",
+ try {const res = await fetchWithAuth(`${API_BASE_URL}/api/projects/company/${email}`, { credentials:"include",
  headers: {}
 });
  if (res.ok) {const data = await res.json();

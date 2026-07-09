@@ -3,6 +3,7 @@ import { useState, useEffect} from"react";
 import { useNavigate} from"react-router-dom";
 import { useTranslation} from"react-i18next";
 import { API_BASE_URL} from"../config";
+import { fetchWithAuth } from '../services/apiClient';
 
 export default function Preferences() {const navigate = useNavigate();
  const { t} = useTranslation();
@@ -76,7 +77,7 @@ export default function Preferences() {const navigate = useNavigate();
  const parsedUser = JSON.parse(savedUser);
 
  try {// Save profile preferences using student update API
- const profileResponse = await fetch(`${API_BASE_URL}/api/profile/student/${parsedUser.email}`, { credentials:"include",
+ const profileResponse = await fetchWithAuth(`${API_BASE_URL}/api/profile/student/${parsedUser.email}`, { credentials:"include",
  method:"PUT",
  headers: {"Content-Type":"application/json",
 },
@@ -101,7 +102,7 @@ export default function Preferences() {const navigate = useNavigate();
 }
 
  // 🚀 🆕 LOCK ONBOARDING FLAG MATRIX: Flip hasCompletedProfile to true in MongoDB
- const response = await fetch(`${API_BASE_URL}/api/auth/complete-profile`, { credentials:"include",
+ const response = await fetchWithAuth(`${API_BASE_URL}/api/auth/complete-profile`, { credentials:"include",
  method:"POST",
  headers: {"Content-Type":"application/json",
 },

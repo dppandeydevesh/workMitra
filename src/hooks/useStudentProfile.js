@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../config';
 import { useToast } from '../components/Toast';
 import { track } from '../utils/analytics';
+import { fetchWithAuth } from '../services/apiClient';
 
 /**
  * useStudentProfile — Custom hook to manage student profile states,
@@ -70,7 +71,7 @@ export function useStudentProfile() {
         ? `${API_BASE_URL}/api/auth/user/${email}`
         : `${API_BASE_URL}/api/auth/student/vanity/${email}`;
 
-      const res = await fetch(url, { credentials: 'include', headers: {} });
+      const res = await fetchWithAuth(url, { credentials: 'include', headers: {} });
       const data = await res.json();
       if (res.ok) {
         setProfileUser(data);
@@ -106,7 +107,7 @@ export function useStudentProfile() {
       }
 
       // Load student applications history for ratings & reviews
-      const appsRes = await fetch(
+      const appsRes = await fetchWithAuth(
         `${API_BASE_URL}/api/applications/student-details/${email}`,
         { credentials: 'include', headers: {} }
       );
@@ -156,7 +157,7 @@ export function useStudentProfile() {
     };
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/profile/student/${email}`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/profile/student/${email}`, {
         credentials: 'include',
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -207,7 +208,7 @@ export function useStudentProfile() {
     }
     setVouching(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/profile/vouch`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/profile/vouch`, {
         credentials: 'include',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

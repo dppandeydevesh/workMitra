@@ -9,7 +9,7 @@ import { API_BASE_URL } from '../config';
  * @param {string} turnstileToken - Cloudflare Turnstile token
  */
 export async function login(email, password, portalRole, turnstileToken) {
-  const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/api/auth/login`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
@@ -24,7 +24,7 @@ export async function login(email, password, portalRole, turnstileToken) {
  * @param {object} registrationData - full registration payload
  */
 export async function registerUser(registrationData) {
-  const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/api/auth/register`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
@@ -40,7 +40,7 @@ export async function registerUser(registrationData) {
  * @param {string} otp
  */
 export async function verifyOtp(email, otp) {
-  const res = await fetch(`${API_BASE_URL}/api/auth/register-verify`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/api/auth/register-verify`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
@@ -55,7 +55,7 @@ export async function verifyOtp(email, otp) {
  * @param {string} email
  */
 export async function forgotPassword(email) {
-  const res = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/api/auth/forgot-password`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
@@ -71,7 +71,7 @@ export async function forgotPassword(email) {
  * @param {string} password - new password
  */
 export async function resetPassword(token, password) {
-  const res = await fetch(`${API_BASE_URL}/api/auth/reset-password/${token}`, {
+  const res = await fetchWithAuth(`${API_BASE_URL}/api/auth/reset-password/${token}`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },

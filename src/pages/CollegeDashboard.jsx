@@ -4,6 +4,7 @@ import { API_BASE_URL } from '../config';
 import { useToast } from '../components/Toast';
 import { useTranslation } from 'react-i18next';
 import { Users, Trophy, Building2 } from 'lucide-react';
+import { fetchWithAuth } from '../services/apiClient';
 
 export default function CollegeDashboard() {
   const navigate = useNavigate();
@@ -44,11 +45,11 @@ export default function CollegeDashboard() {
     setErrorMessage('');
     try {
       const [studentsRes, companiesRes] = await Promise.all([
-        fetch(
+        fetchWithAuth(
           `${API_BASE_URL}/api/college/students/${encodeURIComponent(collegeName)}`,
           { credentials: 'include', headers: {} }
         ),
-        fetch(`${API_BASE_URL}/api/college/companies`, {
+        fetchWithAuth(`${API_BASE_URL}/api/college/companies`, {
           credentials: 'include',
           headers: {},
         }),
@@ -72,7 +73,7 @@ export default function CollegeDashboard() {
 
   const handleEndorseToggle = async (studentEmail, currentStatus) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/college/endorse`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/college/endorse`, {
         credentials: 'include',
         method: 'POST',
         headers: {
@@ -99,7 +100,7 @@ export default function CollegeDashboard() {
 
   const handleCompanyToggle = async (companyEmail, status) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/college/toggle-company`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/college/toggle-company`, {
         credentials: 'include',
         method: 'POST',
         headers: {
@@ -150,7 +151,7 @@ export default function CollegeDashboard() {
         return;
       }
 
-      const res = await fetch(`${API_BASE_URL}/api/college/bulk-import`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/college/bulk-import`, {
         credentials: 'include',
         method: 'POST',
         headers: {

@@ -2,15 +2,17 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
-  withCredentials: true,
+  withCredentials: true, // sends httpOnly cookie automatically
 });
 
+// Attach access token to every request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('accessToken');
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
+// On 401 — silently refresh and retry original request
 let isRefreshing = false;
 let failedQueue = [];
 
@@ -56,34 +58,5 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-// Fallback wrapper that emulates `fetch` so we don't break existing components immediately
-// while still getting the silent refresh benefits. We'll migrate components natively over time.
-export const fetchWithAuth = async (endpoint, options = {}) => {
-  try {
-    const response = await api({
-      url: endpoint.replace(import.meta.env.VITE_API_URL || 'http://localhost:3000/api', ''),
-      method: options.method || 'GET',
-      data: options.body ? (typeof options.body === 'string' ? JSON.parse(options.body) : options.body) : undefined,
-      headers: options.headers,
-    });
-    return {
-      ok: true,
-      status: response.status,
-      json: async () => response.data,
-      text: async () => JSON.stringify(response.data)
-    };
-  } catch (error) {
-    if (error.response) {
-      return {
-        ok: false,
-        status: error.response.status,
-        json: async () => error.response.data,
-        text: async () => JSON.stringify(error.response.data)
-      };
-    }
-    throw error;
-  }
-};
 
 export default api;

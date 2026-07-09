@@ -1,5 +1,6 @@
 import React, { useState, useRef} from'react';
 import { useTranslation} from'react-i18next';
+import { fetchWithAuth } from '../services/apiClient';
 
 const ResumeChecker = () => {const { t} = useTranslation();
  const [file, setFile] = useState(null);
@@ -45,7 +46,7 @@ const ResumeChecker = () => {const { t} = useTranslation();
  formData.append('resume', file);
  formData.append('jobRole', jobRole);
 
- try {const response = await fetch('/api/ai/resume-check', {method:'POST',
+ try {const response = await fetchWithAuth('/api/ai/resume-check', {method:'POST',
  body: formData,
 });
 
@@ -57,7 +58,7 @@ const ResumeChecker = () => {const { t} = useTranslation();
       if (data.jobId) {
         const pollInterval = setInterval(async () => {
           try {
-            const statusRes = await fetch(`/api/ai/resume-check/${data.jobId}`);
+            const statusRes = await fetchWithAuth(`/api/ai/resume-check/${data.jobId}`);
             if (!statusRes.ok) throw new Error(t('Failed to check job status'));
             const statusData = await statusRes.json();
             

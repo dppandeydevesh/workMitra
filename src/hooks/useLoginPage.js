@@ -102,6 +102,7 @@ export function useLoginPage() {
       if (ok) {
         if (data.user) {
           localStorage.setItem('user', JSON.stringify(data.user));
+        if (data.accessToken) localStorage.setItem('accessToken', data.accessToken);
           identify(data.user._id, { role: data.user.userRole }); // PostHog identification
           track('user_logged_in', { role: data.user.userRole });
 
@@ -247,6 +248,7 @@ export function useLoginPage() {
       if (ok) {
         toast.success(t('login.registrationSuccessful'));
         localStorage.setItem('user', JSON.stringify(data.user));
+        if (data.accessToken) localStorage.setItem('accessToken', data.accessToken);
         identifyUser();
         capture('user_registered', { role: data.user.userRole });
 

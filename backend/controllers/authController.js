@@ -7,7 +7,25 @@ const crypto = require('crypto');
 const { sendWebhookNotification } = require('../utils/webhook');
 const { verifyTurnstile } = require('../utils/verifyTurnstile');
 
-const JWT_SECRET = process.env.JWT_SECRET;
+
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+const ACCESS_TOKEN_EXPIRY = process.env.ACCESS_TOKEN_EXPIRY || '15m';
+const REFRESH_TOKEN_EXPIRY = process.env.REFRESH_TOKEN_EXPIRY || '7d';
+
+const generateTokens = (userId, email, role) => {
+  const accessToken = jwt.sign(
+    { userId, email, userRole: role },
+    ACCESS_TOKEN_SECRET,
+    { expiresIn: ACCESS_TOKEN_EXPIRY }
+  );
+  const refreshToken = jwt.sign(
+    { userId, email, userRole: role },
+    REFRESH_TOKEN_SECRET,
+    { expiresIn: REFRESH_TOKEN_EXPIRY }
+  );
+  return { accessToken, refreshToken };
+};
 
 const smtpLogs = new Proxy([], {
   get(target, prop) {
@@ -294,13 +312,12 @@ const verifyOtp = async (req, res) => {
     // Notify via webhook asynchronously
     sendWebhookNotification(`🚀 New user registered: ${newUser.email} (${newUser.userRole})`);
 
-    const token = jwt.sign(
-      { userId: newUser._id.toString(), email: newUser.email, userRole: newUser.userRole },
-      JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    const { accessToken, refreshToken } = generateTokens(newUser._id.toString(), newUser.email, newUser.userRole);
+    
+    newUser.refreshToken = refreshToken;
+    await newUser.save();
 
-    res.cookie("token", token, {
+    res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
@@ -309,6 +326,7 @@ const verifyOtp = async (req, res) => {
 
     res.status(201).json({
       message: "Registration successful!",
+      accessToken,
       user: {
         fullName: newUser.fullName,
         companyName: newUser.companyName,
@@ -358,13 +376,12 @@ const login = async (req, res) => {
             return res.status(400).json({ error: "Invalid email or account password." });
         }
 
-        const token = jwt.sign(
-          { userId: user._id.toString(), email: user.email, userRole: user.userRole },
-          JWT_SECRET,
-          { expiresIn: "7d" }
-        );
+        const { accessToken, refreshToken } = generateTokens(user._id.toString(), user.email, user.userRole);
 
-    res.cookie("token", token, {
+        user.refreshToken = refreshToken;
+        await user.save();
+
+    res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
@@ -373,6 +390,7 @@ const login = async (req, res) => {
 
         res.status(200).json({ 
             message: "Success",
+            accessToken,
             user: {
                 fullName: user.fullName, 
                 companyName: user.companyName, 
@@ -471,8 +489,12 @@ const resetPassword = async (req, res) => {
   }
 };
 
-const logout = (req, res) => {
-  res.clearCookie('token', {
+const logout = async (req, res) => {
+  const token = req.cookies.refreshToken;
+  if (token) {
+    await User.findOneAndUpdate({ refreshToken: token }, { refreshToken: null });
+  }
+  res.clearCookie('refreshToken', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict'
@@ -602,7 +624,38 @@ const updateCompanyProfile = async (req, res) => {
   }
 };
 
+
+const refreshAccessToken = async (req, res) => {
+  const token = req.cookies.refreshToken;
+  if (!token) return res.status(401).json({ error: 'No refresh token provided.' });
+
+  try {
+    const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+    const user = await User.findById(decoded.userId);
+
+    if (!user || user.refreshToken !== token) {
+      return res.status(403).json({ error: 'Invalid refresh token.' });
+    }
+
+    const { accessToken, refreshToken: newRefreshToken } = generateTokens(user._id.toString(), user.email, user.userRole);
+    user.refreshToken = newRefreshToken;
+    await user.save();
+
+    res.cookie('refreshToken', newRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.json({ accessToken });
+  } catch (err) {
+    res.status(403).json({ error: 'Expired or invalid refresh token.' });
+  }
+};
+
 module.exports = {
+  refreshAccessToken,
   register,
   verifyOtp,
   login,

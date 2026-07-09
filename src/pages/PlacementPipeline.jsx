@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/Toast';
 import { API_BASE_URL } from '../config';
 import { useTranslation } from 'react-i18next';
+import { fetchWithAuth } from '../services/apiClient';
 
 const STAGES = ['Applied', 'Shortlisted', 'Interviewing', 'Offered', 'Placed'];
 
@@ -64,7 +65,7 @@ export default function PlacementPipeline() {
         url = `${API_BASE_URL}/api/applications/company/${user.email}`;
       }
 
-      const res = await fetch(url, {
+      const res = await fetchWithAuth(url, {
         credentials: 'include',
         headers: { Authorization: `Bearer` },
       });
@@ -95,7 +96,7 @@ export default function PlacementPipeline() {
 
   const handleUpdateStage = async (appId, newStage) => {
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `${API_BASE_URL}/api/applications/${appId}/update-pipeline`,
         {
           credentials: 'include',
@@ -131,7 +132,7 @@ export default function PlacementPipeline() {
 
     setSubmittingOffer(true);
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `${API_BASE_URL}/api/applications/${selectedApp._id}/offer-placement`,
         {
           credentials: 'include',

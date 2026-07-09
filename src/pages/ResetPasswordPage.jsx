@@ -5,6 +5,7 @@ import { API_BASE_URL } from '../config';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { Lock } from 'lucide-react';
+import { fetchWithAuth } from '../services/apiClient';
 
 export default function ResetPasswordPage() {
   const { token } = useParams();
@@ -60,7 +61,7 @@ export default function ResetPasswordPage() {
 
     setSubmitting(true);
     try {
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `${API_BASE_URL}/api/auth/reset-password/${token}`,
         {
           credentials: 'include',

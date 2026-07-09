@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef} from'react';
 import ReactMarkdown from'react-markdown';
 import { useTranslation} from'react-i18next';
 import { API_BASE_URL} from'../config';
+import { fetchWithAuth } from '../services/apiClient';
 
 const AIAssistant = () => {const { t} = useTranslation();
  const [isOpen, setIsOpen] = useState(false);
@@ -33,7 +34,7 @@ const AIAssistant = () => {const { t} = useTranslation();
     setIsTyping(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/ai/chat`, {
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/ai/chat`, {
         credentials: "include",
         method: 'POST',
         headers: {

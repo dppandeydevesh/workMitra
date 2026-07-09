@@ -3,6 +3,7 @@ import { API_BASE_URL } from '../config';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/Toast';
 import { useTranslation } from 'react-i18next';
+import { fetchWithAuth } from '../services/apiClient';
 
 export default function CompanyPreferences() {
   const navigate = useNavigate();
@@ -100,7 +101,7 @@ export default function CompanyPreferences() {
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/profile/company`, {
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/profile/company`, {
         credentials: 'include',
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -116,7 +117,7 @@ export default function CompanyPreferences() {
           const parsedUser = JSON.parse(savedUser);
 
           // Call your new backend endpoint to set hasCompletedProfile to true
-          await fetch(`${API_BASE_URL}/api/auth/complete-profile`, {
+          await fetchWithAuth(`${API_BASE_URL}/api/auth/complete-profile`, {
             credentials: 'include',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

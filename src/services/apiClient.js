@@ -49,7 +49,10 @@ api.interceptors.response.use(
         return api(original);
       } catch (err) {
         processQueue(err, null);
+        // CRITICAL: Clear all auth state, not just token, to prevent infinite redirect loop
         localStorage.removeItem('accessToken');
+        localStorage.removeItem('user');
+        localStorage.removeItem('hasPaidPass');
         window.location.href = '/login';
         return Promise.reject(err);
       } finally {

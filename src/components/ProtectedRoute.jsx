@@ -27,11 +27,21 @@ export default function ProtectedRoute({ children, allowedRoles }) {
             }
           }
         } else {
-          if (isMounted) setIsAuthenticated(false);
+          if (isMounted) {
+            setIsAuthenticated(false);
+            localStorage.removeItem('user');
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('hasPaidPass');
+          }
         }
       } catch (err) {
         console.error(err);
-        if (isMounted) setIsAuthenticated(false);
+        if (isMounted) {
+          setIsAuthenticated(false);
+          localStorage.removeItem('user');
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('hasPaidPass');
+        }
       } finally {
         if (isMounted) setIsVerifying(false);
       }

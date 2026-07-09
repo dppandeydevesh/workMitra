@@ -27,7 +27,6 @@ Sentry.init({
   environment: process.env.NODE_ENV,
   tracesSampleRate: 0.2,
 });
-app.use(Sentry.Handlers.requestHandler());
 
 // Configure trust proxy for Cloudflare
 app.set('trust proxy', [
@@ -111,7 +110,7 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/files', fileRoutes);
 
-app.use(Sentry.Handlers.errorHandler());
+Sentry.setupExpressErrorHandler(app);
 const errorHandler = require('./middleware/errorHandler');
 // Global error handler must be last
 app.use(errorHandler);

@@ -1,289 +1,417 @@
-import React, { useEffect, useState} from"react";
-import { useNavigate} from"react-router-dom";
-import { useToast} from"../components/Toast";
-import { API_BASE_URL} from"../config";
-import { useTranslation} from"react-i18next";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '../components/Toast';
+import { API_BASE_URL } from '../config';
+import { useTranslation } from 'react-i18next';
 
-const STAGES = ["Applied","Shortlisted","Interviewing","Offered","Placed"];
+const STAGES = ['Applied', 'Shortlisted', 'Interviewing', 'Offered', 'Placed'];
 
 const getStageStyle = (stage) => {
-  switch(stage) {
-    case "Applied":
+  switch (stage) {
+    case 'Applied':
       return { borderTop: '3px solid #C8C9C2', backgroundColor: '#F9F9F8' };
-    case "Shortlisted": // under review
+    case 'Shortlisted': // under review
       return { borderTop: '3px solid #F5A623', backgroundColor: '#F9F9F8' };
-    case "Interviewing": // interview
+    case 'Interviewing': // interview
       return { borderTop: '3px solid #1D9E75', backgroundColor: '#F9F9F8' };
-    case "Offered": // offer / green Strong fill
+    case 'Offered': // offer / green Strong fill
       return { borderTop: '3px solid #1D9E75', backgroundColor: '#E1F5EE' };
-    case "Placed": // placed / green Strong fill
+    case 'Placed': // placed / green Strong fill
       return { borderTop: '3px solid #1D9E75', backgroundColor: '#E1F5EE' };
-    case "Rejected":
+    case 'Rejected':
       return { borderTop: '3px solid #E24B4A', backgroundColor: '#FFF0F0' };
     default:
       return { borderTop: '3px solid #C8C9C2', backgroundColor: '#F9F9F8' };
   }
 };
 
-export default function PlacementPipeline() {const { t} = useTranslation();
- const navigate = useNavigate();
- const toast = useToast();
- const [currentUser, setCurrentUser] = useState(null);
- const [applications, setApplications] = useState([]);
- const [loading, setLoading] = useState(true);
- const [showOfferModal, setShowOfferModal] = useState(false);
- const [selectedApp, setSelectedApp] = useState(null);
- const [offerText, setOfferText] = useState("");
- const [submittingOffer, setSubmittingOffer] = useState(false);
- const [errorMessage, setErrorMessage] = useState("");
+export default function PlacementPipeline() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const toast = useToast();
+  const [currentUser, setCurrentUser] = useState(null);
+  const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showOfferModal, setShowOfferModal] = useState(false);
+  const [selectedApp, setSelectedApp] = useState(null);
+  const [offerText, setOfferText] = useState('');
+  const [submittingOffer, setSubmittingOffer] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
- useEffect(() => {const userObj = JSON.parse(localStorage.getItem("user") ||"{}");
- setCurrentUser(userObj);
+  useEffect(() => {
+    const userObj = JSON.parse(localStorage.getItem('user') || '{}');
+    setCurrentUser(userObj);
 
- if (!userObj.email || (userObj.userRole !=="company" && userObj.userRole !=="college")) {toast.error(t("pipeline.unauthorized"));
- navigate("/");
- return;
-}
+    if (
+      !userObj.email ||
+      (userObj.userRole !== 'company' && userObj.userRole !== 'college')
+    ) {
+      toast.error(t('pipeline.unauthorized'));
+      navigate('/');
+      return;
+    }
 
- fetchApplications(userObj);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [navigate]);
+    fetchApplications(userObj);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigate]);
 
- const fetchApplications = async (user) => {setLoading(true);
-  setErrorMessage("");
-  try {let url =`${API_BASE_URL}/api/applications`;
-  if (user.userRole ==="company") {url =`${API_BASE_URL}/api/applications/company/${user.email}`;
- }
-  
-  const res = await fetch(url, { credentials:"include",
-  headers: { Authorization:`Bearer`}
- });
-  const data = await res.json();
-  if (res.ok) {// Set default pipelineStage if missing
-  const list = (data.applications || data || []).map(app => ({...app,
-  pipelineStage: app.pipelineStage || (app.status ==="Completed" ?"Placed" : app.status ==="Approved" ?"Offered" :"Applied")
- }));
-  setApplications(list);
-} else {
-  setErrorMessage(t("pipeline.loadApplicantsFailed"));
-}
-} catch (err) { console.error(err);
-  setErrorMessage(t("pipeline.loadNetworkError"));
-} finally {setLoading(false);
-}
-};
+  const fetchApplications = async (user) => {
+    setLoading(true);
+    setErrorMessage('');
+    try {
+      let url = `${API_BASE_URL}/api/applications`;
+      if (user.userRole === 'company') {
+        url = `${API_BASE_URL}/api/applications/company/${user.email}`;
+      }
 
- const handleUpdateStage = async (appId, newStage) => {try {const res = await fetch(`${API_BASE_URL}/api/applications/${appId}/update-pipeline`, { credentials:"include",
- method:"POST",
- headers: {
-"Content-Type":"application/json",
- Authorization:`Bearer`
-},
- body: JSON.stringify({ status: newStage})
-});
+      const res = await fetch(url, {
+        credentials: 'include',
+        headers: { Authorization: `Bearer` },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        // Set default pipelineStage if missing
+        const list = (data.applications || data || []).map((app) => ({
+          ...app,
+          pipelineStage:
+            app.pipelineStage ||
+            (app.status === 'Completed'
+              ? 'Placed'
+              : app.status === 'Approved'
+                ? 'Offered'
+                : 'Applied'),
+        }));
+        setApplications(list);
+      } else {
+        setErrorMessage(t('pipeline.loadApplicantsFailed'));
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMessage(t('pipeline.loadNetworkError'));
+    } finally {
+      setLoading(false);
+    }
+  };
 
- if (res.ok) {toast.success(t("pipeline.candidateShifted", { stage: newStage}));
- setApplications(prev => prev.map(app => app._id === appId ? { ...app, pipelineStage: newStage} : app));
-} else {const data = await res.json();
- toast.error(data.error || t("pipeline.updateStageFailed"));
-}
-} catch (err) { console.error(err);toast.error(t("pipeline.updateStageError"));
-}
-};
+  const handleUpdateStage = async (appId, newStage) => {
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/applications/${appId}/update-pipeline`,
+        {
+          credentials: 'include',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer`,
+          },
+          body: JSON.stringify({ status: newStage }),
+        }
+      );
 
- const handleSendOfferSubmit = async (e) => {e.preventDefault();
- if (!selectedApp) return;
+      if (res.ok) {
+        toast.success(t('pipeline.candidateShifted', { stage: newStage }));
+        setApplications((prev) =>
+          prev.map((app) =>
+            app._id === appId ? { ...app, pipelineStage: newStage } : app
+          )
+        );
+      } else {
+        const data = await res.json();
+        toast.error(data.error || t('pipeline.updateStageFailed'));
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(t('pipeline.updateStageError'));
+    }
+  };
 
- setSubmittingOffer(true);
- try {const res = await fetch(`${API_BASE_URL}/api/applications/${selectedApp._id}/offer-placement`, { credentials:"include",
- method:"POST",
- headers: {
-"Content-Type":"application/json",
- Authorization:`Bearer`
-},
- body: JSON.stringify({ offerText})
-});
+  const handleSendOfferSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedApp) return;
 
- if (res.ok) {toast.success(t("pipeline.offerSuccess"));
- setShowOfferModal(false);
- setOfferText("");
- handleUpdateStage(selectedApp._id,"Offered");
-} else {const data = await res.json();
- toast.error(data.error || t("pipeline.sendContractFailed"));
-}
-} catch (err) { console.error(err);toast.error(t("pipeline.extendOfferError"));
-} finally {setSubmittingOffer(false);
-}
-};
+    setSubmittingOffer(true);
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/applications/${selectedApp._id}/offer-placement`,
+        {
+          credentials: 'include',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer`,
+          },
+          body: JSON.stringify({ offerText }),
+        }
+      );
 
- // Metrics
- const totalApplicants = applications.length;
- const placedCount = applications.filter(a => a.pipelineStage ==="Placed").length;
- const offeredCount = applications.filter(a => a.pipelineStage ==="Offered").length;
- const placedRate = totalApplicants > 0 ? Math.round((placedCount / totalApplicants) * 100) : 0;
+      if (res.ok) {
+        toast.success(t('pipeline.offerSuccess'));
+        setShowOfferModal(false);
+        setOfferText('');
+        handleUpdateStage(selectedApp._id, 'Offered');
+      } else {
+        const data = await res.json();
+        toast.error(data.error || t('pipeline.sendContractFailed'));
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(t('pipeline.extendOfferError'));
+    } finally {
+      setSubmittingOffer(false);
+    }
+  };
 
- return (
- <div className="min-h-screen bg-transparent pb-12 transition-colors duration-250">
- {/* Upper Navigation Header */}
- <div className="bg-white border-b sticky top-0 z-35 px-6 py-4 flex justify-between items-center transition-colors duration-250">
- <div>
- <h1 className="text-xl font-black text-ink-900 tracking-tight flex items-center gap-2">
- <span>💼</span> {t("pipeline.title")}
- </h1>
- <p className="text-[11px] text-ink-500 font-bold">{t("pipeline.subtitle")}</p>
- </div>
- <button
- onClick={() => navigate(-1)}
- className="px-3.5 py-1.5 border border-ink-200 text-xs font-bold text-ink-600 rounded-xl hover:bg-ink-50 transition">
- ← {t("pipeline.back")}
- </button>
- </div>
+  // Metrics
+  const totalApplicants = applications.length;
+  const placedCount = applications.filter(
+    (a) => a.pipelineStage === 'Placed'
+  ).length;
+  const offeredCount = applications.filter(
+    (a) => a.pipelineStage === 'Offered'
+  ).length;
+  const placedRate =
+    totalApplicants > 0 ? Math.round((placedCount / totalApplicants) * 100) : 0;
 
- <div className="max-w-7xl mx-auto px-6 mt-8 space-y-8">
- {/* KPI Cards Panel */}
- <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
- <div className="bg-white p-5 rounded-xl border shadow-sm transition">
- <p className="text-[10px] uppercase font-black text-ink-400">{t("pipeline.totalCandidates")}</p>
- <p className="text-2xl font-black text-ink-900 mt-1">{totalApplicants}</p>
- </div>
- <div className="bg-white p-5 rounded-xl border shadow-sm transition">
- <p className="text-[10px] uppercase font-black text-ink-400">{t("pipeline.activeOffers")}</p>
- <p className="text-2xl font-black text-marigold-500 mt-1">{offeredCount}</p>
- </div>
- <div className="bg-white p-5 rounded-xl border shadow-sm transition">
- <p className="text-[10px] uppercase font-black text-ink-400">{t("pipeline.hiredPlaced")}</p>
- <p className="text-2xl font-black text-green-600 mt-1">{placedCount}</p>
- </div>
- <div className="bg-white p-5 rounded-xl border shadow-sm transition">
- <p className="text-[10px] uppercase font-black text-ink-400">{t("pipeline.conversionRate")}</p>
- <p className="text-2xl font-black text-purple-600 mt-1">{placedRate}%</p>
- </div>
- </div>
+  return (
+    <div className="min-h-screen bg-transparent pb-12 transition-colors duration-250">
+      {/* Upper Navigation Header */}
+      <div className="bg-white border-b sticky top-0 z-35 px-6 py-4 flex justify-between items-center transition-colors duration-250">
+        <div>
+          <h1 className="text-xl font-black text-ink-900 tracking-tight flex items-center gap-2">
+            <span>💼</span> {t('pipeline.title')}
+          </h1>
+          <p className="text-[11px] text-ink-500 font-bold">
+            {t('pipeline.subtitle')}
+          </p>
+        </div>
+        <button
+          onClick={() => navigate(-1)}
+          className="px-3.5 py-1.5 border border-ink-200 text-xs font-bold text-ink-600 rounded-xl hover:bg-ink-50 transition"
+        >
+          ← {t('pipeline.back')}
+        </button>
+      </div>
 
- {loading ? (
- <div className="text-center py-20 text-ink-400 font-bold animate-pulse">
- 🔄 {t("pipeline.loading")}
- </div>
- ) : errorMessage ? (
-   <div className="bg-white rounded-xl shadow-sm p-8 text-center space-y-4 border border-ink-200 max-w-md mx-auto my-12">
-     <span className="text-4xl block">⚠️</span>
-     <p className="text-red-700 font-bold">{errorMessage}</p>
-     <button 
-       onClick={() => fetchApplications(currentUser)} 
-       style={{ background: "#F5A623", color: "#1B2333" }} className="px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm"
-     >
-       Retry
-     </button>
-   </div>
- ) : (
- /* Kanban Board Grid */
- <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-start overflow-x-auto">
- {STAGES.map((stage) => {const stageApps = applications.filter(app => app.pipelineStage === stage);
+      <div className="max-w-7xl mx-auto px-6 mt-8 space-y-8">
+        {/* KPI Cards Panel */}
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
+          <div className="bg-white p-5 rounded-xl border shadow-sm transition">
+            <p className="text-[10px] uppercase font-black text-ink-400">
+              {t('pipeline.totalCandidates')}
+            </p>
+            <p className="text-2xl font-black text-ink-900 mt-1">
+              {totalApplicants}
+            </p>
+          </div>
+          <div className="bg-white p-5 rounded-xl border shadow-sm transition">
+            <p className="text-[10px] uppercase font-black text-ink-400">
+              {t('pipeline.activeOffers')}
+            </p>
+            <p className="text-2xl font-black text-marigold-500 mt-1">
+              {offeredCount}
+            </p>
+          </div>
+          <div className="bg-white p-5 rounded-xl border shadow-sm transition">
+            <p className="text-[10px] uppercase font-black text-ink-400">
+              {t('pipeline.hiredPlaced')}
+            </p>
+            <p className="text-2xl font-black text-green-600 mt-1">
+              {placedCount}
+            </p>
+          </div>
+          <div className="bg-white p-5 rounded-xl border shadow-sm transition">
+            <p className="text-[10px] uppercase font-black text-ink-400">
+              {t('pipeline.conversionRate')}
+            </p>
+            <p className="text-2xl font-black text-ink-dark mt-1">
+              {placedRate}%
+            </p>
+          </div>
+        </div>
 
- return (
- <div key={stage} style={getStageStyle(stage)} className="p-3 rounded-xl border border-ink-200/50 flex flex-col gap-3 min-h-[450px]">
- <div className="flex justify-between items-center px-1">
- <span className="text-xs font-black text-ink-700 uppercase tracking-wide">{stage}</span>
- <span style={{ background: '#F1EFE8', color: '#3D4A5C', fontSize: '11px', fontWeight: 500, padding: '2px 8px', borderRadius: '20px' }}>
- {stageApps.length}
- </span>
- </div>
+        {loading ? (
+          <div className="text-center py-20 text-ink-400 font-bold animate-pulse">
+            🔄 {t('pipeline.loading')}
+          </div>
+        ) : errorMessage ? (
+          <div className="bg-white rounded-xl shadow-sm p-8 text-center space-y-4 border border-ink-200 max-w-md mx-auto my-12">
+            <span className="text-4xl block">⚠️</span>
+            <p className="text-red-700 font-bold">{errorMessage}</p>
+            <button
+              onClick={() => fetchApplications(currentUser)}
+              style={{ background: '#F5A623', color: '#1B2333' }}
+              className="px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm"
+            >
+              Retry
+            </button>
+          </div>
+        ) : (
+          /* Kanban Board Grid */
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-start overflow-x-auto">
+            {STAGES.map((stage) => {
+              const stageApps = applications.filter(
+                (app) => app.pipelineStage === stage
+              );
 
- <div className="space-y-3 flex-1 overflow-y-auto">
- {stageApps.map((app) => (
- <div key={app._id} className="wm-card flex flex-col gap-3 text-left">
- <div>
- <h4 className="font-extrabold text-xs text-ink-900 leading-tight">
- {app.studentName || app.studentEmail.split("@")[0].toUpperCase()}
- </h4>
- <p className="text-[10px] text-ink-400 font-bold mt-0.5 truncate">{app.projectTitle || t("pipeline.defaultProjectTitle")}</p>
- <p className="text-[9px] text-ink-500 mt-1">{app.studentEmail}</p>
- </div>
+              return (
+                <div
+                  key={stage}
+                  style={getStageStyle(stage)}
+                  className="p-3 rounded-xl border border-ink-200/50 flex flex-col gap-3 min-h-[450px]"
+                >
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-xs font-black text-ink-700 uppercase tracking-wide">
+                      {stage}
+                    </span>
+                    <span
+                      style={{
+                        background: '#F1EFE8',
+                        color: '#3D4A5C',
+                        fontSize: '11px',
+                        fontWeight: 500,
+                        padding: '2px 8px',
+                        borderRadius: '20px',
+                      }}
+                    >
+                      {stageApps.length}
+                    </span>
+                  </div>
 
- {/* Navigation controls */}
- <div className="flex items-center justify-between border-t pt-2 mt-1">
- <button
- disabled={stage === STAGES[0]}
- onClick={() => {const prevStage = STAGES[STAGES.indexOf(stage) - 1];
- handleUpdateStage(app._id, prevStage);
-}}
- className="p-1 hover:bg-ink-100 rounded text-ink-400 disabled:opacity-40"title={t("pipeline.moveLeft")}
- >
- ◀
- </button>
- 
- {currentUser?.userRole ==="company" && stage !=="Placed" && stage !=="Offered" && (
- <button
- onClick={() => { setSelectedApp(app); setShowOfferModal(true);}}
- className="text-[9px] bg-marigold-50 text-marigold-700 hover:bg-marigold-100 font-extrabold px-2 py-0.5 rounded">
- {t("pipeline.offerJob")} 💼
- </button>
- )}
+                  <div className="space-y-3 flex-1 overflow-y-auto">
+                    {stageApps.map((app) => (
+                      <div
+                        key={app._id}
+                        className="wm-card flex flex-col gap-3 text-left"
+                      >
+                        <div>
+                          <h4 className="font-extrabold text-xs text-ink-900 leading-tight">
+                            {app.studentName ||
+                              app.studentEmail.split('@')[0].toUpperCase()}
+                          </h4>
+                          <p className="text-[10px] text-ink-400 font-bold mt-0.5 truncate">
+                            {app.projectTitle ||
+                              t('pipeline.defaultProjectTitle')}
+                          </p>
+                          <p className="text-[9px] text-ink-500 mt-1">
+                            {app.studentEmail}
+                          </p>
+                        </div>
 
- <button
- disabled={stage === STAGES[STAGES.length - 1]}
- onClick={() => {const nextStage = STAGES[STAGES.indexOf(stage) + 1];
- handleUpdateStage(app._id, nextStage);
-}}
- className="p-1 hover:bg-ink-100 rounded text-ink-400 disabled:opacity-40"title={t("pipeline.moveRight")}
- >
- ▶
- </button>
- </div>
- </div>
- ))}
+                        {/* Navigation controls */}
+                        <div className="flex items-center justify-between border-t pt-2 mt-1">
+                          <button
+                            disabled={stage === STAGES[0]}
+                            onClick={() => {
+                              const prevStage =
+                                STAGES[STAGES.indexOf(stage) - 1];
+                              handleUpdateStage(app._id, prevStage);
+                            }}
+                            className="p-1 hover:bg-ink-100 rounded text-ink-400 disabled:opacity-40"
+                            title={t('pipeline.moveLeft')}
+                          >
+                            ◀
+                          </button>
 
- {stageApps.length === 0 && (
- <div className="text-center py-8 text-[10px] text-ink-400 italic">
- {t("pipeline.noCandidates")}
- </div>
- )}
- </div>
- </div>
- );
-})}
- </div>
- )}
- </div>
+                          {currentUser?.userRole === 'company' &&
+                            stage !== 'Placed' &&
+                            stage !== 'Offered' && (
+                              <button
+                                onClick={() => {
+                                  setSelectedApp(app);
+                                  setShowOfferModal(true);
+                                }}
+                                className="text-[9px] bg-marigold-50 text-marigold-700 hover:bg-marigold-100 font-extrabold px-2 py-0.5 rounded"
+                              >
+                                {t('pipeline.offerJob')} 💼
+                              </button>
+                            )}
 
- {/* Offer Job modal */}
- {showOfferModal && selectedApp && (
- <div className="fixed inset-0 bg-ink-900/50 z-50 flex items-center justify-center p-4">
- <div className="bg-white rounded-xl max-w-md w-full shadow-sm p-6 border text-left">
- <div className="flex justify-between items-center border-b pb-3 mb-4">
- <h3 className="font-bold text-base text-ink-900">{t("pipeline.extendContractTitle")}</h3>
- <button onClick={() => setShowOfferModal(false)} className="text-ink-400 hover:text-ink-600 text-lg">×</button>
- </div>
- <form onSubmit={handleSendOfferSubmit} className="space-y-4">
- <p className="text-xs text-ink-500">
- {t("pipeline.offerPrefix")} <strong>{selectedApp.studentName}</strong>. {t("pipeline.offerSuffix")}
- </p>
- <div>
- <label className="block text-xs font-bold text-ink-500 uppercase mb-1">{t("pipeline.offerMessageTerms")}</label>
- <textarea
- placeholder={t("pipeline.offerPlaceholder")}
- value={offerText}
- onChange={(e) => setOfferText(e.target.value)}
- rows={4}
- className="w-full bg-ink-50 border border-ink-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none resize-none"required
- />
- </div>
- <div className="flex justify-end space-x-3 pt-2">
- <button
- type="button"onClick={() => setShowOfferModal(false)}
- className="px-4 py-2 border border-ink-200 rounded-xl text-xs font-bold text-ink-500 hover:bg-ink-50 transition">
- {t("pipeline.cancel")}
- </button>
- <button
- type="submit"disabled={submittingOffer}
- style={{ background: "#F5A623", color: "#1B2333" }} className="px-5 py-2 rounded-xl text-xs font-bold transition shadow-md">
- {submittingOffer ? t("pipeline.sending") : t("pipeline.extendOffer")}
- </button>
- </div>
- </form>
- </div>
- </div>
- )}
- </div>
- );
+                          <button
+                            disabled={stage === STAGES[STAGES.length - 1]}
+                            onClick={() => {
+                              const nextStage =
+                                STAGES[STAGES.indexOf(stage) + 1];
+                              handleUpdateStage(app._id, nextStage);
+                            }}
+                            className="p-1 hover:bg-ink-100 rounded text-ink-400 disabled:opacity-40"
+                            title={t('pipeline.moveRight')}
+                          >
+                            ▶
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+
+                    {stageApps.length === 0 && (
+                      <div className="text-center py-8 text-[10px] text-ink-400 italic">
+                        {t('pipeline.noCandidates')}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Offer Job modal */}
+      {showOfferModal && selectedApp && (
+        <div className="fixed inset-0 bg-ink-900/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl max-w-md w-full shadow-sm p-6 border text-left">
+            <div className="flex justify-between items-center border-b pb-3 mb-4">
+              <h3 className="font-bold text-base text-ink-900">
+                {t('pipeline.extendContractTitle')}
+              </h3>
+              <button
+                onClick={() => setShowOfferModal(false)}
+                className="text-ink-400 hover:text-ink-600 text-lg"
+              >
+                ×
+              </button>
+            </div>
+            <form onSubmit={handleSendOfferSubmit} className="space-y-4">
+              <p className="text-xs text-ink-500">
+                {t('pipeline.offerPrefix')}{' '}
+                <strong>{selectedApp.studentName}</strong>.{' '}
+                {t('pipeline.offerSuffix')}
+              </p>
+              <div>
+                <label className="block text-xs font-bold text-ink-500 uppercase mb-1">
+                  {t('pipeline.offerMessageTerms')}
+                </label>
+                <textarea
+                  placeholder={t('pipeline.offerPlaceholder')}
+                  value={offerText}
+                  onChange={(e) => setOfferText(e.target.value)}
+                  rows={4}
+                  className="w-full bg-ink-50 border border-ink-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none resize-none"
+                  required
+                />
+              </div>
+              <div className="flex justify-end space-x-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowOfferModal(false)}
+                  className="px-4 py-2 border border-ink-200 rounded-xl text-xs font-bold text-ink-500 hover:bg-ink-50 transition"
+                >
+                  {t('pipeline.cancel')}
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingOffer}
+                  style={{ background: '#F5A623', color: '#1B2333' }}
+                  className="px-5 py-2 rounded-xl text-xs font-bold transition shadow-md"
+                >
+                  {submittingOffer
+                    ? t('pipeline.sending')
+                    : t('pipeline.extendOffer')}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

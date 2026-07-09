@@ -188,3 +188,10 @@ button:active {
     display: none !important;
   }
 }
+/* Purple elimination — catch any remaining instances */
+[class*="purple"],
+[class*="violet"],
+[class*="indigo"] {
+  --tw-text-opacity: 1;
+  color: #1B2333;
+}

@@ -220,7 +220,7 @@ export default function LandingPage() {
                 </p>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3 text-xs">
-                    <span className="bg-purple-100 text-purple-700 font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">
+                    <span className="bg-paper text-ink-dark font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">
                       1
                     </span>
                     <p className="text-ink-600">
@@ -228,7 +228,7 @@ export default function LandingPage() {
                     </p>
                   </div>
                   <div className="flex items-start gap-3 text-xs">
-                    <span className="bg-purple-100 text-purple-700 font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">
+                    <span className="bg-paper text-ink-dark font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">
                       2
                     </span>
                     <p className="text-ink-600">
@@ -236,7 +236,7 @@ export default function LandingPage() {
                     </p>
                   </div>
                   <div className="flex items-start gap-3 text-xs">
-                    <span className="bg-purple-100 text-purple-700 font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">
+                    <span className="bg-paper text-ink-dark font-extrabold w-5 h-5 flex items-center justify-center rounded-full mt-0.5">
                       3
                     </span>
                     <p className="text-ink-600">

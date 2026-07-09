@@ -20,7 +20,7 @@ const PremiumCheckoutModal = ({
         onClick={() => setShowCheckoutModal(false)}
       ></div>
       <div className="relative bg-white rounded-xl w-full max-w-sm overflow-hidden shadow-sm animate-fade-in-up border border-ink-200">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-marigold-500 to-purple-500"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-marigold-500 to-paper"></div>
 
         <div className="flex justify-between items-center p-4 border-b border-ink-100 bg-ink-50">
           <h2 className="text-xs font-bold text-ink-500 uppercase tracking-wider">

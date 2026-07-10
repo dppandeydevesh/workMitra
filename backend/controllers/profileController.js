@@ -7,7 +7,7 @@ const { supabase } = require('../utils/supabase');
 const Application = require('../models/Application');
 const Project = require('../models/Project');
 
-exports.routeHandler0 = async (req, res) => {
+exports.routeHandler0 = async (req, res, next) => {
   try {
     // Validate request ownership
     if (req.user.userRole !== "company") {
@@ -21,11 +21,11 @@ exports.routeHandler0 = async (req, res) => {
     );
     res.status(201).json({ message: "Company profile saved successfully!", profile });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to save company profile." });
+    next(err);
   }
 };
 
-exports.routeHandler1 = async (req, res) => {
+exports.routeHandler1 = async (req, res, next) => {
   try {
     const profile = await User.findOne({ email: req.user.email }).select("-password");
     if (!profile) {
@@ -33,11 +33,11 @@ exports.routeHandler1 = async (req, res) => {
     }
     res.status(200).json(profile);
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to retrieve company profile." });
+    next(err);
   }
 };
 
-exports.routeHandler2 = async (req, res) => {
+exports.routeHandler2 = async (req, res, next) => {
   try {
     const { email, resumeUrl, resumeText } = req.body;
     if (!email) {
@@ -71,11 +71,11 @@ exports.routeHandler2 = async (req, res) => {
       }
     });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to update candidate resume details." });
+    next(err);
   }
 };
 
-exports.routeHandler3 = async (req, res) => {
+exports.routeHandler3 = async (req, res, next) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: "No CV file was uploaded." });
@@ -118,7 +118,7 @@ exports.routeHandler3 = async (req, res) => {
       }
     } else {
       if (process.env.NODE_ENV === 'production') {
-        return res.status(500).json({ error: "Storage service is offline. File upload failed." });
+        return next(new Error("Firebase is not configured for file uploads."));
       } else {
         const fs = require('fs');
         const path = require('path');
@@ -149,12 +149,11 @@ exports.routeHandler3 = async (req, res) => {
       resumeText: extractedText
     });
   } catch (err) {
-    console.error("PDF upload/parse error:", err);
-    res.status(500).json({ error: `Failed to upload and parse CV PDF: ${err.message}` });
+    next(err);
   }
 };
 
-exports.routeHandler4 = async (req, res) => {
+exports.routeHandler4 = async (req, res, next) => {
   try {
     const { studentEmail, skills, comment } = req.body;
     if (!studentEmail || !skills || !comment) {
@@ -189,11 +188,11 @@ exports.routeHandler4 = async (req, res) => {
 
     res.status(200).json({ message: "Vouch endorsement submitted successfully!", student: sanitizedStudent });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to submit vouch endorsement." });
+    next(err);
   }
 };
 
-exports.routeHandler5 = async (req, res) => {
+exports.routeHandler5 = async (req, res, next) => {
   try {
     const { email } = req.params;
     if (req.user.email !== email) {
@@ -236,7 +235,7 @@ exports.routeHandler5 = async (req, res) => {
 
     res.status(200).json({ user: sanitized });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to update profile parameters." });
+    next(err);
   }
 };
 

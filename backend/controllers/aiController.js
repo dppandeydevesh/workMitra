@@ -15,7 +15,7 @@ const { aiQueue } = require('../queues/aiQueue');
 // =========================================================================
 // 🧠 Pinecone semantic match — top projects for a student
 // =========================================================================
-exports.semanticMatch = async (req, res) => {
+exports.semanticMatch = async (req, res, next) => {
   try {
     const { email } = req.params;
     if (req.user.email !== email) {
@@ -44,27 +44,27 @@ exports.semanticMatch = async (req, res) => {
     res.status(200).json({ pinecone: true, matches: enriched });
   } catch (err) {
     console.error('[Semantic Match]', err);
-    res.status(500).json({ error: 'Semantic match failed.' });
+    next(err);
   }
 };
 
 // =========================================================================
 // 🔄 Admin — backfill all existing projects into Pinecone
 // =========================================================================
-exports.pineconeBackfill = async (req, res) => {
+exports.pineconeBackfill = async (req, res, next) => {
   if (req.user.userRole !== 'admin') return res.status(403).json({ error: 'Admin only.' });
   try {
     const count = await backfillAllProjects(Project);
     res.status(200).json({ message: `Backfill complete. ${count} projects indexed.` });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 };
 
 // =========================================================================
 // 💡 AI Top Picks — personalised project recommendations for a student
 // =========================================================================
-exports.getRecommendations = async (req, res) => {
+exports.getRecommendations = async (req, res, next) => {
   try {
     const { email } = req.params;
     if (req.user.email !== email) {
@@ -83,7 +83,7 @@ exports.getRecommendations = async (req, res) => {
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return res.status(500).json({ error: 'Gemini API key is missing.' });
+      return next(new Error('Gemini API key is missing.'));
     }
 
     const projectsList = projects.map(p => ({
@@ -127,14 +127,14 @@ Return ONLY a valid JSON array of strings (the 3 project IDs). No markdown, no e
     res.status(200).json(orderedProjects);
   } catch (err) {
     console.error('AI Recommendations error:', err.message);
-    res.status(500).json({ error: 'Failed to fetch AI recommendations.' });
+    next(err);
   }
 };
 
 // =========================================================================
 // 🤖 AI Assistant Chat (Mitra AI)
 // =========================================================================
-exports.chat = async (req, res) => {
+exports.chat = async (req, res, next) => {
   try {
     const { message, history, context } = req.body;
     const name = context?.name || 'User';
@@ -143,7 +143,7 @@ exports.chat = async (req, res) => {
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return res.status(500).json({ error: 'Gemini API key is missing.' });
+      return next(new Error('Gemini API key is missing.'));
     }
 
     const systemPrompt = `You are Mitra AI, a helpful, enthusiastic, and highly knowledgeable assistant for the workMitra platform. The user's name is ${name}. They are a ${role}. They are currently on the page: ${pagePath}. Use this context to answer their query...`;
@@ -168,14 +168,14 @@ exports.chat = async (req, res) => {
     res.status(200).json({ text: responseText });
   } catch (err) {
     console.error('AI Chat error:', err.message);
-    res.status(500).json({ error: 'Failed to process AI chat request.' });
+    next(err);
   }
 };
 
 // =========================================================================
 // 🧠 CV Review — Gemini-powered resume critique
 // =========================================================================
-exports.reviewCV = async (req, res) => {
+exports.reviewCV = async (req, res, next) => {
   try {
     const { email, resumeText } = req.body;
     if (!email) {
@@ -197,7 +197,7 @@ exports.reviewCV = async (req, res) => {
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return res.status(500).json({ error: 'Gemini API key is not configured in the server.' });
+      return next(new Error('Gemini API key is not configured in the server.'));
     }
 
     const prompt = `You are an expert recruiter and CV critique specialist.
@@ -226,7 +226,7 @@ ${textToAnalyze}`;
     const result = await AiService.callGemini(prompt, { responseMimeType: 'application/json', temperature: 0 });
 
     if (!result?.text) {
-      return res.status(500).json({ error: 'Empty response from AI engine.' });
+      return next(new Error('Empty response from AI engine.'));
     }
 
     let reviewReport;
@@ -251,14 +251,14 @@ ${textToAnalyze}`;
       report: reviewReport
     });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: 'Failed to execute AI resume scan.' });
+    next(err);
   }
 };
 
 // =========================================================================
 // 📄 ATS Resume Check against Job Role (file upload endpoint)
 // =========================================================================
-exports.resumeCheck = async (req, res) => {
+exports.resumeCheck = async (req, res, next) => {
   try {
     const { jobRole } = req.body;
     if (!jobRole) {
@@ -270,7 +270,7 @@ exports.resumeCheck = async (req, res) => {
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return res.status(500).json({ error: 'Gemini API key is not configured.' });
+      return next(new Error('Gemini API key is not configured.'));
     }
 
     const pdfData = await pdfParse(req.file.buffer);
@@ -288,14 +288,14 @@ exports.resumeCheck = async (req, res) => {
     res.status(200).json({ jobId: job.id, status: 'processing' });
   } catch (err) {
     console.error('ATS Resume Check error:', err.message);
-    res.status(500).json({ error: 'Failed to execute ATS resume check.' });
+    next(err);
   }
 };
 
 // =========================================================================
 // 🕒 Check job status
 // =========================================================================
-exports.getJobStatus = async (req, res) => {
+exports.getJobStatus = async (req, res, next) => {
   try {
     const { Job } = require('bullmq');
     const job = await Job.fromId(aiQueue, req.params.jobId);
@@ -306,6 +306,6 @@ exports.getJobStatus = async (req, res) => {
     res.json({ status: state, result, error });
   } catch (err) {
     console.error('Job status check error:', err.message);
-    res.status(500).json({ error: 'Failed to check job status.' });
+    next(err);
   }
 };

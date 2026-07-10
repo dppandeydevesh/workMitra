@@ -28,7 +28,7 @@ function _runGithubLinter(githubUrl, fileTypes) {
 }
 
 
-exports.applyForProject = async (req, res) => {
+exports.applyForProject = async (req, res, next) => {
   try {
     // Fix 6: Only students can apply to projects
     if (req.user.userRole !== 'student') {
@@ -92,14 +92,14 @@ exports.applyForProject = async (req, res) => {
     await newApplication.save();
     res.status(201).json({ message: "Application submitted successfully!" });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to process project application." });
+    next(err);
   }
 };
 
 // =========================================================================
 // 🔍 ROUTE: Fetch all project IDs a student has applied to
 // =========================================================================
-exports.getStudentApplications = async (req, res) => {
+exports.getStudentApplications = async (req, res, next) => {
   try {
     if (req.user.email !== req.params.email) {
       return res.status(403).json({ error: "Unauthorized access to application indices." });
@@ -108,7 +108,7 @@ exports.getStudentApplications = async (req, res) => {
     const appliedProjectIds = apps.map(app => app.projectId.toString());
     res.status(200).json(appliedProjectIds);
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to fetch student application logs." });
+    next(err);
   }
 };
 
@@ -118,7 +118,7 @@ exports.getStudentApplications = async (req, res) => {
 // =========================================================================
 // 🏢 ROUTE: Fetch all applications for a specific company's projects
 // =========================================================================
-exports.getCompanyApplications = async (req, res) => {
+exports.getCompanyApplications = async (req, res, next) => {
   try {
     const { email } = req.params;
     if (req.user.email !== email) {
@@ -184,14 +184,14 @@ exports.getCompanyApplications = async (req, res) => {
 
     res.status(200).json(enrichedApps);
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to load corporate applications." });
+    next(err);
   }
 };
 
 // =========================================================================
 // 🔎 ROUTE: Fetch full student application details with populated project metrics
 // =========================================================================
-exports.getStudentDetails = async (req, res) => {
+exports.getStudentDetails = async (req, res, next) => {
   try {
     if (req.user.email !== req.params.email) {
       return res.status(403).json({ error: "Unauthorized access to candidate application details." });
@@ -201,14 +201,14 @@ exports.getStudentDetails = async (req, res) => {
       .sort({ appliedAt: -1 });
     res.status(200).json(apps);
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to load candidate application timelines." });
+    next(err);
   }
 };
 
 // =========================================================================
 // 🔒 ROUTE: Accept or Reject an Application (Update Status)
 // =========================================================================
-exports.updateStatus = async (req, res) => {
+exports.updateStatus = async (req, res, next) => {
   try {
     const { status } = req.body;
     if (!["Approved", "Rejected"].includes(status)) {
@@ -244,7 +244,7 @@ exports.updateStatus = async (req, res) => {
 
     res.status(200).json({ message: `Application status updated to ${status}.`, application });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to modify application status." });
+    next(err);
   }
 };
 
@@ -278,7 +278,7 @@ function runLinter(code) {
   return warnings;
 }
 
-exports.submitApplicationWork = async (req, res) => {
+exports.submitApplicationWork = async (req, res, next) => {
   try {
     const { submissionLink, submissionText, githubRepoUrl, liveDeploymentUrl, aiDeclaration, selfAssessment } = req.body;
     if (!submissionLink || !submissionText) {
@@ -360,14 +360,14 @@ exports.submitApplicationWork = async (req, res) => {
     res.status(200).json({ message: "Work submitted successfully for company review.", application });
   } catch (err) {
     console.error("Submission error:", err.message);
-    res.status(500).json({ error: "Failed to register project solution details." });
+    next(err);
   }
 };
 
 // =========================================================================
 // ⏳ ROUTE: Request Deadline Extension (Phase 12)
 // =========================================================================
-exports.requestExtension = async (req, res) => {
+exports.requestExtension = async (req, res, next) => {
   try {
     const { requestedDays, reason } = req.body;
     if (!requestedDays || !reason) {
@@ -394,14 +394,14 @@ exports.requestExtension = async (req, res) => {
     res.status(200).json({ message: "Deadline extension requested.", application });
   } catch (err) {
     console.error("Request extension error:", err.message);
-    res.status(500).json({ error: "Failed to submit deadline extension request." });
+    next(err);
   }
 };
 
 // =========================================================================
 // ⏳ ROUTE: Review Deadline Extension (Phase 12)
 // =========================================================================
-exports.reviewExtension = async (req, res) => {
+exports.reviewExtension = async (req, res, next) => {
   try {
     const { requestId, status } = req.body; // status: 'Approved' | 'Rejected'
     if (!requestId || !status) {
@@ -447,14 +447,14 @@ exports.reviewExtension = async (req, res) => {
     res.status(200).json({ message: `Extension request has been ${status.toLowerCase()}.`, application });
   } catch (err) {
     console.error("Review extension error:", err.message);
-    res.status(500).json({ error: "Failed to review deadline extension request." });
+    next(err);
   }
 };
 
 // =========================================================================
 // ✅ ROUTE: Approve & Complete task submission
 // =========================================================================
-exports.completeApplication = async (req, res) => {
+exports.completeApplication = async (req, res, next) => {
   try {
     const { feedbackText, rating, ratingReview } = req.body;
 
@@ -515,14 +515,14 @@ exports.completeApplication = async (req, res) => {
 
     res.status(200).json({ message: "Work approved and marked as Completed.", application });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to approve solution node." });
+    next(err);
   }
 };
 
 // =========================================================================
 // 🔄 ROUTE: Request revision for a task submission
 // =========================================================================
-exports.requestRevision = async (req, res) => {
+exports.requestRevision = async (req, res, next) => {
   try {
     const { feedbackText } = req.body;
     if (!feedbackText) {
@@ -556,14 +556,14 @@ exports.requestRevision = async (req, res) => {
 
     res.status(200).json({ message: "Revision requested successfully.", application });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to request task revision." });
+    next(err);
   }
 };
 
 // =========================================================================
 // ⚠️ ROUTE: Flag and Dispute task submission
 // =========================================================================
-exports.withdrawApplication = async (req, res) => {
+exports.withdrawApplication = async (req, res, next) => {
   try {
     const application = await Application.findById(req.params.id);
     if (!application) {
@@ -583,11 +583,11 @@ exports.withdrawApplication = async (req, res) => {
     res.status(200).json(application);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to withdraw application." });
+    next(err);
   }
 };
 
-exports.fileDispute = async (req, res) => {
+exports.fileDispute = async (req, res, next) => {
   try {
     const { feedbackText } = req.body;
     if (!feedbackText) {
@@ -631,7 +631,7 @@ exports.fileDispute = async (req, res) => {
 
     res.status(200).json({ message: "Task solution disputed successfully.", application });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to dispute solution node." });
+    next(err);
   }
 };
 
@@ -642,7 +642,7 @@ exports.fileDispute = async (req, res) => {
 // =========================================================================
 // 🏛️ ROUTE: Get College Students Roster & Calculate Scores (Phase 11)
 // =========================================================================
-exports.offerPlacement = async (req, res) => {
+exports.offerPlacement = async (req, res, next) => {
   try {
     const { offerText } = req.body;
     const recruiterUser = await User.findOne({ email: req.user.email });
@@ -690,14 +690,14 @@ exports.offerPlacement = async (req, res) => {
     res.status(200).json({ message: "Placement offer extended successfully.", studentUser: sanitizedStudent });
   } catch (err) {
     console.error("Offer extension error:", err.message);
-    res.status(500).json({ error: "Failed to extend placement job offer." });
+    next(err);
   }
 };
 
 // =========================================================================
 // 💼 ROUTE: Student Resolve Placement Offer (Phase 13)
 // =========================================================================
-exports.resolvePlacementOffer = async (req, res) => {
+exports.resolvePlacementOffer = async (req, res, next) => {
   try {
     const { offerId, status } = req.body; // status: 'Accepted' | 'Rejected'
     if (!offerId || !status) {
@@ -746,11 +746,11 @@ exports.resolvePlacementOffer = async (req, res) => {
     res.status(200).json({ message: `Offer has been ${status.toLowerCase()}.`, studentUser: sanitizedStudent });
   } catch (err) {
     console.error("Resolve offer error:", err.message);
-    res.status(500).json({ error: "Failed to resolve placement offer." });
+    next(err);
   }
 };
 
-exports.updatePipelineStatus = async (req, res) => {
+exports.updatePipelineStatus = async (req, res, next) => {
   try {
     const { status } = req.body; // Applied, Shortlisted, Interviewing, Offered, Placed
     if (!status) {
@@ -781,6 +781,6 @@ exports.updatePipelineStatus = async (req, res) => {
 
     res.status(200).json({ message: "Placement pipeline stage updated.", application });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to update pipeline stage." });
+    next(err);
   }
 };

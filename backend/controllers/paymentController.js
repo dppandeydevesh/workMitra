@@ -11,10 +11,10 @@ if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
   });
 }
 
-exports.createOrder = async (req, res) => {
+exports.createOrder = async (req, res, next) => {
     try {
         if (!razorpayInstance) {
-            return res.status(500).json({ error: "Razorpay API keys are missing. Payment gateway is offline." });
+            return next(new Error("Razorpay instance not initialized. Check server keys."));
         }
 
         const { planId } = req.body;
@@ -39,16 +39,16 @@ exports.createOrder = async (req, res) => {
         res.status(200).json(order);
     } catch (err) {
         console.error("Razorpay Create Order Error:", err);
-        res.status(500).json({ error: "Failed to create payment order." });
+        next(err);
     }
 };
 
-exports.verifyPayment = async (req, res) => {
+exports.verifyPayment = async (req, res, next) => {
     try {
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
         if (!process.env.RAZORPAY_KEY_SECRET) {
-            return res.status(500).json({ error: "Razorpay Secret is missing." });
+            return next(new Error("RAZORPAY_KEY_SECRET is missing. Cannot verify signature."));
         }
 
         // Verify signature using crypto module and razorpay secret
@@ -67,6 +67,6 @@ exports.verifyPayment = async (req, res) => {
         res.status(200).json({ success: true, message: "Payment verified successfully! Background webhook will activate pass." });
     } catch (err) {
         console.error("Razorpay Verify Error:", err);
-        res.status(500).json({ error: "Payment verification failed." });
+        next(err);
     }
 };

@@ -2,7 +2,7 @@ const User = require('../models/User');
 const Application = require('../models/Application');
 const Project = require('../models/Project');
 
-exports.routeHandler0 = async (req, res) => {
+exports.routeHandler0 = async (req, res, next) => {
   try {
     const { user1, user2 } = req.params;
     
@@ -32,11 +32,11 @@ exports.routeHandler0 = async (req, res) => {
       res.status(200).json(messages);
     }
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to load chat history." });
+    next(err);
   }
 };
 
-exports.routeHandler1 = async (req, res) => {
+exports.routeHandler1 = async (req, res, next) => {
   try {
     const { email } = req.params;
     if (req.user.email !== email) {
@@ -73,11 +73,11 @@ exports.routeHandler1 = async (req, res) => {
     
     res.status(200).json(partnersWithUnread);
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to load recent chat partners." });
+    next(err);
   }
 };
 
-exports.routeHandler2 = async (req, res) => {
+exports.routeHandler2 = async (req, res, next) => {
   try {
     const { sender } = req.body;
     if (!sender) {
@@ -90,7 +90,7 @@ exports.routeHandler2 = async (req, res) => {
     );
     res.status(200).json({ success: true });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to mark messages as read." });
+    next(err);
   }
 };
 

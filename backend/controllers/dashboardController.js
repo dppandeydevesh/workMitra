@@ -2,7 +2,7 @@ const User = require('../models/User');
 const Application = require('../models/Application');
 const Project = require('../models/Project');
 
-exports.routeHandler0 = async (req, res) => {
+exports.getCompanyStats = async (req, res, next) => {
   try {
     const companyEmail = req.params.email;
     if (req.user.email !== companyEmail) {
@@ -53,11 +53,11 @@ exports.routeHandler0 = async (req, res) => {
     });
   } catch (err) {
     console.error("Company stats aggregation error:", err.message);
-    res.status(500).json({ error: "Failed to aggregate company dashboard stats." });
+    next(err);
   }
 };
 
-exports.routeHandler1 = async (req, res) => {
+exports.getRecentActivity = async (req, res, next) => {
   try {
     const companyEmail = req.params.email;
     if (req.user.email !== companyEmail) {
@@ -85,7 +85,7 @@ exports.routeHandler1 = async (req, res) => {
     res.status(200).json(feed);
   } catch (err) {
     console.error("Recent activity feed error:", err.message);
-    res.status(500).json({ error: "Failed to load recent activity." });
+    next(err);
   }
 };
 

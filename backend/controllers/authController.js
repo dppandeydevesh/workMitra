@@ -150,7 +150,7 @@ const sendResetPasswordEmail = async (toEmail, resetLink) => {
   }
 };
 
-const register = async (req, res) => {
+const register = async (req, res, next) => {
   try {
     const { fullName, companyName, email, password, userRole, mobile, collegeName, enrollmentNumber, departmentName, turnstileToken } = req.body;
 
@@ -267,11 +267,11 @@ const register = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to initiate registration." });
+    next(err);
   }
 };
 
-const verifyOtp = async (req, res) => {
+const verifyOtp = async (req, res, next) => {
   try {
     // Accept either emailOtp or otp field for frontend compatibility
   // eslint-disable-next-line no-unused-vars
@@ -342,12 +342,11 @@ const verifyOtp = async (req, res) => {
       }
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: `Failed to verify registration: ${err.message}` });
+    next(err);
   }
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
     try {
         const { email, password, portalRole, turnstileToken } = req.body;
 
@@ -407,11 +406,11 @@ const login = async (req, res) => {
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Failed to log in." });
+        next(err);
     }
 };
 
-const forgotPassword = async (req, res) => {
+const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
     if (!email) {
@@ -424,15 +423,16 @@ const forgotPassword = async (req, res) => {
     }
 
     const token = crypto.randomBytes(20).toString("hex");
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
-    user.resetPasswordToken = token;
+    user.resetPasswordToken = hashedToken;
     user.resetPasswordExpires = Date.now() + 3600000;
     await user.save();
 
     const frontendUrl = process.env.FRONTEND_URL;
     if (!frontendUrl) {
       console.error("🚨 Configuration Error: FRONTEND_URL environment variable is missing.");
-      return res.status(500).json({ error: "Server configuration error. Cannot generate reset link." });
+      return next(new Error("Server configuration error. Cannot generate reset link."));
     }
     const resetLink = `${frontendUrl}/reset-password/${token}`;
 
@@ -454,12 +454,11 @@ const forgotPassword = async (req, res) => {
     }
     res.status(200).json(responsePayload);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: `Failed to process forgot password request: ${err.message}` });
+    next(err);
   }
 };
 
-const resetPassword = async (req, res) => {
+const resetPassword = async (req, res, next) => {
   try {
     const { token } = req.params;
     const { password } = req.body;
@@ -468,8 +467,10 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({ error: "New password is required." });
     }
 
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
     const user = await User.findOne({
-      resetPasswordToken: token,
+      resetPasswordToken: hashedToken,
       resetPasswordExpires: { $gt: Date.now() }
     });
 
@@ -485,11 +486,11 @@ const resetPassword = async (req, res) => {
     res.status(200).json({ message: "Password updated successfully!" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message });
+    next(err);
   }
 };
 
-const logout = async (req, res) => {
+const logout = async (req, res, _next) => {
   const token = req.cookies.refreshToken;
   if (token) {
     await User.findOneAndUpdate({ refreshToken: token }, { refreshToken: null });
@@ -502,21 +503,21 @@ const logout = async (req, res) => {
   res.status(200).json({ message: 'Logged out successfully' });
 };
 
-const me = async (req, res) => {
+const me = async (req, res, next) => {
   try {
     const User = require("../models/User");
     const user = await User.findOne({ email: req.user.email }).select("-password -__v");
     if (!user) return res.status(404).json({ error: "User not found" });
     res.json(user);
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Server error" });
+    next(err);
   }
 };
 
 // =========================================================================
 // 👤 Get user profile by email (used by student profiles, recruiter views)
 // =========================================================================
-const getUserByEmail = async (req, res) => {
+const getUserByEmail = async (req, res, next) => {
   try {
     const User = require('../models/User');
     const user = await User.findOne({ email: req.params.email }, '-password');
@@ -538,14 +539,14 @@ const getUserByEmail = async (req, res) => {
     userObj.isEndorsed = isEndorsed;
     res.status(200).json(userObj);
   } catch (err) { console.error(err);
-    res.status(500).json({ error: 'Failed to read profile details.' });
+    next(err);
   }
 };
 
 // =========================================================================
 // 🔗 Get user profile by vanity username
 // =========================================================================
-const getVanityProfile = async (req, res) => {
+const getVanityProfile = async (req, res, next) => {
   try {
     const User = require('../models/User');
     const user = await User.findOne({ vanityUsername: req.params.username }, '-password');
@@ -566,14 +567,14 @@ const getVanityProfile = async (req, res) => {
     userObj.isEndorsed = isEndorsed;
     res.status(200).json(userObj);
   } catch (err) { console.error(err);
-    res.status(500).json({ error: 'Failed to read vanity profile.' });
+    next(err);
   }
 };
 
 // =========================================================================
 // 🔒 Lock onboarding profile flag (so the form won't re-appear on next login)
 // =========================================================================
-const completeProfile = async (req, res) => {
+const completeProfile = async (req, res, next) => {
   try {
     const User = require('../models/User');
     const { email } = req.body;
@@ -586,14 +587,14 @@ const completeProfile = async (req, res) => {
     await User.findOneAndUpdate({ email }, { hasCompletedProfile: true });
     res.status(200).json({ message: 'Profile onboarding flag locked successfully.' });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: 'Failed to lock profile onboarding state.' });
+    next(err);
   }
 };
 
 // =========================================================================
 // ⚙️ Update company profile settings
 // =========================================================================
-const updateCompanyProfile = async (req, res) => {
+const updateCompanyProfile = async (req, res, next) => {
   try {
     const User = require('../models/User');
     const { companyBio, companyLogoUrl, companyWebsite, companyLinkedin, industryVertical, teamSize, defaultComplexity, autoApproveApplications } = req.body;
@@ -620,12 +621,12 @@ const updateCompanyProfile = async (req, res) => {
     res.status(200).json({ message: 'Company profile updated successfully.', user: sanitizedUser });
   } catch (err) {
     console.error('Company profile update error:', err.message);
-    res.status(500).json({ error: 'Failed to update company profile.' });
+    next(err);
   }
 };
 
 
-const refreshAccessToken = async (req, res) => {
+const refreshAccessToken = async (req, res, _next) => {
   const token = req.cookies.refreshToken;
   if (!token) return res.status(401).json({ error: 'No refresh token provided.' });
 
@@ -637,19 +638,12 @@ const refreshAccessToken = async (req, res) => {
       return res.status(403).json({ error: 'Invalid refresh token.' });
     }
 
-    const { accessToken, refreshToken: newRefreshToken } = generateTokens(user._id.toString(), user.email, user.userRole);
-    user.refreshToken = newRefreshToken;
-    await user.save();
-
-    res.cookie('refreshToken', newRefreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    // Disable strict refresh token rotation to support concurrent multi-tab refreshes
+    const { accessToken } = generateTokens(user._id.toString(), user.email, user.userRole);
 
     res.json({ accessToken });
   } catch (err) {
+    console.error(err);
     res.status(403).json({ error: 'Expired or invalid refresh token.' });
   }
 };

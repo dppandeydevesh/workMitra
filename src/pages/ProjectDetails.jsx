@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { useToast } from '../components/Toast';
@@ -268,8 +268,7 @@ export default function ProjectDetails() {
                     JSON.parse(localStorage.getItem('user') || '{}').email
                 )
               }
-              style={{ background: '#F5A623', color: '#1B2333' }}
-              className="px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm"
+              className="bg-marigold-500 text-ink-dark px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm"
             >
               Retry
             </button>
@@ -282,15 +281,18 @@ export default function ProjectDetails() {
   // Calculate skills intersection
   const studentSkills = currentUser?.skills || [];
   const requiredSkills = project.requiredSkills || [];
-  const matchingSkills = requiredSkills.filter((skill) =>
-    studentSkills.some(
-      (studentSkill) => studentSkill.toLowerCase() === skill.toLowerCase()
-    )
-  );
-  const matchPercentage =
-    requiredSkills.length > 0
-      ? Math.round((matchingSkills.length / requiredSkills.length) * 100)
+  
+  const { matchingSkills, matchPercentage } = useMemo(() => {
+    const matched = requiredSkills.filter((skill) =>
+      studentSkills.some(
+        (studentSkill) => studentSkill.toLowerCase() === skill.toLowerCase()
+      )
+    );
+    const percentage = requiredSkills.length > 0
+      ? Math.round((matched.length / requiredSkills.length) * 100)
       : 0;
+    return { matchingSkills: matched, matchPercentage: percentage };
+  }, [requiredSkills, studentSkills]);
 
   return (
     <div className="min-h-screen bg-transparent font-sans py-8">

@@ -53,7 +53,7 @@ api.interceptors.response.use(
         localStorage.removeItem('accessToken');
         localStorage.removeItem('user');
         localStorage.removeItem('hasPaidPass');
-        window.location.href = '/login';
+        window.dispatchEvent(new CustomEvent('auth:unauthorized'));
         return Promise.reject(err);
       } finally {
         isRefreshing = false;

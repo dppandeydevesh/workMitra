@@ -16,7 +16,7 @@ const getBlockedCompanyIdsForStudent = async (student) => {
   return resolveBlockedCompanyIds(collegeAdmin.collegeBlockedCompanies);
 };
 
-const getAllProjects = async (req, res) => {
+const getAllProjects = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
@@ -40,19 +40,28 @@ const getAllProjects = async (req, res) => {
       aggregatePipeline.push({ $limit: limit });
     }
 
-    // 1. Lookup applications to count them efficiently
+    // 1. Lookup applications to count them efficiently without breaching 16MB document limit
     aggregatePipeline.push({
       $lookup: {
         from: "applications",
-        localField: "_id",
-        foreignField: "projectId",
-        as: "applications"
+        let: { pId: "$_id" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$projectId", "$$pId"] } } },
+          { $count: "count" }
+        ],
+        as: "appCountData"
       }
     });
 
     aggregatePipeline.push({
       $addFields: {
-        applicantCount: { $size: "$applications" }
+        applicantCount: { 
+          $cond: { 
+            if: { $gt: [{ $size: "$appCountData" }, 0] }, 
+            then: { $arrayElemAt: ["$appCountData.count", 0] }, 
+            else: 0 
+          } 
+        }
       }
     });
 
@@ -83,7 +92,7 @@ const getAllProjects = async (req, res) => {
     // Clean up temporary fields
     aggregatePipeline.push({
       $project: {
-        applications: 0,
+        appCountData: 0,
         companyInfo: 0
       }
     });
@@ -92,11 +101,11 @@ const getAllProjects = async (req, res) => {
     res.status(200).json(projectsWithCounts);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to retrieve projects." });
+    next(err);
   }
 };
 
-const createProject = async (req, res) => {
+const createProject = async (req, res, next) => {
   try {
     if (req.user.userRole !== "company" && req.user.userRole !== "admin") {
       return res.status(403).json({ error: "Access denied. Only recruiters can publish projects." });
@@ -138,11 +147,11 @@ const createProject = async (req, res) => {
     res.status(201).json(project);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to publish new project stack." });
+    next(err);
   }
 };
 
-const getProjectById = async (req, res) => {
+const getProjectById = async (req, res, next) => {
   try {
     const project = await Project.findById(req.params.projectId).populate('companyId', 'email companyName');
     if (!project) {
@@ -151,11 +160,11 @@ const getProjectById = async (req, res) => {
     res.status(200).json(project);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to retrieve project details." });
+    next(err);
   }
 };
 
-const getProjectsByCompany = async (req, res) => {
+const getProjectsByCompany = async (req, res, next) => {
   try {
     if (req.user.email !== req.params.email) {
       return res.status(403).json({ error: "Unauthorized projects access request." });
@@ -164,11 +173,11 @@ const getProjectsByCompany = async (req, res) => {
     res.status(200).json(companyProjects);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to retrieve company projects." });
+    next(err);
   }
 };
 
-const getProjectApplicants = async (req, res) => {
+const getProjectApplicants = async (req, res, next) => {
   try {
     const { projectId } = req.params;
 
@@ -239,11 +248,11 @@ const getProjectApplicants = async (req, res) => {
     res.status(200).json(enrichedApplicants);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to parse matching applicants." });
+    next(err);
   }
 };
 
-const updateProject = async (req, res) => {
+const updateProject = async (req, res, next) => {
   try {
     const project = await Project.findById(req.params.projectId);
     if (!project) {
@@ -270,11 +279,11 @@ const updateProject = async (req, res) => {
     res.status(200).json(project);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to update project details." });
+    next(err);
   }
 };
 
-const deleteProject = async (req, res) => {
+const deleteProject = async (req, res, next) => {
   try {
     const { projectId } = req.params;
     const project = await Project.findById(projectId);
@@ -294,11 +303,11 @@ const deleteProject = async (req, res) => {
     res.status(200).json({ message: "Project and associated applications deleted successfully." });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to delete corporate project." });
+    next(err);
   }
 };
 
-const getRecommendedProjects = async (req, res) => {
+const getRecommendedProjects = async (req, res, next) => {
   try {
     const studentUser = await User.findOne({ email: req.user.email });
     if (!studentUser || studentUser.userRole !== "student") {
@@ -339,11 +348,11 @@ const getRecommendedProjects = async (req, res) => {
     res.status(200).json(scoredProjects);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to query recommended gig matches." });
+    next(err);
   }
 };
 
-const archiveProject = async (req, res) => {
+const archiveProject = async (req, res, next) => {
   try {
     const { id } = req.params;
     const project = await Project.findById(id);
@@ -363,7 +372,7 @@ const archiveProject = async (req, res) => {
     res.status(200).json(project);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to archive project." });
+    next(err);
   }
 };
 

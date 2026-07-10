@@ -47,9 +47,17 @@ export default function ProtectedRoute({ children, allowedRoles }) {
       }
     };
 
+    const handleUnauthorized = () => {
+      if (isMounted) {
+        setIsAuthenticated(false);
+      }
+    };
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+
     verifySession();
     return () => {
       isMounted = false;
+      window.removeEventListener('auth:unauthorized', handleUnauthorized);
     };
   }, []);
 

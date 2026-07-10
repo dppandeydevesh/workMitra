@@ -1,13 +1,12 @@
 const crypto = require('crypto');
 const User = require('../models/User');
 
-exports.handleWebhook = async (req, res) => {
+exports.handleWebhook = async (req, res, next) => {
   try {
     const signature = req.headers['x-razorpay-signature'];
 
     if (!process.env.RAZORPAY_WEBHOOK_SECRET) {
-      console.error('RAZORPAY_WEBHOOK_SECRET is missing');
-      return res.status(500).send('Webhook secret missing');
+      return next(new Error('Webhook secret missing'));
     }
 
     const rawBody = req.body.toString('utf8');
@@ -44,7 +43,6 @@ exports.handleWebhook = async (req, res) => {
 
     res.status(200).json({ status: 'ok' });
   } catch (err) {
-    console.error('Razorpay Webhook Error:', err);
-    res.status(500).send('Server Error');
+    next(err);
   }
 };

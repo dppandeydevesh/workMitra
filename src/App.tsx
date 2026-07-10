@@ -30,6 +30,7 @@ const CollegeDashboard = React.lazy(() => import("./pages/CollegeDashboard"));
 const PlacementPipeline = React.lazy(() => import("./pages/PlacementPipeline"));
 import { ThemeProvider } from "./components/ThemeContext";
 import AIAssistant from "./components/AIAssistant";
+import ErrorBoundary from "./components/ErrorBoundary";
 const ResumeChecker = React.lazy(() => import("./pages/ResumeChecker"));
 const FacultyDashboard = React.lazy(() => import("./pages/FacultyDashboard"));
 
@@ -77,10 +78,11 @@ function App() {
     <ThemeProvider>
       <div className="min-h-screen bg-transparent dark:text-ink-100 transition-colors duration-200">
         <WebSocketProvider>
+          <ErrorBoundary>
             <BrowserRouter>
               <RouteTracker />
               <Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-transparent text-marigold-500 font-bold tracking-widest text-sm uppercase">Loading Platform...</div>}>
-          <Routes>
+                <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
                 <Route path="/terms" element={<TermsPage />} />
@@ -119,10 +121,11 @@ function App() {
                 
                 {/* 404 Wildcard Catch-All */}
                 <Route path="*" element={<NotFoundPage />} />
-              </Routes>
-            </Suspense>
+                </Routes>
+              </Suspense>
             </BrowserRouter>
-          </WebSocketProvider>
+          </ErrorBoundary>
+        </WebSocketProvider>
       </div>
     </ThemeProvider>
   );

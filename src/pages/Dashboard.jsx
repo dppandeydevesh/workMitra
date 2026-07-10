@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../config';
@@ -206,82 +206,87 @@ export default function Dashboard() {
   };
 
   // ── Computed values ────────────────────────────────────────────────────────
-  // eslint-disable-next-line no-unused-vars
-  const notificationsList = myApplications
-    .map((app) => {
-      const project = app.projectId;
-      if (!project) return null;
-      if (app.status === 'Approved') {
-        return {
-          id: app._id,
-          title: t('dashboard.appApprovedTitle') + ' 🎉',
-          message: t('dashboard.appApprovedMsg', { title: project.title }),
-          date: app.appliedAt,
-          type: 'info',
-        };
-      }
-      if (app.status === 'Completed') {
-        return {
-          id: app._id,
-          title: t('dashboard.gigCompletedTitle') + ' 🏆',
-          message: t('dashboard.gigCompletedMsg', {
-            title: project.title,
-            feedback: app.feedbackText || t('dashboard.excellentWork'),
-          }),
-          date: app.submittedAt || app.appliedAt,
-          type: 'success',
-        };
-      }
-      if (app.status === 'Rejected') {
-        return {
-          id: app._id,
-          title: t('dashboard.appRejectedTitle') + ' ✕',
-          message: t('dashboard.appRejectedMsg', { title: project.title }),
-          date: app.appliedAt,
-          type: 'danger',
-        };
-      }
-      return null;
-    })
-    .filter(Boolean);
+  const notificationsList = useMemo(() => {
+    return myApplications
+      .map((app) => {
+        const project = app.projectId;
+        if (!project) return null;
+        if (app.status === 'Approved') {
+          return {
+            id: app._id,
+            title: t('dashboard.appApprovedTitle') + ' 🎉',
+            message: t('dashboard.appApprovedMsg', { title: project.title }),
+            date: app.appliedAt,
+            type: 'info',
+          };
+        }
+        if (app.status === 'Completed') {
+          return {
+            id: app._id,
+            title: t('dashboard.gigCompletedTitle') + ' 🏆',
+            message: t('dashboard.gigCompletedMsg', {
+              title: project.title,
+              feedback: app.feedbackText || t('dashboard.excellentWork'),
+            }),
+            date: app.submittedAt || app.appliedAt,
+            type: 'success',
+          };
+        }
+        if (app.status === 'Rejected') {
+          return {
+            id: app._id,
+            title: t('dashboard.appRejectedTitle') + ' ✕',
+            message: t('dashboard.appRejectedMsg', { title: project.title }),
+            date: app.appliedAt,
+            type: 'danger',
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
+  }, [myApplications, t]);
 
-  const uniqueSkillsList = [
-    ...new Set(
-      projects.flatMap((p) => p.requiredSkills || []).map((s) => s.trim())
-    ),
-  ];
+  const uniqueSkillsList = useMemo(() => {
+    return [
+      ...new Set(
+        projects.flatMap((p) => p.requiredSkills || []).map((s) => s.trim())
+      ),
+    ];
+  }, [projects]);
 
-  const filteredProjects = projects
-    .filter((project) => {
-      const query = searchTerm.toLowerCase();
-      const matchesSearch =
-        project.title?.toLowerCase().includes(query) ||
-        (project.companyId &&
-          project.companyId.email &&
-          project.companyId.email.toLowerCase().includes(query)) ||
-        project.description?.toLowerCase().includes(query);
-      const matchesSkill =
-        skillFilter === 'All' ||
-        (project.requiredSkills &&
-          project.requiredSkills.includes(skillFilter));
-      const matchesWorkType =
-        workTypeFilter === 'All' || project.workType === workTypeFilter;
-      const budgetVal = project.budget || 0;
-      const matchesBudget =
-        maxBudgetFilter >= 10000 || budgetVal <= maxBudgetFilter;
-      return matchesSearch && matchesSkill && matchesWorkType && matchesBudget;
-    })
-    .sort((a, b) => {
-      if (sortBy === 'budgetHigh') return (b.budget || 0) - (a.budget || 0);
-      if (sortBy === 'closestDeadline') {
-        const dA = a.deadline ? new Date(a.deadline).getTime() : Infinity;
-        const dB = b.deadline ? new Date(b.deadline).getTime() : Infinity;
-        return dA - dB;
-      }
-      if (sortBy === 'latest')
-        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-      return 0;
-    });
+  const filteredProjects = useMemo(() => {
+    return projects
+      .filter((project) => {
+        const query = searchTerm.toLowerCase();
+        const matchesSearch =
+          project.title?.toLowerCase().includes(query) ||
+          (project.companyId &&
+            project.companyId.email &&
+            project.companyId.email.toLowerCase().includes(query)) ||
+          project.description?.toLowerCase().includes(query);
+        const matchesSkill =
+          skillFilter === 'All' ||
+          (project.requiredSkills &&
+            project.requiredSkills.includes(skillFilter));
+        const matchesWorkType =
+          workTypeFilter === 'All' || project.workType === workTypeFilter;
+        const budgetVal = project.budget || 0;
+        const matchesBudget =
+          maxBudgetFilter >= 10000 || budgetVal <= maxBudgetFilter;
+        return matchesSearch && matchesSkill && matchesWorkType && matchesBudget;
+      })
+      .sort((a, b) => {
+        if (sortBy === 'budgetHigh') return (b.budget || 0) - (a.budget || 0);
+        if (sortBy === 'closestDeadline') {
+          const dA = a.deadline ? new Date(a.deadline).getTime() : Infinity;
+          const dB = b.deadline ? new Date(b.deadline).getTime() : Infinity;
+          return dA - dB;
+        }
+        if (sortBy === 'latest')
+          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+        return 0;
+      });
+  }, [projects, searchTerm, skillFilter, workTypeFilter, maxBudgetFilter, sortBy]);
 
   return (
     <motion.div
@@ -315,6 +320,7 @@ export default function Dashboard() {
                       stroke="currentColor"
                       strokeWidth="3"
                       viewBox="0 0 24 24"
+                      aria-hidden="true"
                     >
                       <path
                         strokeLinecap="round"
@@ -360,8 +366,7 @@ export default function Dashboard() {
                         setCheckoutStep(1);
                         setShowCheckoutModal(true);
                       }}
-                      style={{ background: '#F5A623', color: '#1B2333' }}
-                      className="px-2.5 py-1 rounded-lg text-[9px] font-bold transition shadow-sm"
+                      className="bg-marigold-500 text-ink-dark px-2.5 py-1 rounded-lg text-[9px] font-bold transition shadow-sm"
                     >
                       {t('dashboard.upgradePlan')}
                     </button>
@@ -429,7 +434,7 @@ export default function Dashboard() {
 
               {myApplications.length === 0 ? (
                 <div className="wm-panel p-[40px_24px] text-center max-w-md mx-auto my-6 flex flex-col items-center justify-center">
-                  <div className="w-[48px] h-[48px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-4">
+                  <div className="w-[48px] h-[48px] rounded-xl bg-marigold-100 flex items-center justify-center text-marigold-500 shadow-sm mb-4">
                     <Briefcase size={24} />
                   </div>
                   <div>
@@ -572,11 +577,7 @@ export default function Dashboard() {
                                   setActiveAppToSubmit(app);
                                   setShowSubmitModal(true);
                                 }}
-                                style={{
-                                  background: '#F5A623',
-                                  color: '#1B2333',
-                                }}
-                                className="font-bold text-xs px-3.5 py-1.5 rounded-lg transition shadow-sm animate-fade-in"
+                                className="bg-marigold-500 text-ink-dark font-bold text-xs px-3.5 py-1.5 rounded-lg transition shadow-sm animate-fade-in"
                               >
                                 {app.status === 'Approved'
                                   ? t('dashboard.submitWork')
@@ -748,11 +749,11 @@ export default function Dashboard() {
                           <p className="text-[10px] uppercase font-bold text-[#6B7280]">
                             {t('dashboard.qualityScore')}
                           </p>
-                          <p className="text-2xl font-black text-[#F5A623]">
+                          <p className="text-2xl font-black text-marigold-500">
                             {cvReport.score}/100
                           </p>
                         </div>
-                        <div className="relative w-12 h-12 flex items-center justify-center rounded-full bg-white border-2 border-[#F5A623]">
+                        <div className="relative w-12 h-12 flex items-center justify-center rounded-full bg-white border-2 border-marigold-500">
                           <span className="text-[11px] font-black text-[#1B2333]">
                             {cvReport.score}%
                           </span>
@@ -785,7 +786,7 @@ export default function Dashboard() {
                       </div>
                       <div>
                         <h5 className="text-[12px] font-bold uppercase text-[#1B2333] mb-2 flex items-center gap-1.5">
-                          <span className="text-[#F5A623]">!</span>{' '}
+                          <span className="text-marigold-500">!</span>{' '}
                           <span className="tracking-wider">
                             {t('dashboard.areasOfImprovement')}
                           </span>
@@ -796,7 +797,7 @@ export default function Dashboard() {
                               key={idx}
                               className="py-2 border-b border-[#E1E2DC] last:border-b-0 leading-tight"
                             >
-                              <span className="text-[#F5A623] font-bold mr-1.5">
+                              <span className="text-marigold-500 font-bold mr-1.5">
                                 !
                               </span>
                               {imp}

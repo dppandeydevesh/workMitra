@@ -35,6 +35,7 @@ ${payload.resumeText || payload.cvText}`;
     try {
       return JSON.parse(result.text.trim());
     } catch (parseErr) {
+      console.error(parseErr);
       throw new Error('Failed to parse AI response into JSON.');
     }
   }
@@ -58,8 +59,10 @@ Return ONLY a valid JSON array of strings (the 3 project IDs). No markdown, no e
       try {
         recommendedIds = JSON.parse(result.text.trim());
       } catch (e) {
-        console.error('Failed to parse Gemini recommendations response:', result.text);
+        throw new Error('Failed to parse Gemini recommendations response: ' + e.message);
       }
+    } else {
+      throw new Error('Empty response from AI engine for job match.');
     }
 
     if (!Array.isArray(recommendedIds)) recommendedIds = [];
@@ -67,12 +70,16 @@ Return ONLY a valid JSON array of strings (the 3 project IDs). No markdown, no e
   }
 }, { connection, concurrency: 2 });
 
-aiWorker.on('completed', (job, result) => {
+aiWorker.on('completed', (job, _result) => {
   console.log(`AI job ${job.id} completed`);
 });
 
 aiWorker.on('failed', (job, err) => {
-  console.error(`AI job ${job.id} failed:`, err.message);
+  console.error(`AI job ${job?.id} failed:`, err.message);
+});
+
+aiWorker.on('error', (err) => {
+  console.error('AI worker experienced a systemic error:', err);
 });
 
 module.exports = { aiQueue, aiWorker };

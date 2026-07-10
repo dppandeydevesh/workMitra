@@ -5,7 +5,7 @@ const Application = require('../models/Application');
 
 const getInstitutionName = (collegeUser) => collegeUser.collegeName || collegeUser.companyName;
 
-exports.getStudents = async (req, res) => {
+exports.getStudents = async (req, res, next) => {
   try {
     const collegeUser = await User.findOne({ email: req.user.email });
     if (!collegeUser || collegeUser.userRole !== "college") {
@@ -32,11 +32,11 @@ exports.getStudents = async (req, res) => {
     res.status(200).json(studentStats);
   } catch (err) {
     console.error("Failed to fetch college students:", err);
-    res.status(500).json({ error: "Failed to load student directory." });
+    next(err);
   }
 };
 
-exports.endorseStudent = async (req, res) => {
+exports.endorseStudent = async (req, res, next) => {
   try {
     const { studentEmail, endorse } = req.body;
     const collegeUser = await User.findOne({ email: req.user.email });
@@ -55,11 +55,11 @@ exports.endorseStudent = async (req, res) => {
     await collegeUser.save();
     res.status(200).json({ message: `Student ${endorse ? 'endorsed' : 'un-endorsed'} successfully.`, endorsedList: collegeUser.collegeEndorsedStudents });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to update endorsement status." });
+    next(err);
   }
 };
 
-exports.getCompanies = async (req, res) => {
+exports.getCompanies = async (req, res, next) => {
   try {
     const collegeUser = await User.findOne({ email: req.user.email });
     if (!collegeUser || collegeUser.userRole !== "college") {
@@ -103,11 +103,11 @@ exports.getCompanies = async (req, res) => {
       blocked: collegeUser.collegeBlockedCompanies || []
     });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to fetch companies." });
+    next(err);
   }
 };
 
-exports.toggleCompanyStatus = async (req, res) => {
+exports.toggleCompanyStatus = async (req, res, next) => {
   try {
     const { companyEmail, status } = req.body; 
     const collegeUser = await User.findOne({ email: req.user.email });
@@ -124,11 +124,11 @@ exports.toggleCompanyStatus = async (req, res) => {
     await collegeUser.save();
     res.status(200).json({ message: `Company status updated to ${status}` });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to update company status." });
+    next(err);
   }
 };
 
-exports.bulkImportStudents = async (req, res) => {
+exports.bulkImportStudents = async (req, res, next) => {
   try {
     const { students } = req.body; 
     const collegeUser = await User.findOne({ email: req.user.email });
@@ -191,6 +191,6 @@ exports.bulkImportStudents = async (req, res) => {
       errors 
     });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to process bulk import." });
+    next(err);
   }
 };

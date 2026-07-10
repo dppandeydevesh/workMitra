@@ -111,6 +111,10 @@ const applicationSchema = new mongoose.Schema({
   }]
 });
 
+// Performance indexes for frequent queries
+applicationSchema.index({ studentEmail: 1 });
+applicationSchema.index({ status: 1 });
+
 // Prevent duplicate applications
 applicationSchema.index({ projectId: 1, studentEmail: 1 }, { unique: true });
 

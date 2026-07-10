@@ -1,8 +1,13 @@
 const verifyTurnstile = async (token, ip) => {
   // Allow bypass in local dev if secret key is not set
   if (!process.env.CF_TURNSTILE_SECRET_KEY) {
-    console.warn("⚠️ Warning: CF_TURNSTILE_SECRET_KEY is missing from environment. Bypassing Turnstile validation.");
-    return true;
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn("⚠️ Warning: CF_TURNSTILE_SECRET_KEY is missing from environment. Bypassing Turnstile validation.");
+      return true;
+    } else {
+      console.error("❌ Critical Error: CF_TURNSTILE_SECRET_KEY is missing in production!");
+      return false;
+    }
   }
 
   try {

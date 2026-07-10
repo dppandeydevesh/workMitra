@@ -2,7 +2,7 @@ const User = require('../models/User');
 const Project = require('../models/Project');
 const Application = require('../models/Application');
 
-exports.getMetrics = async (req, res) => {
+exports.getMetrics = async (req, res, next) => {
   if (req.user.userRole !== "admin") return res.status(403).json({ error: "Access denied. Admins only." });
   try {
     const totalStudents = await User.countDocuments({ userRole: "student" });
@@ -45,21 +45,21 @@ exports.getMetrics = async (req, res) => {
 
     res.status(200).json({ totalStudents, totalCompanies, totalProjects, lockedEscrow, completedEscrow, disputedEscrow });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to load admin statistics." });
+    next(err);
   }
 };
 
-exports.getDisputes = async (req, res) => {
+exports.getDisputes = async (req, res, next) => {
   if (req.user.userRole !== "admin") return res.status(403).json({ error: "Access denied. Admins only." });
   try {
     const disputes = await Application.find({ status: "Disputed" }).populate("projectId");
     res.status(200).json(disputes);
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to load disputes." });
+    next(err);
   }
 };
 
-exports.resolveDispute = async (req, res) => {
+exports.resolveDispute = async (req, res, next) => {
   if (req.user.userRole !== "admin") return res.status(403).json({ error: "Access denied. Admins only." });
   try {
     const { applicationId } = req.params;
@@ -72,21 +72,21 @@ exports.resolveDispute = async (req, res) => {
     await app.save();
     res.status(200).json({ message: "Dispute resolved successfully.", application: app });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to resolve dispute." });
+    next(err);
   }
 };
 
-exports.getCompanies = async (req, res) => {
+exports.getCompanies = async (req, res, next) => {
   if (req.user.userRole !== "admin") return res.status(403).json({ error: "Access denied. Admins only." });
   try {
     const companies = await User.find({ userRole: "company" }).select("-password");
     res.status(200).json(companies);
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to load companies." });
+    next(err);
   }
 };
 
-exports.verifyCompany = async (req, res) => {
+exports.verifyCompany = async (req, res, next) => {
   if (req.user.userRole !== "admin") return res.status(403).json({ error: "Access denied. Admins only." });
   try {
     const { companyEmail } = req.params;
@@ -95,6 +95,6 @@ exports.verifyCompany = async (req, res) => {
     if (!company) return res.status(404).json({ error: "Company not found." });
     res.status(200).json({ message: `Company ${isVerified ? 'verified' : 'unverified'} successfully.`, company });
   } catch (err) { console.error(err);
-    res.status(500).json({ error: "Failed to verify company." });
+    next(err);
   }
 };

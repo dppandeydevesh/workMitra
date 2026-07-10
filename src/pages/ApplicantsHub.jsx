@@ -347,19 +347,20 @@ export default function ApplicantsHub() {
 
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4
+                        <button
+                          type="button"
                           onClick={() => {
                             if (!isBlindMode)
                               navigate(`/student-profile/${app.studentEmail}`);
                           }}
-                          className={`text-lg font-bold text-ink-900 ${isBlindMode ? '' : 'hover:text-marigold-500 cursor-pointer hover:underline'}`}
+                          className={`text-lg font-bold text-ink-900 text-left ${isBlindMode ? '' : 'hover:text-marigold-500 cursor-pointer hover:underline'}`}
                         >
                           {isBlindMode
                             ? t('applicantsHub.developerNumber', {
                                 id: app.applicationId.slice(-4).toUpperCase(),
                               })
                             : app.studentName}
-                        </h4>
+                        </button>
                         {!isBlindMode && (
                           <button
                             onClick={() =>

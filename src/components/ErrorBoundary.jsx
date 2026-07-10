@@ -3,7 +3,7 @@ import React from 'react';
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, errorInfo: null };
   }
 
   static getDerivedStateFromError(error) {
@@ -14,6 +14,7 @@ class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
     // You can also log the error to an error reporting service here
     console.error("ErrorBoundary caught an error", error, errorInfo);
+    this.setState({ errorInfo });
   }
 
   render() {
@@ -30,9 +31,17 @@ class ErrorBoundary extends React.Component {
           <p className="text-ink-500 mb-6 max-w-md mx-auto">
             We're sorry, but an unexpected error occurred. This could be due to a poor network connection or a bug in the application.
           </p>
+          {this.state.error && (
+            <div className="bg-red-50 text-red-800 p-4 rounded-xl mb-6 text-left w-full max-w-2xl overflow-auto text-sm border border-red-200">
+              <p className="font-bold mb-2">{this.state.error.toString()}</p>
+              <pre className="whitespace-pre-wrap text-xs">
+                {this.state.errorInfo ? this.state.errorInfo.componentStack : this.state.error.stack}
+              </pre>
+            </div>
+          )}
           <button
             onClick={() => window.location.reload()}
-            className="px-6 py-3 bg-marigold-500 text-white font-bold uppercase tracking-wider rounded-xl shadow-md hover:bg-marigold-600 transition"
+            className="px-6 py-3 bg-blue-600 text-white font-bold uppercase tracking-wider rounded-xl shadow-md hover:bg-blue-700 transition"
           >
             Reload Application
           </button>

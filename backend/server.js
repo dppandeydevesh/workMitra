@@ -12,7 +12,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 
-const JWT_SECRET = process.env.JWT_SECRET; // Already validated by validateEnv()
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET; // Already validated by validateEnv()
 
 global.wsClients = new Map(); // Global WebSocket client registry
 
@@ -160,7 +160,7 @@ if (process.env.NODE_ENV !== 'test') {
   // 💬 WEBSOCKET CHAT ENGINE (Real-time Messaging Gateway)
   // =========================================================================
   const initWebSocketServer = require('./services/websocketService');
-  initWebSocketServer(server, JWT_SECRET);
+  initWebSocketServer(server, ACCESS_TOKEN_SECRET);
 }
 
 module.exports = app;

@@ -84,12 +84,11 @@ exports.getCompanies = async (req, res) => {
         status: { $in: ["Approved", "Submitted", "Completed"] }
       });
       
-      for (const app of apps) {
-        const stu = await User.findOne({ email: app.studentEmail });
-        if (stu && stu.collegeName === institutionName) {
-          hiredFromCollege++;
-        }
-      }
+      const studentEmails = apps.map(app => app.studentEmail);
+      hiredFromCollege = await User.countDocuments({
+        email: { $in: studentEmails },
+        collegeName: institutionName
+      });
 
       return {
         ...company.toObject(),

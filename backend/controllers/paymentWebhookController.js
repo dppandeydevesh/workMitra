@@ -26,13 +26,16 @@ exports.handleWebhook = async (req, res) => {
     const payment = parsedBody.payload.payment.entity;
 
     if (event === 'payment.captured') {
+      const userEmail = payment.notes?.userEmail;
       const orderId = payment.order_id;
-      if (orderId) {
+      if (userEmail) {
         await User.findOneAndUpdate(
-          { razorpayOrderId: orderId },
+          { email: userEmail },
           { hasPaidPass: true }
         );
-        console.log(`Payment captured for order ${orderId}. Pass activated.`);
+        console.log(`Payment captured for order ${orderId}. Pass activated for ${userEmail}.`);
+      } else {
+        console.warn(`Payment captured for order ${orderId} but no userEmail found in notes.`);
       }
     } else if (event === 'payment.failed') {
       console.log(`Payment failed for order ${payment.order_id}`);

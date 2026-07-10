@@ -193,7 +193,7 @@ export default function FacultyDashboard() {
             <div className="relative z-10 w-full md:w-auto mt-4 md:mt-0">
               <button
                 onClick={() => setActiveTab('new-project')}
-                className="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-marigold-600 to-paper hover:from-marigold-500 hover:to-paper text-white rounded-xl font-bold shadow-lg shadow-marigold-200 transition-all hover:-tranink-y-0.5 flex items-center justify-center gap-2"
+                className="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-marigold-600 to-paper hover:from-marigold-500 hover:to-paper text-white rounded-xl font-bold shadow-lg shadow-marigold-200 transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2"
               >
                 <span>➕</span> New Academic Project
               </button>

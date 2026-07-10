@@ -6,7 +6,8 @@
  */
 
 const REQUIRED_VARS = [
-  { key: 'JWT_SECRET',      hint: 'Secret used to sign/verify authentication tokens.' },
+  { key: 'ACCESS_TOKEN_SECRET', hint: 'Secret used to sign/verify access tokens.' },
+  { key: 'REFRESH_TOKEN_SECRET', hint: 'Secret used to sign/verify refresh tokens.' },
   { key: 'MONGO_URI',       hint: 'MongoDB Atlas connection string.' },
   { key: 'ADMIN_EMAIL',     hint: 'Default super-admin email for seeding.' },
   { key: 'ADMIN_PASSWORD',  hint: 'Default super-admin password for seeding.' },

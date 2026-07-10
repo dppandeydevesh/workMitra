@@ -665,8 +665,8 @@ export default function LoginPage() {
 
               {/* 🔀 DESKTOP ONLY SLIDING SHIELD PANELS */}
               <div className="hidden md:block overlay-panel absolute top-0 left-1/2 w-1/2 h-full overflow-hidden z-30 rounded-l-[150px]">
-                <div className="overlay-content bg-[#F5A623] text-white relative -left-full h-full w-[200%] transform tranink-x-0 flex">
-                  <div className="content-left absolute top-0 h-full w-1/2 flex flex-col items-center justify-center px-10 text-center transform -tranink-x-[200%]">
+                <div className="overlay-content bg-[#F5A623] text-white relative -left-full h-full w-[200%] transform translate-x-0 flex">
+                  <div className="content-left absolute top-0 h-full w-1/2 flex flex-col items-center justify-center px-10 text-center transform -translate-x-[200%]">
                     <h1 className="text-3xl font-extrabold mb-2">
                       {t('login.welcomeBack')}
                     </h1>
@@ -684,7 +684,7 @@ export default function LoginPage() {
                       {t('login.signInBtn')}
                     </button>
                   </div>
-                  <div className="content-right absolute top-0 right-0 h-full w-1/2 flex flex-col items-center justify-center px-10 text-center transform tranink-x-0">
+                  <div className="content-right absolute top-0 right-0 h-full w-1/2 flex flex-col items-center justify-center px-10 text-center transform translate-x-0">
                     <h1 className="text-3xl font-extrabold mb-2">
                       {t('login.helloFriend')}
                     </h1>

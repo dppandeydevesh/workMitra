@@ -10,7 +10,7 @@
     "start": "node backend/server.js",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "JWT_SECRET=test MONGO_URI=test ADMIN_EMAIL=test ADMIN_PASSWORD=test CORS_ORIGINS=test GEMINI_API_KEY=test FRONTEND_URL=test vitest run",
+    "test": "ACCESS_TOKEN_SECRET=test MONGO_URI=test ADMIN_EMAIL=test ADMIN_PASSWORD=test CORS_ORIGINS=test GEMINI_API_KEY=test FRONTEND_URL=test vitest run",
     "prepare": "husky"
   },
   "dependencies": {

@@ -25,16 +25,16 @@ exports.createOrder = async (req, res) => {
         const options = {
             amount: amount * 100, // amount in smallest currency unit (paise)
             currency: "INR",
-            receipt: `receipt_order_${Math.random().toString(36).substr(2, 9)}`
+            receipt: `receipt_order_${Math.random().toString(36).substr(2, 9)}`,
+            notes: {
+                userEmail: req.user.email
+            }
         };
 
         const order = await razorpayInstance.orders.create(options);
         
-        // Save the pending order ID to the user so the webhook can find them later
-        await User.findOneAndUpdate(
-            { email: req.user.email },
-            { razorpayOrderId: order.id }
-        );
+        // The order ID is no longer saved to the user document to prevent multi-tab concurrency overwrite bugs.
+        // The webhook will extract the userEmail from the payment notes directly.
 
         res.status(200).json(order);
     } catch (err) {

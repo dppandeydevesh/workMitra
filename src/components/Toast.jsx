@@ -29,7 +29,7 @@ export function ToastProvider({ children}) {const [toasts, setToasts] = useState
  <div
  key={t.id}
  onClick={() => removeToast(t.id)}
- className={`cursor-pointer px-4 py-3 rounded-xl shadow-sm border flex items-center gap-3 transition-all transform tranink-y-0 scale-100 hover:scale-[1.02] active:scale-95 animate-slide-in-up text-xs font-bold ${t.type ==="success" ?"bg-emerald-50/95 border-emerald-100 text-emerald-800" :
+ className={`cursor-pointer px-4 py-3 rounded-xl shadow-sm border flex items-center gap-3 transition-all transform translate-y-0 scale-100 hover:scale-[1.02] active:scale-95 animate-slide-in-up text-xs font-bold ${t.type ==="success" ?"bg-emerald-50/95 border-emerald-100 text-emerald-800" :
  t.type ==="error" ?"bg-rose-50/95 border-rose-100 text-rose-800" :
  t.type ==="warning" ?"bg-amber-50/95 border-amber-100 text-amber-800" :
 "bg-marigold-50/95 border-marigold-100 text-marigold-800"

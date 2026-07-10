@@ -8,11 +8,40 @@ exports.getMetrics = async (req, res) => {
     const totalStudents = await User.countDocuments({ userRole: "student" });
     const totalCompanies = await User.countDocuments({ userRole: "company" });
     const totalProjects = await Project.countDocuments();
-    const applications = await Application.find().populate("projectId");
-    
-    const lockedEscrow = applications.filter(app => ["Approved", "Submitted"].includes(app.status)).reduce((sum, app) => sum + (app.projectId?.budget || 0), 0);
-    const completedEscrow = applications.filter(app => app.status === "Completed").reduce((sum, app) => sum + (app.projectId?.budget || 0), 0);
-    const disputedEscrow = applications.filter(app => app.status === "Disputed").reduce((sum, app) => sum + (app.projectId?.budget || 0), 0);
+    const escrowStats = await Application.aggregate([
+      {
+        $match: { status: { $in: ["Approved", "Submitted", "Completed", "Disputed"] } }
+      },
+      {
+        $lookup: {
+          from: 'projects',
+          localField: 'projectId',
+          foreignField: '_id',
+          as: 'project'
+        }
+      },
+      { $unwind: '$project' },
+      {
+        $group: {
+          _id: "$status",
+          total: { $sum: "$project.budget" }
+        }
+      }
+    ]);
+
+    let lockedEscrow = 0;
+    let completedEscrow = 0;
+    let disputedEscrow = 0;
+
+    escrowStats.forEach(stat => {
+      if (["Approved", "Submitted"].includes(stat._id)) {
+        lockedEscrow += stat.total;
+      } else if (stat._id === "Completed") {
+        completedEscrow += stat.total;
+      } else if (stat._id === "Disputed") {
+        disputedEscrow += stat.total;
+      }
+    });
 
     res.status(200).json({ totalStudents, totalCompanies, totalProjects, lockedEscrow, completedEscrow, disputedEscrow });
   } catch (err) { console.error(err);

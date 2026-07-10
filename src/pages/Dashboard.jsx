@@ -925,7 +925,7 @@ export default function Dashboard() {
                       ></div>
                     ))}
                   </div>
-                ) : aiTopPicks.length > 0 ? (
+                ) : Array.isArray(aiTopPicks) && aiTopPicks.length > 0 ? (
                   <div className="flex space-x-4 overflow-x-auto pb-4 hide-scrollbar py-2">
                     {aiTopPicks.map((project) => (
                       <motion.div

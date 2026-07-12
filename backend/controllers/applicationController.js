@@ -101,10 +101,13 @@ exports.applyForProject = async (req, res, next) => {
 // =========================================================================
 exports.getStudentApplications = async (req, res, next) => {
   try {
-    if (req.user.email !== req.params.email) {
+    // V2 routes carry no :email param — default to the authenticated user's own
+    // identity. Legacy :email routes must still match the caller.
+    const targetEmail = req.params.email || req.user.email;
+    if (req.user.email !== targetEmail) {
       return res.status(403).json({ error: "Unauthorized access to application indices." });
     }
-    const apps = await Application.find({ studentEmail: req.params.email });
+    const apps = await Application.find({ studentEmail: targetEmail });
     const appliedProjectIds = apps.map(app => app.projectId.toString());
     res.status(200).json(appliedProjectIds);
   } catch (err) { console.error(err);
@@ -120,8 +123,9 @@ exports.getStudentApplications = async (req, res, next) => {
 // =========================================================================
 exports.getCompanyApplications = async (req, res, next) => {
   try {
-    const { email } = req.params;
-    if (req.user.email !== email) {
+    // V2 route carries no :email param — default to the authenticated company.
+    const targetEmail = req.params.email || req.user.email;
+    if (req.user.email !== targetEmail) {
       return res.status(403).json({ error: "Unauthorized access to company applications." });
     }
 
@@ -193,10 +197,12 @@ exports.getCompanyApplications = async (req, res, next) => {
 // =========================================================================
 exports.getStudentDetails = async (req, res, next) => {
   try {
-    if (req.user.email !== req.params.email) {
+    // V2 route carries no :email param — default to the authenticated student.
+    const targetEmail = req.params.email || req.user.email;
+    if (req.user.email !== targetEmail) {
       return res.status(403).json({ error: "Unauthorized access to candidate application details." });
     }
-    const apps = await Application.find({ studentEmail: req.params.email })
+    const apps = await Application.find({ studentEmail: targetEmail })
       .populate("projectId")
       .sort({ appliedAt: -1 });
     res.status(200).json(apps);
@@ -318,9 +324,10 @@ exports.submitApplicationWork = async (req, res, next) => {
       }
     }
     application.plagiarismScore = plagiarismScore;
-    
-    // Auto-reject if plagiarism score exceeds 20% (as per Terms of Service policy)
-    if (plagiarismScore > 20) {
+
+    // Auto-reject if plagiarism score exceeds 20% (as per Terms of Service policy).
+    // calculateSimilarity() returns a 0–1 ratio, so 20% == 0.2.
+    if (plagiarismScore > 0.2) {
       application.status = "Flagged";
     } else {
       application.status = "Submitted";
@@ -608,26 +615,16 @@ exports.fileDispute = async (req, res, next) => {
     await application.save();
 
     // Push live real-time notification warning alert if student is online
-    try {
-      const receiverSocket = global.req.app.locals.wsClients?.get(application.studentEmail);
-      const ws = require("ws");
-      if (receiverSocket && receiverSocket.readyState === ws.OPEN) {
-        receiverSocket.send(
-          JSON.stringify({
-            type: "notification",
-            statusUpdate: true,
-            message: {
-              id: application._id,
-              title: "⚠️ Submission Disputed!",
-              message: `Your solution for "${application.projectId.title}" was flagged by the recruiter. Check dashboard feedback.`,
-              type: "danger"
-            }
-          })
-        );
+    notifyUser(application.studentEmail, {
+      type: "notification",
+      statusUpdate: true,
+      message: {
+        id: application._id,
+        title: "⚠️ Submission Disputed!",
+        message: `Your solution for "${application.projectId.title}" was flagged by the recruiter. Check dashboard feedback.`,
+        type: "danger"
       }
-    } catch (wsErr) {
-      console.error("Failed to push real-time dispute socket alert:", wsErr.message);
-    }
+    });
 
     res.status(200).json({ message: "Task solution disputed successfully.", application });
   } catch (err) { console.error(err);

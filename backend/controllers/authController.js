@@ -372,7 +372,9 @@ const login = async (req, res, next) => {
 
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {
-            return res.status(400).json({ error: "Invalid email or account password." });
+            // Same status + message as the "user not found" branch above so an
+            // attacker cannot enumerate which emails are registered.
+            return res.status(401).json({ error: "Invalid email or account password." });
         }
 
         const { accessToken, refreshToken } = generateTokens(user._id.toString(), user.email, user.userRole);

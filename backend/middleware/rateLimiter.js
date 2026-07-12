@@ -57,10 +57,24 @@ const loginLimiter    = make(5,   60_000,  'Too many login attempts. Try again i
 const registerLimiter = make(3,   60_000,  'Too many accounts created. Try again in 1 minute.');
 const applyLimiter    = make(10,  60_000,  'Too many applications. Try again in 1 minute.');
 const verifyLimiter   = make(5,  300_000,  'Too many verification attempts. Try again in 5 minutes.');
+// AI/Gemini endpoints are expensive — cap per-user usage to prevent cost abuse.
+// These routes run after authenticateToken, so key by user identity (falling back
+// to IP) rather than IP alone, which a single user could rotate.
+const aiLimiter = rateLimit({
+  windowMs: 60_000,
+  max: 20,
+  message: { error: 'Too many AI requests. Please slow down and try again in a minute.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => req.user?.userId || req.user?.email || req.realIP || req.ip,
+  validate: false,
+  ...(store ? { store } : {}),
+});
 
 module.exports = {
   loginLimiter,
   registerLimiter,
   applyLimiter,
   verifyLimiter,
+  aiLimiter,
 };

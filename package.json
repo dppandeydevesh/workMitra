@@ -3,14 +3,17 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "heroku-postbuild": "npm install --include=dev && npm install --prefix backend && npm run build",
+    "render-build": "npm install --prefix backend && npm run build",
     "start": "node backend/server.js",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "ACCESS_TOKEN_SECRET=test MONGO_URI=test ADMIN_EMAIL=test ADMIN_PASSWORD=test CORS_ORIGINS=test GEMINI_API_KEY=test FRONTEND_URL=test vitest run",
+    "test": "NODE_ENV=test ACCESS_TOKEN_SECRET=test REFRESH_TOKEN_SECRET=test MONGO_URI=test ADMIN_EMAIL=test ADMIN_PASSWORD=test CORS_ORIGINS=test GEMINI_API_KEY=test FRONTEND_URL=test REDIS_URL=redis://localhost:6379 vitest run",
     "prepare": "husky"
   },
   "dependencies": {

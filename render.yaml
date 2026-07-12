@@ -1,0 +1,130 @@
+# Render Blueprint for workMitra
+# Single Node web service: builds the Vite frontend and serves it from the
+# Express backend (backend/server.js serves ../dist in production).
+#
+# Docs: https://render.com/docs/blueprint-spec
+#
+# After first deploy, set every env var marked `sync: false` in the Render
+# dashboard (Environment tab). See DEPLOYMENT.md for the full checklist.
+
+services:
+  - type: web
+    name: workmitra
+    runtime: node
+    plan: starter            # bump to standard+ if you need more memory for the BullMQ worker
+    region: singapore        # pick the region closest to your users / Atlas cluster
+    branch: main
+    # Root install pulls Vite + root deps; render-build installs backend deps and builds dist/
+    buildCommand: npm install && npm run render-build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      # ── Runtime ──────────────────────────────────────────────
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "20"          # pin the Node major; must be >=18 for global fetch()
+
+      # ── Core secrets (set in dashboard) ──────────────────────
+      - key: ACCESS_TOKEN_SECRET
+        sync: false
+      - key: REFRESH_TOKEN_SECRET
+        sync: false
+      - key: ACCESS_TOKEN_EXPIRY
+        value: 15m
+      - key: REFRESH_TOKEN_EXPIRY
+        value: 7d
+
+      # ── Database (MongoDB Atlas) ─────────────────────────────
+      - key: MONGO_URI
+        sync: false
+
+      # ── Admin seed ───────────────────────────────────────────
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+
+      # ── URLs / CORS ──────────────────────────────────────────
+      # Since the backend serves the frontend on the same origin, FRONTEND_URL
+      # and the allowed origin are your Render URL (or custom domain).
+      - key: FRONTEND_URL
+        sync: false          # e.g. https://workmitra.me
+      - key: CORS_ORIGINS
+        sync: false          # e.g. https://workmitra.me,https://www.workmitra.me
+
+      # ── AI (Google Gemini) ───────────────────────────────────
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_API_URL
+        sync: false          # optional; defaults to gemini-2.5-flash
+
+      # ── Redis / Queues (Upstash) ─────────────────────────────
+      # REDIS_URL = Upstash "redis://" TLS URL (used by BullMQ/ioredis)
+      - key: REDIS_URL
+        sync: false
+      # REST creds used by the rate limiter store
+      - key: UPSTASH_REDIS_REST_URL
+        sync: false
+      - key: UPSTASH_REDIS_REST_TOKEN
+        sync: false
+
+      # ── Payments (Razorpay) ──────────────────────────────────
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
+      - key: PRICE_PREMIUM
+        value: "299"
+      - key: PRICE_STANDARD
+        value: "199"
+
+      # ── Email (Resend) ───────────────────────────────────────
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false          # e.g. workMitra <noreply@workmitra.me>
+
+      # ── File storage (Supabase) ──────────────────────────────
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+
+      # ── Semantic search (Pinecone) ───────────────────────────
+      - key: PINECONE_API_KEY
+        sync: false
+      - key: PINECONE_INDEX
+        sync: false
+
+      # ── Bot / SEO (Prerender) ────────────────────────────────
+      - key: PRERENDER_TOKEN
+        sync: false
+
+      # ── Anti-abuse (Cloudflare Turnstile) ────────────────────
+      - key: CF_TURNSTILE_SECRET_KEY
+        sync: false
+
+      # ── Error monitoring (Sentry) ────────────────────────────
+      - key: SENTRY_DSN
+        sync: false
+
+      # ── Startup notifications (Discord/Slack webhook) ────────
+      - key: WEBHOOK_URL
+        sync: false
+
+      # ── Frontend build-time vars (Vite inlines these at build) ──
+      # These MUST be present at build time, not just runtime.
+      - key: VITE_API_BASE_URL
+        value: ""            # empty = same-origin (backend serves frontend)
+      - key: VITE_RAZORPAY_KEY_ID
+        sync: false
+      - key: VITE_CF_TURNSTILE_SITE_KEY
+        sync: false
+      - key: VITE_POSTHOG_KEY
+        sync: false
+      - key: VITE_POSTHOG_HOST
+        sync: false

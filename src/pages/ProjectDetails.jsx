@@ -26,6 +26,23 @@ export default function ProjectDetails() {
   const [showQuizModal, setShowQuizModal] = useState(false);
   const [quizAnswers, setQuizAnswers] = useState({});
 
+  // Skills intersection — computed unconditionally (hooks must run on every
+  // render, before any early returns) and null-safe against unloaded data.
+  const { matchingSkills, matchPercentage } = useMemo(() => {
+    const studentSkills = currentUser?.skills || [];
+    const requiredSkills = project?.requiredSkills || [];
+    const matched = requiredSkills.filter((skill) =>
+      studentSkills.some(
+        (studentSkill) => studentSkill.toLowerCase() === skill.toLowerCase()
+      )
+    );
+    const percentage =
+      requiredSkills.length > 0
+        ? Math.round((matched.length / requiredSkills.length) * 100)
+        : 0;
+    return { matchingSkills: matched, matchPercentage: percentage };
+  }, [project, currentUser]);
+
   const fetchProjectAndAppState = useCallback(
     async (userEmail) => {
       setLoading(true);
@@ -64,8 +81,9 @@ export default function ProjectDetails() {
       } finally {
         setLoading(false);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
+    // t (i18next) is stable; only re-create when the target project changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [projectId]
   );
 
@@ -278,21 +296,9 @@ export default function ProjectDetails() {
     );
   }
 
-  // Calculate skills intersection
+  // Plain derived values for use in JSX below (project is guaranteed non-null here).
   const studentSkills = currentUser?.skills || [];
   const requiredSkills = project.requiredSkills || [];
-  
-  const { matchingSkills, matchPercentage } = useMemo(() => {
-    const matched = requiredSkills.filter((skill) =>
-      studentSkills.some(
-        (studentSkill) => studentSkill.toLowerCase() === skill.toLowerCase()
-      )
-    );
-    const percentage = requiredSkills.length > 0
-      ? Math.round((matched.length / requiredSkills.length) * 100)
-      : 0;
-    return { matchingSkills: matched, matchPercentage: percentage };
-  }, [requiredSkills, studentSkills]);
 
   return (
     <div className="min-h-screen bg-transparent font-sans py-8">

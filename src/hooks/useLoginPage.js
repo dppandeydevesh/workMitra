@@ -102,7 +102,11 @@ export function useLoginPage() {
       if (ok) {
         if (data.user) {
           localStorage.setItem('user', JSON.stringify(data.user));
-        if (data.accessToken) localStorage.setItem('accessToken', data.accessToken);
+          if (data.accessToken)
+            localStorage.setItem('accessToken', data.accessToken);
+          // Notify same-tab listeners (e.g. WebSocketProvider) since SPA navigation
+          // doesn't reload the page and the "storage" event only fires in other tabs.
+          window.dispatchEvent(new Event('auth:login'));
           identify(data.user._id, { role: data.user.userRole }); // PostHog identification
           track('user_logged_in', { role: data.user.userRole });
 
@@ -248,7 +252,10 @@ export function useLoginPage() {
       if (ok) {
         toast.success(t('login.registrationSuccessful'));
         localStorage.setItem('user', JSON.stringify(data.user));
-        if (data.accessToken) localStorage.setItem('accessToken', data.accessToken);
+        if (data.accessToken)
+          localStorage.setItem('accessToken', data.accessToken);
+        // Same-tab notify so the WebSocket connects right after registration too.
+        window.dispatchEvent(new Event('auth:login'));
         identifyUser();
         capture('user_registered', { role: data.user.userRole });
 

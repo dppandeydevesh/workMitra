@@ -1,78 +1,124 @@
-import React, { useState, useRef} from'react';
-import { useTranslation} from'react-i18next';
+import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { fetchWithAuth } from '../services/apiClient';
 
-const ResumeChecker = () => {const { t} = useTranslation();
- const [file, setFile] = useState(null);
- const [jobRole, setJobRole] = useState('');
- const [isLoading, setIsLoading] = useState(false);
- const [result, setResult] = useState(null);
- const [error, setError] = useState('');
- 
- const fileInputRef = useRef(null);
+const ResumeChecker = () => {
+  const { t } = useTranslation();
+  const [file, setFile] = useState(null);
+  const [jobRole, setJobRole] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState('');
 
- const handleDragOver = (e) => {e.preventDefault();
-};
+  const fileInputRef = useRef(null);
+  const pollIntervalRef = useRef(null);
 
- const handleDrop = (e) => {e.preventDefault();
- if (e.dataTransfer.files && e.dataTransfer.files[0]) {const droppedFile = e.dataTransfer.files[0];
- if (droppedFile.type ==='application/pdf' || droppedFile.name.endsWith('.pdf')) {setFile(droppedFile);
- setError('');
-} else {setError(t('Please upload a valid PDF file.'));
-}
-}
-};
+  // Stop polling if the user navigates away mid-analysis (prevents a runaway
+  // interval + setState-after-unmount warnings).
+  useEffect(() => {
+    return () => {
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+    };
+  }, []);
 
- const handleFileChange = (e) => {if (e.target.files && e.target.files[0]) {const selectedFile = e.target.files[0];
- if (selectedFile.type ==='application/pdf' || selectedFile.name.endsWith('.pdf')) {setFile(selectedFile);
- setError('');
-} else {setError(t('Please upload a valid PDF file.'));
-}
-}
-};
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
 
- const handleSubmit = async (e) => {e.preventDefault();
- if (!file) {setError(t('Please upload a resume (PDF).'));
- return;
-}
- if (!jobRole) {setError(t('Please enter a target job role.'));
- return;
-}
+  const handleDrop = (e) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const droppedFile = e.dataTransfer.files[0];
+      if (
+        droppedFile.type === 'application/pdf' ||
+        droppedFile.name.endsWith('.pdf')
+      ) {
+        setFile(droppedFile);
+        setError('');
+      } else {
+        setError(t('Please upload a valid PDF file.'));
+      }
+    }
+  };
 
- setIsLoading(true);
- setError('');
- 
- const formData = new FormData();
- formData.append('resume', file);
- formData.append('jobRole', jobRole);
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const selectedFile = e.target.files[0];
+      if (
+        selectedFile.type === 'application/pdf' ||
+        selectedFile.name.endsWith('.pdf')
+      ) {
+        setFile(selectedFile);
+        setError('');
+      } else {
+        setError(t('Please upload a valid PDF file.'));
+      }
+    }
+  };
 
- try {const response = await fetchWithAuth('/api/ai/resume-check', {method:'POST',
- body: formData,
-});
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!file) {
+      setError(t('Please upload a resume (PDF).'));
+      return;
+    }
+    if (!jobRole) {
+      setError(t('Please enter a target job role.'));
+      return;
+    }
 
- if (!response.ok) {throw new Error(t('Failed to analyze resume'));
-}
+    setIsLoading(true);
+    setError('');
+
+    const formData = new FormData();
+    formData.append('resume', file);
+    formData.append('jobRole', jobRole);
+
+    try {
+      const response = await fetchWithAuth('/api/ai/resume-check', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(t('Failed to analyze resume'));
+      }
 
       const data = await response.json();
-      
+
       if (data.jobId) {
-        const pollInterval = setInterval(async () => {
+        // Give up after ~60s (30 × 2s) so a stuck/dead worker doesn't poll forever.
+        const MAX_POLL_ATTEMPTS = 30;
+        let attempts = 0;
+        if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+        pollIntervalRef.current = setInterval(async () => {
+          attempts++;
           try {
-            const statusRes = await fetchWithAuth(`/api/ai/resume-check/${data.jobId}`);
+            if (attempts > MAX_POLL_ATTEMPTS) {
+              clearInterval(pollIntervalRef.current);
+              setError(t('Analysis timed out. Please try again in a moment.'));
+              setIsLoading(false);
+              return;
+            }
+            const statusRes = await fetchWithAuth(
+              `/api/ai/resume-check/${data.jobId}`
+            );
             if (!statusRes.ok) throw new Error(t('Failed to check job status'));
             const statusData = await statusRes.json();
-            
+
             if (statusData.status === 'completed') {
-              clearInterval(pollInterval);
+              clearInterval(pollIntervalRef.current);
               setResult(statusData.result);
               setIsLoading(false);
             } else if (statusData.status === 'failed') {
-              clearInterval(pollInterval);
-              setError(t('AI Job failed: ') + (statusData.error || 'Unknown error'));
+              clearInterval(pollIntervalRef.current);
+              setError(
+                t('AI Job failed: ') + (statusData.error || 'Unknown error')
+              );
               setIsLoading(false);
             }
           } catch (e) {
-            clearInterval(pollInterval);
+            clearInterval(pollIntervalRef.current);
             setError(e.message);
             setIsLoading(false);
           }
@@ -87,9 +133,9 @@ const ResumeChecker = () => {const { t} = useTranslation();
     }
   };
 
- return (
- <div className="resume-checker-container">
- <style>{`.resume-checker-container {min-height: 100vh;
+  return (
+    <div className="resume-checker-container">
+      <style>{`.resume-checker-container {min-height: 100vh;
  width: 100%;
  display: flex;
  justify-content: center;
@@ -343,117 +389,158 @@ const ResumeChecker = () => {const { t} = useTranslation();
 }
 `}</style>
 
- <div className="wm-panel">
- {!result ? (
- <>
- <h1 className="title">{t('Resume Matcher')}</h1>
- <p className="subtitle">{t('Upload your resume to see how well it fits your target role')}</p>
- 
- {error && <div className="error-msg">{error}</div>}
+      <div className="wm-panel">
+        {!result ? (
+          <>
+            <h1 className="title">{t('Resume Matcher')}</h1>
+            <p className="subtitle">
+              {t('Upload your resume to see how well it fits your target role')}
+            </p>
 
- <form onSubmit={handleSubmit}>
- <div className="form-group">
- <label className="label">{t('Target Job Role')}</label>
- <input 
- type="text"className="input-field"placeholder={t("e.g. Senior Frontend Developer")}
- value={jobRole}
- onChange={(e) => setJobRole(e.target.value)}
- disabled={isLoading}
- />
- </div>
+            {error && <div className="error-msg">{error}</div>}
 
- <div className="form-group">
- <label className="label">{t('Resume Upload (PDF)')}</label>
- <div 
- className="dropzone"onDragOver={handleDragOver} 
- onDrop={handleDrop}
- onClick={() => fileInputRef.current.click()}
- >
- <div className="dropzone-icon">📄</div>
- {file ? (
- <div className="file-info">
- <span style={{fontWeight: 500, color:'#e2e8f0'}}>{file.name}</span>
- <button 
- type="button"onClick={(e) => { e.stopPropagation(); setFile(null);}} 
- style={{background:'none', border:'none', color:'#fca5a5', cursor:'pointer', fontSize:'1.5rem', lineHeight: 1}}
- >
- ×
- </button>
- </div>
- ) : (
- <div>
- <p style={{marginBottom:'0.5rem', color:'#e2e8f0', fontSize:'1.1rem', fontWeight: 500}}>
- {t('Drag & Drop your PDF here')}
- </p>
- <p style={{color:'#94a3b8', fontSize:'0.95rem'}}>
- {t('or click to browse files')}
- </p>
- </div>
- )}
- <input 
- type="file"ref={fileInputRef} 
- style={{display:'none'}} 
- accept=".pdf,application/pdf"onChange={handleFileChange}
- disabled={isLoading}
- />
- </div>
- </div>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label className="label">{t('Target Job Role')}</label>
+                <input
+                  type="text"
+                  className="input-field"
+                  placeholder={t('e.g. Senior Frontend Developer')}
+                  value={jobRole}
+                  onChange={(e) => setJobRole(e.target.value)}
+                  disabled={isLoading}
+                />
+              </div>
 
- {isLoading ? (
- <div className="loader"></div>
- ) : (
- <button type="submit" className="submit-btn" disabled={!file || !jobRole}>
- {t('Analyze Resume Match')}
- </button>
- )}
- </form>
- </>
- ) : (
- <div className="results-dashboard">
- <h1 className="title">{t('Analysis Complete')}</h1>
- <p className="subtitle">{t("Here's your ATS compatibility for")} <strong>{jobRole}</strong></p>
+              <div className="form-group">
+                <label className="label">{t('Resume Upload (PDF)')}</label>
+                <div
+                  className="dropzone"
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                  onClick={() => fileInputRef.current.click()}
+                >
+                  <div className="dropzone-icon">📄</div>
+                  {file ? (
+                    <div className="file-info">
+                      <span style={{ fontWeight: 500, color: '#e2e8f0' }}>
+                        {file.name}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setFile(null);
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#fca5a5',
+                          cursor: 'pointer',
+                          fontSize: '1.5rem',
+                          lineHeight: 1,
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <p
+                        style={{
+                          marginBottom: '0.5rem',
+                          color: '#e2e8f0',
+                          fontSize: '1.1rem',
+                          fontWeight: 500,
+                        }}
+                      >
+                        {t('Drag & Drop your PDF here')}
+                      </p>
+                      <p style={{ color: '#94a3b8', fontSize: '0.95rem' }}>
+                        {t('or click to browse files')}
+                      </p>
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
+                    accept=".pdf,application/pdf"
+                    onChange={handleFileChange}
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
 
- <div className="score-container">
- <div className="score-circle" style={{'--score':`${(result.score || 0) * 3.6}deg`}}>
- <div className="score-inner">
- <span className="score-value">{result.score || 0}</span>
- <span className="score-label">{t('Match Score')}</span>
- </div>
- </div>
- </div>
+              {isLoading ? (
+                <div className="loader"></div>
+              ) : (
+                <button
+                  type="submit"
+                  className="submit-btn"
+                  disabled={!file || !jobRole}
+                >
+                  {t('Analyze Resume Match')}
+                </button>
+              )}
+            </form>
+          </>
+        ) : (
+          <div className="results-dashboard">
+            <h1 className="title">{t('Analysis Complete')}</h1>
+            <p className="subtitle">
+              {t("Here's your ATS compatibility for")}{' '}
+              <strong>{jobRole}</strong>
+            </p>
 
- <div className="feedback-section">
- <h3 className="feedback-title">
- <span>⚠️</span> {t('Missing Keywords')}
- </h3>
- {result.missingKeywords && result.missingKeywords.length > 0 ? (
- <div className="keywords-list">
- {result.missingKeywords.map((kw, i) => (
- <span key={i} className="keyword-tag">{kw}</span>
- ))}
- </div>
- ) : (
- <p className="feedback-text" style={{color:'#34d399'}}>
- {t('Great job! You hit all the major keywords.')}
- </p>
- )}
- </div>
+            <div className="score-container">
+              <div
+                className="score-circle"
+                style={{ '--score': `${(result.score || 0) * 3.6}deg` }}
+              >
+                <div className="score-inner">
+                  <span className="score-value">{result.score || 0}</span>
+                  <span className="score-label">{t('Match Score')}</span>
+                </div>
+              </div>
+            </div>
 
- <div className="feedback-section">
- <h3 className="feedback-title">
- <span>💡</span> {t('Detailed Feedback')}
- </h3>
- <p className="feedback-text">{result.feedback || t('No additional feedback provided.')}</p>
- </div>
+            <div className="feedback-section">
+              <h3 className="feedback-title">
+                <span>⚠️</span> {t('Missing Keywords')}
+              </h3>
+              {result.missingKeywords && result.missingKeywords.length > 0 ? (
+                <div className="keywords-list">
+                  {result.missingKeywords.map((kw, i) => (
+                    <span key={i} className="keyword-tag">
+                      {kw}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="feedback-text" style={{ color: '#34d399' }}>
+                  {t('Great job! You hit all the major keywords.')}
+                </p>
+              )}
+            </div>
 
- <button className="back-btn" onClick={() => setResult(null)}>
- {t('Check Another Resume')}
- </button>
- </div>
- )}
- </div>
- </div>
- );
+            <div className="feedback-section">
+              <h3 className="feedback-title">
+                <span>💡</span> {t('Detailed Feedback')}
+              </h3>
+              <p className="feedback-text">
+                {result.feedback || t('No additional feedback provided.')}
+              </p>
+            </div>
+
+            <button className="back-btn" onClick={() => setResult(null)}>
+              {t('Check Another Resume')}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default ResumeChecker;

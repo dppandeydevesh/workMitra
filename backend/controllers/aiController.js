@@ -134,12 +134,20 @@ Return ONLY a valid JSON array of strings (the 3 project IDs). No markdown, no e
 // =========================================================================
 // 🤖 AI Assistant Chat (Mitra AI)
 // =========================================================================
+// Caps to keep Gemini token usage (and cost) bounded per request.
+const MAX_CHAT_MESSAGE_CHARS = 4000;
+const MAX_CHAT_HISTORY_TURNS = 20;
+
 exports.chat = async (req, res, next) => {
   try {
     const { message, history, context } = req.body;
     const name = context?.name || 'User';
     const role = req.user.userRole || 'user';
     const pagePath = context?.path || 'unknown';
+
+    if (typeof message === 'string' && message.length > MAX_CHAT_MESSAGE_CHARS) {
+      return res.status(400).json({ error: `Message too long. Please keep it under ${MAX_CHAT_MESSAGE_CHARS} characters.` });
+    }
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -150,9 +158,10 @@ exports.chat = async (req, res, next) => {
 
     const contents = [];
     if (history && Array.isArray(history)) {
-      history.forEach(msg => {
+      // Only keep the most recent turns to bound prompt size / cost.
+      history.slice(-MAX_CHAT_HISTORY_TURNS).forEach(msg => {
         const msgRole = msg.role === 'ai' || msg.role === 'model' ? 'model' : 'user';
-        const msgText = msg.text || msg.message || '';
+        const msgText = (msg.text || msg.message || '').slice(0, MAX_CHAT_MESSAGE_CHARS);
         if (msgText) {
           contents.push({ role: msgRole, parts: [{ text: msgText }] });
         }

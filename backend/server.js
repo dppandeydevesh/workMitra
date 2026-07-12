@@ -98,6 +98,18 @@ const profileRoutes = require('./routes/profileRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const fileRoutes = require('./routes/fileRoutes');
 
+// Lightweight health check for Render (no auth, no DB round-trip on the happy path).
+// Reports 200 only when MongoDB is connected so the platform can gate traffic.
+app.get('/api/health', (req, res) => {
+  const dbState = mongoose.connection.readyState; // 1 = connected
+  const healthy = dbState === 1;
+  res.status(healthy ? 200 : 503).json({
+    status: healthy ? 'ok' : 'degraded',
+    db: healthy ? 'connected' : 'disconnected',
+    uptime: process.uptime(),
+  });
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/ai', aiRoutes);

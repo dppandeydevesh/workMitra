@@ -7,19 +7,42 @@ const { supabase } = require('../utils/supabase');
 const Application = require('../models/Application');
 const Project = require('../models/Project');
 
+// Fields a company account is allowed to edit on its own profile.
+// Everything else in req.body (userRole, hasPaidPass, isVerified, email,
+// password, refreshToken, etc.) is ignored to prevent mass-assignment /
+// privilege-escalation attacks.
+const COMPANY_EDITABLE_FIELDS = [
+  'companyName', 'website', 'industry', 'companySize', 'location',
+  'requiredRoles', 'requiredSkills', 'hiringType', 'targetSkills', 'projectType',
+  'companyBio', 'companyLogoUrl', 'companyWebsite', 'companyLinkedin',
+  'industryVertical', 'teamSize', 'defaultComplexity', 'autoApproveApplications',
+  'bio',
+];
+
 exports.routeHandler0 = async (req, res, next) => {
   try {
     // Validate request ownership
     if (req.user.userRole !== "company") {
       return res.status(403).json({ error: "Access denied. Only recruiters can update company profiles." });
     }
-    const profileData = { ...req.body, companyEmail: req.user.email };
+
+    // Only copy explicitly-allowed fields — never spread req.body directly.
+    const profileData = {};
+    for (const field of COMPANY_EDITABLE_FIELDS) {
+      if (req.body[field] !== undefined) profileData[field] = req.body[field];
+    }
+
     const profile = await User.findOneAndUpdate(
       { email: req.user.email },
       profileData,
       { new: true, upsert: true, runValidators: true }
     );
-    res.status(201).json({ message: "Company profile saved successfully!", profile });
+    const sanitizedProfile = profile.toObject();
+    delete sanitizedProfile.password;
+    delete sanitizedProfile.resetPasswordToken;
+    delete sanitizedProfile.resetPasswordExpires;
+    delete sanitizedProfile.refreshToken;
+    res.status(201).json({ message: "Company profile saved successfully!", profile: sanitizedProfile });
   } catch (err) { console.error(err);
     next(err);
   }

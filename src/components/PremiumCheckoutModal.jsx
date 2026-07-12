@@ -128,6 +128,9 @@ const PremiumCheckoutModal = ({
                       }
                     } catch (err) {
                       toast.error('Verification error:' + err.message);
+                    } finally {
+                      // Re-enable only once the payment flow has fully resolved.
+                      setCheckingOutPass(false);
                     }
                   },
                   prefill: {
@@ -144,9 +147,14 @@ const PremiumCheckoutModal = ({
                 };
                 const rzp = new window.Razorpay(options);
                 rzp.open();
+                // NOTE: do NOT reset checkingOutPass here — rzp.open() returns
+                // immediately while the payment modal is still open. The button is
+                // re-enabled by modal.ondismiss (cancel) or the verify handler
+                // (success/failure) so a user can't double-submit an order.
               } catch (err) {
                 toast.error(err.message);
-              } finally {
+                // Only reset on a synchronous failure (order/SDK/config error) —
+                // the Razorpay modal never opened in this branch.
                 setCheckingOutPass(false);
               }
             }}

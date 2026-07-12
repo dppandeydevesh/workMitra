@@ -14,7 +14,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "NODE_ENV=test ACCESS_TOKEN_SECRET=test REFRESH_TOKEN_SECRET=test MONGO_URI=test ADMIN_EMAIL=test ADMIN_PASSWORD=test CORS_ORIGINS=test GEMINI_API_KEY=test FRONTEND_URL=test REDIS_URL=redis://localhost:6379 vitest run",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "dependencies": {
     "@eslint/js": "^9.39.4",

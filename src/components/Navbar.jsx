@@ -168,6 +168,8 @@ export default function Navbar() {
                   navigate('/admin-dashboard');
                 else if (user.userRole === 'college')
                   navigate('/college-dashboard');
+                else if (user.userRole === 'faculty')
+                  navigate('/faculty-dashboard');
                 else navigate('/dashboard');
               }}
             >

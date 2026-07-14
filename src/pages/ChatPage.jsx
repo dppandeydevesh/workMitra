@@ -265,13 +265,14 @@ export default function ChatPage() {
       <div className="max-w-6xl w-full mx-auto wm-panel mb-6 px-5 py-4 flex justify-between items-center z-10">
         <div
           className="logo-hook"
-          onClick={() =>
-            navigate(
-              loggedInUser.userRole === 'company'
-                ? '/company-dashboard'
-                : '/dashboard'
-            )
-          }
+          onClick={() => {
+            const role = loggedInUser?.userRole;
+            if (role === 'company') navigate('/company-dashboard');
+            else if (role === 'admin') navigate('/admin-dashboard');
+            else if (role === 'college') navigate('/college-dashboard');
+            else if (role === 'faculty') navigate('/faculty-dashboard');
+            else navigate('/dashboard');
+          }}
         >
           <img
             src="/logo.png"
@@ -280,13 +281,14 @@ export default function ChatPage() {
           />
         </div>
         <button
-          onClick={() =>
-            navigate(
-              loggedInUser.userRole === 'company'
-                ? '/company-dashboard'
-                : '/dashboard'
-            )
-          }
+          onClick={() => {
+            const role = loggedInUser?.userRole;
+            if (role === 'company') navigate('/company-dashboard');
+            else if (role === 'admin') navigate('/admin-dashboard');
+            else if (role === 'college') navigate('/college-dashboard');
+            else if (role === 'faculty') navigate('/faculty-dashboard');
+            else navigate('/dashboard');
+          }}
           className="text-xs font-bold bg-ink-900/5 hover:bg-ink-900/10 text-ink-800 px-4 py-2 rounded-xl transition-all"
         >
           ← {t('chat.dashboardBack')}

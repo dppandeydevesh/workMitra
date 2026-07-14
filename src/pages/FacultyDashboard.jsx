@@ -18,6 +18,7 @@ export default function FacultyDashboard() {
 
   const [projects, setProjects] = useState([]);
   const [applicants, setApplicants] = useState([]);
+  const [selectedProjectId, setSelectedProjectId] = useState('');
   const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
@@ -62,6 +63,22 @@ export default function FacultyDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (activeTab === 'applicants') {
+      if (!selectedProjectId && projects.length > 0) {
+        setSelectedProjectId(projects[0]._id);
+      } else if (selectedProjectId) {
+        const load = async () => {
+          setLoading(true);
+          const data = await fetchApplicantsForProject(selectedProjectId);
+          setApplicants(data);
+          setLoading(false);
+        };
+        load();
+      }
+    }
+  }, [activeTab, selectedProjectId, projects]);
+
   const fetchFacultyProjects = async (email) => {
     setLoading(true);
     setErrorMessage('');
@@ -105,11 +122,8 @@ export default function FacultyDashboard() {
   };
 
   const handleViewApplicants = async (projectId) => {
-    setLoading(true);
-    const data = await fetchApplicantsForProject(projectId);
-    setApplicants(data);
+    setSelectedProjectId(projectId);
     setActiveTab('applicants');
-    setLoading(false);
   };
 
   const handleArchiveProject = async (projectId) => {
@@ -657,105 +671,154 @@ export default function FacultyDashboard() {
                   </button>
                 </div>
 
-                {loading ? (
-                  <div className="text-center py-12 text-ink-400 font-bold">
-                    {t('facultyDashboard.loadingApplicants') ||
-                      'Loading applicants...'}
-                  </div>
-                ) : applicants.length === 0 ? (
+                {projects.length === 0 ? (
                   <div className="wm-panel p-[40px_24px] text-center max-w-md mx-auto my-6 flex flex-col items-center justify-center">
                     <div className="w-[48px] h-[48px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-4">
                       <Users size={24} />
                     </div>
                     <div>
                       <h3 className="text-[16px] font-medium text-[#1B2333] mb-[6px]">
-                        {t('facultyDashboard.noApplicants') ||
-                          'No applicants yet'}
+                        No Projects Posted
                       </h3>
                       <p className="text-[13px] text-[#6B7280] leading-[1.65] max-w-[260px] mx-auto">
-                        {t('facultyDashboard.noApplicantsDesc') ||
-                          'Students will appear here once they submit their interest or quiz results for review.'}
+                        Post research tasks or academic coursework projects to
+                        invite student submissions.
                       </p>
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    {applicants.map((app) => (
-                      <div
-                        key={app.applicationId}
-                        className="border border-ink-100 rounded-xl p-5"
-                      >
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                          <div>
-                            <h3 className="text-lg font-extrabold text-ink-800 flex items-center gap-2">
-                              {app.studentName}
-                              <span
-                                className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
-                                  app.status === 'Approved'
-                                    ? 'bg-emerald-100 text-emerald-700'
-                                    : app.status === 'Rejected'
-                                      ? 'bg-rose-100 text-rose-700'
-                                      : 'bg-amber-100 text-amber-700'
-                                }`}
-                              >
-                                {app.status}
-                              </span>
-                            </h3>
-                            <p className="text-xs text-ink-500 mb-2">
-                              ✉️ {app.studentEmail}
-                            </p>
+                  <>
+                    {/* Dropdown Selector */}
+                    <div className="mb-6 p-4 bg-ink-50 border border-ink-100 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <label className="text-xs font-black text-ink-700 uppercase tracking-wider">
+                          Select Academic Project:
+                        </label>
+                        <select
+                          value={selectedProjectId}
+                          onChange={(e) => setSelectedProjectId(e.target.value)}
+                          className="bg-white border border-ink-200 rounded-xl px-4 py-2 text-xs font-extrabold text-ink-800 focus:ring-2 focus:ring-marigold outline-none transition cursor-pointer"
+                        >
+                          {projects.map((p) => (
+                            <option key={p._id} value={p._id}>
+                              {p.title}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      {selectedProjectId && (
+                        <div className="text-xs font-bold text-ink-500">
+                          Total Applicants:{' '}
+                          <span className="text-marigold font-black">
+                            {applicants.length}
+                          </span>
+                        </div>
+                      )}
+                    </div>
 
-                            <div className="flex items-center gap-3">
-                              <div className="bg-ink-100 px-3 py-1.5 rounded-lg">
-                                <span className="text-[10px] font-bold text-ink-400 block uppercase">
-                                  {t('facultyDashboard.atsMatch') ||
-                                    'ATS Match'}
-                                </span>
-                                <span className="text-sm font-black text-marigold">
-                                  {app.matchScore}%
-                                </span>
-                              </div>
-                              {app.resumeUrl && (
-                                <a
-                                  href={app.resumeUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="text-xs font-bold text-marigold hover:underline"
-                                >
-                                  📄 {t('facultyDashboard.viewCv') || 'View CV'}
-                                </a>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className="flex gap-2 w-full md:w-auto">
-                            <button
-                              onClick={() =>
-                                handleApplicationStatus(
-                                  app.applicationId,
-                                  'Approved'
-                                )
-                              }
-                              className="flex-1 md:flex-none px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-sm font-bold transition"
-                            >
-                              {t('facultyDashboard.approve') || 'Approve'}
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleApplicationStatus(
-                                  app.applicationId,
-                                  'Rejected'
-                                )
-                              }
-                              className="flex-1 md:flex-none px-4 py-2 bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 rounded-lg text-sm font-bold transition"
-                            >
-                              {t('facultyDashboard.reject') || 'Reject'}
-                            </button>
-                          </div>
+                    {loading ? (
+                      <div className="text-center py-12 text-ink-400 font-bold">
+                        {t('facultyDashboard.loadingApplicants') ||
+                          'Loading applicants...'}
+                      </div>
+                    ) : applicants.length === 0 ? (
+                      <div className="wm-panel p-[40px_24px] text-center max-w-md mx-auto my-6 flex flex-col items-center justify-center">
+                        <div className="w-[48px] h-[48px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-4">
+                          <Users size={24} />
+                        </div>
+                        <div>
+                          <h3 className="text-[16px] font-medium text-[#1B2333] mb-[6px]">
+                            {t('facultyDashboard.noApplicants') ||
+                              'No applicants yet'}
+                          </h3>
+                          <p className="text-[13px] text-[#6B7280] leading-[1.65] max-w-[260px] mx-auto">
+                            {t('facultyDashboard.noApplicantsDesc') ||
+                              'Students will appear here once they submit their interest or quiz results for review.'}
+                          </p>
                         </div>
                       </div>
-                    ))}
-                  </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {applicants.map((app) => (
+                          <div
+                            key={app.applicationId}
+                            className="border border-ink-100 rounded-xl p-5"
+                          >
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                              <div>
+                                <h3 className="text-lg font-extrabold text-ink-800 flex items-center gap-2">
+                                  {app.studentName}
+                                  <span
+                                    className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                                      app.status === 'Approved'
+                                        ? 'bg-emerald-100 text-emerald-700'
+                                        : app.status === 'Rejected'
+                                          ? 'bg-rose-100 text-rose-700'
+                                          : 'bg-amber-100 text-amber-700'
+                                    }`}
+                                  >
+                                    {app.status}
+                                  </span>
+                                </h3>
+                                <p className="text-xs text-ink-500 mb-2">
+                                  ✉️ {app.studentEmail}
+                                </p>
+
+                                <div className="flex items-center gap-3">
+                                  <div className="bg-ink-100 px-3 py-1.5 rounded-lg">
+                                    <span className="text-[10px] font-bold text-ink-400 block uppercase">
+                                      {t('facultyDashboard.atsMatch') ||
+                                        'ATS Match'}
+                                    </span>
+                                    <span className="text-sm font-black text-marigold">
+                                      {app.matchScore}%
+                                    </span>
+                                  </div>
+                                  {app.resumeUrl && (
+                                    <a
+                                      href={app.resumeUrl}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="text-xs font-bold text-marigold hover:underline"
+                                    >
+                                      📄{' '}
+                                      {t('facultyDashboard.viewCv') ||
+                                        'View CV'}
+                                    </a>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className="flex gap-2 w-full md:w-auto">
+                                <button
+                                  onClick={() =>
+                                    handleApplicationStatus(
+                                      app.applicationId,
+                                      'Approved'
+                                    )
+                                  }
+                                  className="flex-1 md:flex-none px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-sm font-bold transition"
+                                >
+                                  {t('facultyDashboard.approve') || 'Approve'}
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    handleApplicationStatus(
+                                      app.applicationId,
+                                      'Rejected'
+                                    )
+                                  }
+                                  className="flex-1 md:flex-none px-4 py-2 bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 rounded-lg text-sm font-bold transition"
+                                >
+                                  {t('facultyDashboard.reject') || 'Reject'}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             )}

@@ -298,17 +298,17 @@ export default function CollegeDashboard() {
       {/* Main Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         {/* Welcome Card & University Branding */}
-        <div className="bg-gradient-to-r from-marigold-700 via-paper to-marigold-600 rounded-xl shadow-sm p-6 sm:p-8 text-white mb-8 relative overflow-hidden">
-          <div className="absolute -top-10 -right-10 w-44 h-44 bg-white rounded-full blur-3xl" />
-          <div className="absolute -bottom-10 -left-10 w-36 h-36 bg-white rounded-full blur-2xl" />
+        <div className="bg-gradient-to-r from-marigold-dark to-marigold rounded-xl shadow-sm p-6 sm:p-8 text-white mb-8 relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-44 h-44 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 w-36 h-36 bg-white/10 rounded-full blur-2xl" />
           <div className="relative z-10">
-            <p className="text-marigold-200 text-[10px] font-extrabold uppercase tracking-widest mb-1">
+            <p className="text-marigold-light text-[10px] font-extrabold uppercase tracking-widest mb-1">
               {t('college.academicEngagementHub')}
             </p>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
               {currentUser?.collegeName || t('college.partnerUniversity')}
             </h1>
-            <p className="text-marigold-100 text-sm mt-1 max-w-xl">
+            <p className="text-white/90 text-sm mt-1 max-w-xl">
               {t('college.hubDescription')}
             </p>
           </div>

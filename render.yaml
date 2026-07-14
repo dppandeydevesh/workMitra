@@ -77,9 +77,7 @@ services:
         sync: false
       - key: RAZORPAY_WEBHOOK_SECRET
         sync: false
-      - key: PRICE_PREMIUM
-        value: "99"
-      - key: PRICE_STANDARD
+      - key: PRICE_PASS
         value: "99"
 
       # ── Email (Resend) ───────────────────────────────────────

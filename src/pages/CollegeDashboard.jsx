@@ -100,14 +100,17 @@ export default function CollegeDashboard() {
 
   const handleCompanyToggle = async (companyEmail, status) => {
     try {
-      const res = await fetchWithAuth(`${API_BASE_URL}/api/college/toggle-company`, {
-        credentials: 'include',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ companyEmail, status }),
-      });
+      const res = await fetchWithAuth(
+        `${API_BASE_URL}/api/college/toggle-company`,
+        {
+          credentials: 'include',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ companyEmail, status }),
+        }
+      );
 
       if (res.ok) {
         toast.success(t('college.recruiterStatusUpdated', { status }));
@@ -151,14 +154,17 @@ export default function CollegeDashboard() {
         return;
       }
 
-      const res = await fetchWithAuth(`${API_BASE_URL}/api/college/bulk-import`, {
-        credentials: 'include',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ students: parsedStudents }),
-      });
+      const res = await fetchWithAuth(
+        `${API_BASE_URL}/api/college/bulk-import`,
+        {
+          credentials: 'include',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ students: parsedStudents }),
+        }
+      );
 
       const data = await res.json();
       if (res.ok) {
@@ -199,13 +205,20 @@ export default function CollegeDashboard() {
 
   // Stats calculation
   const totalStudents = students.length;
+  // readinessScore is undefined until a student takes an assessment — treat
+  // missing as 0 so one unscored student doesn't turn the average into NaN.
   const avgReadiness =
     totalStudents > 0
       ? Math.round(
-          students.reduce((sum, s) => sum + s.readinessScore, 0) / totalStudents
+          students.reduce(
+            (sum, s) => sum + (Number(s.readinessScore) || 0),
+            0
+          ) / totalStudents
         )
       : 0;
-  const atRiskCount = students.filter((s) => s.readinessScore < 400).length;
+  const atRiskCount = students.filter(
+    (s) => (Number(s.readinessScore) || 0) < 400
+  ).length;
   const endorsedCount = students.filter((s) => s.isEndorsed).length;
 
   const handleLogout = () => {

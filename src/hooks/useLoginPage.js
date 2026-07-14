@@ -41,6 +41,16 @@ export function useLoginPage() {
   });
   const [errorMessage, setErrorMessage] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');
+  // Turnstile tokens are SINGLE-USE: the backend consumes one per attempt.
+  // After any failed attempt the widget must be remounted (via this key) to
+  // issue a fresh token — otherwise every retry sends the dead token and
+  // fails with "Security verification failed" until a full page refresh.
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
+
+  const resetTurnstile = () => {
+    setTurnstileToken('');
+    setTurnstileResetKey((k) => k + 1);
+  };
 
   // Loading States
   const [isRegistering, setIsRegistering] = useState(false);
@@ -128,9 +138,11 @@ export function useLoginPage() {
         }
       } else {
         setErrorMessage(data.error || t('login.invalidSignIn'));
+        resetTurnstile(); // token was consumed by this attempt — issue a new one
       }
     } catch (err) {
       setErrorMessage(t('login.networkError', { message: err.message }));
+      resetTurnstile();
     } finally {
       setIsLoggingIn(false);
     }
@@ -150,7 +162,12 @@ export function useLoginPage() {
     const looksAcademic =
       /\.(edu|ac)\b/.test(domainPart) ||
       /\.(org|res|ernet)\.in$/.test(domainPart);
-    if ((userRole === 'student' || userRole === 'college') && !looksAcademic) {
+    if (
+      (userRole === 'student' ||
+        userRole === 'college' ||
+        userRole === 'faculty') &&
+      !looksAcademic
+    ) {
       setErrorMessage(t('login.academicEmailRequired'));
       setTimeout(() => setErrorMessage(''), 5000);
       return;
@@ -170,7 +187,7 @@ export function useLoginPage() {
         userRole: 'company',
         turnstileToken,
       };
-    } else if (userRole === 'college') {
+    } else if (userRole === 'college' || userRole === 'faculty') {
       payload = {
         fullName,
         email,
@@ -178,7 +195,7 @@ export function useLoginPage() {
         mobile,
         collegeName,
         departmentName,
-        userRole: 'college',
+        userRole,
         turnstileToken,
       };
     } else {
@@ -202,9 +219,11 @@ export function useLoginPage() {
         setEmailOtpInput('');
       } else {
         setErrorMessage(data.error || t('login.registrationSystemError'));
+        resetTurnstile(); // token was consumed by this attempt — issue a new one
       }
     } catch (err) {
       setErrorMessage(t('login.registrationError', { message: err.message }));
+      resetTurnstile();
     } finally {
       setIsRegistering(false);
     }
@@ -277,6 +296,8 @@ export function useLoginPage() {
           navigate('/admin-dashboard');
         } else if (data.user.userRole === 'college') {
           navigate('/college-dashboard');
+        } else if (data.user.userRole === 'faculty') {
+          navigate('/faculty-dashboard');
         } else {
           navigate('/preferences');
         }
@@ -324,6 +345,8 @@ export function useLoginPage() {
     setErrorMessage,
     turnstileToken,
     setTurnstileToken,
+    turnstileResetKey,
+    resetTurnstile,
 
     // loading state
     isRegistering,

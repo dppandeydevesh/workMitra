@@ -54,8 +54,12 @@ exports.applyForProject = async (req, res, next) => {
       return res.status(404).json({ error: "Student not found." });
     }
     
-    // Strict Server-Side Validation: Ensure Paid Pass is active for Student Applications
-    if (!studentUser.hasPaidPass) {
+    // Strict Server-Side Validation: Ensure Paid Pass is active for Student Applications.
+    // Faculty-posted academic projects are exempt — students shouldn't need a paid
+    // pass to apply for their own professor's coursework project.
+    const poster = project ? await User.findById(project.companyId).select("userRole") : null;
+    const isAcademicProject = poster?.userRole === "faculty";
+    if (!studentUser.hasPaidPass && !isAcademicProject) {
       return res.status(403).json({ error: "Premium Pass is required to apply for projects." });
     }
     const studentName = studentUser.fullName;

@@ -17,7 +17,7 @@ export default function AuthLanding({ setView, setUserRole }) {
           {t('login.choosePathDesc')}
         </p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full z-10 px-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl w-full z-10 px-4">
         <button
           onClick={() => {
             setUserRole('student');
@@ -25,11 +25,15 @@ export default function AuthLanding({ setView, setUserRole }) {
           }}
           className="group text-left p-8 bg-white/40 border border-ink-200 rounded-[32px] hover:border-[#F5A623] hover:bg-white/60 transition-all duration-300 relative overflow-hidden"
         >
-          <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">💼</div>
+          <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">
+            💼
+          </div>
           <div className="w-12 h-12 rounded-xl bg-transparent text-white flex items-center justify-center text-2xl mb-4">
             🚀
           </div>
-          <h3 className="text-2xl font-bold text-[#1B2333] mb-2">{t('login.needJobTitle')}</h3>
+          <h3 className="text-2xl font-bold text-[#1B2333] mb-2">
+            {t('login.needJobTitle')}
+          </h3>
           <p className="text-sm text-[#6B7280]">{t('login.needJobDesc')}</p>
         </button>
 
@@ -40,12 +44,35 @@ export default function AuthLanding({ setView, setUserRole }) {
           }}
           className="group text-left p-8 bg-white/40 border border-ink-200 rounded-[32px] hover:border-[#F5A623] hover:bg-white/60 transition-all duration-300 relative overflow-hidden"
         >
-          <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">🏢</div>
+          <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">
+            🏢
+          </div>
           <div className="w-12 h-12 rounded-xl bg-[#F5A623] text-white flex items-center justify-center text-2xl mb-4">
             🤝
           </div>
-          <h3 className="text-2xl font-bold text-[#1B2333] mb-2">{t('login.wantToHireTitle')}</h3>
+          <h3 className="text-2xl font-bold text-[#1B2333] mb-2">
+            {t('login.wantToHireTitle')}
+          </h3>
           <p className="text-sm text-[#6B7280]">{t('login.wantToHireDesc')}</p>
+        </button>
+
+        <button
+          onClick={() => {
+            setUserRole('faculty');
+            setView('auth');
+          }}
+          className="group text-left p-8 bg-white/40 border border-ink-200 rounded-[32px] hover:border-marigold-400 hover:bg-white/60 transition-all duration-300 relative overflow-hidden"
+        >
+          <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">
+            📚
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-marigold-500 text-white flex items-center justify-center text-2xl mb-4">
+            👨‍🏫
+          </div>
+          <h3 className="text-2xl font-bold text-[#1B2333] mb-2">
+            {t('login.facultyTitle')}
+          </h3>
+          <p className="text-sm text-[#6B7280]">{t('login.facultyDesc')}</p>
         </button>
 
         <button
@@ -55,11 +82,15 @@ export default function AuthLanding({ setView, setUserRole }) {
           }}
           className="group text-left p-8 bg-white/40 border border-ink-200 rounded-[32px] hover:border-marigold-400 hover:bg-white/60 transition-all duration-300 relative overflow-hidden"
         >
-          <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">🎓</div>
+          <div className="absolute -right-4 -bottom-4 text-8xl opacity-10">
+            🎓
+          </div>
           <div className="w-12 h-12 rounded-xl bg-marigold-500 text-white flex items-center justify-center text-2xl mb-4">
             🏫
           </div>
-          <h3 className="text-2xl font-bold text-[#1B2333] mb-2">{t('login.professorTitle')}</h3>
+          <h3 className="text-2xl font-bold text-[#1B2333] mb-2">
+            {t('login.professorTitle')}
+          </h3>
           <p className="text-sm text-[#6B7280]">{t('login.professorDesc')}</p>
         </button>
       </div>

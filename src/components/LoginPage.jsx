@@ -38,6 +38,8 @@ export default function LoginPage() {
     setErrorMessage,
     turnstileToken,
     setTurnstileToken,
+    turnstileResetKey,
+    resetTurnstile,
     isRegistering,
     isLoggingIn,
     isVerifying,
@@ -78,14 +80,22 @@ export default function LoginPage() {
           </>
         )}
 
-        <div className="absolute z-10 airplane-fly" style={{ top: '20%', transform: 'translateY(-50%)' }}>
-          <div className="text-4xl md:text-5xl opacity-35 animate-pulse">✈️</div>
+        {/* Flight path sits at the very top of the viewport (hidden on mobile)
+            so the plane never crosses the auth card and reads as decorative,
+            not as a stuck UI element. */}
+        <div
+          className="hidden md:block absolute z-0 airplane-fly"
+          style={{ top: '6%', transform: 'translateY(-50%)' }}
+        >
+          <div className="text-3xl opacity-25">✈️</div>
           <div className="absolute -z-10 w-24 md:w-32 h-1 bg-gradient-to-r from-transparent to-[#F5A623]/20 right-full top-1/2" />
         </div>
-        <div className="absolute top-[20%] left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-[#F5A623]/20 to-transparent" />
+        <div className="hidden md:block absolute top-[6%] left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-[#F5A623]/15 to-transparent" />
       </div>
 
-      {view === 'landing' && <AuthLanding setView={setView} setUserRole={setUserRole} />}
+      {view === 'landing' && (
+        <AuthLanding setView={setView} setUserRole={setUserRole} />
+      )}
 
       {view === 'auth' && (
         <div className="w-full min-h-screen flex flex-col items-center justify-center p-4 relative z-20">
@@ -139,6 +149,8 @@ export default function LoginPage() {
               checkPasswordStrength={checkPasswordStrength}
               turnstileToken={turnstileToken}
               setTurnstileToken={setTurnstileToken}
+              turnstileResetKey={turnstileResetKey}
+              resetTurnstile={resetTurnstile}
               isRegistering={isRegistering}
               isLoggingIn={isLoggingIn}
               setErrorMessage={setErrorMessage}

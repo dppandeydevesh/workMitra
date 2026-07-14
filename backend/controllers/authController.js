@@ -157,14 +157,14 @@ const register = async (req, res, next) => {
     // Verify Cloudflare Turnstile token
     const isTokenValid = await verifyTurnstile(turnstileToken, req.realIP);
     if (!isTokenValid) {
-      return res.status(400).json({ error: "Security verification failed. Please try again." });
+      return res.status(400).json({ error: "Security check expired — it refreshes automatically. Please wait a moment and try again." });
     }
 
     if (!email || !password || !mobile || !userRole) {
       return res.status(400).json({ error: "Email, Password, Mobile Number, and User Role are required parameters." });
     }
 
-    if (!["student", "company", "college"].includes(userRole)) {
+    if (!["student", "company", "college", "faculty"].includes(userRole)) {
       return res.status(400).json({ error: "Invalid user role registration attempt." });
     }
 
@@ -207,9 +207,22 @@ const register = async (req, res, next) => {
       return res.status(400).json({ error: "Company Name is required." });
     }
 
-    if (userRole === "college") {
+    if (userRole === "college" || userRole === "faculty") {
       if (!fullName || !collegeName || !departmentName) {
-        return res.status(400).json({ error: "Full Name, University Name, and Department are required for college administrators." });
+        return res.status(400).json({ error: "Full Name, University Name, and Department are required for academic staff." });
+      }
+      // Faculty post projects students apply to — hold them to the same
+      // academic-email requirement as students to stop fake professor signups.
+      if (userRole === "faculty") {
+        const isAcademic = await swot.isAcademic(email);
+        if (!isAcademic) {
+          const academicTLDFallback = [".edu", ".edu.in", ".ac.in", ".ac.uk", ".ac.jp", ".ac.kr", ".ac.nz", ".ac.za", ".ac.id", ".ac.th", ".ac.il", ".ac.ke", ".ac.be", ".org.in", ".res.in", ".ernet.in"];
+          const domainPart = email.toLowerCase().split("@")[1] || "";
+          const matchesFallback = academicTLDFallback.some(d => domainPart.endsWith(d));
+          if (!matchesFallback) {
+            return res.status(400).json({ error: "Please use an official academic email address from your university. If your domain is not recognized, contact support." });
+          }
+        }
       }
     }
 
@@ -247,8 +260,8 @@ const register = async (req, res, next) => {
       password: hashedPassword,
       userRole,
       mobile,
-      collegeName: userRole === "student" || userRole === "college" ? collegeName : null,
-      departmentName: userRole === "college" ? departmentName : null,
+      collegeName: ["student", "college", "faculty"].includes(userRole) ? collegeName : null,
+      departmentName: ["college", "faculty"].includes(userRole) ? departmentName : null,
       enrollmentNumber: userRole === "student" ? enrollmentNumber : null
     };
 
@@ -300,8 +313,8 @@ const verifyOtp = async (req, res, next) => {
       email,
       password,
       mobile,
-      collegeName: userRole === "student" || userRole === "college" ? collegeName : null,
-      departmentName: userRole === "college" ? departmentName : null,
+      collegeName: ["student", "college", "faculty"].includes(userRole) ? collegeName : null,
+      departmentName: ["college", "faculty"].includes(userRole) ? departmentName : null,
       enrollmentNumber: userRole === "student" ? enrollmentNumber : null,
       userRole
     });
@@ -353,7 +366,7 @@ const login = async (req, res, next) => {
         // Verify Cloudflare Turnstile token
         const isTokenValid = await verifyTurnstile(turnstileToken, req.realIP);
         if (!isTokenValid) {
-            return res.status(400).json({ error: "Security verification failed. Please try again." });
+            return res.status(400).json({ error: "Security check expired — it refreshes automatically. Please wait a moment and try again." });
         }
 
         if (!email || !password) {

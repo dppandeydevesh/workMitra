@@ -22,11 +22,26 @@ const processQueue = (error, token = null) => {
   failedQueue = [];
 };
 
+// A 401 from these endpoints is a credential/verification failure, NOT an
+// expired session — refreshing and auto-retrying would resend a consumed
+// (single-use) Turnstile token and mask the real error from the user.
+const NO_REFRESH_ENDPOINTS = [
+  '/api/auth/login',
+  '/api/auth/register',
+  '/api/auth/register-verify',
+  '/api/auth/refresh',
+  '/api/auth/forgot-password',
+  '/api/auth/reset-password',
+];
+
 api.interceptors.response.use(
   (res) => res,
   async (error) => {
     const original = error.config;
-    if (error.response?.status === 401 && !original._retry) {
+    const isAuthCall = NO_REFRESH_ENDPOINTS.some((p) =>
+      (original?.url || '').includes(p)
+    );
+    if (error.response?.status === 401 && !original._retry && !isAuthCall) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });

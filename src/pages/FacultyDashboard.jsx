@@ -44,10 +44,13 @@ export default function FacultyDashboard() {
     setLoading(true);
     setErrorMessage('');
     try {
-      const res = await fetchWithAuth(`${API_BASE_URL}/api/projects/company/${email}`, {
-        credentials: 'include',
-        headers: {},
-      });
+      const res = await fetchWithAuth(
+        `${API_BASE_URL}/api/projects/company/${email}`,
+        {
+          credentials: 'include',
+          headers: {},
+        }
+      );
       if (res.ok) {
         const data = await res.json();
         setProjects(data);
@@ -99,12 +102,12 @@ export default function FacultyDashboard() {
         body: JSON.stringify({
           title: formData.title,
           description: formData.description,
-          skills: formData.skills
+          requiredSkills: formData.skills
             .split(',')
             .map((s) => s.trim())
             .filter(Boolean),
           budget: formData.budget,
-          projectType: 'Academic', // Specific marker for faculty projects
+          workType: 'Academic', // Specific marker for faculty projects
         }),
       });
 
@@ -115,7 +118,9 @@ export default function FacultyDashboard() {
         fetchFacultyProjects(user.email);
       } else {
         const errorData = await res.json();
-        toast.error(`Error: ${errorData.message || 'Failed to post'}`);
+        toast.error(
+          `Error: ${errorData.error || errorData.message || 'Failed to post'}`
+        );
       }
     } catch (error) {
       console.error(error);
@@ -127,12 +132,15 @@ export default function FacultyDashboard() {
 
   const handleApplicationStatus = async (appId, newStatus) => {
     try {
-      const res = await fetchWithAuth(`${API_BASE_URL}/api/applications/${appId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ status: newStatus }),
-      });
+      const res = await fetchWithAuth(
+        `${API_BASE_URL}/api/applications/${appId}/status`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ status: newStatus }),
+        }
+      );
       if (res.ok) {
         toast.success(`Application marked as ${newStatus}`);
         setApplicants((prev) =>
@@ -429,10 +437,11 @@ export default function FacultyDashboard() {
                   <div>
                     <label className="block text-sm font-extrabold text-ink-700 mb-2">
                       {t('facultyDashboard.incentive') ||
-                        'Incentive (Stipend / Marks)'}
+                        'Incentive Value (Stipend ₹ or Marks)'}
                     </label>
                     <input
-                      type="text"
+                      type="number"
+                      min="1"
                       required
                       value={formData.budget}
                       onChange={(e) =>
@@ -441,7 +450,7 @@ export default function FacultyDashboard() {
                       className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold-500 outline-none transition"
                       placeholder={
                         t('facultyDashboard.incentivePlaceholder') ||
-                        'e.g., 50 Internal Marks'
+                        'e.g., 50 (marks) or 5000 (stipend ₹)'
                       }
                     />
                   </div>

@@ -107,12 +107,13 @@ const getAllProjects = async (req, res, next) => {
 
 const createProject = async (req, res, next) => {
   try {
-    if (req.user.userRole !== "company" && req.user.userRole !== "admin") {
-      return res.status(403).json({ error: "Access denied. Only recruiters can publish projects." });
+    const isFaculty = req.user.userRole === "faculty";
+    if (req.user.userRole !== "company" && req.user.userRole !== "admin" && !isFaculty) {
+      return res.status(403).json({ error: "Access denied. Only recruiters and faculty can publish projects." });
     }
 
-    const { title, description, budget, requiredSkills, duration, deadline, workType, complexity, targetUniversity, hasPpiBadge, departmentName } = req.body;
-    
+    const { title, description, budget, requiredSkills, skills, duration, deadline, workType, complexity, targetUniversity, hasPpiBadge, departmentName } = req.body;
+
     // Use the authenticated user's ObjectId instead of relying on frontend email payload
     const companyId = req.user.userId;
 
@@ -122,18 +123,21 @@ const createProject = async (req, res, next) => {
 
     const parsedBudget = Number(budget);
     if (isNaN(parsedBudget) || parsedBudget <= 0) {
-      return res.status(400).json({ error: "Budget must be a positive number." });
+      return res.status(400).json({ error: "Budget must be a positive number (stipend amount or marks)." });
     }
 
+    // Faculty posts are academic assignments: accept either skills/requiredSkills
+    // key and default the schedule fields the shorter faculty form omits
+    // (duration/deadline are required by the schema).
     const project = new Project({
       companyId,
       title,
       description,
       budget: parsedBudget,
-      requiredSkills,
-      duration,
-      deadline,
-      workType,
+      requiredSkills: requiredSkills || skills || [],
+      duration: duration || (isFaculty ? "1 Semester" : duration),
+      deadline: deadline || (isFaculty ? "Open until filled" : deadline),
+      workType: workType || (isFaculty ? "Academic" : undefined),
       complexity,
       targetUniversity,
       hasPpiBadge,

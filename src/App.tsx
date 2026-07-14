@@ -45,9 +45,18 @@ function RouteTracker() {
 
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const savedUser = localStorage.getItem("user");
-  
+
   if (savedUser) {
-    const user = JSON.parse(savedUser);
+    let user;
+    try {
+      user = JSON.parse(savedUser);
+    } catch {
+      // Corrupt entry would otherwise crash the login route until the user
+      // manually clears site data — recover by treating them as logged out.
+      localStorage.removeItem("user");
+      localStorage.removeItem("accessToken");
+      return children;
+    }
     if (user.userRole === "company") {
       return <Navigate to="/company-dashboard" replace />;
     } else if (user.userRole === "admin") {

@@ -74,7 +74,15 @@ function initWebSocketServer(server, jwtSecret) {
 
           // Save message to MongoDB
           const Message = require('../models/Message');
-          const newMessage = new Message({ sender, receiver, text });
+          const { getLinkPreview } = require('../utils/linkPreviewHelper');
+          const preview = await getLinkPreview(text);
+
+          const newMessage = new Message({
+            sender,
+            receiver,
+            text,
+            linkPreview: preview || undefined,
+          });
           await newMessage.save();
 
           const payload = {
@@ -84,6 +92,7 @@ function initWebSocketServer(server, jwtSecret) {
             receiver,
             text,
             timestamp: newMessage.timestamp,
+            linkPreview: newMessage.linkPreview,
           };
 
           // Send to receiver if online

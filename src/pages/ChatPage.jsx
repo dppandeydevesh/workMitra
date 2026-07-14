@@ -252,6 +252,28 @@ export default function ChatPage() {
     setMessageInput('');
   };
 
+  const renderMessageText = (text) => {
+    if (!text) return '';
+    const urlRegex = /(https?:\/\/[^\s]+)/gi;
+    const parts = text.split(urlRegex);
+    return parts.map((part, idx) => {
+      if (part.match(urlRegex)) {
+        return (
+          <a
+            key={idx}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline font-bold text-inherit hover:opacity-80 transition-all break-all"
+          >
+            {part}
+          </a>
+        );
+      }
+      return part;
+    });
+  };
+
   if (!loggedInUser) return null;
 
   return (
@@ -527,7 +549,49 @@ export default function ChatPage() {
                               : {}
                           }
                         >
-                          <p className="whitespace-pre-wrap">{msg.text}</p>
+                          <p className="whitespace-pre-wrap">
+                            {renderMessageText(msg.text)}
+                          </p>
+                          {msg.linkPreview && msg.linkPreview.title && (
+                            <a
+                              href={msg.linkPreview.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block mt-2.5 bg-white/10 dark:bg-black/10 border border-white/20 dark:border-black/20 rounded-lg overflow-hidden transition-all hover:opacity-90 max-w-sm text-left"
+                              style={{
+                                color: 'inherit',
+                                textDecoration: 'none',
+                              }}
+                            >
+                              {msg.linkPreview.image && (
+                                <img
+                                  src={msg.linkPreview.image}
+                                  alt={msg.linkPreview.title}
+                                  className="w-full h-32 object-cover border-b border-white/20 dark:border-black/20"
+                                />
+                              )}
+                              <div className="p-3">
+                                <h4 className="font-bold text-[12px] line-clamp-1">
+                                  {msg.linkPreview.title}
+                                </h4>
+                                {msg.linkPreview.description && (
+                                  <p className="text-[10px] opacity-85 mt-1 line-clamp-2 leading-relaxed">
+                                    {msg.linkPreview.description}
+                                  </p>
+                                )}
+                                <span className="text-[9px] opacity-60 mt-1.5 block tracking-wider uppercase font-semibold">
+                                  {(() => {
+                                    try {
+                                      return new URL(msg.linkPreview.url)
+                                        .hostname;
+                                    } catch {
+                                      return '';
+                                    }
+                                  })()}
+                                </span>
+                              </div>
+                            </a>
+                          )}
                           <span
                             className={`text-[9px] block font-medium opacity-0 group-hover:opacity-100 transition-opacity absolute ${
                               isOutgoing

@@ -25,6 +25,9 @@ export default function ProjectDetails() {
   const [ndaAccepted, setNdaAccepted] = useState(false);
   const [showQuizModal, setShowQuizModal] = useState(false);
   const [quizAnswers, setQuizAnswers] = useState({});
+  const [showPitchModal, setShowPitchModal] = useState(false);
+  const [coverLetter, setCoverLetter] = useState('');
+  const [generatingPitch, setGeneratingPitch] = useState(false);
 
   // Skills intersection — computed unconditionally (hooks must run on every
   // render, before any early returns) and null-safe against unloaded data.
@@ -182,6 +185,12 @@ export default function ProjectDetails() {
       return;
     }
 
+    // Pitch check (Open Cover Letter Modal)
+    if (!showPitchModal && !coverLetter) {
+      setShowPitchModal(true);
+      return;
+    }
+
     executeApplyAPI();
   };
 
@@ -195,6 +204,7 @@ export default function ProjectDetails() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             projectId,
+            coverLetter,
             companyId:
               typeof project.companyId === 'object'
                 ? project.companyId._id
@@ -218,6 +228,7 @@ export default function ProjectDetails() {
       setApplying(false);
       setShowNdaModal(false);
       setShowQuizModal(false);
+      setShowPitchModal(false);
     }
   };
 
@@ -720,6 +731,126 @@ export default function ProjectDetails() {
               </div>
             </div>
           )}
+
+        {/* ✍️ Application Pitch / Cover Letter Modal Overlay */}
+        {showPitchModal && (
+          <div className="fixed inset-0 bg-ink-900/60 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl max-w-lg w-full shadow-sm p-6 border text-left flex flex-col animate-fade-in">
+              <div className="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 className="font-black text-ink-800 text-sm uppercase tracking-wider flex items-center gap-1.5">
+                  ✍️{' '}
+                  {t('projectDetails.applyToGig') ||
+                    'Apply for Gig: Submission Pitch'}
+                </h3>
+                <button
+                  onClick={() => setShowPitchModal(false)}
+                  className="text-ink-400 hover:text-ink-600 text-lg font-bold"
+                >
+                  ×
+                </button>
+              </div>
+
+              <p className="text-xs text-ink-505 mb-4 font-semibold">
+                Introduce yourself to the hiring manager and explain why you're
+                a great fit for this gig. You can write your own or generate one
+                with AI.
+              </p>
+
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between items-center mb-1.5">
+                    <label
+                      htmlFor="pitchTextarea"
+                      className="block text-[10px] font-black text-ink-400 uppercase tracking-wider"
+                    >
+                      Your Cover Letter / Pitch
+                    </label>
+                    <button
+                      type="button"
+                      disabled={generatingPitch}
+                      onClick={async () => {
+                        try {
+                          setGeneratingPitch(true);
+                          const response = await fetchWithAuth(
+                            `${API_BASE_URL}/api/ai/generate-pitch`,
+                            {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ projectId }),
+                            }
+                          );
+                          const data = await response.json();
+                          if (response.ok) {
+                            setCoverLetter(data.pitch);
+                            toast.success(
+                              '✨ AI Pitch generated successfully!'
+                            );
+                          } else {
+                            if (data.requiresPass) {
+                              toast.error(
+                                'Premium Pass required to use AI pitches.'
+                              );
+                            } else {
+                              toast.error(
+                                data.error || 'AI generation failed.'
+                              );
+                            }
+                          }
+                        } catch (err) {
+                          console.error(err);
+                          toast.error('Error generating AI pitch.');
+                        } finally {
+                          setGeneratingPitch(false);
+                        }
+                      }}
+                      className="text-xs font-bold text-marigold-600 hover:text-marigold-800 disabled:opacity-50 flex items-center gap-1 bg-marigold-50 hover:bg-marigold-100/70 border border-marigold-100 rounded-lg px-2.5 py-1"
+                    >
+                      {generatingPitch
+                        ? '⚡ Writing...'
+                        : '✨ Generate with AI'}
+                    </button>
+                  </div>
+                  <textarea
+                    id="pitchTextarea"
+                    placeholder="Describe your relevant skills, B.Tech semester project experiences, or target stack proficiency..."
+                    value={coverLetter}
+                    onChange={(e) => setCoverLetter(e.target.value)}
+                    rows={8}
+                    className="w-full bg-ink-50 border border-ink-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400 resize-none font-semibold text-ink-800"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2.5 pt-4 border-t mt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowPitchModal(false)}
+                  className="px-4 py-2 border rounded-xl text-xs font-bold text-ink-500 hover:bg-ink-50 transition"
+                >
+                  {t('projectDetails.cancel')}
+                </button>
+                <button
+                  type="button"
+                  disabled={applying || !coverLetter.trim()}
+                  onClick={() => {
+                    setShowPitchModal(false);
+                    executeApplyAPI();
+                  }}
+                  className={`px-5 py-2.5 rounded-xl text-xs font-black transition shadow ${
+                    applying || !coverLetter.trim()
+                      ? 'bg-marigold-400 cursor-not-allowed text-white'
+                      : 'marigold-btn-inline'
+                  }`}
+                >
+                  {applying
+                    ? t('projectDetails.submitting')
+                    : 'Submit Application'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

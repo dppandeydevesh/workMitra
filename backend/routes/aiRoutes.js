@@ -33,6 +33,9 @@ router.post('/chat', authenticateToken, checkPassOrTrial, aiLimiter, aiControlle
 // CV critique via Gemini
 router.post('/review-cv', authenticateToken, checkPassOrTrial, aiLimiter, aiController.reviewCV);
 
+// AI Application Pitch / Cover Letter Generator
+router.post('/generate-pitch', authenticateToken, checkPassOrTrial, aiLimiter, aiController.generatePitch);
+
 // ATS resume check (PDF file upload via memory multer)
 router.post('/resume-check', authenticateToken, checkPassOrTrial, aiLimiter, memoryUpload.single('resume'), aiController.resumeCheck);
 

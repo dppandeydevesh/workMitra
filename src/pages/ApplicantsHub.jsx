@@ -39,9 +39,9 @@ import { useApplicantsHub } from '../hooks/useApplicantsHub';
 
 export default function ApplicantsHub() {
   const {
-    // eslint-disable-next-line no-unused-vars
     navigate,
     t,
+    // eslint-disable-next-line no-unused-vars
     applications,
     loading,
     errorMessage,
@@ -56,10 +56,11 @@ export default function ApplicantsHub() {
     setSortBy,
     isBlindMode,
     setIsBlindMode,
-    // eslint-disable-next-line no-unused-vars
+
     showReviewModal,
     setShowReviewModal,
     activeAppToReview,
+    // eslint-disable-next-line no-unused-vars
     setActiveAppToReview,
     feedbackText,
     setFeedbackText,
@@ -80,8 +81,9 @@ export default function ApplicantsHub() {
     handleRequestRevision,
     handleReviewExtension,
     handleCompleteReview,
-    // eslint-disable-next-line no-unused-vars
+
     getSubmissionFiles,
+    // eslint-disable-next-line no-unused-vars
     getMockCodeFiles,
     uniqueProjectTitles,
     filteredApps,
@@ -467,6 +469,18 @@ export default function ApplicantsHub() {
                         </p>
                         <p className="text-[10px] text-ink-dark font-semibold leading-relaxed mt-0.5">
                           {app.aiRationale}
+                        </p>
+                      </div>
+                    )}
+                    {app.coverLetter && (
+                      <div className="bg-amber-50/50 border border-amber-100 p-3 rounded-xl text-left max-w-lg mt-2">
+                        <p className="text-[9px] font-extrabold text-amber-800 flex items-center gap-1 uppercase tracking-wider">
+                          <FileText className="w-3 h-3 text-amber-600" />{' '}
+                          {t('applicantsHub.coverLetter') ||
+                            'Applicant Pitch / Cover Letter'}
+                        </p>
+                        <p className="text-[10px] text-ink-800 font-medium whitespace-pre-line leading-relaxed mt-1">
+                          {app.coverLetter}
                         </p>
                       </div>
                     )}

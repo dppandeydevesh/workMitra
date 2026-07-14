@@ -35,7 +35,7 @@ exports.applyForProject = async (req, res, next) => {
       return res.status(403).json({ error: 'Only students can apply to projects' });
     }
 
-    const { projectId } = req.body;
+    const { projectId, coverLetter } = req.body;
     const studentEmail = req.user.email;
 
     if (!projectId) {
@@ -95,7 +95,8 @@ exports.applyForProject = async (req, res, next) => {
       studentEmail,
       studentName,
       matchScore,
-      aiRationale
+      aiRationale,
+      coverLetter
     });
 
     await newApplication.save();

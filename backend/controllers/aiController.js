@@ -318,3 +318,55 @@ exports.getJobStatus = async (req, res, next) => {
     next(err);
   }
 };
+
+// =========================================================================
+// ✍️ AI Application Pitch / Cover Letter Generator
+// =========================================================================
+exports.generatePitch = async (req, res, next) => {
+  try {
+    const { projectId } = req.body;
+    if (!projectId) {
+      return res.status(400).json({ error: 'projectId parameter is required.' });
+    }
+
+    const student = await User.findOne({ email: req.user.email });
+    if (!student) {
+      return res.status(404).json({ error: 'Student profile not found.' });
+    }
+
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({ error: 'Project not found.' });
+    }
+
+    const prompt = `
+You are an expert career coach writing a highly compelling, direct application pitch (cover letter) for a student applying to a project/gig.
+
+Student Profile:
+- Name: ${student.fullName}
+- Biography: ${student.bio || 'Not provided'}
+- Skills: ${student.targetSkills || 'Not provided'}
+
+Project Details:
+- Title: ${project.title}
+- Description: ${project.description}
+- Required Skills: ${project.requiredSkills ? project.requiredSkills.join(', ') : 'Not specified'}
+
+Write a professional cover letter from the student's perspective. It must be highly personalized to the project's requirements, highlight the student's matching skills, show energy and competence, and remain concise (maximum 150-180 words).
+Do NOT include any generic bracketed placeholders (like "[Your Name]", "[Company Name]", etc.). Ensure the text flows naturally. Finish it cleanly as:
+Sincerely,
+${student.fullName}
+`;
+
+    const result = await AiService.callGemini(prompt);
+    if (!result || !result.text) {
+      return res.status(502).json({ error: 'AI generation engine failed. Please try again.' });
+    }
+
+    res.status(200).json({ pitch: result.text.trim() });
+  } catch (err) {
+    console.error('generatePitch error:', err.message);
+    next(err);
+  }
+};
+

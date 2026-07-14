@@ -19,6 +19,10 @@ const applicationSchema = new mongoose.Schema({
     default: "Pending",
     enum: ["Pending", "Approved", "Rejected", "Submitted", "Completed", "Disputed", "Flagged", "Revision Requested", "Withdrawn", "Resolved"]
   },
+  coverLetter: {
+    type: String,
+    default: null
+  },
   submissionText: {
     type: String,
     default: null

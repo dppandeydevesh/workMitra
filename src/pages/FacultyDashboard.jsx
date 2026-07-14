@@ -90,6 +90,58 @@ export default function FacultyDashboard() {
     setLoading(false);
   };
 
+  const handleArchiveProject = async (projectId) => {
+    if (
+      !window.confirm(
+        'Are you sure you want to archive this academic project? This will hide it from the marketplace.'
+      )
+    )
+      return;
+    try {
+      const res = await fetchWithAuth(
+        `${API_BASE_URL}/api/projects/archive/${projectId}`,
+        {
+          method: 'PUT',
+        }
+      );
+      if (res.ok) {
+        toast.success('Project archived successfully');
+        fetchFacultyProjects(user.email);
+      } else {
+        toast.error('Failed to archive project');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Network error');
+    }
+  };
+
+  const handleDeleteProject = async (projectId) => {
+    if (
+      !window.confirm(
+        'Are you sure you want to permanently delete this academic project? This cannot be undone.'
+      )
+    )
+      return;
+    try {
+      const res = await fetchWithAuth(
+        `${API_BASE_URL}/api/projects/${projectId}`,
+        {
+          method: 'DELETE',
+        }
+      );
+      if (res.ok) {
+        toast.success('Project deleted successfully');
+        fetchFacultyProjects(user.email);
+      } else {
+        toast.error('Failed to delete project');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Network error');
+    }
+  };
+
   const handlePostProject = async (e) => {
     e.preventDefault();
     setPosting(true);
@@ -177,7 +229,7 @@ export default function FacultyDashboard() {
         <>
           {/* Header Profile Section */}
           <div className="wm-panel p-8 relative overflow-hidden flex flex-col md:flex-row items-center gap-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] (255,255,255,0.02)]">
-            <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-marigold-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-marigold/10 rounded-full blur-3xl pointer-events-none"></div>
 
             <div className="w-24 h-24 rounded-xl bg-[#F5A623] shadow-sm flex items-center justify-center text-4xl font-bold text-white shrink-0 relative z-10">
               {user.companyName
@@ -186,8 +238,8 @@ export default function FacultyDashboard() {
             </div>
 
             <div className="text-center md:text-left relative z-10 flex-1">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-marigold-50 text-marigold-700 text-xs font-extrabold tracking-wide uppercase mb-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-marigold-500 animate-pulse"></span>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-marigold-light text-marigold-dark text-xs font-extrabold tracking-wide uppercase mb-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-marigold animate-pulse"></span>
                 Professor / HOD Account
               </div>
               <h1 className="text-3xl font-black text-ink-800 mb-1">
@@ -201,7 +253,7 @@ export default function FacultyDashboard() {
             <div className="relative z-10 w-full md:w-auto mt-4 md:mt-0">
               <button
                 onClick={() => setActiveTab('new-project')}
-                className="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-marigold-600 to-paper hover:from-marigold-500 hover:to-paper text-white rounded-xl font-bold shadow-lg shadow-marigold-200 transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                className="w-full md:w-auto px-6 py-3 bg-marigold hover:bg-marigold-mid text-ink-dark rounded-xl font-bold shadow-md transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2"
               >
                 <span>➕</span> New Academic Project
               </button>
@@ -238,7 +290,7 @@ export default function FacultyDashboard() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-5 py-3 rounded-xl font-bold text-sm whitespace-nowrap transition-all flex items-center gap-2 ${
                   activeTab === tab.id
-                    ? 'bg-marigold-500 text-white shadow-md shadow-marigold-200'
+                    ? 'bg-marigold text-ink-dark shadow-md'
                     : 'bg-white text-ink-600 hover:bg-ink-50 shadow-sm border border-ink-100'
                 }`}
               >
@@ -252,7 +304,7 @@ export default function FacultyDashboard() {
             {/* OVERVIEW TAB */}
             {activeTab === 'overview' && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="wm-panel p-6 border-l-4 border-marigold-500">
+                <div className="wm-panel p-6 border-l-4 border-marigold">
                   <p className="text-xs font-black text-ink-400 uppercase tracking-wider">
                     {t('facultyDashboard.totalProjects') ||
                       'Total Academic Projects'}
@@ -274,7 +326,9 @@ export default function FacultyDashboard() {
                     {t('facultyDashboard.department') || 'Department'}
                   </p>
                   <h2 className="text-2xl font-black text-ink-800 mt-2 flex items-center h-full pb-2">
-                    {user.department || 'Computer Science'}
+                    {user.departmentName ||
+                      user.department ||
+                      'Computer Science'}
                   </h2>
                 </div>
               </div>
@@ -290,7 +344,7 @@ export default function FacultyDashboard() {
                   </h2>
                   <button
                     onClick={() => fetchFacultyProjects(user.email)}
-                    className="text-marigold-500 font-bold text-sm hover:underline"
+                    className="text-marigold font-bold text-sm hover:underline"
                   >
                     {t('facultyDashboard.refresh') || 'Refresh 🔄'}
                   </button>
@@ -343,19 +397,37 @@ export default function FacultyDashboard() {
                             {project.requiredSkills?.map((s, i) => (
                               <span
                                 key={i}
-                                className="px-2 py-1 bg-marigold-50 text-marigold-500 text-xs font-semibold rounded"
+                                className="px-2 py-1 bg-marigold-light text-marigold-dark text-xs font-semibold rounded"
                               >
                                 {s}
                               </span>
                             ))}
                           </div>
-                          <button
-                            onClick={() => handleViewApplicants(project._id)}
-                            className="text-sm font-bold bg-ink-800 text-white px-4 py-2 rounded-lg hover:bg-ink-700 transition"
-                          >
-                            {t('facultyDashboard.viewApplicants') ||
-                              'View Applicants 👨‍🎓'}
-                          </button>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleViewApplicants(project._id)}
+                              className="text-sm font-bold bg-ink-800 text-white px-4 py-2 rounded-lg hover:bg-ink-700 transition"
+                            >
+                              {t('facultyDashboard.viewApplicants') ||
+                                'View Applicants 👨‍🎓'}
+                            </button>
+                            {project.status !== 'Archived' && (
+                              <button
+                                onClick={() =>
+                                  handleArchiveProject(project._id)
+                                }
+                                className="text-sm font-bold bg-amber-50 text-amber-700 border border-amber-200 px-4 py-2 rounded-lg hover:bg-amber-100 transition"
+                              >
+                                {t('facultyDashboard.archive') || 'Archive 📁'}
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDeleteProject(project._id)}
+                              className="text-sm font-bold bg-rose-50 text-rose-700 border border-rose-200 px-4 py-2 rounded-lg hover:bg-rose-100 transition"
+                            >
+                              {t('facultyDashboard.delete') || 'Delete 🗑️'}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -383,7 +455,7 @@ export default function FacultyDashboard() {
                       onChange={(e) =>
                         setFormData({ ...formData, title: e.target.value })
                       }
-                      className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold-500 outline-none transition"
+                      className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold outline-none transition"
                       placeholder={
                         t('facultyDashboard.projectTitlePlaceholder') ||
                         'e.g., Deep Learning Research Assistant'
@@ -406,7 +478,7 @@ export default function FacultyDashboard() {
                           description: e.target.value,
                         })
                       }
-                      className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold-500 outline-none transition"
+                      className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold outline-none transition"
                       placeholder={
                         t('facultyDashboard.descriptionPlaceholder') ||
                         'Describe the research goals and student responsibilities...'
@@ -426,7 +498,7 @@ export default function FacultyDashboard() {
                       onChange={(e) =>
                         setFormData({ ...formData, skills: e.target.value })
                       }
-                      className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold-500 outline-none transition"
+                      className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold outline-none transition"
                       placeholder={
                         t('facultyDashboard.skillsPlaceholder') ||
                         'e.g., Python, PyTorch, Data Analysis'
@@ -447,7 +519,7 @@ export default function FacultyDashboard() {
                       onChange={(e) =>
                         setFormData({ ...formData, budget: e.target.value })
                       }
-                      className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold-500 outline-none transition"
+                      className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold outline-none transition"
                       placeholder={
                         t('facultyDashboard.incentivePlaceholder') ||
                         'e.g., 50 (marks) or 5000 (stipend ₹)'
@@ -458,8 +530,7 @@ export default function FacultyDashboard() {
                   <button
                     type="submit"
                     disabled={posting}
-                    style={{ background: '#F5A623', color: '#1B2333' }}
-                    className="w-full font-black py-4 rounded-xl transition shadow-lg shadow-marigold-200"
+                    className="w-full bg-marigold hover:bg-marigold-mid text-ink-dark font-black py-4 rounded-xl transition shadow-md"
                   >
                     {posting
                       ? t('facultyDashboard.publishing') ||
@@ -481,7 +552,7 @@ export default function FacultyDashboard() {
                   </h2>
                   <button
                     onClick={() => setActiveTab('my-projects')}
-                    className="text-marigold-500 font-bold text-sm hover:underline"
+                    className="text-marigold font-bold text-sm hover:underline"
                   >
                     {t('facultyDashboard.backToProjects') ||
                       '← Back to Projects'}
@@ -542,7 +613,7 @@ export default function FacultyDashboard() {
                                   {t('facultyDashboard.atsMatch') ||
                                     'ATS Match'}
                                 </span>
-                                <span className="text-sm font-black text-marigold-500">
+                                <span className="text-sm font-black text-marigold">
                                   {app.matchScore}%
                                 </span>
                               </div>
@@ -551,7 +622,7 @@ export default function FacultyDashboard() {
                                   href={app.resumeUrl}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="text-xs font-bold text-marigold-500 hover:underline"
+                                  className="text-xs font-bold text-marigold hover:underline"
                                 >
                                   📄 {t('facultyDashboard.viewCv') || 'View CV'}
                                 </a>

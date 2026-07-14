@@ -33,6 +33,7 @@ import AIAssistant from "./components/AIAssistant";
 import ErrorBoundary from "./components/ErrorBoundary";
 const ResumeChecker = React.lazy(() => import("./pages/ResumeChecker"));
 const FacultyDashboard = React.lazy(() => import("./pages/FacultyDashboard"));
+const CertificatePage = React.lazy(() => import("./pages/CertificatePage"));
 
 /** Fires a PostHog $pageview event on every route change */
 function RouteTracker() {
@@ -98,6 +99,7 @@ function App() {
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/refund" element={<RefundPage />} />
                 <Route path="/about" element={<AboutPage />} />
+                <Route path="/certificate/verify/:applicationId" element={<CertificatePage />} />
                 
                 <Route path="/preferences" element={<ProtectedRoute allowedRoles={["student"]}><Preferences /></ProtectedRoute>} />
                 <Route path="/company-preferences" element={<ProtectedRoute allowedRoles={["company"]}><CompanyPreferences /></ProtectedRoute>} />

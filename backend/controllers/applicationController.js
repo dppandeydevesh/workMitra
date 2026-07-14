@@ -791,3 +791,121 @@ exports.updatePipelineStatus = async (req, res, next) => {
     next(err);
   }
 };
+
+// =========================================================================
+// 📜 ROUTE: Fetch public certificate details for verification
+// =========================================================================
+exports.getCertificatePublic = async (req, res, next) => {
+  try {
+    const { applicationId } = req.params;
+    const application = await Application.findById(applicationId)
+      .populate("projectId")
+      .lean();
+
+    if (!application) {
+      return res.status(404).json({ error: "Certificate/Application not found." });
+    }
+
+    if (application.status !== "Completed") {
+      return res.status(400).json({ error: "This project application has not been completed yet." });
+    }
+
+    // Find the student to check their pass or trial status
+    const student = await User.findOne({ email: application.studentEmail });
+    if (!student) {
+      return res.status(404).json({ error: "Student profile not found." });
+    }
+
+    // Check if student has paid or is within 30-day trial
+    const trialDurationMs = 30 * 24 * 60 * 60 * 1000;
+    const isTrialActive = (Date.now() - new Date(student.createdAt).getTime()) < trialDurationMs;
+    const isPassOrTrialActive = student.hasPaidPass || isTrialActive;
+
+    if (!isPassOrTrialActive) {
+      return res.status(403).json({
+        error: "This certificate is locked because the student's trial has expired. Purchase a Premium Pass to unlock.",
+        requiresPass: true
+      });
+    }
+
+    // Retrieve company profile name if available, otherwise fallback
+    let companyName = "workMitra Partner";
+    if (application.projectId && application.projectId.companyId) {
+      const companyUser = await User.findById(application.projectId.companyId);
+      if (companyUser && companyUser.companyName) {
+        companyName = companyUser.companyName;
+      }
+    }
+
+    res.status(200).json({
+      applicationId: application._id,
+      studentName: application.studentName,
+      collegeName: student.collegeName || "Registered University",
+      projectTitle: application.projectId ? application.projectId.title : "Micro-Gig",
+      companyName,
+      completedAt: application.submittedAt || application.appliedAt,
+      matchScore: application.matchScore,
+      verificationUrl: `${req.protocol}://${req.get("host")}/certificate/verify/${application._id}`
+    });
+  } catch (err) {
+    console.error("getCertificatePublic error:", err.message);
+    next(err);
+  }
+};
+
+// =========================================================================
+// 🔒 ROUTE: Fetch certificate details (authenticated student check)
+// =========================================================================
+exports.getCertificateDetails = async (req, res, next) => {
+  try {
+    const { applicationId } = req.params;
+    const application = await Application.findById(applicationId).populate("projectId");
+
+    if (!application) {
+      return res.status(404).json({ error: "Application not found." });
+    }
+
+    if (application.studentEmail !== req.user.email && req.user.userRole !== "admin") {
+      return res.status(403).json({ error: "Unauthorized access to certificate." });
+    }
+
+    if (application.status !== "Completed") {
+      return res.status(400).json({ error: "This project has not been marked as completed yet." });
+    }
+
+    // Delegate to check pass or trial for current student
+    const student = await User.findOne({ email: application.studentEmail });
+    const trialDurationMs = 30 * 24 * 60 * 60 * 1000;
+    const isTrialActive = (Date.now() - new Date(student.createdAt).getTime()) < trialDurationMs;
+    const isPassOrTrialActive = student.hasPaidPass || isTrialActive;
+
+    if (!isPassOrTrialActive) {
+      return res.status(403).json({
+        error: "Premium Pass or active Free Trial is required to view/export certificates.",
+        requiresPass: true
+      });
+    }
+
+    let companyName = "workMitra Partner";
+    if (application.projectId && application.projectId.companyId) {
+      const companyUser = await User.findById(application.projectId.companyId);
+      if (companyUser && companyUser.companyName) {
+        companyName = companyUser.companyName;
+      }
+    }
+
+    res.status(200).json({
+      applicationId: application._id,
+      studentName: application.studentName,
+      collegeName: student.collegeName || "Registered University",
+      projectTitle: application.projectId ? application.projectId.title : "Micro-Gig",
+      companyName,
+      completedAt: application.submittedAt || application.appliedAt,
+      matchScore: application.matchScore
+    });
+  } catch (err) {
+    console.error("getCertificateDetails error:", err.message);
+    next(err);
+  }
+};
+

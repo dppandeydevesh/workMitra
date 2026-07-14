@@ -23,6 +23,10 @@ router.patch('/:applicationId/placement/offer', authenticateToken, applicationCo
 router.patch('/:applicationId/placement/resolve', authenticateToken, applicationController.resolvePlacementOffer);
 router.patch('/:applicationId/pipeline', authenticateToken, applicationController.updatePipelineStatus);
 
+// Verifiable Certificates
+router.get('/:applicationId/certificate/verify', applicationController.getCertificatePublic);
+router.get('/:applicationId/certificate', authenticateToken, applicationController.getCertificateDetails);
+
 // ==========================================
 // 🏚️ Legacy RPC Routes (Maintained for Frontend Compatibility)
 // ==========================================

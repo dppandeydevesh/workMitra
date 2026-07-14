@@ -633,11 +633,36 @@ export default function Dashboard() {
                               </span>
                             )}
                             {app.status === 'Completed' && (
-                              <div className="text-right w-full">
+                              <div className="text-right w-full flex flex-col items-end gap-1">
                                 <span className="text-[11px] text-green-600 font-bold flex items-center justify-end gap-1">
                                   <Check className="w-3 h-3" />{' '}
                                   {t('dashboard.approved')}
                                 </span>
+                                {currentUser?.hasPaidPass || isTrialActive ? (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      navigate(
+                                        `/certificate/verify/${app._id}`
+                                      );
+                                    }}
+                                    className="text-[10px] bg-marigold-50 hover:bg-marigold-100/80 text-marigold-700 font-extrabold px-2 py-1 rounded border border-marigold-200 transition-all flex items-center gap-1 mt-0.5 shadow-sm"
+                                  >
+                                    <Award className="w-3 h-3" /> View
+                                    Certificate 📜
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setCheckoutStep(1);
+                                      setShowCheckoutModal(true);
+                                    }}
+                                    className="text-[10px] bg-red-50 hover:bg-red-100/80 text-red-700 font-extrabold px-2 py-1 rounded border border-red-200 transition-all flex items-center gap-1 mt-0.5 shadow-sm"
+                                  >
+                                    🔒 Unlock Certificate
+                                  </button>
+                                )}
                                 {app.feedbackText && (
                                   <p
                                     className="text-[10px] text-ink-400 max-w-[150px] truncate"

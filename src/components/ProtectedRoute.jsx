@@ -103,6 +103,7 @@ export default function ProtectedRoute({ children, allowedRoles }) {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (
       user.userRole !== 'college' &&
+      user.userRole !== 'faculty' &&
       user.userRole !== 'admin' &&
       !user.hasCompletedProfile &&
       currentPath !== '/preferences' &&

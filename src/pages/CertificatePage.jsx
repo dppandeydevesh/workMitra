@@ -52,6 +52,26 @@ export default function CertificatePage() {
     }
   }, [applicationId]);
 
+  const navigateToDashboard = () => {
+    const savedUser = localStorage.getItem('user');
+    if (!savedUser) {
+      navigate('/');
+      return;
+    }
+    try {
+      const user = JSON.parse(savedUser);
+      const role = user.userRole;
+      if (role === 'company') navigate('/company-dashboard');
+      else if (role === 'admin') navigate('/admin-dashboard');
+      else if (role === 'college') navigate('/college-dashboard');
+      else if (role === 'faculty') navigate('/faculty-dashboard');
+      else navigate('/dashboard');
+    } catch (err) {
+      console.error(err);
+      navigate('/');
+    }
+  };
+
   const handlePrint = () => {
     window.print();
   };
@@ -100,10 +120,10 @@ export default function CertificatePage() {
               'This credential requires an active Premium Pass (₹99) or free trial period to unlock and view.'}
           </p>
           <button
-            onClick={() => navigate('/dashboard')}
+            onClick={navigateToDashboard}
             className="w-full py-2.5 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-black tracking-wide transition shadow"
           >
-            Go to Student Dashboard
+            Go to Dashboard
           </button>
         </div>
       </div>
@@ -148,7 +168,7 @@ export default function CertificatePage() {
       {/* Non-Printable Action Banner */}
       <div className="w-full max-w-4xl flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 print:hidden">
         <button
-          onClick={() => navigate('/dashboard')}
+          onClick={navigateToDashboard}
           className="flex items-center gap-1.5 px-4 py-2 bg-white dark:bg-ink-900 border hover:bg-ink-50 dark:hover:bg-ink-800 text-ink-700 dark:text-white rounded-xl text-xs font-bold transition shadow-sm"
         >
           <ArrowLeft className="w-4 h-4" /> Back to Dashboard

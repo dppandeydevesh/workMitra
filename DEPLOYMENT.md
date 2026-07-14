@@ -77,8 +77,8 @@ Set all of these in **Render → Environment**. Values are never committed.
 - `RAZORPAY_KEY_ID`
 - `RAZORPAY_KEY_SECRET`
 - `RAZORPAY_WEBHOOK_SECRET`
-- `PRICE_PREMIUM=299`
-- `PRICE_STANDARD=199`
+- `PRICE_PREMIUM=99`
+- `PRICE_STANDARD=99`
 - In the Razorpay dashboard, set the **Webhook URL** to
   `https://<your-domain>/api/payments/webhook` and subscribe to
   `payment.captured` / `payment.failed`. The secret there must equal

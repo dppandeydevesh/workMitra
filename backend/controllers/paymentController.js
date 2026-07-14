@@ -18,8 +18,8 @@ exports.createOrder = async (req, res, next) => {
         }
 
         const { planId } = req.body;
-        const premiumPrice = parseInt(process.env.PRICE_PREMIUM || "299", 10);
-        const standardPrice = parseInt(process.env.PRICE_STANDARD || "199", 10);
+        const premiumPrice = parseInt(process.env.PRICE_PREMIUM || "99", 10);
+        const standardPrice = parseInt(process.env.PRICE_STANDARD || "99", 10);
         const amount = planId === 'premium' ? premiumPrice : standardPrice; // INR
 
         const options = {

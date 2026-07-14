@@ -29,6 +29,17 @@ export default function FacultyDashboard() {
   const [posting, setPosting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const [profileData, setProfileData] = useState({
+    fullName: '',
+    collegeName: '',
+    departmentName: '',
+    mobile: '',
+    bio: '',
+    website: '',
+    linkedinUrl: '',
+  });
+  const [savingProfile, setSavingProfile] = useState(false);
+
   useEffect(() => {
     const savedUser = JSON.parse(localStorage.getItem('user') || 'null');
     if (!savedUser || savedUser.userRole !== 'faculty') {
@@ -36,6 +47,15 @@ export default function FacultyDashboard() {
       return;
     }
     setUser(savedUser);
+    setProfileData({
+      fullName: savedUser.fullName || '',
+      collegeName: savedUser.collegeName || '',
+      departmentName: savedUser.departmentName || '',
+      mobile: savedUser.mobile || '',
+      bio: savedUser.bio || '',
+      website: savedUser.website || '',
+      linkedinUrl: savedUser.linkedinUrl || '',
+    });
     fetchFacultyProjects(savedUser.email);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -139,6 +159,35 @@ export default function FacultyDashboard() {
     } catch (err) {
       console.error(err);
       toast.error('Network error');
+    }
+  };
+
+  const handleSaveProfile = async (e) => {
+    e.preventDefault();
+    setSavingProfile(true);
+    try {
+      const res = await fetchWithAuth(
+        `${API_BASE_URL}/api/auth/faculty-profile`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(profileData),
+        }
+      );
+      if (res.ok) {
+        const result = await res.json();
+        toast.success('Profile updated successfully!');
+        setUser(result.user);
+        localStorage.setItem('user', JSON.stringify(result.user));
+      } else {
+        const errorData = await res.json();
+        toast.error(errorData.error || 'Failed to update profile.');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Network error while saving profile.');
+    } finally {
+      setSavingProfile(false);
     }
   };
 
@@ -283,6 +332,11 @@ export default function FacultyDashboard() {
                 label:
                   t('facultyDashboard.reviewApplicants') || 'Review Applicants',
                 icon: '👨‍🎓',
+              },
+              {
+                id: 'profile',
+                label: t('facultyDashboard.profile') || 'Profile Settings',
+                icon: '👤',
               },
             ].map((tab) => (
               <button
@@ -659,6 +713,145 @@ export default function FacultyDashboard() {
                     ))}
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* PROFILE TAB */}
+            {activeTab === 'profile' && (
+              <div className="wm-panel p-6 sm:p-8 max-w-3xl mx-auto">
+                <h2 className="text-2xl font-black text-ink-800 mb-6">
+                  {t('facultyDashboard.editProfile') || 'Edit Faculty Profile'}
+                </h2>
+                <form onSubmit={handleSaveProfile} className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-sm font-extrabold text-ink-700 mb-2">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={profileData.fullName}
+                        onChange={(e) =>
+                          setProfileData({
+                            ...profileData,
+                            fullName: e.target.value,
+                          })
+                        }
+                        className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold outline-none transition"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-extrabold text-ink-700 mb-2">
+                        Mobile Number
+                      </label>
+                      <input
+                        type="text"
+                        value={profileData.mobile}
+                        onChange={(e) =>
+                          setProfileData({
+                            ...profileData,
+                            mobile: e.target.value,
+                          })
+                        }
+                        className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold outline-none transition"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-sm font-extrabold text-ink-700 mb-2">
+                        University / College
+                      </label>
+                      <input
+                        type="text"
+                        disabled
+                        value={profileData.collegeName}
+                        className="w-full bg-ink-100 border border-ink-200 rounded-xl px-4 py-3 text-ink-500 cursor-not-allowed outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-extrabold text-ink-700 mb-2">
+                        Department
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={profileData.departmentName}
+                        onChange={(e) =>
+                          setProfileData({
+                            ...profileData,
+                            departmentName: e.target.value,
+                          })
+                        }
+                        className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold outline-none transition"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-sm font-extrabold text-ink-700 mb-2">
+                        Personal / Lab Website
+                      </label>
+                      <input
+                        type="url"
+                        value={profileData.website}
+                        onChange={(e) =>
+                          setProfileData({
+                            ...profileData,
+                            website: e.target.value,
+                          })
+                        }
+                        placeholder="https://yourlab.edu"
+                        className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold outline-none transition"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-extrabold text-ink-700 mb-2">
+                        LinkedIn Profile URL
+                      </label>
+                      <input
+                        type="url"
+                        value={profileData.linkedinUrl}
+                        onChange={(e) =>
+                          setProfileData({
+                            ...profileData,
+                            linkedinUrl: e.target.value,
+                          })
+                        }
+                        placeholder="https://linkedin.com/in/username"
+                        className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold outline-none transition"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-extrabold text-ink-700 mb-2">
+                      Bio / Research Area / Specialization
+                    </label>
+                    <textarea
+                      rows="4"
+                      value={profileData.bio}
+                      onChange={(e) =>
+                        setProfileData({ ...profileData, bio: e.target.value })
+                      }
+                      placeholder="Briefly describe your academic background, research interests, or lab focus..."
+                      className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold outline-none transition"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={savingProfile}
+                    className="w-full bg-marigold hover:bg-marigold-mid text-ink-dark font-black py-4 rounded-xl transition shadow-md"
+                  >
+                    {savingProfile
+                      ? 'Saving Changes...'
+                      : 'Save Profile Settings 💾'}
+                  </button>
+                </form>
               </div>
             )}
           </div>

@@ -1305,5 +1305,7 @@
   "facultyDashboard.approve": "स्वीकार करें",
   "facultyDashboard.reject": "अस्वीकार करें",
   "facultyDashboard.archive": "आर्काइव करें",
-  "facultyDashboard.delete": "हटाएं"
+  "facultyDashboard.delete": "हटाएं",
+  "facultyDashboard.profile": "प्रोफ़ाइल सेटिंग्स",
+  "facultyDashboard.editProfile": "संकाय प्रोफ़ाइल संपादित करें"
 }

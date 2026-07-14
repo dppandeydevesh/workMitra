@@ -640,6 +640,37 @@ const updateCompanyProfile = async (req, res, next) => {
   }
 };
 
+// =========================================================================
+// ⚙️ Update faculty profile settings
+// =========================================================================
+const updateFacultyProfile = async (req, res, next) => {
+  try {
+    const User = require('../models/User');
+    const { fullName, departmentName, mobile, bio, website, linkedinUrl } = req.body;
+    const user = await User.findOne({ email: req.user.email });
+    if (!user) {
+      return res.status(404).json({ error: 'User account not found.' });
+    }
+    if (user.userRole !== 'faculty') {
+      return res.status(403).json({ error: 'Only faculty accounts can update faculty profiles.' });
+    }
+    if (fullName !== undefined) user.fullName = fullName;
+    if (departmentName !== undefined) user.departmentName = departmentName;
+    if (mobile !== undefined) user.mobile = mobile;
+    if (bio !== undefined) user.bio = bio;
+    if (website !== undefined) user.website = website;
+    if (linkedinUrl !== undefined) user.linkedinUrl = linkedinUrl;
+    
+    await user.save();
+    const sanitizedUser = user.toObject();
+    delete sanitizedUser.password;
+    res.status(200).json({ message: 'Faculty profile updated successfully.', user: sanitizedUser });
+  } catch (err) {
+    console.error('Faculty profile update error:', err.message);
+    next(err);
+  }
+};
+
 
 const refreshAccessToken = async (req, res, _next) => {
   const token = req.cookies.refreshToken;
@@ -676,5 +707,6 @@ module.exports = {
   getVanityProfile,
   completeProfile,
   updateCompanyProfile,
+  updateFacultyProfile,
 };
 

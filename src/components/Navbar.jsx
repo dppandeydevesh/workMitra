@@ -1,286 +1,381 @@
-import { useState, useEffect} from"react";
-import { useNavigate, useLocation} from"react-router-dom";
-import { API_BASE_URL} from"../config";
-import { useToast} from"./Toast";
-import { useWebSocket} from"./WebSocketContext";
-import { useTheme} from"./ThemeContext";
-import { useTranslation} from"react-i18next";
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
+import { useToast } from './Toast';
+import { useWebSocket } from './WebSocketContext';
+import { useTheme } from './ThemeContext';
+import { useTranslation } from 'react-i18next';
 import { resetPostHog } from '../lib/posthog';
 import { fetchWithAuth } from '../services/apiClient';
 
-export default function Navbar() {const navigate = useNavigate();
- const location = useLocation();
+export default function Navbar() {
+  const navigate = useNavigate();
+  const location = useLocation();
   // eslint-disable-next-line no-unused-vars
- const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user") || "null"));
- const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
- const [notificationsOpen, setNotificationsOpen] = useState(false);
- const [notifications, setNotifications] = useState([]);
-   
+  const [user, setUser] = useState(() =>
+    JSON.parse(localStorage.getItem('user') || 'null')
+  );
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+
   // eslint-disable-next-line no-unused-vars
- const { theme, toggleTheme} = useTheme();
- const { t, i18n} = useTranslation();
+  const { theme, toggleTheme } = useTheme();
+  const { t, i18n } = useTranslation();
 
- const toast = useToast();
- const { addListener} = useWebSocket();
+  const toast = useToast();
+  const { addListener } = useWebSocket();
 
- useEffect(() => {if (!addListener) return;
+  useEffect(() => {
+    if (!addListener) return;
 
- const unsubscribe = addListener((data) => {if (data.type ==="notification" && data.statusUpdate) {setNotifications((prev) => [data.message, ...prev]);
+    const unsubscribe = addListener((data) => {
+      if (data.type === 'notification' && data.statusUpdate) {
+        setNotifications((prev) => [data.message, ...prev]);
 
- if (data.message.type ==="success") {toast.success(`${data.message.title}: ${data.message.message}`);
-} else {toast.info(`${data.message.title}: ${data.message.message}`);
-}
-}
-});
+        if (data.message.type === 'success') {
+          toast.success(`${data.message.title}: ${data.message.message}`);
+        } else {
+          toast.info(`${data.message.title}: ${data.message.message}`);
+        }
+      }
+    });
 
- return () => unsubscribe();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [addListener]);
+    return () => unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addListener]);
 
+  useEffect(() => {
+    const savedUser = user;
 
- useEffect(() => {
- const savedUser = user;
+    if (savedUser && savedUser.userRole === 'student') {
+      // Fetch student applications to extract status updates as notifications
+      const fetchStudentNotifications = async () => {
+        try {
+          const res = await fetchWithAuth(
+            `${API_BASE_URL}/api/applications/student-details/${savedUser.email}`,
+            { credentials: 'include', headers: {} }
+          );
+          if (res.ok) {
+            const apps = await res.json();
+            const list = apps
+              .filter((app) =>
+                ['Approved', 'Rejected', 'Completed'].includes(app.status)
+              )
+              .map((app) => {
+                let title = '';
+                let msg = '';
+                let type = 'info';
+                if (app.status === 'Approved') {
+                  title = '🎉 Proposal Approved!';
+                  msg = `Your application for"${app.projectId?.title || 'Unknown Gig'}" was approved by the company. You can start working on it!`;
+                  type = 'success';
+                } else if (app.status === 'Rejected') {
+                  title = '😞 Application Update';
+                  msg = `Your application for"${app.projectId?.title || 'Unknown Gig'}" was rejected. Keep trying!`;
+                  type = 'danger';
+                } else if (app.status === 'Completed') {
+                  title = '🏆 Gig Completed!';
+                  msg = `Your work for"${app.projectId?.title || 'Unknown Gig'}" has been reviewed, approved, and marked completed. Check your profile for rating!`;
+                  type = 'success';
+                }
+                return { id: app._id, title, message: msg, type };
+              });
+            setNotifications(list);
+          }
+        } catch (err) {
+          console.error('Failed to fetch notifications:', err.message);
+        }
+      };
+      fetchStudentNotifications();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
- if (savedUser && savedUser.userRole ==="student") {// Fetch student applications to extract status updates as notifications
- const fetchStudentNotifications = async () => {try {const res = await fetchWithAuth(`${API_BASE_URL}/api/applications/student-details/${savedUser.email}`, { credentials:"include",
- headers: {}
-});
- if (res.ok) {const apps = await res.json();
- const list = apps
- .filter(app => ["Approved","Rejected","Completed"].includes(app.status))
- .map(app => {let title ="";
- let msg ="";
- let type ="info";
- if (app.status ==="Approved") {title ="🎉 Proposal Approved!";
- msg =`Your application for"${app.projectId?.title ||'Unknown Gig'}" was approved by the company. You can start working on it!`;
- type ="success";
-} else if (app.status ==="Rejected") {title ="😞 Application Update";
- msg =`Your application for"${app.projectId?.title ||'Unknown Gig'}" was rejected. Keep trying!`;
- type ="danger";
-} else if (app.status ==="Completed") {title ="🏆 Gig Completed!";
- msg =`Your work for"${app.projectId?.title ||'Unknown Gig'}" has been reviewed, approved, and marked completed. Check your profile for rating!`;
- type ="success";
-}
- return { id: app._id, title, message: msg, type};
-});
- setNotifications(list);
-}
-} catch (err) {console.error("Failed to fetch notifications:", err.message);
-}
-};
- fetchStudentNotifications();
-}
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [location.pathname]);
+  if (!user) return null;
 
- if (!user) return null;
+  const handleLogout = async () => {
+    try {
+      await fetchWithAuth(`${API_BASE_URL}/api/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (e) {
+      console.error(e);
+    }
+    resetPostHog(); // 📊 PostHog: clear identity on logout
+    localStorage.clear();
+    window.location.href = '/login';
+  };
 
- const handleLogout = async () => {try {await fetchWithAuth(`${API_BASE_URL}/api/auth/logout`, { method:'POST', credentials:'include'});
-} catch (e) { console.error(e);}
- resetPostHog(); // 📊 PostHog: clear identity on logout
- localStorage.clear();
- window.location.href ='/login';
-};
+  const companyLinks = [
+    { label: t('Dashboard'), path: '/company-dashboard', icon: '🏠' },
+    { label: t('Post Gig'), path: '/add-project', icon: '➕' },
+    { label: t('Manage Gigs'), path: '/my-projects', icon: '📂' },
+    { label: t('Applicants'), path: '/applicants', icon: '👨‍🎓' },
+    { label: t('Analytics'), path: '/analytics', icon: '📈' },
+    { label: t('Chat'), path: '/chat', icon: '💬' },
+  ];
 
- const companyLinks = [
- { label: t("Dashboard"), path:"/company-dashboard", icon:"🏠"},
- { label: t("Post Gig"), path:"/add-project", icon:"➕"},
- { label: t("Manage Gigs"), path:"/my-projects", icon:"📂"},
- { label: t("Applicants"), path:"/applicants", icon:"👨‍🎓"},
- { label: t("Analytics"), path:"/analytics", icon:"📈"},
- { label: t("Chat"), path:"/chat", icon:"💬"}
- ];
+  const studentLinks = [
+    { label: t('Marketplace'), path: '/dashboard', icon: '🏠' },
+    { label: t('Profile'), path: `/student-profile/${user.email}`, icon: '👤' },
+    { label: t('Chat'), path: '/chat', icon: '💬' },
+  ];
 
- const studentLinks = [
- { label: t("Marketplace"), path:"/dashboard", icon:"🏠"},
- { label: t("Profile"), path:`/student-profile/${user.email}`, icon:"👤"},
- { label: t("Chat"), path:"/chat", icon:"💬"}
- ];
+  const adminLinks = [
+    { label: t('Admin Console'), path: '/admin-dashboard', icon: '👑' },
+    { label: t('Chat'), path: '/chat', icon: '💬' },
+  ];
 
- const adminLinks = [
- { label: t("Admin Console"), path:"/admin-dashboard", icon:"👑"},
- { label: t("Chat"), path:"/chat", icon:"💬"}
- ];
+  const collegeLinks = [
+    { label: t('College Portal'), path: '/college-dashboard', icon: '🎓' },
+    { label: t('Career Tracks'), path: '/placement-pipeline', icon: '📋' },
+    { label: t('Chat'), path: '/chat', icon: '💬' },
+  ];
 
- const collegeLinks = [
- { label: t("College Portal"), path:"/college-dashboard", icon:"🎓"},
- { label: t("Career Tracks"), path:"/placement-pipeline", icon:"📋"},
- { label: t("Chat"), path:"/chat", icon:"💬"}
- ];
+  const facultyLinks = [
+    {
+      label: t('Professor / HOD Portal'),
+      path: '/faculty-dashboard',
+      icon: '🎓',
+    },
+    { label: t('Chat'), path: '/chat', icon: '💬' },
+  ];
 
- let activeLinks = [...studentLinks];
- if (user.userRole ==="company") {activeLinks = [...companyLinks];
-} else if (user.userRole ==="faculty") {activeLinks = [{ path:"/faculty-dashboard", label:"Professor / HOD Portal", icon:"🎓"}, ...studentLinks];
-} else if (user.userRole ==="admin") {activeLinks = [...adminLinks];
-} else if (user.userRole ==="college") {activeLinks = [...collegeLinks];
-}
+  let activeLinks = [...studentLinks];
+  if (user.userRole === 'company') {
+    activeLinks = [...companyLinks];
+  } else if (user.userRole === 'faculty') {
+    activeLinks = [...facultyLinks];
+  } else if (user.userRole === 'admin') {
+    activeLinks = [...adminLinks];
+  } else if (user.userRole === 'college') {
+    activeLinks = [...collegeLinks];
+  }
 
- return (
- <nav className="bg-white/80 shadow-md sticky top-0 z-50 transition-all border-b border-ink-100">
- <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
- <div className="flex justify-between items-center h-16">
- {/* Logo */}
- <div className="flex items-center">
- <div 
- className="logo-hook"onClick={() => {if (user.userRole ==="company") navigate("/company-dashboard");
- else if (user.userRole ==="admin") navigate("/admin-dashboard");
- else if (user.userRole ==="college") navigate("/college-dashboard");
- else navigate("/dashboard");
-}}
- >
- <img 
- src="/logo.png"alt="workMitra Logo"className="h-8 object-contain"/>
- </div>
- </div>
+  return (
+    <nav className="bg-white/80 shadow-md sticky top-0 z-50 transition-all border-b border-ink-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <div className="flex items-center">
+            <div
+              className="logo-hook"
+              onClick={() => {
+                if (user.userRole === 'company') navigate('/company-dashboard');
+                else if (user.userRole === 'admin')
+                  navigate('/admin-dashboard');
+                else if (user.userRole === 'college')
+                  navigate('/college-dashboard');
+                else navigate('/dashboard');
+              }}
+            >
+              <img
+                src="/logo.png"
+                alt="workMitra Logo"
+                className="h-8 object-contain"
+              />
+            </div>
+          </div>
 
- {/* Desktop Nav Links */}
- <div className="hidden md:flex items-center space-x-1 relative">
- {activeLinks.map((link) => {const isActive = location.pathname.startsWith(link.path);
- return (
- <button
- key={link.path}
- onClick={() => { navigate(link.path); setMobileMenuOpen(false);}}
- className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ${isActive 
- ?"bg-marigold-100 text-marigold-900":"text-ink-600 hover:text-marigold-500 hover:bg-ink-50"
-}`}
- >
- <span>{link.icon}</span>
- <span>{link.label}</span>
- </button>
- );
-})}
+          {/* Desktop Nav Links */}
+          <div className="hidden md:flex items-center space-x-1 relative">
+            {activeLinks.map((link) => {
+              const isActive = location.pathname.startsWith(link.path);
+              return (
+                <button
+                  key={link.path}
+                  onClick={() => {
+                    navigate(link.path);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ${
+                    isActive
+                      ? 'bg-marigold-light text-marigold-dark border border-marigold-mid/10'
+                      : 'text-ink-600 hover:text-marigold hover:bg-ink-50'
+                  }`}
+                >
+                  <span>{link.icon}</span>
+                  <span>{link.label}</span>
+                </button>
+              );
+            })}
 
- {/* Notification Bell for Students */}
- {user.userRole ==="student" && (
- <div className="relative">
- <button
- onClick={() => setNotificationsOpen(!notificationsOpen)}
- className="relative text-ink-500 hover:text-marigold-500 p-2 rounded-full hover:bg-ink-100 transition focus:outline-none">
- <span className="text-lg">🔔</span>
- {notifications.length > 0 && (
- <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse border-2 border-white"></span>
- )}
- </button>
+            {/* Notification Bell for Students */}
+            {user.userRole === 'student' && (
+              <div className="relative">
+                <button
+                  onClick={() => setNotificationsOpen(!notificationsOpen)}
+                  className="relative text-ink-500 hover:text-marigold p-2 rounded-full hover:bg-ink-100 transition focus:outline-none"
+                >
+                  <span className="text-lg">🔔</span>
+                  {notifications.length > 0 && (
+                    <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse border-2 border-white"></span>
+                  )}
+                </button>
 
- {/* Dropdown */}
- {notificationsOpen && (
- <div className="absolute right-0 top-12 bg-white rounded-xl shadow-sm border border-ink-100 p-4 w-80 max-h-96 overflow-y-auto z-50 text-left animate-slide-in-up">
- <h4 className="font-extrabold text-[10px] text-ink-400 uppercase tracking-wider mb-3">Notification Logs ({notifications.length})</h4>
- {notifications.length === 0 ? (
- <p className="text-xs text-ink-400 italic text-center py-4">No recent status alerts</p>
- ) : (
- <div className="space-y-3">
- {notifications.map(notif => (
- <div key={notif.id} className={`p-2.5 rounded-xl border text-[11px] ${notif.type ==='success' ?'bg-emerald-50/50 border-emerald-100 text-emerald-800' :
- notif.type ==='danger' ?'bg-rose-50/50 border-rose-100 text-rose-800' :
-'bg-marigold-50/50 border-marigold-100 text-marigold-800'
-}`}>
- <p className="font-extrabold">{notif.title}</p>
- <p className="opacity-90 mt-0.5 leading-relaxed">{notif.message}</p>
- </div>
- ))}
- </div>
- )}
- </div>
- )}
- </div>
- )}
+                {/* Dropdown */}
+                {notificationsOpen && (
+                  <div className="absolute right-0 top-12 bg-white rounded-xl shadow-sm border border-ink-100 p-4 w-80 max-h-96 overflow-y-auto z-50 text-left animate-slide-in-up">
+                    <h4 className="font-extrabold text-[10px] text-ink-400 uppercase tracking-wider mb-3">
+                      Notification Logs ({notifications.length})
+                    </h4>
+                    {notifications.length === 0 ? (
+                      <p className="text-xs text-ink-400 italic text-center py-4">
+                        No recent status alerts
+                      </p>
+                    ) : (
+                      <div className="space-y-3">
+                        {notifications.map((notif) => (
+                          <div
+                            key={notif.id}
+                            className={`p-2.5 rounded-xl border text-[11px] ${
+                              notif.type === 'success'
+                                ? 'bg-emerald-50/50 border-emerald-100 text-emerald-800'
+                                : notif.type === 'danger'
+                                  ? 'bg-rose-50/50 border-rose-100 text-rose-800'
+                                  : 'bg-marigold-light/50 border-marigold-mid/20 text-marigold-dark'
+                            }`}
+                          >
+                            <p className="font-extrabold">{notif.title}</p>
+                            <p className="opacity-90 mt-0.5 leading-relaxed">
+                              {notif.message}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
- {/* Language Toggle */}
- <button
- onClick={() => i18n.changeLanguage(i18n.language?.startsWith('en') ?'hi' :'en')}
- className="p-2 text-xs font-bold text-ink-500 hover:text-marigold-500 rounded-full hover:bg-ink-100 transition focus:outline-none">
- {i18n.language?.startsWith('en') ?'हिन्दी' :'EN'}
- </button>
+            {/* Language Toggle */}
+            <button
+              onClick={() =>
+                i18n.changeLanguage(
+                  i18n.language?.startsWith('en') ? 'hi' : 'en'
+                )
+              }
+              className="p-2 text-xs font-bold text-ink-500 hover:text-marigold rounded-full hover:bg-ink-100 transition focus:outline-none"
+            >
+              {i18n.language?.startsWith('en') ? 'हिन्दी' : 'EN'}
+            </button>
 
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="px-3 py-2 text-ink-600 hover:text-red-600 hover:bg-red-55 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ml-1"
+            >
+              <span>🚪</span>
+              <span>{t('Logout')}</span>
+            </button>
+          </div>
 
+          {/* Mobile Menu Buttons */}
+          <div className="flex md:hidden items-center gap-2">
+            {user.userRole === 'student' && (
+              <div className="relative">
+                <button
+                  onClick={() => setNotificationsOpen(!notificationsOpen)}
+                  className="relative text-ink-500 hover:text-marigold p-2 rounded-full hover:bg-ink-100 transition focus:outline-none"
+                >
+                  <span className="text-lg">🔔</span>
+                  {notifications.length > 0 && (
+                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+                  )}
+                </button>
 
- {/* Logout Button */}
- <button
- onClick={handleLogout}
- className="px-3 py-2 text-ink-600 hover:text-red-600 hover:bg-red-55 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ml-1">
- <span>🚪</span>
- <span>{t("Logout")}</span>
- </button>
- </div>
+                {notificationsOpen && (
+                  <div className="absolute right-0 top-12 bg-white rounded-xl shadow-sm border border-ink-100 p-4 w-72 max-h-96 overflow-y-auto z-50 text-left">
+                    <h4 className="font-extrabold text-[10px] text-ink-400 uppercase tracking-wider mb-3">
+                      Notification Logs ({notifications.length})
+                    </h4>
+                    {notifications.length === 0 ? (
+                      <p className="text-xs text-ink-400 italic text-center py-4">
+                        No recent status alerts
+                      </p>
+                    ) : (
+                      <div className="space-y-3">
+                        {notifications.map((notif) => (
+                          <div
+                            key={notif.id}
+                            className={`p-2.5 rounded-xl border text-[11px] ${
+                              notif.type === 'success'
+                                ? 'bg-emerald-50/50 border-emerald-100 text-emerald-800'
+                                : notif.type === 'danger'
+                                  ? 'bg-rose-50/50 border-rose-100 text-rose-800'
+                                  : 'bg-marigold-light/50 border-marigold-mid/20 text-marigold-dark'
+                            }`}
+                          >
+                            <p className="font-extrabold">{notif.title}</p>
+                            <p className="opacity-90 mt-0.5 leading-relaxed">
+                              {notif.message}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
- {/* Mobile Menu Buttons */}
- <div className="flex md:hidden items-center gap-2">
- {user.userRole ==="student" && (
- <div className="relative">
- <button
- onClick={() => setNotificationsOpen(!notificationsOpen)}
- className="relative text-ink-500 hover:text-marigold-500 p-2 rounded-full hover:bg-ink-100 transition focus:outline-none">
- <span className="text-lg">🔔</span>
- {notifications.length > 0 && (
- <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
- )}
- </button>
- 
- {notificationsOpen && (
- <div className="absolute right-0 top-12 bg-white rounded-xl shadow-sm border border-ink-100 p-4 w-72 max-h-96 overflow-y-auto z-50 text-left">
- <h4 className="font-extrabold text-[10px] text-ink-400 uppercase tracking-wider mb-3">Notification Logs ({notifications.length})</h4>
- {notifications.length === 0 ? (
- <p className="text-xs text-ink-400 italic text-center py-4">No recent status alerts</p>
- ) : (
- <div className="space-y-3">
- {notifications.map(notif => (
- <div key={notif.id} className={`p-2.5 rounded-xl border text-[11px] ${notif.type ==='success' ?'bg-emerald-50/50 border-emerald-100 text-emerald-800' :
- notif.type ==='danger' ?'bg-rose-50/50 border-rose-100 text-rose-800' :
-'bg-marigold-50/50 border-marigold-100 text-marigold-800'
-}`}>
- <p className="font-extrabold">{notif.title}</p>
- <p className="opacity-90 mt-0.5 leading-relaxed">{notif.message}</p>
- </div>
- ))}
- </div>
- )}
- </div>
- )}
- </div>
- )}
+            {/* Language Toggle */}
+            <button
+              onClick={() =>
+                i18n.changeLanguage(
+                  i18n.language?.startsWith('en') ? 'hi' : 'en'
+                )
+              }
+              className="p-2 text-xs font-bold text-ink-500 hover:text-marigold rounded-full hover:bg-ink-100 transition focus:outline-none"
+            >
+              {i18n.language?.startsWith('en') ? 'हिन्दी' : 'EN'}
+            </button>
 
- {/* Language Toggle */}
- <button
- onClick={() => i18n.changeLanguage(i18n.language?.startsWith('en') ?'hi' :'en')}
- className="p-2 text-xs font-bold text-ink-500 hover:text-marigold-500 rounded-full hover:bg-ink-100 transition focus:outline-none">
- {i18n.language?.startsWith('en') ?'हिन्दी' :'EN'}
- </button>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="text-ink-500 hover:text-marigold p-2 rounded-lg hover:bg-ink-100 transition focus:outline-none"
+            >
+              <span className="text-xl">{mobileMenuOpen ? '✕' : '☰'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
- <button
- onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
- className="text-ink-500 hover:text-marigold-500 p-2 rounded-lg hover:bg-ink-100 transition focus:outline-none">
- <span className="text-xl">{mobileMenuOpen ?"✕" :"☰"}</span>
- </button>
- </div>
- </div>
- </div>
-
- {/* Mobile Menu Drawer */}
- {mobileMenuOpen && (
- <div className="md:hidden bg-white border-t border-ink-100 px-4 py-3 space-y-1.5 shadow-inner">
- {activeLinks.map((link) => {const isActive = location.pathname.startsWith(link.path);
- return (
- <button
- key={link.path}
- onClick={() => { navigate(link.path); setMobileMenuOpen(false);}}
- className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition ${isActive 
- ?"bg-marigold-50 text-marigold-700 border border-marigold-100/50":"text-ink-600 hover:text-marigold-500 hover:bg-ink-50"
-}`}
- >
- <span>{link.icon}</span>
- <span>{link.label}</span>
- </button>
- );
-})}
- <button
- onClick={handleLogout}
- className="w-full text-left px-3 py-2.5 text-ink-600 hover:text-red-600 hover:bg-red-55 rounded-xl text-xs font-bold flex items-center gap-2 transition">
- <span>🚪</span>
- <span>{t("Logout")}</span>
- </button>
- </div>
- )}
- </nav>
- );
+      {/* Mobile Menu Drawer */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white border-t border-ink-100 px-4 py-3 space-y-1.5 shadow-inner">
+          {activeLinks.map((link) => {
+            const isActive = location.pathname.startsWith(link.path);
+            return (
+              <button
+                key={link.path}
+                onClick={() => {
+                  navigate(link.path);
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition ${
+                  isActive
+                    ? 'bg-marigold-light text-marigold-dark border border-marigold-mid/10'
+                    : 'text-ink-600 hover:text-marigold hover:bg-ink-50'
+                }`}
+              >
+                <span>{link.icon}</span>
+                <span>{link.label}</span>
+              </button>
+            );
+          })}
+          <button
+            onClick={handleLogout}
+            className="w-full text-left px-3 py-2.5 text-ink-600 hover:text-red-600 hover:bg-red-55 rounded-xl text-xs font-bold flex items-center gap-2 transition"
+          >
+            <span>🚪</span>
+            <span>{t('Logout')}</span>
+          </button>
+        </div>
+      )}
+    </nav>
+  );
 }

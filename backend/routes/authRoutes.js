@@ -35,6 +35,7 @@ router.get('/user/:email', authenticateToken, authController.getUserByEmail);
 router.get('/student/vanity/:username', authenticateToken, authController.getVanityProfile);
 router.post('/complete-profile', authenticateToken, authController.completeProfile);
 router.put('/company-profile', authenticateToken, authController.updateCompanyProfile);
+router.put('/faculty-profile', authenticateToken, authController.updateFacultyProfile);
 
 module.exports = router;
 

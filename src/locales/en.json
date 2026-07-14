@@ -1305,5 +1305,7 @@
   "facultyDashboard.approve": "Approve",
   "facultyDashboard.reject": "Reject",
   "facultyDashboard.archive": "Archive",
-  "facultyDashboard.delete": "Delete"
+  "facultyDashboard.delete": "Delete",
+  "facultyDashboard.profile": "Profile Settings",
+  "facultyDashboard.editProfile": "Edit Faculty Profile"
 }

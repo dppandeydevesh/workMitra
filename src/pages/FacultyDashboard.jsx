@@ -25,6 +25,8 @@ export default function FacultyDashboard() {
     description: '',
     skills: '',
     budget: '',
+    duration: '1 Semester',
+    deadline: '',
   });
   const [posting, setPosting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -208,13 +210,22 @@ export default function FacultyDashboard() {
             .map((s) => s.trim())
             .filter(Boolean),
           budget: formData.budget,
+          duration: formData.duration,
+          deadline: formData.deadline,
           workType: 'Academic', // Specific marker for faculty projects
         }),
       });
 
       if (res.ok) {
         toast.success('Academic Project posted successfully!');
-        setFormData({ title: '', description: '', skills: '', budget: '' });
+        setFormData({
+          title: '',
+          description: '',
+          skills: '',
+          budget: '',
+          duration: '1 Semester',
+          deadline: '',
+        });
         setActiveTab('my-projects');
         fetchFacultyProjects(user.email);
       } else {
@@ -579,6 +590,39 @@ export default function FacultyDashboard() {
                         'e.g., 50 (marks) or 5000 (stipend ₹)'
                       }
                     />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-extrabold text-ink-700 mb-2">
+                        Timeline Duration
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.duration}
+                        onChange={(e) =>
+                          setFormData({ ...formData, duration: e.target.value })
+                        }
+                        className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold outline-none transition"
+                        placeholder="e.g., 1 Semester, 2 Months"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-extrabold text-ink-700 mb-2">
+                        Application Deadline
+                      </label>
+                      <input
+                        type="date"
+                        required
+                        value={formData.deadline}
+                        onChange={(e) =>
+                          setFormData({ ...formData, deadline: e.target.value })
+                        }
+                        className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold outline-none transition"
+                      />
+                    </div>
                   </div>
 
                   <button

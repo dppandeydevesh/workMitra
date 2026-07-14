@@ -381,7 +381,16 @@ export default function ProjectDetails() {
               <span className="text-xs font-extrabold text-ink-800 mt-1 block">
                 ⏱️{' '}
                 {(() => {
-                  const diff = new Date(project.deadline) - new Date();
+                  if (!project.deadline) return 'Open';
+                  const parsedDate = new Date(project.deadline);
+                  if (isNaN(parsedDate.getTime())) {
+                    return (
+                      <span className="text-marigold-500 font-black">
+                        {project.deadline}
+                      </span>
+                    );
+                  }
+                  const diff = parsedDate - new Date();
                   if (diff <= 0)
                     return (
                       <span className="text-red-500 font-black">

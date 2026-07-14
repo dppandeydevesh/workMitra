@@ -62,7 +62,10 @@ export default function AddProject() {
       toast.error(t('addProject.validationScheduling'));
       return;
     }
-    if (step === 3 && !budget) {
+    if (
+      step === 3 &&
+      (budget === '' || budget === undefined || budget === null)
+    ) {
       toast.error(t('addProject.validationRewards'));
       return;
     }

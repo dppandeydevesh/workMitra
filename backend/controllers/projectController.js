@@ -117,13 +117,13 @@ const createProject = async (req, res, next) => {
     // Use the authenticated user's ObjectId instead of relying on frontend email payload
     const companyId = req.user.userId;
 
-    if (!title || !description || !budget) {
+    if (!title || !description || budget === undefined || budget === null) {
       return res.status(400).json({ error: "Missing mandatory project field metrics." });
     }
 
     const parsedBudget = Number(budget);
-    if (isNaN(parsedBudget) || parsedBudget <= 0) {
-      return res.status(400).json({ error: "Budget must be a positive number (stipend amount or marks)." });
+    if (isNaN(parsedBudget) || parsedBudget < 0) {
+      return res.status(400).json({ error: "Budget must be a non-negative number (stipend amount or marks)." });
     }
 
     // Faculty posts are academic assignments: accept either skills/requiredSkills

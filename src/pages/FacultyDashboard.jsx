@@ -567,7 +567,7 @@ export default function FacultyDashboard() {
                     </label>
                     <input
                       type="number"
-                      min="1"
+                      min="0"
                       required
                       value={formData.budget}
                       onChange={(e) =>

@@ -59,7 +59,12 @@ exports.applyForProject = async (req, res, next) => {
     // pass to apply for their own professor's coursework project.
     const poster = project ? await User.findById(project.companyId).select("userRole") : null;
     const isAcademicProject = poster?.userRole === "faculty";
-    if (!studentUser.hasPaidPass && !isAcademicProject) {
+    
+    // 1 Month = 30 Days Free Trial Check
+    const trialDurationMs = 30 * 24 * 60 * 60 * 1000;
+    const isTrialActive = (Date.now() - new Date(studentUser.createdAt).getTime()) < trialDurationMs;
+    
+    if (!studentUser.hasPaidPass && !isTrialActive && !isAcademicProject) {
       return res.status(403).json({ error: "Premium Pass is required to apply for projects." });
     }
     const studentName = studentUser.fullName;

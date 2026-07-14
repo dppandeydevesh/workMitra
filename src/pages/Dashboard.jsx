@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../config';
@@ -61,21 +61,25 @@ export default function Dashboard() {
     liveDeploymentUrl,
     setLiveDeploymentUrl,
 
-    // eslint-disable-next-line no-unused-vars
     cvReport,
+    // eslint-disable-next-line no-unused-vars
     resumeUrl,
+    // eslint-disable-next-line no-unused-vars
     setResumeUrl,
     resumeText,
-    setResumeText,
     // eslint-disable-next-line no-unused-vars
+    setResumeText,
+
     loadingReview,
+    // eslint-disable-next-line no-unused-vars
     updatingResume,
     uploadingCV,
 
-    // eslint-disable-next-line no-unused-vars
     showCheckoutModal,
     setShowCheckoutModal,
+    // eslint-disable-next-line no-unused-vars
     checkingOutPass,
+    // eslint-disable-next-line no-unused-vars
     checkoutStep,
     setCheckoutStep,
     codeQualityRubric,
@@ -98,10 +102,11 @@ export default function Dashboard() {
     setExtensionDays,
     extensionReason,
     setExtensionReason,
-    // eslint-disable-next-line no-unused-vars
+
     requestingExtension,
     aiTopPicks,
     loadingAiPicks,
+    // eslint-disable-next-line no-unused-vars
     totalPages,
     errorMessage,
     handleSubmitWork,
@@ -120,7 +125,7 @@ export default function Dashboard() {
     setSkillFilter,
     workTypeFilter,
     setWorkTypeFilter,
-    // eslint-disable-next-line no-unused-vars
+
     maxBudgetFilter,
     setMaxBudgetFilter,
     sortBy,
@@ -128,8 +133,21 @@ export default function Dashboard() {
     page,
     setPage,
     limit,
-    setLimit,
   } = useDashboard();
+
+  const [isTrialActive, setIsTrialActive] = useState(true);
+
+  useEffect(() => {
+    if (!currentUser?.createdAt) return;
+    const trialDurationMs = 30 * 24 * 60 * 60 * 1000;
+    const active =
+      Date.now() - new Date(currentUser.createdAt).getTime() < trialDurationMs;
+    if (active !== isTrialActive) {
+      setTimeout(() => {
+        setIsTrialActive(active);
+      }, 0);
+    }
+  }, [currentUser?.createdAt, isTrialActive]);
 
   const renderStepper = useCallback(
     (status) => {
@@ -206,6 +224,7 @@ export default function Dashboard() {
   };
 
   // ── Computed values ────────────────────────────────────────────────────────
+  // eslint-disable-next-line no-unused-vars
   const notificationsList = useMemo(() => {
     return myApplications
       .map((app) => {
@@ -273,7 +292,9 @@ export default function Dashboard() {
         const budgetVal = project.budget || 0;
         const matchesBudget =
           maxBudgetFilter >= 10000 || budgetVal <= maxBudgetFilter;
-        return matchesSearch && matchesSkill && matchesWorkType && matchesBudget;
+        return (
+          matchesSearch && matchesSkill && matchesWorkType && matchesBudget
+        );
       })
       .sort((a, b) => {
         if (sortBy === 'budgetHigh') return (b.budget || 0) - (a.budget || 0);
@@ -286,7 +307,14 @@ export default function Dashboard() {
           return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
         return 0;
       });
-  }, [projects, searchTerm, skillFilter, workTypeFilter, maxBudgetFilter, sortBy]);
+  }, [
+    projects,
+    searchTerm,
+    skillFilter,
+    workTypeFilter,
+    maxBudgetFilter,
+    sortBy,
+  ]);
 
   return (
     <motion.div
@@ -351,14 +379,14 @@ export default function Dashboard() {
                 <span className="text-[10px] font-black text-marigold-700 uppercase tracking-wider block">
                   {t('dashboard.membershipPassStatus')}
                 </span>
-                {localStorage.getItem('hasPaidPass') === 'true' ? (
+                {currentUser?.hasPaidPass ? (
                   <span className="text-xs font-bold text-emerald-600 mt-0.5 flex items-center gap-1">
                     <Check className="w-3 h-3" />{' '}
                     {t('dashboard.premiumActivated')}
                   </span>
-                ) : (
+                ) : isTrialActive ? (
                   <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-xs font-bold text-red-500">
+                    <span className="text-xs font-bold text-emerald-600">
                       {t('dashboard.freeTrialActive')}
                     </span>
                     <button
@@ -369,6 +397,21 @@ export default function Dashboard() {
                       className="bg-marigold-500 text-ink-dark px-2.5 py-1 rounded-lg text-[9px] font-bold transition shadow-sm"
                     >
                       {t('dashboard.upgradePlan')}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-xs font-bold text-rose-500">
+                      {t('dashboard.trialExpired') || 'Trial Expired'}
+                    </span>
+                    <button
+                      onClick={() => {
+                        setCheckoutStep(1);
+                        setShowCheckoutModal(true);
+                      }}
+                      className="bg-rose-500 text-white px-2.5 py-1 rounded-lg text-[9px] font-bold transition shadow-sm hover:bg-rose-600"
+                    >
+                      {t('dashboard.purchasePass') || 'Upgrade'}
                     </button>
                   </div>
                 )}

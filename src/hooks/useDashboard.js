@@ -20,14 +20,22 @@ export function useDashboard() {
 
   // ─── Zustand store (search / filter / pagination) ─────────────────────────
   const {
-    searchTerm, setSearchTerm,
-    showSearchSuggestions, setShowSearchSuggestions,
-    skillFilter, setSkillFilter,
-    workTypeFilter, setWorkTypeFilter,
-    maxBudgetFilter, setMaxBudgetFilter,
-    sortBy, setSortBy,
-    page, setPage,
-    limit, setLimit,
+    searchTerm,
+    setSearchTerm,
+    showSearchSuggestions,
+    setShowSearchSuggestions,
+    skillFilter,
+    setSkillFilter,
+    workTypeFilter,
+    setWorkTypeFilter,
+    maxBudgetFilter,
+    setMaxBudgetFilter,
+    sortBy,
+    setSortBy,
+    page,
+    setPage,
+    limit,
+    setLimit,
   } = useDashboardStore();
 
   // ─── Core state ────────────────────────────────────────────────────────────
@@ -135,7 +143,8 @@ export function useDashboard() {
         const details = await detailsRes.json();
         setMyApplications(details);
       }
-    } catch (err) { console.error(err);
+    } catch (err) {
+      console.error(err);
       console.error('Failed to refetch details');
     }
   };
@@ -216,7 +225,10 @@ export function useDashboard() {
             const semanticData = await semanticRes.json();
             if (semanticData.pinecone && semanticData.matches?.length > 0) {
               setAiTopPicks(
-                semanticData.matches.map((p) => ({ ...p, _semanticPowered: true }))
+                semanticData.matches.map((p) => ({
+                  ...p,
+                  _semanticPowered: true,
+                }))
               );
               setLoadingAiPicks(false);
               return; // skip Gemini fallback
@@ -237,7 +249,8 @@ export function useDashboard() {
           setLoadingAiPicks(false);
         }
       }
-    } catch (err) { console.error(err);
+    } catch (err) {
+      console.error(err);
       setErrorMessage(t('dashboard.connectServerFail'));
     } finally {
       setLoading(false);
@@ -268,12 +281,15 @@ export function useDashboard() {
     formData.append('email', currentUser.email);
 
     try {
-      const response = await fetchWithAuth(`${API_BASE_URL}/api/profile/upload-cv`, {
-        credentials: 'include',
-        method: 'POST',
-        headers: {},
-        body: formData,
-      });
+      const response = await fetchWithAuth(
+        `${API_BASE_URL}/api/profile/upload-cv`,
+        {
+          credentials: 'include',
+          method: 'POST',
+          headers: {},
+          body: formData,
+        }
+      );
       const data = await response.json();
       if (response.ok) {
         setResumeText(data.resumeText);
@@ -284,7 +300,8 @@ export function useDashboard() {
       } else {
         toast.error(data.error || t('dashboard.cvUploadFail'));
       }
-    } catch (err) { console.error(err);
+    } catch (err) {
+      console.error(err);
       toast.error(t('dashboard.uploadGatewayError'));
     } finally {
       setUploadingCV(false);
@@ -299,12 +316,19 @@ export function useDashboard() {
     setUpdatingResume(true);
 
     try {
-      const response = await fetchWithAuth(`${API_BASE_URL}/api/profile/resume`, {
-        credentials: 'include',
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: currentUser.email, resumeUrl, resumeText }),
-      });
+      const response = await fetchWithAuth(
+        `${API_BASE_URL}/api/profile/resume`,
+        {
+          credentials: 'include',
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: currentUser.email,
+            resumeUrl,
+            resumeText,
+          }),
+        }
+      );
       const data = await response.json();
       if (response.ok) {
         toast.success(t('dashboard.resumeUpdateSuccess'));
@@ -318,7 +342,8 @@ export function useDashboard() {
       } else {
         toast.error(data.error || t('dashboard.resumeUpdateFail'));
       }
-    } catch (err) { console.error(err);
+    } catch (err) {
+      console.error(err);
       toast.error(t('dashboard.serverGatewayError'));
     } finally {
       setUpdatingResume(false);
@@ -328,6 +353,21 @@ export function useDashboard() {
   /** Send resume text to AI CV reviewer and store the report. */
   const handleReviewCV = async () => {
     if (!currentUser) return;
+
+    // Check if trial has expired and user does not have a paid pass
+    const trialDurationMs = 30 * 24 * 60 * 60 * 1000;
+    const isTrialActive = currentUser.createdAt
+      ? Date.now() - new Date(currentUser.createdAt).getTime() < trialDurationMs
+      : true;
+    if (!currentUser.hasPaidPass && !isTrialActive) {
+      toast.error(
+        t('dashboard.trialExpiredAiRequired') ||
+          'Premium Pass is required to access AI features. Please purchase a pass for just ₹99.'
+      );
+      setShowCheckoutModal(true);
+      return;
+    }
+
     if (!resumeText || resumeText.trim().length === 0) {
       toast.info(t('dashboard.pasteCvInfo'));
       return;
@@ -354,7 +394,8 @@ export function useDashboard() {
       } else {
         toast.error(data.error || t('dashboard.cvReviewFail'));
       }
-    } catch (err) { console.error(err);
+    } catch (err) {
+      console.error(err);
       toast.error(t('dashboard.aiEngineError'));
     } finally {
       setLoadingReview(false);
@@ -408,7 +449,8 @@ export function useDashboard() {
       } else {
         toast.error(data.error || t('dashboard.submissionFail'));
       }
-    } catch (err) { console.error(err);
+    } catch (err) {
+      console.error(err);
       toast.error(t('dashboard.submissionPayloadError'));
     }
   };
@@ -443,7 +485,8 @@ export function useDashboard() {
       } else {
         toast.error(data.error || t('dashboard.extensionFail'));
       }
-    } catch (err) { console.error(err);
+    } catch (err) {
+      console.error(err);
       toast.error(t('dashboard.extensionNetworkError'));
     } finally {
       setRequestingExtension(false);
@@ -475,50 +518,79 @@ export function useDashboard() {
     loadingAiPicks,
 
     // Submit modal
-    showSubmitModal, setShowSubmitModal,
-    activeAppToSubmit, setActiveAppToSubmit,
-    submissionLink, setSubmissionLink,
-    submissionText, setSubmissionText,
-    githubRepoUrl, setGithubRepoUrl,
-    liveDeploymentUrl, setLiveDeploymentUrl,
+    showSubmitModal,
+    setShowSubmitModal,
+    activeAppToSubmit,
+    setActiveAppToSubmit,
+    submissionLink,
+    setSubmissionLink,
+    submissionText,
+    setSubmissionText,
+    githubRepoUrl,
+    setGithubRepoUrl,
+    liveDeploymentUrl,
+    setLiveDeploymentUrl,
 
     // CV / Resume
     cvReport,
-    resumeUrl, setResumeUrl,
-    resumeText, setResumeText,
+    resumeUrl,
+    setResumeUrl,
+    resumeText,
+    setResumeText,
     loadingReview,
     updatingResume,
     uploadingCV,
 
     // Checkout
-    showCheckoutModal, setShowCheckoutModal,
-    checkingOutPass, setCheckingOutPass,
-    checkoutStep, setCheckoutStep,
+    showCheckoutModal,
+    setShowCheckoutModal,
+    checkingOutPass,
+    setCheckingOutPass,
+    checkoutStep,
+    setCheckoutStep,
 
     // Rubric & AI declaration
-    codeQualityRubric, setCodeQualityRubric,
-    correctnessRubric, setCorrectnessRubric,
-    documentationRubric, setDocumentationRubric,
-    usedAi, setUsedAi,
-    aiPercentage, setAiPercentage,
-    aiToolsUsed, setAiToolsUsed,
+    codeQualityRubric,
+    setCodeQualityRubric,
+    correctnessRubric,
+    setCorrectnessRubric,
+    documentationRubric,
+    setDocumentationRubric,
+    usedAi,
+    setUsedAi,
+    aiPercentage,
+    setAiPercentage,
+    aiToolsUsed,
+    setAiToolsUsed,
 
     // Extension modal
-    showExtensionModal, setShowExtensionModal,
-    activeAppToExtend, setActiveAppToExtend,
-    extensionDays, setExtensionDays,
-    extensionReason, setExtensionReason,
+    showExtensionModal,
+    setShowExtensionModal,
+    activeAppToExtend,
+    setActiveAppToExtend,
+    extensionDays,
+    setExtensionDays,
+    extensionReason,
+    setExtensionReason,
     requestingExtension,
 
     // Zustand filter/search/pagination
-    searchTerm, setSearchTerm,
-    showSearchSuggestions, setShowSearchSuggestions,
-    skillFilter, setSkillFilter,
-    workTypeFilter, setWorkTypeFilter,
-    maxBudgetFilter, setMaxBudgetFilter,
-    sortBy, setSortBy,
-    page, setPage,
-    limit, setLimit,
+    searchTerm,
+    setSearchTerm,
+    showSearchSuggestions,
+    setShowSearchSuggestions,
+    skillFilter,
+    setSkillFilter,
+    workTypeFilter,
+    setWorkTypeFilter,
+    maxBudgetFilter,
+    setMaxBudgetFilter,
+    sortBy,
+    setSortBy,
+    page,
+    setPage,
+    limit,
+    setLimit,
 
     // Handlers
     handleApply: null, // not implemented in original; reserved for future use

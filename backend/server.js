@@ -121,6 +121,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/files', fileRoutes);
+app.use('/api/daily', require('./routes/dailyRoutes'));
 
 Sentry.setupExpressErrorHandler(app);
 const errorHandler = require('./middleware/errorHandler');
@@ -142,6 +143,9 @@ if (process.env.NODE_ENV !== 'test') {
     .then(() => {
       console.log('🔌 Connected to MongoDB Successfully!');
       seedAdmin();
+      // 🌅 Daily 8AM IST student digest emails
+      const { startDigestScheduler } = require('./services/digestService');
+      startDigestScheduler();
     })
     .catch((err) => {
       console.error('❌ MongoDB connection error:', err.message);

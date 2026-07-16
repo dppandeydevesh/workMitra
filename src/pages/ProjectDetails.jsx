@@ -5,6 +5,7 @@ import { useToast } from '../components/Toast';
 import { fetchWithAuth } from '../services/apiClient';
 import { useTranslation } from 'react-i18next';
 import { track } from '../utils/analytics';
+import { trackDailyTask } from '../utils/dailyTasks';
 
 export default function ProjectDetails() {
   const { projectId } = useParams();
@@ -58,6 +59,7 @@ export default function ProjectDetails() {
 
         if (projectRes.ok) {
           setProject(projectData);
+          trackDailyTask('explore'); // daily checklist: "explore a project"
         } else {
           setErrorMessage(
             projectData.error || t('projectDetails.failedToLoadDetails')

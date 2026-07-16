@@ -46,6 +46,12 @@ const UserSchema = new mongoose.Schema({
         offeredAt: { type: Date, default: Date.now }
     }],
 
+    // 🔥 Daily engagement (streaks + digest)
+    dailyStreak: { type: Number, default: 0 },
+    longestStreak: { type: Number, default: 0 },
+    lastStreakDate: { type: String, default: null }, // YYYY-MM-DD (IST) of last completed day
+    emailDigestOptOut: { type: Boolean, default: false },
+
     // 💳 Payment / Premium Pass
     hasPaidPass: { type: Boolean, default: false },
     razorpayOrderId: { type: String, default: null },

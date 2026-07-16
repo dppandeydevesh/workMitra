@@ -113,7 +113,7 @@ const applicationSchema = new mongoose.Schema({
     by: String,
     note: String
   }]
-});
+}, { timestamps: true }); // updatedAt lets the daily digest find fresh status changes
 
 // Performance indexes for frequent queries
 applicationSchema.index({ studentEmail: 1 });

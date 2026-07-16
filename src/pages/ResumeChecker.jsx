@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { fetchWithAuth } from '../services/apiClient';
+import { trackDailyTask } from '../utils/dailyTasks';
 
 const ResumeChecker = () => {
   const { t } = useTranslation();
@@ -110,6 +111,7 @@ const ResumeChecker = () => {
               clearInterval(pollIntervalRef.current);
               setResult(statusData.result);
               setIsLoading(false);
+              trackDailyTask('improve'); // daily checklist: "sharpen your profile"
             } else if (statusData.status === 'failed') {
               clearInterval(pollIntervalRef.current);
               setError(

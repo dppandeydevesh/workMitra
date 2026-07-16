@@ -5,6 +5,7 @@ import { API_BASE_URL } from '../config';
 import { useDashboard } from '../hooks/useDashboard';
 import { track } from '../utils/analytics';
 import PremiumCheckoutModal from '../components/PremiumCheckoutModal';
+import DailyStreakCard from '../components/DailyStreakCard';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import {
@@ -419,6 +420,9 @@ export default function Dashboard() {
             </div>
           </div>
           <p className="text-ink-600">{t('dashboard.loggedInMsg')}</p>
+
+          {/* 🔥 Daily streak + Today's 3 Tasks */}
+          <DailyStreakCard />
 
           {/* Feature Cards */}
           <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">

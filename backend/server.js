@@ -1,3 +1,10 @@
+// Load .env BEFORE validating — otherwise local development always fails
+// validation even with a complete .env file. Loads from the current working
+// directory (npm start at repo root) and from backend/.env (node server.js
+// inside backend/). Render injects env vars directly, so this is a no-op there.
+require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
+
 const validateEnv = require('./utils/validateEnv');
 validateEnv(); // Fail fast if any required env var is missing
 
@@ -5,7 +12,6 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const mongoose = require('mongoose');
-require('dotenv').config();
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
@@ -168,7 +174,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 if (process.env.NODE_ENV !== 'test') {
-  const server = app.listen(PORT, () => {
+  // HOST override lets local dev bind 127.0.0.1; Render needs the 0.0.0.0 default
+  const server = app.listen(PORT, process.env.HOST || '0.0.0.0', () => {
       console.log(`🚀 Server running smoothly on http://localhost:${PORT}`);
   });
 

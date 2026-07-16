@@ -17,6 +17,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 const NotFoundPage = React.lazy(() => import("./pages/NotFoundPage"));
 const ProjectDetails = React.lazy(() => import("./pages/ProjectDetails"));
 import Navbar from "./components/Navbar";
+import BottomNav from "./components/BottomNav";
 const LandingPage = React.lazy(() => import("./pages/LandingPage"));
 const AboutPage = React.lazy(() => import("./pages/AboutPage"));
 const TermsPage = React.lazy(() => import("./pages/LegalPages").then(module => ({ default: module.TermsPage })));
@@ -79,6 +80,7 @@ const ProtectedLayout = ({ allowedRoles, children }) => {
       <Navbar />
       {children}
       <AIAssistant />
+      <BottomNav />
     </ProtectedRoute>
   );
 };

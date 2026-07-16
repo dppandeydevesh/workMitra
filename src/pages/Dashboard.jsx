@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../config';
 import { useDashboard } from '../hooks/useDashboard';
@@ -317,6 +317,17 @@ export default function Dashboard() {
     sortBy,
   ]);
 
+  // 📱 Mobile tab view (?tab=home|projects|gigs) driven by the BottomNav —
+  // phones show one section at a time; md+ ignores the tab and shows all.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const mobileTab = searchParams.get('tab') || 'home';
+  const openSection = (sectionId, tab) => {
+    setSearchParams({ tab }, { replace: true });
+    // Desktop shows every section, so smooth-scroll there; on phones the
+    // tab switch alone brings the section to the top.
+    requestAnimationFrame(() => scrollToSection(sectionId));
+  };
+
   return (
     <motion.div
       className="min-h-screen bg-transparent"
@@ -327,141 +338,146 @@ export default function Dashboard() {
       {/* Dashboard Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 lg:p-8 wm-panel">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-6 mb-6 gap-4">
-            <div>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-ink-800 mb-2 flex items-center flex-wrap gap-2">
-                {t('dashboard.welcome', {
-                  name: currentUser?.fullName || t('dashboard.studentDefault'),
-                })}
-                {currentUser?.isEndorsed && (
-                  <span className="bg-emerald-50 border border-emerald-100 text-emerald-600 text-[9px] font-black px-2 py-0.5 rounded-full select-none flex items-center gap-1">
-                    {t('dashboard.facultyEndorsed')}{' '}
-                    <Award className="w-3 h-3" />
-                  </span>
-                )}
-              </h1>
-              {currentUser?.collegeName && (
-                <div className="flex items-start gap-2.5 mt-3 select-none">
-                  <div className="w-5 h-5 rounded-full bg-teal-500 flex items-center justify-center text-white shrink-0 mt-0.5 shadow-sm">
-                    <svg
-                      className="w-3 h-3 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-ink-900 tracking-tight leading-none uppercase">
-                      {t('College verified')}
-                    </p>
-                    <p className="text-[10px] text-ink-500 mt-1 font-medium leading-none">
-                      {currentUser.collegeName}{' '}
-                      {currentUser.enrollmentNumber
-                        ? `· ID: ${currentUser.enrollmentNumber}`
-                        : ''}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Membership Pass Panel Card */}
-            <div className="bg-marigold-50 border border-marigold-100 p-4 rounded-xl flex items-center gap-3.5 shadow-sm wm-panel">
-              <Ticket className="w-8 h-8 text-marigold-500" />
+          {/* 🏠 Home tab (welcome + streak + feature cards) */}
+          <div className={mobileTab === 'home' ? '' : 'hidden md:block'}>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-6 mb-6 gap-4">
               <div>
-                <span className="text-[10px] font-black text-marigold-700 uppercase tracking-wider block">
-                  {t('dashboard.membershipPassStatus')}
-                </span>
-                {currentUser?.hasPaidPass ? (
-                  <span className="text-xs font-bold text-emerald-600 mt-0.5 flex items-center gap-1">
-                    <Check className="w-3 h-3" />{' '}
-                    {t('dashboard.premiumActivated')}
-                  </span>
-                ) : isTrialActive ? (
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-xs font-bold text-emerald-600">
-                      {t('dashboard.freeTrialActive')}
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-ink-800 mb-2 flex items-center flex-wrap gap-2">
+                  {t('dashboard.welcome', {
+                    name:
+                      currentUser?.fullName || t('dashboard.studentDefault'),
+                  })}
+                  {currentUser?.isEndorsed && (
+                    <span className="bg-emerald-50 border border-emerald-100 text-emerald-600 text-[9px] font-black px-2 py-0.5 rounded-full select-none flex items-center gap-1">
+                      {t('dashboard.facultyEndorsed')}{' '}
+                      <Award className="w-3 h-3" />
                     </span>
-                    <button
-                      onClick={() => {
-                        setCheckoutStep(1);
-                        setShowCheckoutModal(true);
-                      }}
-                      className="bg-marigold-500 text-ink-dark px-2.5 py-1 rounded-lg text-[9px] font-bold transition shadow-sm"
-                    >
-                      {t('dashboard.upgradePlan')}
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-xs font-bold text-rose-500">
-                      {t('dashboard.trialExpired') || 'Trial Expired'}
-                    </span>
-                    <button
-                      onClick={() => {
-                        setCheckoutStep(1);
-                        setShowCheckoutModal(true);
-                      }}
-                      className="bg-rose-500 text-white px-2.5 py-1 rounded-lg text-[9px] font-bold transition shadow-sm hover:bg-rose-600"
-                    >
-                      {t('dashboard.purchasePass') || 'Upgrade'}
-                    </button>
+                  )}
+                </h1>
+                {currentUser?.collegeName && (
+                  <div className="flex items-start gap-2.5 mt-3 select-none">
+                    <div className="w-5 h-5 rounded-full bg-teal-500 flex items-center justify-center text-white shrink-0 mt-0.5 shadow-sm">
+                      <svg
+                        className="w-3 h-3 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-ink-900 tracking-tight leading-none uppercase">
+                        {t('College verified')}
+                      </p>
+                      <p className="text-[10px] text-ink-500 mt-1 font-medium leading-none">
+                        {currentUser.collegeName}{' '}
+                        {currentUser.enrollmentNumber
+                          ? `· ID: ${currentUser.enrollmentNumber}`
+                          : ''}
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
+
+              {/* Membership Pass Panel Card */}
+              <div className="bg-marigold-50 border border-marigold-100 p-4 rounded-xl flex items-center gap-3.5 shadow-sm wm-panel">
+                <Ticket className="w-8 h-8 text-marigold-500" />
+                <div>
+                  <span className="text-[10px] font-black text-marigold-700 uppercase tracking-wider block">
+                    {t('dashboard.membershipPassStatus')}
+                  </span>
+                  {currentUser?.hasPaidPass ? (
+                    <span className="text-xs font-bold text-emerald-600 mt-0.5 flex items-center gap-1">
+                      <Check className="w-3 h-3" />{' '}
+                      {t('dashboard.premiumActivated')}
+                    </span>
+                  ) : isTrialActive ? (
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-xs font-bold text-emerald-600">
+                        {t('dashboard.freeTrialActive')}
+                      </span>
+                      <button
+                        onClick={() => {
+                          setCheckoutStep(1);
+                          setShowCheckoutModal(true);
+                        }}
+                        className="bg-marigold-500 text-ink-dark px-2.5 py-1 rounded-lg text-[9px] font-bold transition shadow-sm"
+                      >
+                        {t('dashboard.upgradePlan')}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-xs font-bold text-rose-500">
+                        {t('dashboard.trialExpired') || 'Trial Expired'}
+                      </span>
+                      <button
+                        onClick={() => {
+                          setCheckoutStep(1);
+                          setShowCheckoutModal(true);
+                        }}
+                        className="bg-rose-500 text-white px-2.5 py-1 rounded-lg text-[9px] font-bold transition shadow-sm hover:bg-rose-600"
+                      >
+                        {t('dashboard.purchasePass') || 'Upgrade'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-          <p className="text-ink-600">{t('dashboard.loggedInMsg')}</p>
+            <p className="text-ink-600">{t('dashboard.loggedInMsg')}</p>
 
-          {/* 🔥 Daily streak + Today's 3 Tasks */}
-          <DailyStreakCard />
+            {/* 🔥 Daily streak + Today's 3 Tasks */}
+            <DailyStreakCard />
 
-          {/* Feature Cards */}
-          <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
-            <motion.button
-              variants={itemVariants}
-              onClick={() => scrollToSection('gigs-section')}
-              className="group text-left bg-marigold-50 p-4 sm:p-6 rounded-xl hover:bg-marigold-100/70 hover:-translate-y-1 transition-all duration-300 shadow-sm border border-marigold-100/30 wm-panel wm-card"
-            >
-              <h3 className="font-bold text-lg text-marigold-950 mb-2 group-hover:text-marigold-700 flex items-center gap-2">
-                <Briefcase className="w-5 h-5" /> {t('dashboard.myGigs')}
-              </h3>
-              <p className="text-ink-600 text-xs">
-                {t('dashboard.manageGigs')}
-              </p>
-            </motion.button>
-            <motion.button
-              variants={itemVariants}
-              onClick={() => scrollToSection('projects-section')}
-              className="group text-left bg-green-50 p-4 sm:p-6 rounded-xl hover:bg-green-100/70 hover:-translate-y-1 transition-all duration-300 shadow-sm border border-green-100/30 wm-panel wm-card"
-            >
-              <h3 className="font-bold text-lg text-green-950 mb-2 group-hover:text-green-700 flex items-center gap-2">
-                <CheckCircle className="w-5 h-5" /> {t('dashboard.orders')}
-              </h3>
-              <p className="text-ink-600 text-xs">
-                {t('dashboard.exploreProjects')}
-              </p>
-            </motion.button>
-            <motion.button
-              variants={itemVariants}
-              onClick={() => navigate('/chat')}
-              className="group text-left bg-paper p-4 sm:p-6 rounded-xl hover:bg-paper hover:-translate-y-1 transition-all duration-300 shadow-sm border border-border wm-panel wm-card"
-            >
-              <h3 className="font-bold text-lg text-ink-dark mb-2 group-hover:text-ink-dark flex items-center gap-2">
-                <MessageSquare className="w-5 h-5" /> {t('dashboard.messages')}
-              </h3>
-              <p className="text-ink-600 text-xs">
-                {t('dashboard.chatManagers')}
-              </p>
-            </motion.button>
+            {/* Feature Cards */}
+            <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
+              <motion.button
+                variants={itemVariants}
+                onClick={() => openSection('gigs-section', 'gigs')}
+                className="group text-left bg-marigold-50 p-4 sm:p-6 rounded-xl hover:bg-marigold-100/70 hover:-translate-y-1 transition-all duration-300 shadow-sm border border-marigold-100/30 wm-panel wm-card"
+              >
+                <h3 className="font-bold text-lg text-marigold-950 mb-2 group-hover:text-marigold-700 flex items-center gap-2">
+                  <Briefcase className="w-5 h-5" /> {t('dashboard.myGigs')}
+                </h3>
+                <p className="text-ink-600 text-xs">
+                  {t('dashboard.manageGigs')}
+                </p>
+              </motion.button>
+              <motion.button
+                variants={itemVariants}
+                onClick={() => openSection('projects-section', 'projects')}
+                className="group text-left bg-green-50 p-4 sm:p-6 rounded-xl hover:bg-green-100/70 hover:-translate-y-1 transition-all duration-300 shadow-sm border border-green-100/30 wm-panel wm-card"
+              >
+                <h3 className="font-bold text-lg text-green-950 mb-2 group-hover:text-green-700 flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5" /> {t('dashboard.orders')}
+                </h3>
+                <p className="text-ink-600 text-xs">
+                  {t('dashboard.exploreProjects')}
+                </p>
+              </motion.button>
+              <motion.button
+                variants={itemVariants}
+                onClick={() => navigate('/chat')}
+                className="group text-left bg-paper p-4 sm:p-6 rounded-xl hover:bg-paper hover:-translate-y-1 transition-all duration-300 shadow-sm border border-border wm-panel wm-card"
+              >
+                <h3 className="font-bold text-lg text-ink-dark mb-2 group-hover:text-ink-dark flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5" />{' '}
+                  {t('dashboard.messages')}
+                </h3>
+                <p className="text-ink-600 text-xs">
+                  {t('dashboard.chatManagers')}
+                </p>
+              </motion.button>
+            </div>
           </div>
 
           {/* ================================================================= */}
@@ -470,7 +486,11 @@ export default function Dashboard() {
           {currentUser && currentUser.userRole !== 'company' && (
             <div
               id="gigs-section"
-              className="mt-12 pt-8 border-t border-ink-100"
+              className={`mt-12 pt-8 border-t border-ink-100 ${
+                mobileTab === 'gigs'
+                  ? 'max-md:mt-0 max-md:pt-0 max-md:border-t-0'
+                  : 'hidden md:block'
+              }`}
             >
               <h2 className="text-lg sm:text-2xl font-bold text-ink-800 mb-2">
                 {t('dashboard.myGigsAppsTitle')}
@@ -972,7 +992,11 @@ export default function Dashboard() {
           {/* ================================================================= */}
           <div
             id="projects-section"
-            className="mt-12 pt-8 border-t border-ink-100"
+            className={`mt-12 pt-8 border-t border-ink-100 ${
+              mobileTab === 'projects'
+                ? 'max-md:mt-0 max-md:pt-0 max-md:border-t-0'
+                : 'hidden md:block'
+            }`}
           >
             <h2 className="text-lg sm:text-2xl font-bold text-ink-800 mb-2">
               {t('dashboard.deployedCompanyProjects')}

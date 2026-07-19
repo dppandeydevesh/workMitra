@@ -5,7 +5,6 @@ import { API_BASE_URL } from '../config';
 import { useToast } from '../components/Toast';
 // eslint-disable-next-line no-unused-vars
 import { useWebSocket } from '../components/WebSocketContext';
-import './FacultyDashboard.css';
 import { Briefcase, Users } from 'lucide-react';
 import { fetchWithAuth } from '../services/apiClient';
 export default function FacultyDashboard() {
@@ -18,6 +17,7 @@ export default function FacultyDashboard() {
 
   const [projects, setProjects] = useState([]);
   const [applicants, setApplicants] = useState([]);
+  const [applicantsError, setApplicantsError] = useState(null);
   const [selectedProjectId, setSelectedProjectId] = useState('');
   const [loading, setLoading] = useState(true);
   const [actioningId, setActioningId] = useState(null); // applicationId being approved/rejected
@@ -71,13 +71,15 @@ export default function FacultyDashboard() {
       } else if (selectedProjectId) {
         const load = async () => {
           setLoading(true);
-          const data = await fetchApplicantsForProject(selectedProjectId);
-          setApplicants(data);
+          const result = await fetchApplicantsForProject(selectedProjectId);
+          setApplicants(result.applicants);
+          setApplicantsError(result.error);
           setLoading(false);
         };
         load();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, selectedProjectId, projects]);
 
   const fetchFacultyProjects = async (email) => {
@@ -95,11 +97,11 @@ export default function FacultyDashboard() {
         const data = await res.json();
         setProjects(data);
       } else {
-        setErrorMessage('Failed to load academic projects.');
+        setErrorMessage(t('facultyDashboard.loadProjectsFailed'));
       }
     } catch (error) {
       console.error(error);
-      setErrorMessage('Network error while fetching projects.');
+      setErrorMessage(t('facultyDashboard.loadProjectsNetworkError'));
     } finally {
       setLoading(false);
     }
@@ -113,12 +115,15 @@ export default function FacultyDashboard() {
       );
       if (res.ok) {
         const data = await res.json();
-        return data;
+        return { applicants: data, error: null };
       }
-      return [];
+      return {
+        applicants: [],
+        error: t('facultyDashboard.loadApplicantsFailed'),
+      };
     } catch (e) {
       console.error(e);
-      return [];
+      return { applicants: [], error: t('facultyDashboard.toastNetworkError') };
     }
   };
 
@@ -128,12 +133,7 @@ export default function FacultyDashboard() {
   };
 
   const handleArchiveProject = async (projectId) => {
-    if (
-      !window.confirm(
-        'Are you sure you want to archive this academic project? This will hide it from the marketplace.'
-      )
-    )
-      return;
+    if (!window.confirm(t('facultyDashboard.confirmArchive'))) return;
     try {
       const res = await fetchWithAuth(
         `${API_BASE_URL}/api/projects/archive/${projectId}`,
@@ -142,24 +142,19 @@ export default function FacultyDashboard() {
         }
       );
       if (res.ok) {
-        toast.success('Project archived successfully');
+        toast.success(t('facultyDashboard.toastArchived'));
         fetchFacultyProjects(user.email);
       } else {
-        toast.error('Failed to archive project');
+        toast.error(t('facultyDashboard.toastArchiveFailed'));
       }
     } catch (err) {
       console.error(err);
-      toast.error('Network error');
+      toast.error(t('facultyDashboard.toastNetworkError'));
     }
   };
 
   const handleDeleteProject = async (projectId) => {
-    if (
-      !window.confirm(
-        'Are you sure you want to permanently delete this academic project? This cannot be undone.'
-      )
-    )
-      return;
+    if (!window.confirm(t('facultyDashboard.confirmDelete'))) return;
     try {
       const res = await fetchWithAuth(
         `${API_BASE_URL}/api/projects/${projectId}`,
@@ -168,14 +163,14 @@ export default function FacultyDashboard() {
         }
       );
       if (res.ok) {
-        toast.success('Project deleted successfully');
+        toast.success(t('facultyDashboard.toastDeleted'));
         fetchFacultyProjects(user.email);
       } else {
-        toast.error('Failed to delete project');
+        toast.error(t('facultyDashboard.toastDeleteFailed'));
       }
     } catch (err) {
       console.error(err);
-      toast.error('Network error');
+      toast.error(t('facultyDashboard.toastNetworkError'));
     }
   };
 
@@ -193,16 +188,18 @@ export default function FacultyDashboard() {
       );
       if (res.ok) {
         const result = await res.json();
-        toast.success('Profile updated successfully!');
+        toast.success(t('facultyDashboard.toastProfileUpdated'));
         setUser(result.user);
         localStorage.setItem('user', JSON.stringify(result.user));
       } else {
         const errorData = await res.json();
-        toast.error(errorData.error || 'Failed to update profile.');
+        toast.error(
+          errorData.error || t('facultyDashboard.toastProfileUpdateFailed')
+        );
       }
     } catch (err) {
       console.error(err);
-      toast.error('Network error while saving profile.');
+      toast.error(t('facultyDashboard.toastProfileNetworkError'));
     } finally {
       setSavingProfile(false);
     }
@@ -232,7 +229,7 @@ export default function FacultyDashboard() {
       });
 
       if (res.ok) {
-        toast.success('Academic Project posted successfully!');
+        toast.success(t('facultyDashboard.toastProjectPosted'));
         setFormData({
           title: '',
           description: '',
@@ -246,12 +243,14 @@ export default function FacultyDashboard() {
       } else {
         const errorData = await res.json();
         toast.error(
-          `Error: ${errorData.error || errorData.message || 'Failed to post'}`
+          errorData.error ||
+            errorData.message ||
+            t('facultyDashboard.toastPostFailed')
         );
       }
     } catch (error) {
       console.error(error);
-      toast.error('Error posting academic project. Please try again.');
+      toast.error(t('facultyDashboard.toastPostError'));
     } finally {
       setPosting(false);
     }
@@ -278,11 +277,11 @@ export default function FacultyDashboard() {
           )
         );
       } else {
-        toast.error('Failed to update status');
+        toast.error(t('facultyDashboard.toastStatusUpdateFailed'));
       }
     } catch (err) {
       console.error(err);
-      toast.error('Network error');
+      toast.error(t('facultyDashboard.toastNetworkError'));
     } finally {
       setActioningId(null);
     }
@@ -301,13 +300,13 @@ export default function FacultyDashboard() {
             style={{ background: '#F5A623', color: '#1B2333' }}
             className="px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm"
           >
-            Retry
+            {t('common.retry')}
           </button>
         </div>
       ) : (
         <>
           {/* Header Profile Section */}
-          <div className="wm-panel p-8 relative overflow-hidden flex flex-col md:flex-row items-center gap-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] (255,255,255,0.02)]">
+          <div className="wm-panel p-8 relative overflow-hidden flex flex-col md:flex-row items-center gap-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
             <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-marigold/10 rounded-full blur-3xl pointer-events-none"></div>
 
             <div className="w-24 h-24 rounded-xl bg-[#F5A623] shadow-sm flex items-center justify-center text-4xl font-bold text-white shrink-0 relative z-10">
@@ -319,10 +318,11 @@ export default function FacultyDashboard() {
             <div className="text-center md:text-left relative z-10 flex-1">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-marigold-light text-marigold-dark text-xs font-extrabold tracking-wide uppercase mb-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-marigold animate-pulse"></span>
-                Professor / HOD Account
+                {t('facultyDashboard.accountBadge')}
               </div>
               <h1 className="text-3xl font-black text-ink-800 mb-1">
-                {user.companyName || 'Faculty Member'}
+                {user.companyName ||
+                  t('facultyDashboard.facultyMemberFallback')}
               </h1>
               <p className="text-sm font-medium text-ink-500 flex items-center justify-center md:justify-start gap-2">
                 <span>✉️ {user.email}</span>
@@ -334,7 +334,7 @@ export default function FacultyDashboard() {
                 onClick={() => setActiveTab('new-project')}
                 className="w-full md:w-auto px-6 py-3 bg-marigold hover:bg-marigold-mid text-ink-dark rounded-xl font-bold shadow-md transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2"
               >
-                <span>➕</span> New Academic Project
+                <span>➕</span> {t('facultyDashboard.newProjectBtn')}
               </button>
             </div>
           </div>
@@ -471,7 +471,13 @@ export default function FacultyDashboard() {
                               {project.description}
                             </p>
                           </div>
-                          <span className="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-xs font-bold uppercase tracking-wider">
+                          <span
+                            className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider ${
+                              project.status === 'Archived'
+                                ? 'bg-ink-100 text-ink-500'
+                                : 'bg-green-100 text-green-700'
+                            }`}
+                          >
                             {project.status || 'Active'}
                           </span>
                         </div>
@@ -726,6 +732,29 @@ export default function FacultyDashboard() {
                         {t('facultyDashboard.loadingApplicants') ||
                           'Loading applicants...'}
                       </div>
+                    ) : applicantsError ? (
+                      <div className="wm-panel p-8 text-center space-y-4 max-w-md mx-auto my-6">
+                        <span className="text-4xl block">⚠️</span>
+                        <p className="text-red-700 font-bold text-sm">
+                          {applicantsError}
+                        </p>
+                        <button
+                          onClick={async () => {
+                            setLoading(true);
+                            const result =
+                              await fetchApplicantsForProject(
+                                selectedProjectId
+                              );
+                            setApplicants(result.applicants);
+                            setApplicantsError(result.error);
+                            setLoading(false);
+                          }}
+                          style={{ background: '#F5A623', color: '#1B2333' }}
+                          className="px-5 py-2 rounded-xl text-xs font-bold transition shadow-sm"
+                        >
+                          {t('common.retry')}
+                        </button>
+                      </div>
                     ) : applicants.length === 0 ? (
                       <div className="wm-panel p-[40px_24px] text-center max-w-md mx-auto my-6 flex flex-col items-center justify-center">
                         <div className="w-[48px] h-[48px] rounded-xl bg-[#FBE7C4] flex items-center justify-center text-[#F5A623] shadow-sm mb-4">
@@ -805,7 +834,10 @@ export default function FacultyDashboard() {
                                   disabled={actioningId === app.applicationId}
                                   className="flex-1 md:flex-none px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-sm font-bold transition disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                  {actioningId === app.applicationId ? '…' : (t('facultyDashboard.approve') || 'Approve')}
+                                  {actioningId === app.applicationId
+                                    ? '…'
+                                    : t('facultyDashboard.approve') ||
+                                      'Approve'}
                                 </button>
                                 <button
                                   onClick={() =>
@@ -817,7 +849,9 @@ export default function FacultyDashboard() {
                                   disabled={actioningId === app.applicationId}
                                   className="flex-1 md:flex-none px-4 py-2 bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 rounded-lg text-sm font-bold transition disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                  {actioningId === app.applicationId ? '…' : (t('facultyDashboard.reject') || 'Reject')}
+                                  {actioningId === app.applicationId
+                                    ? '…'
+                                    : t('facultyDashboard.reject') || 'Reject'}
                                 </button>
                               </div>
                             </div>
@@ -840,7 +874,7 @@ export default function FacultyDashboard() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-sm font-extrabold text-ink-700 mb-2">
-                        Full Name
+                        {t('facultyDashboard.labelFullName')}
                       </label>
                       <input
                         type="text"
@@ -857,7 +891,7 @@ export default function FacultyDashboard() {
                     </div>
                     <div>
                       <label className="block text-sm font-extrabold text-ink-700 mb-2">
-                        Mobile Number
+                        {t('facultyDashboard.labelMobile')}
                       </label>
                       <input
                         type="text"
@@ -876,7 +910,7 @@ export default function FacultyDashboard() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-sm font-extrabold text-ink-700 mb-2">
-                        University / College
+                        {t('facultyDashboard.labelUniversity')}
                       </label>
                       <input
                         type="text"
@@ -887,7 +921,7 @@ export default function FacultyDashboard() {
                     </div>
                     <div>
                       <label className="block text-sm font-extrabold text-ink-700 mb-2">
-                        Department
+                        {t('facultyDashboard.labelDepartment')}
                       </label>
                       <input
                         type="text"
@@ -907,7 +941,7 @@ export default function FacultyDashboard() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-sm font-extrabold text-ink-700 mb-2">
-                        Personal / Lab Website
+                        {t('facultyDashboard.labelWebsite')}
                       </label>
                       <input
                         type="url"
@@ -924,7 +958,7 @@ export default function FacultyDashboard() {
                     </div>
                     <div>
                       <label className="block text-sm font-extrabold text-ink-700 mb-2">
-                        LinkedIn Profile URL
+                        {t('facultyDashboard.labelLinkedin')}
                       </label>
                       <input
                         type="url"
@@ -943,7 +977,7 @@ export default function FacultyDashboard() {
 
                   <div>
                     <label className="block text-sm font-extrabold text-ink-700 mb-2">
-                      Bio / Research Area / Specialization
+                      {t('facultyDashboard.labelBio')}
                     </label>
                     <textarea
                       rows="4"
@@ -951,7 +985,7 @@ export default function FacultyDashboard() {
                       onChange={(e) =>
                         setProfileData({ ...profileData, bio: e.target.value })
                       }
-                      placeholder="Briefly describe your academic background, research interests, or lab focus..."
+                      placeholder={t('facultyDashboard.bioPlaceholder')}
                       className="w-full bg-ink-50 border border-ink-200 rounded-xl px-4 py-3 text-ink-800 focus:ring-2 focus:ring-marigold outline-none transition"
                     />
                   </div>
@@ -962,8 +996,8 @@ export default function FacultyDashboard() {
                     className="w-full bg-marigold hover:bg-marigold-mid text-ink-dark font-black py-4 rounded-xl transition shadow-md"
                   >
                     {savingProfile
-                      ? 'Saving Changes...'
-                      : 'Save Profile Settings 💾'}
+                      ? t('facultyDashboard.savingProfile')
+                      : t('facultyDashboard.saveProfileBtn')}
                   </button>
                 </form>
               </div>

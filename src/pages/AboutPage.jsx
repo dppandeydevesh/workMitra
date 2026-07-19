@@ -2,6 +2,8 @@ import { useState} from"react";
 import { useNavigate} from"react-router-dom";
 import { useToast} from"../components/Toast";
 import { useTranslation} from"react-i18next";
+import { fetchWithAuth } from '../services/apiClient';
+import { API_BASE_URL } from '../config';
 
 export default function AboutPage() {const navigate = useNavigate();
  const toast = useToast();
@@ -12,17 +14,28 @@ export default function AboutPage() {const navigate = useNavigate();
  const [message, setMessage] = useState("");
  const [submitting, setSubmitting] = useState(false);
 
- const handleSubmit = (e) => {e.preventDefault();
- if (!name || !email || !message) {toast.error(t("about.toastFillAll"));
- return;
-}
+ const handleSubmit = async (e) => {
+ e.preventDefault();
+ if (!name || !email || !message) { toast.error(t('about.toastFillAll')); return; }
  setSubmitting(true);
- setTimeout(() => {toast.success(t("about.toastTicketCreated"));
- setName("");
- setEmail("");
- setMessage("");
- setSubmitting(false);
-}, 1200);
+ try {
+   const res = await fetchWithAuth(`${API_BASE_URL}/api/auth/contact`, {
+     method: 'POST',
+     headers: { 'Content-Type': 'application/json' },
+     body: JSON.stringify({ name, email, message }),
+   });
+   const data = await res.json();
+   if (res.ok) {
+     toast.success(t('about.toastTicketCreated'));
+     setName(''); setEmail(''); setMessage('');
+   } else {
+     toast.error(data.error || t('about.toastSubmitFailed', 'Failed to send. Please try again.'));
+   }
+ } catch {
+   toast.error(t('about.toastSubmitFailed', 'Failed to send. Please try again.'));
+ } finally {
+   setSubmitting(false);
+ }
 };
 
  return (

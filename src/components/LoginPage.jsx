@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { useLoginPage } from '../hooks/useLoginPage';
 
 import AuthLanding from './auth/AuthLanding';
@@ -8,6 +9,7 @@ import PasswordRecoveryForm from './auth/PasswordRecoveryForm';
 
 export default function LoginPage() {
   const { t } = useTranslation();
+  const location = useLocation();
 
   const {
     view,
@@ -108,6 +110,12 @@ export default function LoginPage() {
           >
             ← {t('login.backToPaths')}
           </button>
+
+          {location.state?.sessionExpired && (
+            <div className="mb-4 px-4 py-2 bg-yellow-50 text-yellow-800 text-xs font-bold rounded-xl border border-yellow-300 z-50 shadow-md">
+              ⚠️ Your session has expired. Please sign in again.
+            </div>
+          )}
 
           {errorMessage && (
             <div className="mb-4 px-4 py-2 bg-red-100 text-red-700 text-xs font-bold rounded-xl border border-red-200 z-50 shadow-md">

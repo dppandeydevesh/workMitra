@@ -38,5 +38,14 @@ router.post('/complete-profile', authenticateToken, authController.completeProfi
 router.put('/company-profile', authenticateToken, authController.updateCompanyProfile);
 router.put('/faculty-profile', authenticateToken, authController.updateFacultyProfile);
 
+const contactLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: { error: 'Too many messages sent. Please wait before trying again.' },
+  keyGenerator: (req) => req.realIP || req.ip,
+  validate: false,
+});
+router.post('/contact', contactLimiter, authController.sendContactEmail);
+
 module.exports = router;
 

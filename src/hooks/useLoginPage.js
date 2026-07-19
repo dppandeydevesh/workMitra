@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '../components/Toast';
 import { identifyUser, capture } from '../lib/posthog';
@@ -16,6 +16,7 @@ import {
  */
 export function useLoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const toast = useToast();
   const { t } = useTranslation();
 
@@ -121,18 +122,18 @@ export function useLoginPage() {
           track('user_logged_in', { role: data.user.userRole });
 
           if (data.user.userRole === 'company') {
-            navigate('/company-dashboard');
+            navigate(location.state?.from?.pathname || '/company-dashboard');
           } else if (data.user.userRole === 'admin') {
-            navigate('/admin-dashboard');
+            navigate(location.state?.from?.pathname || '/admin-dashboard');
           } else if (data.user.userRole === 'college') {
-            navigate('/college-dashboard');
+            navigate(location.state?.from?.pathname || '/college-dashboard');
           } else if (data.user.userRole === 'faculty') {
-            navigate('/faculty-dashboard');
+            navigate(location.state?.from?.pathname || '/faculty-dashboard');
           } else {
             if (data.user.hasCompletedProfile === true) {
-              navigate('/dashboard');
+              navigate(location.state?.from?.pathname || '/dashboard');
             } else {
-              navigate('/preferences');
+              navigate(location.state?.from?.pathname || '/preferences');
             }
           }
         }
@@ -291,15 +292,15 @@ export function useLoginPage() {
         setIsOtpVerifying(false);
 
         if (data.user.userRole === 'company') {
-          navigate('/company-dashboard');
+          navigate(location.state?.from?.pathname || '/company-dashboard');
         } else if (data.user.userRole === 'admin') {
-          navigate('/admin-dashboard');
+          navigate(location.state?.from?.pathname || '/admin-dashboard');
         } else if (data.user.userRole === 'college') {
-          navigate('/college-dashboard');
+          navigate(location.state?.from?.pathname || '/college-dashboard');
         } else if (data.user.userRole === 'faculty') {
-          navigate('/faculty-dashboard');
+          navigate(location.state?.from?.pathname || '/faculty-dashboard');
         } else {
-          navigate('/preferences');
+          navigate(location.state?.from?.pathname || '/preferences');
         }
       } else {
         setErrorMessage(data.error || t('login.verificationFailed'));

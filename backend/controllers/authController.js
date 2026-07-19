@@ -734,6 +734,38 @@ const resendRegistrationOtp = async (req, res, next) => {
   }
 };
 
+const sendContactEmail = async (req, res, next) => {
+  try {
+    const { name, email, message } = req.body;
+    if (!name || !email || !message) {
+      return res.status(400).json({ error: 'All fields are required.' });
+    }
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (!resendApiKey) {
+      console.warn('[contact] RESEND_API_KEY not set — contact form submission dropped.');
+      return res.status(200).json({ message: 'Message received.' });
+    }
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendApiKey}` },
+      body: JSON.stringify({
+        from: 'WorkMitra Support <support@workmitra.me>',
+        to: ['adminWorkMitra@gmail.com'],
+        subject: `[Contact] ${name} — ${email}`,
+        html: `<p><strong>From:</strong> ${name} &lt;${email}&gt;</p><p><strong>Message:</strong></p><p>${message.replace(/\n/g, '<br/>')}</p>`,
+      }),
+    });
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      console.error('[contact] Resend error:', data);
+      return res.status(500).json({ error: 'Failed to send message. Please try again.' });
+    }
+    res.status(200).json({ message: 'Your message has been sent. We will reply within 24 hours.' });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   refreshAccessToken,
   register,
@@ -749,5 +781,6 @@ module.exports = {
   completeProfile,
   updateCompanyProfile,
   updateFacultyProfile,
+  sendContactEmail,
 };
 

@@ -5,11 +5,14 @@ import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../config';
 import { fetchWithAuth } from '../services/apiClient';
 import { trackDailyTask } from '../utils/dailyTasks';
+import { useToast } from '../components/Toast';
 
 export default function Preferences() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const toast = useToast();
   const [errorMessage, setErrorMessage] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   // User preferences state
   const [preferences, setPreferences] = useState(() => {
@@ -136,6 +139,7 @@ export default function Preferences() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSaving) return;
     setErrorMessage('');
 
     const savedUser = localStorage.getItem('user');
@@ -147,6 +151,7 @@ export default function Preferences() {
     const parsedUser = JSON.parse(savedUser);
 
     try {
+      setIsSaving(true);
       // Save profile preferences using student update API
       const profileResponse = await fetchWithAuth(
         `${API_BASE_URL}/api/profile/student/${parsedUser.email}`,
@@ -204,7 +209,7 @@ export default function Preferences() {
         parsedUser.interests = preferences.interests;
         localStorage.setItem('user', JSON.stringify(parsedUser));
         trackDailyTask('improve'); // daily checklist: "sharpen your profile"
-
+        toast.success(t('preferences.saved', 'Preferences saved!'));
         console.log('User Preferences Locked:', preferences);
         navigate('/dashboard'); // Sends student to the marketplace grid containing live company tasks
       } else {
@@ -214,6 +219,8 @@ export default function Preferences() {
     } catch (err) {
       console.error(err);
       setErrorMessage(t('preferences.server_error'));
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -401,6 +408,25 @@ export default function Preferences() {
                   {skill}
                 </button>
               ))}
+              {/* Custom skills (not in the preset list) rendered as dismissible chips */}
+              {preferences.skills
+                .filter((s) => !skillsList.includes(s))
+                .map((skill) => (
+                  <span
+                    key={skill}
+                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-marigold-500 text-white shadow-sm"
+                  >
+                    {skill}
+                    <button
+                      type="button"
+                      onClick={() => handleSkillToggle(skill)}
+                      className="ml-0.5 hover:text-marigold-200 font-bold leading-none"
+                      aria-label={`Remove ${skill}`}
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
             </div>
             {/* Custom skill input */}
             <div className="flex gap-2 mt-3">
@@ -449,6 +475,25 @@ export default function Preferences() {
                   {interest}
                 </button>
               ))}
+              {/* Custom interests (not in the preset list) rendered as dismissible chips */}
+              {preferences.interests
+                .filter((i) => !interestsList.includes(i))
+                .map((interest) => (
+                  <span
+                    key={interest}
+                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-green-600 text-white shadow-sm"
+                  >
+                    {interest}
+                    <button
+                      type="button"
+                      onClick={() => handleInterestToggle(interest)}
+                      className="ml-0.5 hover:text-green-200 font-bold leading-none"
+                      aria-label={`Remove ${interest}`}
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
             </div>
             {/* Custom interest input */}
             <div className="flex gap-2 mt-3">
@@ -480,9 +525,14 @@ export default function Preferences() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-marigold-500 text-white py-3 rounded-lg hover:bg-marigold-600 transition font-medium shadow-md active:scale-[0.99]"
+            disabled={isSaving}
+            className={`w-full py-3 rounded-lg transition font-medium shadow-md active:scale-[0.99] ${
+              isSaving
+                ? 'bg-ink-300 text-ink-500 cursor-not-allowed'
+                : 'bg-marigold-500 text-white hover:bg-marigold-600'
+            }`}
           >
-            {t('preferences.continue_button')} →
+            {isSaving ? t('preferences.saving', 'Saving…') : `${t('preferences.continue_button')} →`}
           </button>
         </form>
 

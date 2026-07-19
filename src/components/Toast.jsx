@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback} from"react";
+import { createContext, useContext, useState, useCallback, useEffect } from "react";
 
 const ToastContext = createContext(null);
 
@@ -19,6 +19,12 @@ export function ToastProvider({ children}) {const [toasts, setToasts] = useState
  info: (msg) => addToast(msg,"info"),
  warning: (msg) => addToast(msg,"warning"),
 };
+
+  // Expose to window so the alert() interceptor in main.jsx can call it
+  useEffect(() => {
+    window.showToast = (message, type = 'info') => addToast(message, type);
+    return () => { delete window.showToast; };
+  }, [addToast]);
 
  return (
  <ToastContext.Provider value={toast}>

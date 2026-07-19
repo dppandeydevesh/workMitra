@@ -29,6 +29,7 @@ const NO_REFRESH_ENDPOINTS = [
   '/api/auth/login',
   '/api/auth/register',
   '/api/auth/register-verify',
+  '/api/auth/resend-otp',
   '/api/auth/refresh',
   '/api/auth/forgot-password',
   '/api/auth/reset-password',

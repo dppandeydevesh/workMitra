@@ -694,10 +694,51 @@ const refreshAccessToken = async (req, res, _next) => {
   }
 };
 
+// =========================================================================
+// 🔁 Resend registration OTP — reuses the pending registration created by
+// register(). Issues a fresh code so an undelivered email doesn't force the
+// user to abandon signup and re-enter the whole form.
+// =========================================================================
+const resendRegistrationOtp = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "Email is required." });
+    }
+
+    const pending = await PendingUser.findOne({ email });
+    if (!pending) {
+      return res.status(400).json({ error: "Verification session expired or invalid. Please try registering again." });
+    }
+
+    const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    const emailSuccess = await sendEmailOtp(email, emailOtp);
+    if (!emailSuccess) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[DEVELOPMENT] Resend not configured. Bypassed OTP dispatch. Regenerated OTP for ${email}: ${emailOtp}`);
+      } else {
+        return res.status(400).json({ error: "Failed to deliver OTP. Please check your email address and try again." });
+      }
+    }
+
+    pending.emailOtp = emailOtp;
+    pending.mobileOtp = emailOtp;
+    // Reset the 10-minute TTL so the fresh code doesn't expire early
+    pending.createdAt = new Date();
+    await pending.save();
+
+    res.status(200).json({ message: "A new verification code has been sent." });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+};
+
 module.exports = {
   refreshAccessToken,
   register,
   verifyOtp,
+  resendRegistrationOtp,
   login,
   forgotPassword,
   resetPassword,

@@ -51,10 +51,26 @@ export async function verifyOtp(email, otp) {
 }
 
 /**
+ * Request a fresh OTP for an in-progress registration.
+ * @param {string} email
+ */
+export async function resendOtp(email) {
+  const res = await fetchWithAuth(`${API_BASE_URL}/api/auth/resend-otp`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  const data = await res.json();
+  return { ok: res.ok, data };
+}
+
+/**
  * Request a password reset email.
  * @param {string} email
  */
 export async function forgotPassword(email) {
+
   const res = await fetchWithAuth(`${API_BASE_URL}/api/auth/forgot-password`, {
     method: 'POST',
     credentials: 'include',

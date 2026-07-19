@@ -1,15 +1,49 @@
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { resendOtp } from '../../services/authService';
+
+const COOLDOWN_SECONDS = 60;
 
 export default function OtpVerification({
+  email,
   emailOtpInput,
   setEmailOtpInput,
   handleOtpVerifySubmit,
   isVerifying,
   setIsOtpVerifying,
-  setErrorMessage
+  setErrorMessage,
 }) {
   const { t } = useTranslation();
+  const [cooldown, setCooldown] = useState(0); // seconds remaining
+  const [resending, setResending] = useState(false);
+  const [resendMsg, setResendMsg] = useState('');
+
+  // Tick down the cooldown every second
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const id = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(id);
+  }, [cooldown]);
+
+  const handleResend = useCallback(async () => {
+    if (!email || cooldown > 0 || resending) return;
+    setResending(true);
+    setResendMsg('');
+    try {
+      const { ok, data } = await resendOtp(email);
+      if (ok) {
+        setResendMsg(t('login.otpResent'));
+        setCooldown(COOLDOWN_SECONDS);
+      } else {
+        setResendMsg(data?.error || t('login.otpResendFailed'));
+      }
+    } catch {
+      setResendMsg(t('login.otpResendFailed'));
+    } finally {
+      setResending(false);
+    }
+  }, [email, cooldown, resending, t]);
 
   return (
     <motion.div
@@ -35,16 +69,15 @@ export default function OtpVerification({
         </p>
       </div>
 
-      <form
-        onSubmit={handleOtpVerifySubmit}
-        className="space-y-4 text-left"
-      >
+      <form onSubmit={handleOtpVerifySubmit} className="space-y-4 text-left">
         <div>
           <label className="block text-left text-[9px] font-bold text-ink-400 uppercase mb-1.5 px-1">
             {t('login.emailVerificationCode')}
           </label>
           <input
             type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
             maxLength="6"
             value={emailOtpInput}
             onChange={(e) => setEmailOtpInput(e.target.value)}
@@ -53,21 +86,45 @@ export default function OtpVerification({
             required
           />
           <p className="text-[10px] text-ink-400 mt-1.5 px-1">
-            Check your email inbox for the 6-digit code.
+            {t('login.checkInbox')}
           </p>
         </div>
 
         <button
           type="submit"
           disabled={isVerifying}
-          className={`w-full py-3.5 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition mt-2 ${isVerifying ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#F5A623] hover:bg-[#E0941F] hover:opacity-95'}`}
+          className={`w-full py-3.5 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition mt-2 ${
+            isVerifying ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#F5A623] hover:bg-[#E0941F] hover:opacity-95'
+          }`}
         >
-          {isVerifying
-            ? t('login.verifying')
-            : t('login.verifyAndCreate')}
+          {isVerifying ? t('login.verifying') : t('login.verifyAndCreate')}
         </button>
 
-        <div className="pt-2">
+        {/* Resend code */}
+        <div className="flex items-center justify-center gap-2 pt-1">
+          <button
+            type="button"
+            onClick={handleResend}
+            disabled={cooldown > 0 || resending}
+            className={`text-xs font-bold transition ${
+              cooldown > 0 || resending
+                ? 'text-ink-300 cursor-not-allowed'
+                : 'text-[#F5A623] hover:text-[#E0941F] hover:underline'
+            }`}
+          >
+            {resending
+              ? t('login.otpSending')
+              : cooldown > 0
+              ? t('login.otpResendIn', { seconds: cooldown })
+              : t('login.resendCode')}
+          </button>
+        </div>
+
+        {resendMsg && (
+          <p className="text-[11px] text-center text-green-600 font-medium">{resendMsg}</p>
+        )}
+
+        <div className="pt-1">
           <button
             type="button"
             onClick={() => {

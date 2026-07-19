@@ -117,6 +117,7 @@ export default function LoginPage() {
 
           {isOtpVerifying ? (
             <OtpVerification
+              email={email}
               emailOtpInput={emailOtpInput}
               setEmailOtpInput={setEmailOtpInput}
               handleOtpVerifySubmit={handleOtpVerifySubmit}

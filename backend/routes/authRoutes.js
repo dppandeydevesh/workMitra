@@ -23,6 +23,7 @@ const resetPasswordLimiter = rateLimit({
 
 router.post('/register', registerLimiter, authController.register);
 router.post('/register-verify', verifyLimiter, authController.verifyOtp);
+router.post('/resend-otp', verifyLimiter, authController.resendRegistrationOtp);
 router.post('/login', loginLimiter, authController.login);
 router.post('/forgot-password', forgotPasswordLimiter, authController.forgotPassword);
 router.post('/reset-password/:token', resetPasswordLimiter, authController.resetPassword);

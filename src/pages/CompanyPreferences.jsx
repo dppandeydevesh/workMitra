@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { API_BASE_URL } from '../config';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/Toast';
@@ -11,6 +11,33 @@ export default function CompanyPreferences() {
   const { t } = useTranslation();
 
   const [errorMessage, setErrorMessage] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Prefetch existing company profile so returning users see their saved data
+  useEffect(() => {
+    fetchWithAuth(`${API_BASE_URL}/api/profile/company`, { credentials: 'include' })
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        if (!data) return;
+        if (data.companyName) setCompanyName(data.companyName);
+        if (data.website) setWebsite(data.website);
+        if (data.industry) setIndustry(data.industry);
+        if (data.companySize) setCompanySize(data.companySize);
+        if (data.location) setLocation(data.location);
+        if (Array.isArray(data.requiredRoles)) setRequiredRoles(data.requiredRoles);
+        if (Array.isArray(data.requiredSkills)) setRequiredSkills(data.requiredSkills);
+        if (data.projectTitle) setProjectTitle(data.projectTitle);
+        if (data.projectDescription) setProjectDescription(data.projectDescription);
+        if (data.projectDuration) setProjectDuration(data.projectDuration);
+        if (data.hiringType) setHiringType(data.hiringType);
+        if (data.budgetMin != null) setBudgetMin(String(data.budgetMin));
+        if (data.budgetMax != null) setBudgetMax(String(data.budgetMax));
+        if (data.workMode) setWorkMode(data.workMode);
+        if (data.studentsRequired) setStudentsRequired(String(data.studentsRequired));
+      })
+      .catch(() => {}); // non-fatal — form still usable
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Section 1: Company Information
   const [companyName, setCompanyName] = useState('');
@@ -80,6 +107,7 @@ export default function CompanyPreferences() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSaving) return;
     setErrorMessage('');
 
     const payload = {
@@ -101,6 +129,7 @@ export default function CompanyPreferences() {
     };
 
     try {
+      setIsSaving(true);
       const response = await fetchWithAuth(
         `${API_BASE_URL}/api/profile/company`,
         {
@@ -140,6 +169,8 @@ export default function CompanyPreferences() {
     } catch (err) {
       console.error(err);
       setErrorMessage(t('companyPreferences.errorServer'));
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -392,9 +423,10 @@ export default function CompanyPreferences() {
 
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-paper to-marigold-600 hover:from-paper hover:to-marigold-700 text-white font-bold text-sm uppercase py-4 rounded-xl shadow-md transition active:scale-[0.99]"
+            disabled={isSaving}
+            className={`w-full font-bold text-sm uppercase py-4 rounded-xl shadow-md transition active:scale-[0.99] ${isSaving ? 'bg-ink-300 text-ink-500 cursor-not-allowed' : 'bg-gradient-to-r from-paper to-marigold-600 hover:from-paper hover:to-marigold-700 text-white'}`}
           >
-            {t('companyPreferences.saveButton')}
+            {isSaving ? t('companyPreferences.saving', 'Saving…') : t('companyPreferences.saveButton')}
           </button>
         </form>
       </div>

@@ -15,6 +15,7 @@ export default function CollegeDashboard() {
   const [students, setStudents] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [endorsingEmail, setEndorsingEmail] = useState(null); // email being actioned
   const [errorMessage, setErrorMessage] = useState('');
   const [activeTab, setActiveTab] = useState('roster'); // roster | leaderboard | vetting | onboarding
 
@@ -72,6 +73,8 @@ export default function CollegeDashboard() {
   };
 
   const handleEndorseToggle = async (studentEmail, currentStatus) => {
+    if (endorsingEmail) return; // block concurrent clicks
+    setEndorsingEmail(studentEmail);
     try {
       const res = await fetchWithAuth(`${API_BASE_URL}/api/college/endorse`, {
         credentials: 'include',
@@ -95,6 +98,8 @@ export default function CollegeDashboard() {
     } catch (err) {
       console.error(err);
       toast.error(t('college.networkErrorEndorsement'));
+    } finally {
+      setEndorsingEmail(null);
     }
   };
 
@@ -504,14 +509,17 @@ export default function CollegeDashboard() {
                                   student.isEndorsed
                                 )
                               }
+                              disabled={endorsingEmail === student.email}
                               className={`px-3 py-1.5 rounded-xl text-[10px] font-bold border transition ${
                                 student.isEndorsed
                                   ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
                                   : 'bg-white hover:bg-ink-50 text-ink-500 border-ink-200'
-                              }`}
+                              } disabled:opacity-50 disabled:cursor-not-allowed`}
                             >
                               🎓{' '}
-                              {student.isEndorsed
+                              {endorsingEmail === student.email
+                                ? '…'
+                                : student.isEndorsed
                                 ? t('college.btnEndorsed')
                                 : t('college.btnEndorse')}
                             </button>

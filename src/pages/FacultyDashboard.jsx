@@ -20,6 +20,7 @@ export default function FacultyDashboard() {
   const [applicants, setApplicants] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState('');
   const [loading, setLoading] = useState(true);
+  const [actioningId, setActioningId] = useState(null); // applicationId being approved/rejected
 
   const [formData, setFormData] = useState({
     title: '',
@@ -257,6 +258,8 @@ export default function FacultyDashboard() {
   };
 
   const handleApplicationStatus = async (appId, newStatus) => {
+    if (actioningId) return;
+    setActioningId(appId);
     try {
       const res = await fetchWithAuth(
         `${API_BASE_URL}/api/applications/${appId}/status`,
@@ -280,6 +283,8 @@ export default function FacultyDashboard() {
     } catch (err) {
       console.error(err);
       toast.error('Network error');
+    } finally {
+      setActioningId(null);
     }
   };
 
@@ -797,9 +802,10 @@ export default function FacultyDashboard() {
                                       'Approved'
                                     )
                                   }
-                                  className="flex-1 md:flex-none px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-sm font-bold transition"
+                                  disabled={actioningId === app.applicationId}
+                                  className="flex-1 md:flex-none px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-sm font-bold transition disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                  {t('facultyDashboard.approve') || 'Approve'}
+                                  {actioningId === app.applicationId ? '…' : (t('facultyDashboard.approve') || 'Approve')}
                                 </button>
                                 <button
                                   onClick={() =>
@@ -808,9 +814,10 @@ export default function FacultyDashboard() {
                                       'Rejected'
                                     )
                                   }
-                                  className="flex-1 md:flex-none px-4 py-2 bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 rounded-lg text-sm font-bold transition"
+                                  disabled={actioningId === app.applicationId}
+                                  className="flex-1 md:flex-none px-4 py-2 bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 rounded-lg text-sm font-bold transition disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                  {t('facultyDashboard.reject') || 'Reject'}
+                                  {actioningId === app.applicationId ? '…' : (t('facultyDashboard.reject') || 'Reject')}
                                 </button>
                               </div>
                             </div>

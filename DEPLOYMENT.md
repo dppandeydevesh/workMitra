@@ -68,10 +68,10 @@ Set all of these in **Render → Environment**. Values are never committed.
 - `GEMINI_API_KEY`
 - `GEMINI_API_URL` *(optional; defaults to gemini-2.5-flash)*
 
-### Redis / queues (Upstash)
-- `REDIS_URL` — Upstash **TLS** `rediss://…` URL (BullMQ + ioredis)
-- `UPSTASH_REDIS_REST_URL` — REST endpoint (rate-limiter store)
+### Redis (Upstash)
+- `UPSTASH_REDIS_REST_URL` — REST endpoint (rate-limiter store; limiter fails open if Redis is unreachable or over quota)
 - `UPSTASH_REDIS_REST_TOKEN`
+- `REDIS_URL` is no longer needed — the BullMQ queue was replaced by an in-process AI job runner (Upstash free-tier command quota was being exhausted by idle BullMQ polling)
 
 ### Payments (Razorpay)
 - `RAZORPAY_KEY_ID`

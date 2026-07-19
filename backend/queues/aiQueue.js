@@ -1,15 +1,34 @@
-const { Queue, Worker } = require('bullmq');
-const IORedis = require('ioredis');
+// =========================================================================
+// 🤖 In-process AI job runner
+//
+// Replaces the previous BullMQ + Redis implementation. BullMQ workers poll
+// Redis continuously even when idle, which exhausted the Upstash free-tier
+// command quota (500k/month) and broke every Redis consumer in production.
+// We run a single server instance and the only queued work is short-lived
+// Gemini calls, so an in-memory queue is simpler, free, and just as correct.
+// Trade-off: pending jobs are lost on restart/deploy — the frontend already
+// handles that (polling gives up after ~60s and asks the user to retry).
+// =========================================================================
+const crypto = require('crypto');
 const AiService = require('../services/AiService');
 
-const connection = new IORedis(process.env.REDIS_URL, {
-  maxRetriesPerRequest: null,
-});
+const CONCURRENCY = 2; // mirror the old BullMQ worker setting
+const JOB_TTL_MS = 30 * 60 * 1000; // forget finished jobs after 30 minutes
 
-const aiQueue = new Queue('ai-tasks', { connection });
+const jobs = new Map(); // id -> { id, state, returnvalue, failedReason, createdAt }
+const waiting = [];
+let activeCount = 0;
 
-const aiWorker = new Worker('ai-tasks', async (job) => {
-  const { type, payload } = job.data;
+// Periodically drop old jobs so the map never grows unbounded.
+setInterval(() => {
+  const now = Date.now();
+  for (const [id, job] of jobs) {
+    if (now - job.createdAt > JOB_TTL_MS) jobs.delete(id);
+  }
+}, 5 * 60 * 1000).unref();
+
+async function processJob(job) {
+  const { type, payload } = job;
 
   if (type === 'cv-review' || type === 'resume-check') {
     const prompt = `You are an expert Applicant Tracking System (ATS).
@@ -27,7 +46,7 @@ Resume Text:
 ${payload.resumeText || payload.cvText}`;
 
     const result = await AiService.callGemini(prompt, { responseMimeType: 'application/json', temperature: 0.2 });
-    
+
     if (!result?.text) {
       throw new Error('Empty response from AI engine.');
     }
@@ -41,7 +60,7 @@ ${payload.resumeText || payload.cvText}`;
   }
 
   if (type === 'job-match') {
-    const prompt = `You are an AI recommendations engine. 
+    const prompt = `You are an AI recommendations engine.
 Here is the user's skill profile:
 Skills/Interests: ${payload.studentProfile}
 Resume Summary: ${payload.resumeText || 'N/A'}
@@ -68,18 +87,56 @@ Return ONLY a valid JSON array of strings (the 3 project IDs). No markdown, no e
     if (!Array.isArray(recommendedIds)) recommendedIds = [];
     return recommendedIds.slice(0, 3);
   }
-}, { connection, concurrency: 2 });
 
-aiWorker.on('completed', (job, _result) => {
-  console.log(`AI job ${job.id} completed`);
-});
+  throw new Error(`Unknown AI job type: ${type}`);
+}
 
-aiWorker.on('failed', (job, err) => {
-  console.error(`AI job ${job?.id} failed:`, err.message);
-});
+function runNext() {
+  if (activeCount >= CONCURRENCY) return;
+  const job = waiting.shift();
+  if (!job) return;
 
-aiWorker.on('error', (err) => {
-  console.error('AI worker experienced a systemic error:', err);
-});
+  activeCount++;
+  job.state = 'active';
+  processJob(job)
+    .then((result) => {
+      job.state = 'completed';
+      job.returnvalue = result;
+      console.log(`AI job ${job.id} completed`);
+    })
+    .catch((err) => {
+      job.state = 'failed';
+      job.failedReason = err.message;
+      console.error(`AI job ${job.id} failed:`, err.message);
+    })
+    .finally(() => {
+      activeCount--;
+      runNext();
+    });
+}
 
-module.exports = { aiQueue, aiWorker };
+/**
+ * Enqueue an AI job. Returns immediately with `{ id }`; callers poll getJob().
+ * Random UUIDs (not sequential ids) so one user cannot guess another's job id.
+ */
+function addJob(type, payload) {
+  const job = {
+    id: crypto.randomUUID(),
+    type,
+    payload,
+    state: 'waiting',
+    returnvalue: null,
+    failedReason: null,
+    createdAt: Date.now(),
+  };
+  jobs.set(job.id, job);
+  waiting.push(job);
+  setImmediate(runNext);
+  return job;
+}
+
+function getJob(id) {
+  return jobs.get(String(id)) || null;
+}
+
+module.exports = { addJob, getJob };

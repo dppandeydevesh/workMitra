@@ -10,7 +10,7 @@ const Project = require('../models/Project');
 const AiService = require('../services/AiService');
 const pdfParse = require('pdf-parse');
 const { matchProjectsForStudent, backfillAllProjects } = require('../utils/pinecone');
-const { aiQueue } = require('../queues/aiQueue');
+const aiQueue = require('../queues/aiQueue');
 
 // =========================================================================
 // 🧠 Pinecone semantic match — top projects for a student
@@ -289,10 +289,7 @@ exports.resumeCheck = async (req, res, next) => {
       return res.status(400).json({ error: 'Could not extract text from the provided PDF.' });
     }
 
-    const job = await aiQueue.add('resume-check', {
-      type: 'resume-check',
-      payload: { resumeText, jobRole }
-    });
+    const job = aiQueue.addJob('resume-check', { resumeText, jobRole });
 
     res.status(200).json({ jobId: job.id, status: 'processing' });
   } catch (err) {
@@ -306,13 +303,11 @@ exports.resumeCheck = async (req, res, next) => {
 // =========================================================================
 exports.getJobStatus = async (req, res, next) => {
   try {
-    const { Job } = require('bullmq');
-    const job = await Job.fromId(aiQueue, req.params.jobId);
+    const job = aiQueue.getJob(req.params.jobId);
     if (!job) return res.status(404).json({ error: 'Job not found' });
-    const state = await job.getState();
-    const result = state === 'completed' ? job.returnvalue : null;
-    const error = state === 'failed' ? job.failedReason : null;
-    res.json({ status: state, result, error });
+    const result = job.state === 'completed' ? job.returnvalue : null;
+    const error = job.state === 'failed' ? job.failedReason : null;
+    res.json({ status: job.state, result, error });
   } catch (err) {
     console.error('Job status check error:', err.message);
     next(err);

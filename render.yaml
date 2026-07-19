@@ -60,11 +60,8 @@ services:
       - key: GEMINI_API_URL
         sync: false          # optional; defaults to gemini-2.5-flash
 
-      # ── Redis / Queues (Upstash) ─────────────────────────────
-      # REDIS_URL = Upstash "redis://" TLS URL (used by BullMQ/ioredis)
-      - key: REDIS_URL
-        sync: false
-      # REST creds used by the rate limiter store
+      # ── Redis (Upstash) ──────────────────────────────────────
+      # REST creds used by the rate limiter store (fails open if absent/over quota)
       - key: UPSTASH_REDIS_REST_URL
         sync: false
       - key: UPSTASH_REDIS_REST_TOKEN

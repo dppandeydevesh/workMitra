@@ -24,9 +24,6 @@ global.wsClients = new Map(); // Global WebSocket client registry
 
 const app = express();
 
-// Start background workers
-require('./queues/aiQueue');
-
 const Sentry = require('@sentry/node');
 Sentry.init({
   dsn: process.env.SENTRY_DSN,

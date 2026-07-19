@@ -14,7 +14,6 @@ const REQUIRED_VARS = [
   { key: 'CORS_ORIGINS',    hint: 'Comma-separated list of allowed frontend origins.' },
   { key: 'GEMINI_API_KEY',  hint: 'Google Gemini API key for all AI features.' },
   { key: 'FRONTEND_URL',    hint: 'Public frontend URL (used in password-reset emails).' },
-  { key: 'REDIS_URL',       hint: 'Redis connection URL for BullMQ queues.' },
 ];
 
 function validateEnv() {

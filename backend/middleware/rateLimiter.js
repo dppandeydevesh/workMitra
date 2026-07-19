@@ -47,6 +47,10 @@ const make = (max, windowMs, message) =>
     legacyHeaders: false,
     keyGenerator: (req) => req.realIP || req.ip,
     validate: false,
+    // Fail OPEN: if Redis is down or over quota, let the request through
+    // instead of 500-ing every login/register. (Upstash quota exhaustion
+    // took down auth in production on 2026-07-19.)
+    passOnStoreError: true,
     ...(store ? { store } : {}), // only attach store if Redis is available
   });
 
@@ -68,6 +72,7 @@ const aiLimiter = rateLimit({
   legacyHeaders: false,
   keyGenerator: (req) => req.user?.userId || req.user?.email || req.realIP || req.ip,
   validate: false,
+  passOnStoreError: true, // fail open on Redis errors — see note above
   ...(store ? { store } : {}),
 });
 

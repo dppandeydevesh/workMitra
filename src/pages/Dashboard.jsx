@@ -317,6 +317,25 @@ export default function Dashboard() {
     sortBy,
   ]);
 
+  // Client-side pagination over the FILTERED list — the /recommended endpoint
+  // returns every project, so search/filters must apply across all of them,
+  // not just the visible page.
+  const totalFilteredPages = Math.max(
+    1,
+    Math.ceil(filteredProjects.length / limit)
+  );
+  const safePage = Math.min(page, totalFilteredPages);
+  const pagedProjects = useMemo(
+    () => filteredProjects.slice((safePage - 1) * limit, safePage * limit),
+    [filteredProjects, safePage, limit]
+  );
+
+  // Jump back to page 1 whenever a filter narrows the list
+  useEffect(() => {
+    setPage(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm, skillFilter, workTypeFilter, maxBudgetFilter, sortBy]);
+
   // 📱 Mobile tab view (?tab=home|projects|gigs) driven by the BottomNav —
   // phones show one section at a time; md+ ignores the tab and shows all.
   const [searchParams, setSearchParams] = useSearchParams();
@@ -374,7 +393,7 @@ export default function Dashboard() {
                     </div>
                     <div>
                       <p className="text-xs font-bold text-ink-900 tracking-tight leading-none uppercase">
-                        {t('College verified')}
+                        {t('dashboard.collegeVerified')}
                       </p>
                       <p className="text-[10px] text-ink-500 mt-1 font-medium leading-none">
                         {currentUser.collegeName}{' '}
@@ -1265,19 +1284,17 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-ink-900 tracking-tight">
-                    {t('No matching projects yet')}
+                    {t('dashboard.noMatchingProjects')}
                   </h3>
                   <p className="text-xs text-ink-500 mt-1 max-w-xs leading-relaxed">
-                    {t(
-                      'Projects from verified companies that match your skills appear here. Set your preferences to get started.'
-                    )}
+                    {t('dashboard.noMatchingProjectsDesc')}
                   </p>
                 </div>
                 <button
                   onClick={() => navigate('/preferences')}
                   className="wm-btn wm-btn-primary py-2 px-4 text-xs font-semibold rounded-lg shadow-sm active:scale-95"
                 >
-                  {t('Set preferences')}
+                  {t('dashboard.setPreferences')}
                 </button>
               </div>
             ) : (
@@ -1287,7 +1304,7 @@ export default function Dashboard() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.15 }}
               >
-                {filteredProjects.map((project) => {
+                {pagedProjects.map((project) => {
                   const isAlreadyApplied = appliedProjectIds.includes(
                     project._id.toString()
                   );
@@ -1401,22 +1418,27 @@ export default function Dashboard() {
             )}
 
             {/* Pagination Controls */}
-            {!loading && projects.length > 0 && (
+            {!loading && filteredProjects.length > limit && (
               <div className="flex justify-center items-center space-x-4 mt-8">
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm ${page === 1 ? 'bg-ink-100 text-ink-400 cursor-not-allowed' : 'bg-white border border-ink-200 text-ink-700 hover:bg-ink-50'}`}
+                  disabled={safePage === 1}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm ${safePage === 1 ? 'bg-ink-100 text-ink-400 cursor-not-allowed' : 'bg-white border border-ink-200 text-ink-700 hover:bg-ink-50'}`}
                 >
                   {t('dashboard.previousBtn')}
                 </button>
                 <span className="text-xs font-bold text-ink-600">
-                  {t('dashboard.pageText', { page })}
+                  {t('dashboard.pageOfText', {
+                    page: safePage,
+                    total: totalFilteredPages,
+                  })}
                 </span>
                 <button
-                  onClick={() => setPage((p) => p + 1)}
-                  disabled={projects.length < limit}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm ${projects.length < limit ? 'bg-ink-100 text-ink-400 cursor-not-allowed' : 'bg-white border border-ink-200 text-ink-700 hover:bg-ink-50'}`}
+                  onClick={() =>
+                    setPage((p) => Math.min(totalFilteredPages, p + 1))
+                  }
+                  disabled={safePage >= totalFilteredPages}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm ${safePage >= totalFilteredPages ? 'bg-ink-100 text-ink-400 cursor-not-allowed' : 'bg-white border border-ink-200 text-ink-700 hover:bg-ink-50'}`}
                 >
                   {t('dashboard.nextBtn')}
                 </button>

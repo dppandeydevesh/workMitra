@@ -1348,5 +1348,10 @@
   "college.importSkippedLines": "{{count}} line(s) will be skipped (need Name, Email, Enrollment separated by commas):",
   "college.confirmImport": "Confirm Import ({{count}})",
   "college.cancelImport": "Cancel",
-  "college.rowsFailed": "Rows failed"
+  "college.rowsFailed": "Rows failed",
+  "dashboard.pageOfText": "Page {{page}} of {{total}}",
+  "dashboard.collegeVerified": "College verified",
+  "dashboard.noMatchingProjects": "No matching projects yet",
+  "dashboard.noMatchingProjectsDesc": "Projects from verified companies that match your skills appear here. Set your preferences to get started.",
+  "dashboard.setPreferences": "Set preferences"
 }

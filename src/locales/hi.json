@@ -1348,5 +1348,10 @@
   "college.importSkippedLines": "{{count}} पंक्ति(याँ) छोड़ी जाएँगी (नाम, ईमेल, नामांकन कॉमा से अलग होने चाहिए):",
   "college.confirmImport": "इम्पोर्ट की पुष्टि करें ({{count}})",
   "college.cancelImport": "रद्द करें",
-  "college.rowsFailed": "विफल पंक्तियाँ"
+  "college.rowsFailed": "विफल पंक्तियाँ",
+  "dashboard.pageOfText": "पृष्ठ {{page}} / {{total}}",
+  "dashboard.collegeVerified": "कॉलेज सत्यापित",
+  "dashboard.noMatchingProjects": "अभी कोई मिलान वाले प्रोजेक्ट नहीं",
+  "dashboard.noMatchingProjectsDesc": "आपके कौशल से मेल खाने वाले सत्यापित कंपनियों के प्रोजेक्ट यहाँ दिखेंगे। शुरू करने के लिए अपनी प्राथमिकताएँ सेट करें।",
+  "dashboard.setPreferences": "प्राथमिकताएँ सेट करें"
 }

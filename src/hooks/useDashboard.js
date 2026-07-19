@@ -257,11 +257,12 @@ export function useDashboard() {
     }
   };
 
-  // Re-fetch when page or limit changes
+  // Initial load. Pagination is client-side (the /recommended endpoint
+  // returns the full scored list), so page/limit changes must NOT refetch.
   useEffect(() => {
     initializeDashboardData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, limit]);
+  }, []);
 
   // ─── Handlers ──────────────────────────────────────────────────────────────
 

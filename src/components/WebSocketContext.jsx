@@ -118,7 +118,9 @@ export function WebSocketProvider({ children }) {
       setWsConnected(false);
       console.log('Global WebSocket connection closed. Code:', event.code);
 
-      // Reconnect with exponential backoff if logged in
+      // Reconnect with exponential backoff if logged in. After the cap is
+      // reached, stop the timer loop but leave recovery to the online/
+      // visibilitychange listeners below — never give up permanently.
       if (user && reconnectAttemptsRef.current < MAX_RECONNECT_ATTEMPTS) {
         const delay = Math.min(
           1000 * Math.pow(2, reconnectAttemptsRef.current),
@@ -140,7 +142,28 @@ export function WebSocketProvider({ children }) {
   useEffect(() => {
     connectWebSocket();
 
+    // Recovery paths after the backoff loop exhausts its attempts: when the
+    // network comes back or the user returns to the tab, reset the counter
+    // and try again. Without these, 5 failed attempts meant a dead socket
+    // until a full page reload.
+    const handleRecovery = () => {
+      if (
+        document.visibilityState === 'hidden' ||
+        (socketRef.current &&
+          (socketRef.current.readyState === WebSocket.OPEN ||
+            socketRef.current.readyState === WebSocket.CONNECTING))
+      ) {
+        return;
+      }
+      reconnectAttemptsRef.current = 0;
+      connectWebSocket();
+    };
+    window.addEventListener('online', handleRecovery);
+    document.addEventListener('visibilitychange', handleRecovery);
+
     return () => {
+      window.removeEventListener('online', handleRecovery);
+      document.removeEventListener('visibilitychange', handleRecovery);
       if (socketRef.current) {
         socketRef.current.close();
         socketRef.current = null;

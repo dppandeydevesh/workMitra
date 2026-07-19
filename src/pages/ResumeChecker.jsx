@@ -142,24 +142,22 @@ const ResumeChecker = () => {
  display: flex;
  justify-content: center;
  align-items: center;
- background: linear-gradient(135deg, #0f172a 0%, #1e1e2f 100%);
+ background: #F6F7F4;
  padding: 2rem;
  font-family:'Inter', system-ui, -apple-system, sans-serif;
- color: #fff;
+ color: #1e293b;
  box-sizing: border-box;
 }
- 
- .wm-panel {background: rgba(255, 255, 255, 0.03);
- : blur(20px);
- -webkit-: blur(20px);
- border: 1px solid rgba(255, 255, 255, 0.08);
- box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+
+ .resume-checker-container .wm-panel {background: #ffffff;
+ border: 1px solid #e2e8f0;
+ box-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.08);
  border-radius: 24px;
  padding: 3rem;
  width: 100%;
  max-width: 700px;
 }
- 
+
 
  .title {font-size: 2.2rem;
  font-weight: 800;
@@ -202,7 +200,7 @@ const ResumeChecker = () => {
  
 
  .input-field:focus {border-color: #f59e0b;
- background: rgba(255, 255, 255, 0.08);
+ background: #ffffff;
 }
 
  .dropzone {border: 2px dashed #cbd5e1;
@@ -373,12 +371,12 @@ const ResumeChecker = () => {
  font-weight: 500;
 }
  
- .back-btn:hover {background: rgba(255, 255, 255, 0.05);
- color: white;
+ .back-btn:hover {background: #f8fafc;
+ color: #1e293b;
 }
 
- .loader {border: 3px solid rgba(255, 255, 255, 0.1);
- border-top: 3px solid #c084fc;
+ .loader {border: 3px solid rgba(15, 23, 42, 0.1);
+ border-top: 3px solid #f59e0b;
  border-radius: 50%;
  width: 48px;
  height: 48px;
@@ -425,7 +423,7 @@ const ResumeChecker = () => {
                   <div className="dropzone-icon">📄</div>
                   {file ? (
                     <div className="file-info">
-                      <span style={{ fontWeight: 500, color: '#e2e8f0' }}>
+                      <span style={{ fontWeight: 500, color: '#1e293b' }}>
                         {file.name}
                       </span>
                       <button
@@ -437,7 +435,7 @@ const ResumeChecker = () => {
                         style={{
                           background: 'none',
                           border: 'none',
-                          color: '#fca5a5',
+                          color: '#dc2626',
                           cursor: 'pointer',
                           fontSize: '1.5rem',
                           lineHeight: 1,
@@ -451,14 +449,14 @@ const ResumeChecker = () => {
                       <p
                         style={{
                           marginBottom: '0.5rem',
-                          color: '#e2e8f0',
+                          color: '#334155',
                           fontSize: '1.1rem',
                           fontWeight: 500,
                         }}
                       >
                         {t('Drag & Drop your PDF here')}
                       </p>
-                      <p style={{ color: '#94a3b8', fontSize: '0.95rem' }}>
+                      <p style={{ color: '#64748b', fontSize: '0.95rem' }}>
                         {t('or click to browse files')}
                       </p>
                     </div>
@@ -520,7 +518,7 @@ const ResumeChecker = () => {
                   ))}
                 </div>
               ) : (
-                <p className="feedback-text" style={{ color: '#34d399' }}>
+                <p className="feedback-text" style={{ color: '#059669' }}>
                   {t('Great job! You hit all the major keywords.')}
                 </p>
               )}

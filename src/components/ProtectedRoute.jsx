@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { fetchWithAuth } from '../services/apiClient';
 import { API_BASE_URL } from '../config';
 
 export default function ProtectedRoute({ children, allowedRoles }) {
+  const { t } = useTranslation();
   const [isVerifying, setIsVerifying] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
@@ -67,7 +69,7 @@ export default function ProtectedRoute({ children, allowedRoles }) {
         <div className="flex flex-col items-center">
           <div className="w-12 h-12 border-4 border-border border-t-transparent rounded-full animate-spin"></div>
           <p className="mt-4 text-ink-500 font-medium animate-pulse">
-            Authenticating securely...
+            {t('protectedRoute.authenticating')}
           </p>
         </div>
       </div>
@@ -83,15 +85,15 @@ export default function ProtectedRoute({ children, allowedRoles }) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-ink-50">
         <span className="text-6xl mb-4">⛔</span>
-        <h1 className="text-2xl font-bold text-ink-800 mb-2">Access Denied</h1>
-        <p className="text-ink-500 mb-6">
-          You don"t have permission to view this page.
-        </p>
+        <h1 className="text-2xl font-bold text-ink-800 mb-2">
+          {t('protectedRoute.accessDenied')}
+        </h1>
+        <p className="text-ink-500 mb-6">{t('protectedRoute.noPermission')}</p>
         <button
           onClick={() => (window.location.href = '/')}
-          className="px-6 py-3 bg-paper hover:bg-paper text-white rounded-xl font-bold shadow-lg shadow-purple-500/30 transition"
+          className="px-6 py-3 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl font-bold shadow-lg shadow-marigold-500/30 transition"
         >
-          Return Home
+          {t('protectedRoute.returnHome')}
         </button>
       </div>
     );

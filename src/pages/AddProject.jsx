@@ -33,24 +33,21 @@ export default function AddProject() {
   const [hasPpiBadge, setHasPpiBadge] = useState(false);
   const [status, setStatus] = useState('Published');
 
-  // Pre-test quiz builder states (2 questions)
-  const [q1Text, setQ1Text] = useState(
-    "What is the primary constraint of React's useState hooks?"
-  );
-  const [q1OptA, setQ1OptA] = useState('It runs asynchronously');
-  const [q1OptB, setQ1OptB] = useState('It modifies local variables instantly');
-  const [q1OptC, setQ1OptC] = useState('It cannot be updated');
-  const [q1OptD, setQ1OptD] = useState('It is used for backend DB calls');
-  const [q1Correct, setQ1Correct] = useState('It runs asynchronously');
+  // Pre-test quiz builder states (2 questions, optional — start empty so a
+  // company that skips this step doesn't accidentally publish stale questions)
+  const [q1Text, setQ1Text] = useState('');
+  const [q1OptA, setQ1OptA] = useState('');
+  const [q1OptB, setQ1OptB] = useState('');
+  const [q1OptC, setQ1OptC] = useState('');
+  const [q1OptD, setQ1OptD] = useState('');
+  const [q1Correct, setQ1Correct] = useState('');
 
-  const [q2Text, setQ2Text] = useState(
-    'Which framework supports SSR natively?'
-  );
-  const [q2OptA, setQ2OptA] = useState('Vite standard client SPA');
-  const [q2OptB, setQ2OptB] = useState('Next.js');
-  const [q2OptC, setQ2OptC] = useState('jQuery Core');
-  const [q2OptD, setQ2OptD] = useState('Express Router');
-  const [q2Correct, setQ2Correct] = useState('Next.js');
+  const [q2Text, setQ2Text] = useState('');
+  const [q2OptA, setQ2OptA] = useState('');
+  const [q2OptB, setQ2OptB] = useState('');
+  const [q2OptC, setQ2OptC] = useState('');
+  const [q2OptD, setQ2OptD] = useState('');
+  const [q2Correct, setQ2Correct] = useState('');
 
   const handleNextStep = () => {
     // Basic validation
@@ -68,6 +65,31 @@ export default function AddProject() {
     ) {
       toast.error(t('addProject.validationRewards'));
       return;
+    }
+    if (step === 5) {
+      // Quiz is optional, but a half-filled question would be silently dropped
+      // at submit — surface that instead of publishing without it.
+      const incomplete = [
+        {
+          text: q1Text,
+          opts: [q1OptA, q1OptB, q1OptC, q1OptD],
+          correct: q1Correct,
+        },
+        {
+          text: q2Text,
+          opts: [q2OptA, q2OptB, q2OptC, q2OptD],
+          correct: q2Correct,
+        },
+      ].some(
+        (q) =>
+          q.text.trim().length > 0 &&
+          (!q.opts.every((opt) => opt.trim().length > 0) ||
+            !q.opts.some((opt) => opt.trim() === q.correct.trim()))
+      );
+      if (incomplete) {
+        toast.error(t('addProject.validationQuizIncomplete'));
+        return;
+      }
     }
     setStep((prev) => prev + 1);
   };
@@ -87,7 +109,8 @@ export default function AddProject() {
       .map((skill) => skill.trim())
       .filter((skill) => skill.length > 0);
 
-    // Build the pre-test questions payload
+    // Build the pre-test questions payload — only include complete questions
+    // (text + all 4 options + a correct answer that matches one of them)
     const preTestQuestions = [
       {
         question: q1Text,
@@ -99,7 +122,12 @@ export default function AddProject() {
         options: [q2OptA, q2OptB, q2OptC, q2OptD],
         correctAnswer: q2Correct,
       },
-    ].filter((q) => q.question.trim().length > 0);
+    ].filter(
+      (q) =>
+        q.question.trim().length > 0 &&
+        q.options.every((opt) => opt.trim().length > 0) &&
+        q.options.some((opt) => opt.trim() === q.correctAnswer.trim())
+    );
 
     const payload = {
       companyId: savedUser.email || 'anonymous_corp',

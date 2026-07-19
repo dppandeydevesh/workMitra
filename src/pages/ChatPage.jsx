@@ -5,7 +5,7 @@ import { useWebSocket } from '../components/WebSocketContext';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
-import { Send, User, Paperclip, Search, MessageSquare } from 'lucide-react';
+import { Send, User, MessageSquare } from 'lucide-react';
 import { fetchWithAuth } from '../services/apiClient';
 
 export default function ChatPage() {
@@ -28,6 +28,7 @@ export default function ChatPage() {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [showMobileChat, setShowMobileChat] = useState(!!recipientEmail);
   const [isPartnerTyping, setIsPartnerTyping] = useState(false);
+  const [sendBlocked, setSendBlocked] = useState(false);
 
   const { wsConnected, addListener, sendMessage } = useWebSocket();
   const messagesEndRef = useRef(null);
@@ -230,16 +231,22 @@ export default function ChatPage() {
     e.preventDefault();
     if (!messageInput.trim() || !activePartner) return;
 
+    // Don't clear the input if the socket is down — the message would be
+    // silently lost. Keep the draft so the user can retry once reconnected.
+    if (!wsConnected) {
+      setSendBlocked(true);
+      return;
+    }
+    setSendBlocked(false);
+
     // Reset typing status on send
     if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
-    if (wsConnected) {
-      sendMessage({
-        type: 'typing',
-        sender: loggedInUser.email,
-        receiver: activePartner.email,
-        isTyping: false,
-      });
-    }
+    sendMessage({
+      type: 'typing',
+      sender: loggedInUser.email,
+      receiver: activePartner.email,
+      isTyping: false,
+    });
 
     const payload = {
       type: 'chat',
@@ -654,16 +661,18 @@ export default function ChatPage() {
 
               {/* Message Typing and Send Form */}
               <div className="p-3 sm:p-4 border-t border-white/20 bg-white/50 z-10">
+                {sendBlocked && !wsConnected && (
+                  <p
+                    role="alert"
+                    className="text-xs font-semibold text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-2"
+                  >
+                    {t('chat.offlineWarning')}
+                  </p>
+                )}
                 <form
                   onSubmit={handleSendMessage}
                   className="flex gap-2 relative"
                 >
-                  <button
-                    type="button"
-                    className="p-3 text-ink-500 hover:text-ink-700 transition-colors"
-                  >
-                    <Paperclip className="w-5 h-5" />
-                  </button>
                   <input
                     type="text"
                     value={messageInput}

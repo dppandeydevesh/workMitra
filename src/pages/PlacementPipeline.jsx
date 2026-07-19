@@ -67,21 +67,24 @@ export default function PlacementPipeline() {
 
       const res = await fetchWithAuth(url, {
         credentials: 'include',
-        headers: { Authorization: `Bearer` },
       });
       const data = await res.json();
       if (res.ok) {
-        // Set default pipelineStage if missing
-        const list = (data.applications || data || []).map((app) => ({
-          ...app,
-          pipelineStage:
-            app.pipelineStage ||
-            (app.status === 'Completed'
-              ? 'Placed'
-              : app.status === 'Approved'
-                ? 'Offered'
-                : 'Applied'),
-        }));
+        // Set default pipelineStage if missing. Rejected applications are not
+        // pipeline candidates — without this filter they'd land in "Applied"
+        // and recruiters would re-review people they already rejected.
+        const list = (data.applications || data || [])
+          .filter((app) => app.status !== 'Rejected')
+          .map((app) => ({
+            ...app,
+            pipelineStage:
+              app.pipelineStage ||
+              (app.status === 'Completed'
+                ? 'Placed'
+                : app.status === 'Approved'
+                  ? 'Offered'
+                  : 'Applied'),
+          }));
         setApplications(list);
       } else {
         setErrorMessage(t('pipeline.loadApplicantsFailed'));
@@ -94,7 +97,11 @@ export default function PlacementPipeline() {
     }
   };
 
-  const handleUpdateStage = async (appId, newStage) => {
+  const handleUpdateStage = async (
+    appId,
+    newStage,
+    { silent = false } = {}
+  ) => {
     try {
       const res = await fetchWithAuth(
         `${API_BASE_URL}/api/applications/${appId}/update-pipeline`,
@@ -103,14 +110,15 @@ export default function PlacementPipeline() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer`,
           },
           body: JSON.stringify({ status: newStage }),
         }
       );
 
       if (res.ok) {
-        toast.success(t('pipeline.candidateShifted', { stage: newStage }));
+        if (!silent) {
+          toast.success(t('pipeline.candidateShifted', { stage: newStage }));
+        }
         setApplications((prev) =>
           prev.map((app) =>
             app._id === appId ? { ...app, pipelineStage: newStage } : app
@@ -139,7 +147,6 @@ export default function PlacementPipeline() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer`,
           },
           body: JSON.stringify({ offerText }),
         }
@@ -149,7 +156,7 @@ export default function PlacementPipeline() {
         toast.success(t('pipeline.offerSuccess'));
         setShowOfferModal(false);
         setOfferText('');
-        handleUpdateStage(selectedApp._id, 'Offered');
+        handleUpdateStage(selectedApp._id, 'Offered', { silent: true });
       } else {
         const data = await res.json();
         toast.error(data.error || t('pipeline.sendContractFailed'));

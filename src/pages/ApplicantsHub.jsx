@@ -553,7 +553,7 @@ export default function ApplicantsHub() {
                             className="text-ink-600 hover:text-ink-dark font-semibold flex items-center gap-1"
                             title={t('applicantsHub.github')}
                           >
-                            <Github className="w-3 h-3" />{' '}
+                            <Code className="w-3 h-3" />{' '}
                             <span className="hover:underline">
                               {t('applicantsHub.github')}
                             </span>
@@ -567,7 +567,7 @@ export default function ApplicantsHub() {
                             className="text-marigold-500 hover:text-ink-dark font-semibold flex items-center gap-1"
                             title={t('applicantsHub.linkedin')}
                           >
-                            <Linkedin className="w-3 h-3" />{' '}
+                            <Link className="w-3 h-3" />{' '}
                             <span className="hover:underline">
                               {t('applicantsHub.linkedin')}
                             </span>

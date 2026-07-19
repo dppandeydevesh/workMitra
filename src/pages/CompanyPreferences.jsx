@@ -101,12 +101,15 @@ export default function CompanyPreferences() {
     };
 
     try {
-      const response = await fetchWithAuth(`${API_BASE_URL}/api/profile/company`, {
-        credentials: 'include',
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetchWithAuth(
+        `${API_BASE_URL}/api/profile/company`,
+        {
+          credentials: 'include',
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        }
+      );
 
       const data = await response.json();
 
@@ -246,7 +249,7 @@ export default function CompanyPreferences() {
                     key={skill}
                     type="button"
                     onClick={() => handleSkillToggle(skill)}
-                    className={`text-xs px-4 py-2 rounded-full border transition font-medium ${active ? 'bg-paper border-border text-white shadow-md shadow-purple-100' : 'bg-ink-50 border-ink-200 text-ink-600 hover:bg-ink-100'}`}
+                    className={`text-xs px-4 py-2 rounded-full border transition font-medium ${active ? 'bg-marigold-500 border-marigold-500 text-white shadow-md shadow-marigold-100' : 'bg-ink-50 border-ink-200 text-ink-600 hover:bg-ink-100'}`}
                   >
                     {skill}
                   </button>

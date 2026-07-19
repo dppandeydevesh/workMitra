@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-unused-vars -- used as <motion.div>; the flat config lacks jsx-uses-vars
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Mail,
@@ -9,6 +10,8 @@ import {
   Phone,
   Hash,
   BookOpen,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { Turnstile } from '@marsidev/react-turnstile';
 
@@ -45,6 +48,8 @@ export default function LoginForms({
   handleForgotPassword,
 }) {
   const { t } = useTranslation();
+  const [showSignUpPassword, setShowSignUpPassword] = useState(false);
+  const [showSignInPassword, setShowSignInPassword] = useState(false);
 
   return (
     <motion.div
@@ -230,13 +235,30 @@ export default function LoginForms({
           <div className="relative">
             <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4 z-10" />
             <input
-              type="password"
+              type={showSignUpPassword ? 'text' : 'password'}
               placeholder={t('login.password')}
               value={password}
               onChange={(e) => checkPasswordStrength(e.target.value)}
-              className="w-full bg-transparent border border-[#C8C9C2] text-sm pl-11 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F5A623] transition-all"
+              autoComplete="new-password"
+              className="w-full bg-transparent border border-[#C8C9C2] text-sm pl-11 pr-11 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F5A623] transition-all"
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowSignUpPassword((v) => !v)}
+              aria-label={
+                showSignUpPassword
+                  ? t('login.hidePassword')
+                  : t('login.showPassword')
+              }
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-600 z-10 p-1"
+            >
+              {showSignUpPassword ? (
+                <EyeOff className="w-4 h-4" />
+              ) : (
+                <Eye className="w-4 h-4" />
+              )}
+            </button>
           </div>
 
           {password && (
@@ -258,6 +280,9 @@ export default function LoginForms({
               </div>
             </div>
           )}
+          <p className="w-full text-left text-[10px] text-ink-400 px-1">
+            {t('login.passwordRules')}
+          </p>
           <div className="flex justify-center my-2">
             {/* key forces a remount (fresh single-use token) after each failed
                 attempt; onExpire/onError re-issue so a stale form can't submit
@@ -346,13 +371,30 @@ export default function LoginForms({
           <div className="relative">
             <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4 z-10" />
             <input
-              type="password"
+              type={showSignInPassword ? 'text' : 'password'}
               placeholder={t('login.password')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-transparent border border-[#C8C9C2] text-sm pl-11 pr-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F5A623] transition-all"
+              autoComplete="current-password"
+              className="w-full bg-transparent border border-[#C8C9C2] text-sm pl-11 pr-11 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F5A623] transition-all"
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowSignInPassword((v) => !v)}
+              aria-label={
+                showSignInPassword
+                  ? t('login.hidePassword')
+                  : t('login.showPassword')
+              }
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-600 z-10 p-1"
+            >
+              {showSignInPassword ? (
+                <EyeOff className="w-4 h-4" />
+              ) : (
+                <Eye className="w-4 h-4" />
+              )}
+            </button>
           </div>
 
           <div className="text-right px-1">

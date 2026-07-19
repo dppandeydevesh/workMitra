@@ -46,7 +46,9 @@ export default function AnalyticsDashboard() {
       // Fetch both projects and applications concurrently
       const [projectsRes, appsRes] = await Promise.all([
         fetchWithAuth(`${API_BASE_URL}/api/projects/company/${companyEmail}`),
-        fetchWithAuth(`${API_BASE_URL}/api/applications/company/${companyEmail}`),
+        fetchWithAuth(
+          `${API_BASE_URL}/api/applications/company/${companyEmail}`
+        ),
       ]);
 
       const projectsData = await projectsRes.json();
@@ -113,9 +115,46 @@ export default function AnalyticsDashboard() {
         )
       : 0;
 
+  // Donut chart data — one distinct color per status so slices and legend
+  // dots are actually distinguishable.
+  const STATUS_COLORS = {
+    Completed: '#1D9E75',
+    Approved: '#F5A623',
+    Submitted: '#3B82F6',
+    Pending: '#C8C9C2',
+    Rejected: '#E24B4A',
+  };
+  const donutData = [
+    {
+      name: t('analytics.statusCompleted'),
+      value: statusCounts.Completed,
+      color: STATUS_COLORS.Completed,
+    },
+    {
+      name: t('analytics.statusApproved'),
+      value: statusCounts.Approved,
+      color: STATUS_COLORS.Approved,
+    },
+    {
+      name: t('analytics.statusSubmitted'),
+      value: statusCounts.Submitted,
+      color: STATUS_COLORS.Submitted,
+    },
+    {
+      name: t('analytics.statusPending'),
+      value: statusCounts.Pending,
+      color: STATUS_COLORS.Pending,
+    },
+    {
+      name: t('analytics.statusRejected'),
+      value: statusCounts.Rejected,
+      color: STATUS_COLORS.Rejected,
+    },
+  ].filter((entry) => entry.value > 0);
+
   // 3. Leaderboard of Top Budget Projects (sorted descending)
   const topProjectsLeaderboard = [...projects]
-    .sort((a, b) => b.budget - a.budget)
+    .sort((a, b) => (Number(b.budget) || 0) - (Number(a.budget) || 0))
     .slice(0, 5);
 
   // 4. Skills Frequency Analysis
@@ -169,7 +208,7 @@ export default function AnalyticsDashboard() {
                 }
                 className="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-800 rounded-lg text-[10px] font-extrabold uppercase transition shadow-inner border border-red-300"
               >
-                Retry
+                {t('common.retry')}
               </button>
             </div>
           )}
@@ -179,7 +218,7 @@ export default function AnalyticsDashboard() {
               <div className="w-10 h-10 border-4 border-marigold-500 border-t-transparent rounded-full animate-spin"></div>
               <span>📊 {t('analytics.loading')}</span>
             </div>
-          ) : (
+          ) : errorMessage ? null : (
             <div className="space-y-8">
               {/* 🌐 Grid of Key Metrics Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -319,33 +358,7 @@ export default function AnalyticsDashboard() {
                           <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                               <Pie
-                                data={[
-                                  {
-                                    name: t('analytics.statusCompleted'),
-                                    value: statusCounts.Completed,
-                                    color: '#1D9E75',
-                                  },
-                                  {
-                                    name: t('analytics.statusApproved'),
-                                    value: statusCounts.Approved,
-                                    color: '#F5A623',
-                                  },
-                                  {
-                                    name: t('analytics.statusSubmitted'),
-                                    value: statusCounts.Submitted,
-                                    color: '#F5A623',
-                                  },
-                                  {
-                                    name: t('analytics.statusPending'),
-                                    value: statusCounts.Pending,
-                                    color: '#C8C9C2',
-                                  },
-                                  {
-                                    name: t('analytics.statusRejected'),
-                                    value: statusCounts.Rejected,
-                                    color: '#C8C9C2',
-                                  },
-                                ].filter((entry) => entry.value > 0)}
+                                data={donutData}
                                 cx="50%"
                                 cy="50%"
                                 innerRadius={60}
@@ -353,40 +366,12 @@ export default function AnalyticsDashboard() {
                                 dataKey="value"
                                 stroke="none"
                               >
-                                {[
-                                  {
-                                    name: t('analytics.statusCompleted'),
-                                    value: statusCounts.Completed,
-                                    color: '#1D9E75',
-                                  },
-                                  {
-                                    name: t('analytics.statusApproved'),
-                                    value: statusCounts.Approved,
-                                    color: '#F5A623',
-                                  },
-                                  {
-                                    name: t('analytics.statusSubmitted'),
-                                    value: statusCounts.Submitted,
-                                    color: '#F5A623',
-                                  },
-                                  {
-                                    name: t('analytics.statusPending'),
-                                    value: statusCounts.Pending,
-                                    color: '#C8C9C2',
-                                  },
-                                  {
-                                    name: t('analytics.statusRejected'),
-                                    value: statusCounts.Rejected,
-                                    color: '#C8C9C2',
-                                  },
-                                ]
-                                  .filter((entry) => entry.value > 0)
-                                  .map((entry, index) => (
-                                    <Cell
-                                      key={`cell-${index}`}
-                                      fill={entry.color}
-                                    />
-                                  ))}
+                                {donutData.map((entry, index) => (
+                                  <Cell
+                                    key={`cell-${index}`}
+                                    fill={entry.color}
+                                  />
+                                ))}
                               </Pie>
                               <RechartsTooltip
                                 contentStyle={{
@@ -427,7 +412,7 @@ export default function AnalyticsDashboard() {
                             </span>
                           </div>
                           <div className="flex items-center gap-1.5">
-                            <span className="w-2.5 h-2.5 bg-[#F5A623] rounded-full inline-block"></span>
+                            <span className="w-2.5 h-2.5 bg-[#3B82F6] rounded-full inline-block"></span>
                             <span>
                               {t('analytics.legendAudit')}:{' '}
                               {statusCounts.Submitted}
@@ -442,7 +427,7 @@ export default function AnalyticsDashboard() {
                           </div>
                           {statusCounts.Rejected > 0 && (
                             <div className="flex items-center gap-1.5 col-span-2 justify-center mt-1 border-t pt-2 border-dashed border-ink-100">
-                              <span className="w-2.5 h-2.5 bg-[#C8C9C2] rounded-full inline-block"></span>
+                              <span className="w-2.5 h-2.5 bg-[#E24B4A] rounded-full inline-block"></span>
                               <span>
                                 {t('analytics.legendRejectedSolutions')}:{' '}
                                 {statusCounts.Rejected}
@@ -491,7 +476,7 @@ export default function AnalyticsDashboard() {
                               </p>
                             </div>
                             <span className="font-black text-green-600 bg-green-50 px-2 py-0.5 rounded border border-green-100">
-                              ₹{project.budget.toLocaleString()}
+                              ₹{(Number(project.budget) || 0).toLocaleString()}
                             </span>
                           </div>
                         ))}

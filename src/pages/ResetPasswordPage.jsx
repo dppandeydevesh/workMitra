@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { API_BASE_URL } from '../config';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
-import { Lock } from 'lucide-react';
+import { Lock, Eye, EyeOff } from 'lucide-react';
 import { fetchWithAuth } from '../services/apiClient';
 
 export default function ResetPasswordPage() {
@@ -13,6 +13,7 @@ export default function ResetPasswordPage() {
   const { t } = useTranslation();
 
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -137,13 +138,30 @@ export default function ResetPasswordPage() {
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   placeholder={t('resetPassword.newPasswordPlaceholder')}
                   value={password}
                   onChange={(e) => checkPasswordStrength(e.target.value)}
-                  className="w-full pl-11 bg-transparent/60 border border-[#C8C9C2] text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  autoComplete="new-password"
+                  className="w-full pl-11 pr-11 bg-transparent/60 border border-[#C8C9C2] text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={
+                    showPassword
+                      ? t('login.hidePassword')
+                      : t('login.showPassword')
+                  }
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-600 p-1"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
               </div>
               {password && (
                 <div className="w-full text-left text-[10px] font-bold px-1 space-y-1 mt-1.5">
@@ -176,10 +194,11 @@ export default function ResetPasswordPage() {
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ink-400 w-4 h-4" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   placeholder={t('resetPassword.confirmPasswordPlaceholder')}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  autoComplete="new-password"
                   className="w-full pl-11 bg-transparent/60 border border-[#C8C9C2] text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                   required
                 />

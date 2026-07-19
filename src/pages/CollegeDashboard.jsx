@@ -22,6 +22,7 @@ export default function CollegeDashboard() {
   // Bulk onboarding states
   const [bulkInput, setBulkInput] = useState('');
   const [importStats, setImportStats] = useState(null);
+  const [importPreview, setImportPreview] = useState(null);
   const [importing, setImporting] = useState(false);
 
   // Selected student for report card print view
@@ -129,36 +130,47 @@ export default function CollegeDashboard() {
     }
   };
 
-  const handleBulkImport = async (e) => {
+  // Parse bulk text: "Name, Email, Enrollment" per line. Returns rows plus
+  // the lines that were skipped so the college sees them before importing.
+  const parseBulkInput = (raw) => {
+    const parsed = [];
+    const skipped = [];
+    raw.split('\n').forEach((line, idx) => {
+      if (!line.trim()) return;
+      const parts = line.split(',');
+      if (parts.length < 3 || parts.slice(0, 3).some((p) => !p.trim())) {
+        skipped.push({ lineNumber: idx + 1, text: line.trim() });
+        return;
+      }
+      parsed.push({
+        fullName: parts[0].trim(),
+        email: parts[1].trim(),
+        enrollmentNumber: parts[2].trim(),
+      });
+    });
+    return { parsed, skipped };
+  };
+
+  const handleBulkPreview = (e) => {
     e.preventDefault();
     if (!bulkInput.trim()) {
       toast.error(t('college.enterStudentDataFirst'));
       return;
     }
+    const { parsed, skipped } = parseBulkInput(bulkInput);
+    if (parsed.length === 0) {
+      toast.error(t('college.noValidStudentRows'));
+      return;
+    }
+    setImportPreview({ parsed, skipped });
+  };
+
+  const handleBulkImport = async () => {
+    if (!importPreview || importPreview.parsed.length === 0) return;
 
     setImporting(true);
     setImportStats(null);
     try {
-      // Parse bulk text: Name, Email, Enrollment
-      const lines = bulkInput.split('\n');
-      const parsedStudents = [];
-      for (const line of lines) {
-        if (!line.trim()) continue;
-        const parts = line.split(',');
-        if (parts.length < 3) continue;
-        parsedStudents.push({
-          fullName: parts[0].trim(),
-          email: parts[1].trim(),
-          enrollmentNumber: parts[2].trim(),
-        });
-      }
-
-      if (parsedStudents.length === 0) {
-        toast.error(t('college.noValidStudentRows'));
-        setImporting(false);
-        return;
-      }
-
       const res = await fetchWithAuth(
         `${API_BASE_URL}/api/college/bulk-import`,
         {
@@ -167,19 +179,21 @@ export default function CollegeDashboard() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ students: parsedStudents }),
+          body: JSON.stringify({ students: importPreview.parsed }),
         }
       );
 
       const data = await res.json();
       if (res.ok) {
         toast.success(t('college.bulkImportComplete'));
+        // Backend returns importedCount / failedCount / errors[]
         setImportStats({
-          imported: data.importedCount,
-          duplicate: data.duplicateCount,
-          invalid: data.invalidDomainCount,
+          imported: data.importedCount || 0,
+          failed: data.failedCount || 0,
+          errors: data.errors || [],
         });
         setBulkInput('');
+        setImportPreview(null);
         fetchDashboardData(currentUser.collegeName);
       } else {
         toast.error(data.error || t('college.errorBulkImport'));
@@ -520,8 +534,8 @@ export default function CollegeDashboard() {
                               {endorsingEmail === student.email
                                 ? '…'
                                 : student.isEndorsed
-                                ? t('college.btnEndorsed')
-                                : t('college.btnEndorse')}
+                                  ? t('college.btnEndorsed')
+                                  : t('college.btnEndorse')}
                             </button>
                           </td>
                           <td className="px-6 py-4 text-right">
@@ -711,15 +725,11 @@ export default function CollegeDashboard() {
                 ➕ {t('college.bulkStudentRegistrar')}
               </h3>
               <p className="text-[11px] text-ink-400 mt-1">
-                {t('college.onboardingDesc1')}{' '}
-                <code className="bg-ink-100 px-1 py-0.5 rounded font-mono font-bold text-ink-700">
-                  password123
-                </code>
-                .
+                {t('college.onboardingDesc1')}
               </p>
             </div>
 
-            <form onSubmit={handleBulkImport} className="space-y-4">
+            <form onSubmit={handleBulkPreview} className="space-y-4">
               <div>
                 <label className="block text-[10px] font-bold text-ink-400 uppercase mb-2">
                   {t('college.studentDataPayload')}
@@ -727,11 +737,83 @@ export default function CollegeDashboard() {
                 <textarea
                   rows={8}
                   value={bulkInput}
-                  onChange={(e) => setBulkInput(e.target.value)}
+                  onChange={(e) => {
+                    setBulkInput(e.target.value);
+                    setImportPreview(null); // edits invalidate the preview
+                  }}
                   className="w-full bg-ink-50 border border-ink-200 p-4 rounded-xl text-xs outline-none focus:ring-2 focus:ring-marigold-400 focus:bg-white transition resize-none font-mono"
                   placeholder={t('college.csvPlaceholder')}
                 />
               </div>
+
+              {importPreview && (
+                <div className="bg-ink-50 border border-ink-200 rounded-xl p-4 text-xs space-y-3">
+                  <p className="font-bold text-ink-800">
+                    🔍{' '}
+                    {t('college.importPreviewTitle', {
+                      count: importPreview.parsed.length,
+                    })}
+                  </p>
+                  <div className="max-h-40 overflow-y-auto border border-ink-100 rounded-lg bg-white">
+                    <table className="w-full text-[11px]">
+                      <tbody>
+                        {importPreview.parsed.map((s, i) => (
+                          <tr key={i} className="border-b border-ink-50">
+                            <td className="px-2 py-1 font-semibold">
+                              {s.fullName}
+                            </td>
+                            <td className="px-2 py-1 text-ink-500">
+                              {s.email}
+                            </td>
+                            <td className="px-2 py-1 font-mono text-ink-400">
+                              {s.enrollmentNumber}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {importPreview.skipped.length > 0 && (
+                    <div className="text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-2">
+                      <p className="font-bold">
+                        ⚠️{' '}
+                        {t('college.importSkippedLines', {
+                          count: importPreview.skipped.length,
+                        })}
+                      </p>
+                      <ul className="mt-1 space-y-0.5 font-mono text-[10px]">
+                        {importPreview.skipped.slice(0, 5).map((s) => (
+                          <li key={s.lineNumber}>
+                            #{s.lineNumber}: {s.text.slice(0, 60)}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={handleBulkImport}
+                      disabled={importing}
+                      className="px-6 py-2.5 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-black tracking-wider uppercase transition shadow-lg shadow-marigold-100 disabled:opacity-50"
+                    >
+                      {importing
+                        ? t('college.processingPayload')
+                        : t('college.confirmImport', {
+                            count: importPreview.parsed.length,
+                          })}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImportPreview(null)}
+                      disabled={importing}
+                      className="px-4 py-2.5 bg-ink-100 hover:bg-ink-200 text-ink-700 rounded-xl text-xs font-bold uppercase transition disabled:opacity-50"
+                    >
+                      {t('college.cancelImport')}
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {importStats && (
                 <div className="bg-marigold-50/50 border border-marigold-100 rounded-xl p-4 text-xs space-y-1">
@@ -745,29 +827,27 @@ export default function CollegeDashboard() {
                     </strong>
                   </p>
                   <p className="text-marigold-900/80">
-                    🔹 {t('college.duplicatesSkipped')}:{' '}
-                    <strong className="text-ink-600">
-                      {importStats.duplicate}
-                    </strong>
-                  </p>
-                  <p className="text-marigold-900/80">
-                    🔹 {t('college.invalidDomains')}:{' '}
+                    🔹 {t('college.rowsFailed')}:{' '}
                     <strong className="text-red-600">
-                      {importStats.invalid}
+                      {importStats.failed}
                     </strong>
                   </p>
+                  {importStats.errors.slice(0, 5).map((err, i) => (
+                    <p key={i} className="text-[10px] text-red-700 font-mono">
+                      • {err.email || '—'}: {err.reason}
+                    </p>
+                  ))}
                 </div>
               )}
 
-              <button
-                type="submit"
-                disabled={importing}
-                className="px-6 py-2.5 bg-gradient-to-r from-marigold-600 to-paper hover:from-marigold-700 hover:to-paper text-white rounded-xl text-xs font-black tracking-wider uppercase transition shadow-lg shadow-marigold-100 disabled:opacity-50"
-              >
-                {importing
-                  ? t('college.processingPayload')
-                  : t('college.executeBulkImport')}
-              </button>
+              {!importPreview && (
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-black tracking-wider uppercase transition shadow-lg shadow-marigold-100"
+                >
+                  {t('college.previewImport')}
+                </button>
+              )}
             </form>
           </div>
         )}

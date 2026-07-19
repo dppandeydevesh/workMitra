@@ -1273,7 +1273,7 @@
   "college.btnApprove": "Approve",
   "college.btnBlock": "Block",
   "college.bulkStudentRegistrar": "Bulk Student Registrar",
-  "college.onboardingDesc1": "Input student roster records to instantly create credentials. Default student password is set to",
+  "college.onboardingDesc1": "Paste roster rows to create student accounts. Each account gets a secure random password — students set their own via \"Forgot password\" on first sign-in.",
   "college.studentDataPayload": "Student Data Payload (CSV format)",
   "college.csvPlaceholder": "Full Name, Email, EnrollmentNumber\nAmit Kumar, amit@gla.edu.in, 2015000123\nPooja Sharma, pooja@gla.edu.in, 2015000456",
   "college.lastImportSummary": "Last Import Summary:",
@@ -1339,5 +1339,14 @@
   "protectedRoute.noPermission": "You don't have permission to view this page.",
   "protectedRoute.returnHome": "Return Home",
   "addProject.validationQuizIncomplete": "Your quiz question is incomplete — fill all 4 options and make sure the correct answer exactly matches one of them, or clear the question text to skip the quiz.",
-  "chat.offlineWarning": "You're offline — reconnecting. Your message is saved in the box below; press Send again once connected."
+  "chat.offlineWarning": "You're offline — reconnecting. Your message is saved in the box below; press Send again once connected.",
+  "login.showPassword": "Show password",
+  "login.hidePassword": "Hide password",
+  "login.passwordRules": "Password must be 8+ characters with an uppercase letter, a number, and a special character.",
+  "college.previewImport": "Preview Import",
+  "college.importPreviewTitle": "Ready to import {{count}} students — review before confirming",
+  "college.importSkippedLines": "{{count}} line(s) will be skipped (need Name, Email, Enrollment separated by commas):",
+  "college.confirmImport": "Confirm Import ({{count}})",
+  "college.cancelImport": "Cancel",
+  "college.rowsFailed": "Rows failed"
 }

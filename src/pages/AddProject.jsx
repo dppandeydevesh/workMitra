@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { API_BASE_URL } from '../config';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../components/Toast';
 import { useTranslation } from 'react-i18next';
 import { track } from '../utils/analytics';
 import { fetchWithAuth } from '../services/apiClient';
+
+const DRAFT_KEY = 'wm_addproject_draft';
 
 export default function AddProject() {
   const navigate = useNavigate();
@@ -14,6 +16,7 @@ export default function AddProject() {
   const [step, setStep] = useState(1);
   const [errorMessage, setErrorMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [draftRestored, setDraftRestored] = useState(false);
 
   // Form Fields States
   const [title, setTitle] = useState('');
@@ -48,6 +51,104 @@ export default function AddProject() {
   const [q2OptC, setQ2OptC] = useState('');
   const [q2OptD, setQ2OptD] = useState('');
   const [q2Correct, setQ2Correct] = useState('');
+
+  // ── Draft persistence ────────────────────────────────────────────────────
+  // A 6-step wizard is too much work to lose to a refresh or an accidental
+  // Exit tap. Autosave to localStorage (debounced), restore on mount, clear
+  // on successful publish.
+  const draftSetters = useRef(null);
+  draftSetters.current = {
+    step: setStep,
+    title: setTitle,
+    description: setDescription,
+    skillsInput: setSkillsInput,
+    studentsNeeded: setStudentsNeeded,
+    budget: setBudget,
+    duration: setDuration,
+    deadline: setDeadline,
+    complexity: setComplexity,
+    departmentName: setDepartmentName,
+    targetUniversity: setTargetUniversity,
+    minReadinessScore: setMinReadinessScore,
+    isNdaRequired: setIsNdaRequired,
+    hasPpiBadge: setHasPpiBadge,
+    status: setStatus,
+    q1Text: setQ1Text,
+    q1OptA: setQ1OptA,
+    q1OptB: setQ1OptB,
+    q1OptC: setQ1OptC,
+    q1OptD: setQ1OptD,
+    q1Correct: setQ1Correct,
+    q2Text: setQ2Text,
+    q2OptA: setQ2OptA,
+    q2OptB: setQ2OptB,
+    q2OptC: setQ2OptC,
+    q2OptD: setQ2OptD,
+    q2Correct: setQ2Correct,
+  };
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const draft = JSON.parse(raw);
+      Object.entries(draft).forEach(([key, value]) => {
+        const setter = draftSetters.current[key];
+        if (setter && value !== undefined && value !== null) setter(value);
+      });
+      setDraftRestored(true);
+    } catch {
+      localStorage.removeItem(DRAFT_KEY);
+    }
+  }, []);
+
+  const draftValues = {
+    step,
+    title,
+    description,
+    skillsInput,
+    studentsNeeded,
+    budget,
+    duration,
+    deadline,
+    complexity,
+    departmentName,
+    targetUniversity,
+    minReadinessScore,
+    isNdaRequired,
+    hasPpiBadge,
+    status,
+    q1Text,
+    q1OptA,
+    q1OptB,
+    q1OptC,
+    q1OptD,
+    q1Correct,
+    q2Text,
+    q2OptA,
+    q2OptB,
+    q2OptC,
+    q2OptD,
+    q2Correct,
+  };
+  const draftJson = JSON.stringify(draftValues);
+  useEffect(() => {
+    // Don't persist an untouched form
+    if (!title && !description && !skillsInput) return;
+    const id = setTimeout(() => {
+      try {
+        localStorage.setItem(DRAFT_KEY, draftJson);
+      } catch {
+        /* storage full/blocked — drafting is best-effort */
+      }
+    }, 600);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draftJson]);
+
+  const clearDraft = () => {
+    localStorage.removeItem(DRAFT_KEY);
+  };
 
   const handleNextStep = () => {
     // Basic validation
@@ -158,6 +259,7 @@ export default function AddProject() {
       });
 
       if (response.ok) {
+        clearDraft();
         toast.success(t('addProject.successMessage', { status }));
         track('project_posted', { role: 'company' });
         navigate('/company-dashboard');
@@ -188,12 +290,37 @@ export default function AddProject() {
           </div>
           <button
             type="button"
-            onClick={() => navigate('/company-dashboard')}
+            onClick={() => {
+              // Draft is autosaved, so exiting is safe — tell the user that
+              // instead of letting them fear losing the form.
+              if (title || description || skillsInput) {
+                toast.success(t('addProject.draftSavedOnExit'));
+              }
+              navigate('/company-dashboard');
+            }}
             className="w-full sm:w-auto text-center text-xs font-bold text-ink-500 hover:text-marigold-500 bg-ink-100 px-3.5 py-2 rounded-xl transition"
           >
             ← {t('addProject.exitWizard')}
           </button>
         </div>
+
+        {draftRestored && (
+          <div className="flex items-center justify-between gap-3 p-3 mb-4 bg-marigold-50 border border-marigold-200 rounded-xl text-xs">
+            <span className="font-semibold text-marigold-800">
+              📝 {t('addProject.draftRestored')}
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                clearDraft();
+                window.location.reload();
+              }}
+              className="shrink-0 font-bold text-marigold-700 hover:text-marigold-900 underline"
+            >
+              {t('addProject.startFresh')}
+            </button>
+          </div>
+        )}
 
         {errorMessage && (
           <div className="p-3.5 bg-red-50 border border-red-200 text-red-700 font-bold rounded-xl text-xs mb-4">
@@ -328,6 +455,7 @@ export default function AddProject() {
                   <input
                     type="date"
                     value={deadline}
+                    min={new Date().toISOString().split('T')[0]}
                     onChange={(e) => setDeadline(e.target.value)}
                     className="w-full bg-ink-50 border p-3.5 rounded-xl text-xs outline-none focus:ring-2 focus:ring-marigold-400"
                     required
@@ -380,6 +508,7 @@ export default function AddProject() {
                 </label>
                 <input
                   type="number"
+                  min="0"
                   placeholder={t('addProject.stipendPlaceholder')}
                   value={budget}
                   onChange={(e) => setBudget(e.target.value)}

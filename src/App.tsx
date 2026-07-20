@@ -18,6 +18,7 @@ const NotFoundPage = React.lazy(() => import("./pages/NotFoundPage"));
 const ProjectDetails = React.lazy(() => import("./pages/ProjectDetails"));
 import Navbar from "./components/Navbar";
 import BottomNav from "./components/BottomNav";
+import PublicLanguageSwitcher from "./components/PublicLanguageSwitcher";
 const LandingPage = React.lazy(() => import("./pages/LandingPage"));
 const AboutPage = React.lazy(() => import("./pages/AboutPage"));
 const TermsPage = React.lazy(() => import("./pages/LegalPages").then(module => ({ default: module.TermsPage })));
@@ -44,6 +45,15 @@ function RouteTracker() {
   }, [location]);
   return null;
 }
+
+// Wraps public pages (no Navbar) with the floating language switcher so
+// visitors can reach Hindi before ever logging in.
+const PublicPage = ({ children }: { children: React.ReactNode }) => (
+  <>
+    {children}
+    <PublicLanguageSwitcher />
+  </>
+);
 
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const savedUser = localStorage.getItem("user");
@@ -95,12 +105,12 @@ function App() {
               <RouteTracker />
               <Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-transparent text-marigold-500 font-bold tracking-widest text-sm uppercase">Loading Platform...</div>}>
                 <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
-                <Route path="/terms" element={<TermsPage />} />
-                <Route path="/privacy" element={<PrivacyPage />} />
-                <Route path="/refund" element={<RefundPage />} />
-                <Route path="/about" element={<AboutPage />} />
+                <Route path="/" element={<PublicPage><LandingPage /></PublicPage>} />
+                <Route path="/login" element={<PublicRoute><PublicPage><LoginPage /></PublicPage></PublicRoute>} />
+                <Route path="/terms" element={<PublicPage><TermsPage /></PublicPage>} />
+                <Route path="/privacy" element={<PublicPage><PrivacyPage /></PublicPage>} />
+                <Route path="/refund" element={<PublicPage><RefundPage /></PublicPage>} />
+                <Route path="/about" element={<PublicPage><AboutPage /></PublicPage>} />
                 <Route path="/certificate/verify/:applicationId" element={<CertificatePage />} />
                 
                 <Route path="/preferences" element={<ProtectedRoute allowedRoles={["student"]}><Preferences /></ProtectedRoute>} />

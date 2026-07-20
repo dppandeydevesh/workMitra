@@ -78,10 +78,24 @@ export default function LandingPage() {
             </div>
             <div className="flex items-center gap-4">
               <button
-                onClick={() => navigate('/about')}
+                onClick={() =>
+                  document
+                    .getElementById('how-it-works')
+                    ?.scrollIntoView({ behavior: 'smooth' })
+                }
                 className="text-xs sm:text-sm font-semibold text-ink-600 hover:text-marigold-500 transition"
               >
                 {t('landing.howItWorks')}
+              </button>
+              <button
+                onClick={() =>
+                  document
+                    .getElementById('pricing')
+                    ?.scrollIntoView({ behavior: 'smooth' })
+                }
+                className="hidden sm:block text-xs sm:text-sm font-semibold text-ink-600 hover:text-marigold-500 transition"
+              >
+                {t('landing.pricingNav')}
               </button>
               <button
                 onClick={() => navigate('/login')}
@@ -128,7 +142,11 @@ export default function LandingPage() {
               {t('landing.getStarted')}
             </button>
             <button
-              onClick={() => navigate('/about')}
+              onClick={() =>
+                document
+                  .getElementById('how-it-works')
+                  ?.scrollIntoView({ behavior: 'smooth' })
+              }
               style={{
                 background: 'transparent',
                 border: '0.5px solid #C8C9C2',
@@ -138,13 +156,46 @@ export default function LandingPage() {
               }}
               className="active:scale-95 transition text-xs sm:text-sm"
             >
-              {t('landing.exploreSupportDesk')}
+              {t('landing.seeHowItWorks')}
             </button>
           </div>
         </section>
 
+        {/* 🤝 Trust strip — factual, no invented numbers */}
+        <section className="bg-white border-b border-ink-100 py-8 px-4">
+          <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div>
+              <span className="text-2xl block mb-1">🎓</span>
+              <p className="text-xs font-bold text-ink-700">
+                {t('landing.trustVerified')}
+              </p>
+            </div>
+            <div>
+              <span className="text-2xl block mb-1">🤖</span>
+              <p className="text-xs font-bold text-ink-700">
+                {t('landing.trustAi')}
+              </p>
+            </div>
+            <div>
+              <span className="text-2xl block mb-1">🔒</span>
+              <p className="text-xs font-bold text-ink-700">
+                {t('landing.trustPayments')}
+              </p>
+            </div>
+            <div>
+              <span className="text-2xl block mb-1">🇮🇳</span>
+              <p className="text-xs font-bold text-ink-700">
+                {t('landing.trustBilingual')}
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* 🛠️ How it works (Student vs Recruiter) */}
-        <section className="bg-white py-16 px-4 border-y border-ink-100 shadow-inner">
+        <section
+          id="how-it-works"
+          className="bg-white py-16 px-4 border-y border-ink-100 shadow-inner scroll-mt-16"
+        >
           <div className="max-w-6xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-black text-center text-ink-800 tracking-tight mb-12">
               {t('landing.dualEngineTitle')}
@@ -246,6 +297,86 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* 💰 Pricing */}
+        <section
+          id="pricing"
+          className="bg-paper py-16 px-4 border-b border-ink-100 scroll-mt-16"
+        >
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-2xl sm:text-3xl font-black text-ink-800 tracking-tight mb-3">
+              {t('landing.pricingTitle')}
+            </h2>
+            <p className="text-sm text-ink-500 mb-10 max-w-xl mx-auto">
+              {t('landing.pricingSubtitle')}
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+              {/* Free tier */}
+              <div className="bg-white rounded-2xl border border-ink-200 p-8 shadow-sm flex flex-col">
+                <h3 className="text-sm font-black uppercase tracking-wider text-ink-500">
+                  {t('landing.freePlanName')}
+                </h3>
+                <p className="text-4xl font-black text-ink-800 mt-3">
+                  ₹0
+                  <span className="text-sm font-medium text-ink-400">
+                    {' '}
+                    {t('landing.freePlanPeriod')}
+                  </span>
+                </p>
+                <ul className="mt-6 space-y-3 text-xs text-ink-600 flex-1">
+                  <li>✓ {t('landing.freeFeature1')}</li>
+                  <li>✓ {t('landing.freeFeature2')}</li>
+                  <li>✓ {t('landing.freeFeature3')}</li>
+                  <li>✓ {t('landing.freeFeature4')}</li>
+                </ul>
+                <button
+                  onClick={() => navigate('/login')}
+                  className="mt-8 w-full py-3 border border-ink-300 hover:border-marigold-400 hover:text-marigold-600 text-ink-700 rounded-xl text-xs font-bold uppercase tracking-wider transition"
+                >
+                  {t('landing.freePlanCta')}
+                </button>
+              </div>
+              {/* Premium tier */}
+              <div className="bg-white rounded-2xl border-2 border-marigold-400 p-8 shadow-md relative flex flex-col">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-marigold-500 text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full">
+                  {t('landing.premiumBadge')}
+                </span>
+                <h3 className="text-sm font-black uppercase tracking-wider text-marigold-600">
+                  {t('landing.premiumPlanName')}
+                </h3>
+                <p className="text-4xl font-black text-ink-800 mt-3">
+                  ₹99
+                  <span className="text-sm font-medium text-ink-400">
+                    {' '}
+                    {t('landing.premiumPlanPeriod')}
+                  </span>
+                </p>
+                <ul className="mt-6 space-y-3 text-xs text-ink-600 flex-1">
+                  <li>✓ {t('landing.premiumFeature1')}</li>
+                  <li>✓ {t('landing.premiumFeature2')}</li>
+                  <li>✓ {t('landing.premiumFeature3')}</li>
+                  <li>✓ {t('landing.premiumFeature4')}</li>
+                </ul>
+                <button
+                  onClick={() => navigate('/login')}
+                  className="mt-8 w-full py-3 bg-marigold-500 hover:bg-marigold-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition shadow-sm"
+                >
+                  {t('landing.premiumPlanCta')}
+                </button>
+              </div>
+            </div>
+            {/* Companies & faculty note */}
+            <p className="mt-8 text-xs text-ink-500">
+              {t('landing.companyPricingNote')}{' '}
+              <button
+                onClick={() => navigate('/login')}
+                className="text-marigold-600 font-bold hover:underline"
+              >
+                {t('landing.companyPricingCta')}
+              </button>
+            </p>
           </div>
         </section>
 

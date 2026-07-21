@@ -291,7 +291,7 @@ export default function LoginForms({
               key={`signup-${turnstileResetKey}`}
               siteKey={
                 import.meta.env.VITE_CF_TURNSTILE_SITE_KEY ||
-                '1x00000000000000000000AA'
+                '0x4AAAAAAD6WGrBi_uH3UIIG'
               }
               onSuccess={(token) => setTurnstileToken(token)}
               onExpire={resetTurnstile}
@@ -412,7 +412,7 @@ export default function LoginForms({
               key={`signin-${turnstileResetKey}`}
               siteKey={
                 import.meta.env.VITE_CF_TURNSTILE_SITE_KEY ||
-                '1x00000000000000000000AA'
+                '0x4AAAAAAD6WGrBi_uH3UIIG'
               }
               onSuccess={(token) => setTurnstileToken(token)}
               onExpire={resetTurnstile}

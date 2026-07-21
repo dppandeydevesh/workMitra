@@ -380,7 +380,7 @@ export default function StudentProfile() {
                       type="url"
                       value={avatarUrl}
                       onChange={(e) => setAvatarUrl(e.target.value)}
-                      placeholder="https://workmitra.me/assets/default-avatar.jpg"
+                      placeholder="https://myworkmitra.in/assets/default-avatar.jpg"
                       className="w-full bg-ink-50 border border-ink-200 text-xs px-3.5 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-marigold-400"
                     />
                   </div>

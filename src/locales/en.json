@@ -212,7 +212,7 @@
   "companySettings.companyNamePlaceholder": "e.g. TechCorp Solutions",
   "companySettings.companyNameHelp": "Company name is set during registration.",
   "companySettings.logoUrl": "Logo URL",
-  "companySettings.logoUrlPlaceholder": "https://workmitra.me/assets/company-logo.png",
+  "companySettings.logoUrlPlaceholder": "https://myworkmitra.in/assets/company-logo.png",
   "companySettings.companyBio": "Company Bio & Mission Statement",
   "companySettings.companyBioPlaceholder": "Describe your company's mission, culture, and the type of talent you're looking for...",
   "companySettings.socialLinks": "Social & Web Links",

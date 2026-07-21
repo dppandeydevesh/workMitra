@@ -107,7 +107,7 @@ const sendDailyDigests = async () => {
   }
 
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  const appUrl = process.env.FRONTEND_URL || 'https://workmitra.me';
+  const appUrl = process.env.FRONTEND_URL || 'https://myworkmitra.in';
   const yesterday = istYesterday();
 
   try {

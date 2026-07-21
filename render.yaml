@@ -50,9 +50,9 @@ services:
       # Since the backend serves the frontend on the same origin, FRONTEND_URL
       # and the allowed origin are your Render URL (or custom domain).
       - key: FRONTEND_URL
-        sync: false          # e.g. https://workmitra.me
+        sync: false          # e.g. https://myworkmitra.in
       - key: CORS_ORIGINS
-        sync: false          # e.g. https://workmitra.me,https://www.workmitra.me
+        sync: false          # e.g. https://myworkmitra.in,https://www.myworkmitra.in
 
       # ── AI (Google Gemini) ───────────────────────────────────
       - key: GEMINI_API_KEY
@@ -81,7 +81,7 @@ services:
       - key: RESEND_API_KEY
         sync: false
       - key: EMAIL_FROM
-        sync: false          # e.g. workMitra <noreply@workmitra.me>
+        sync: false          # e.g. workMitra <noreply@myworkmitra.in>
 
       # ── File storage (Supabase) ──────────────────────────────
       - key: SUPABASE_URL

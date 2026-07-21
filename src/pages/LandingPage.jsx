@@ -41,9 +41,12 @@ export default function LandingPage() {
           property="og:description"
           content="Verified internships and freelance gigs for Indian college students."
         />
-        <meta property="og:url" content="https://workmitra.me" />
+        <meta property="og:url" content="https://myworkmitra.in" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://workmitra.me/og-image.png" />
+        <meta
+          property="og:image"
+          content="https://myworkmitra.in/og-image.png"
+        />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
@@ -57,10 +60,10 @@ export default function LandingPage() {
         />
         <meta
           name="twitter:image"
-          content="https://workmitra.me/og-image.png"
+          content="https://myworkmitra.in/og-image.png"
         />
 
-        <link rel="canonical" href="https://workmitra.me" />
+        <link rel="canonical" href="https://myworkmitra.in" />
       </Helmet>
       <div className="min-h-screen bg-paper font-sans text-ink-900 flex flex-col">
         {/* 🚀 Sticky Header */}

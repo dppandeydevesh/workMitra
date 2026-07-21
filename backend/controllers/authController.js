@@ -57,7 +57,7 @@ const sendEmailOtp = async (toEmail, otp, mobileOtp = null) => {
         "Authorization": `Bearer ${resendApiKey}`
       },
       body: JSON.stringify({
-        from: process.env.EMAIL_FROM || "workMitra <noreply@workmitra.me>",
+        from: process.env.EMAIL_FROM || "workMitra <noreply@myworkmitra.in>",
         to: toEmail,
         subject: "workMitra Sign Up Verification OTP Code",
         html: `
@@ -117,7 +117,7 @@ const sendResetPasswordEmail = async (toEmail, resetLink) => {
         "Authorization": `Bearer ${resendApiKey}`
       },
       body: JSON.stringify({
-        from: process.env.EMAIL_FROM || "workMitra <noreply@workmitra.me>",
+        from: process.env.EMAIL_FROM || "workMitra <noreply@myworkmitra.in>",
         to: toEmail,
         subject: "workMitra Password Reset Recovery Link",
         html: `
@@ -749,7 +749,7 @@ const sendContactEmail = async (req, res, next) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendApiKey}` },
       body: JSON.stringify({
-        from: 'WorkMitra Support <support@workmitra.me>',
+        from: 'WorkMitra Support <support@myworkmitra.in>',
         to: ['adminWorkMitra@gmail.com'],
         subject: `[Contact] ${name} — ${email}`,
         html: `<p><strong>From:</strong> ${name} &lt;${email}&gt;</p><p><strong>Message:</strong></p><p>${message.replace(/\n/g, '<br/>')}</p>`,

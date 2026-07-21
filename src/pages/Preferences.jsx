@@ -334,7 +334,7 @@ export default function Preferences() {
                       avatarUrl: e.target.value,
                     })
                   }
-                  placeholder="https://workmitra.me/assets/default-avatar.jpg"
+                  placeholder="https://myworkmitra.in/assets/default-avatar.jpg"
                   className="w-full px-3 py-2 text-xs border border-ink-300 bg-transparent rounded-lg focus:ring-2 focus:ring-marigold-500 outline-none"
                 />
               </div>
@@ -532,7 +532,9 @@ export default function Preferences() {
                 : 'bg-marigold-500 text-white hover:bg-marigold-600'
             }`}
           >
-            {isSaving ? t('preferences.saving', 'Saving…') : `${t('preferences.continue_button')} →`}
+            {isSaving
+              ? t('preferences.saving', 'Saving…')
+              : `${t('preferences.continue_button')} →`}
           </button>
         </form>
 

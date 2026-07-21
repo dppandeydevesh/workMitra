@@ -61,8 +61,8 @@ Set all of these in **Render → Environment**. Values are never committed.
   can't get static egress IPs on your plan; prefer restricting).
 
 ### URLs / CORS (same-origin deploy)
-- `FRONTEND_URL` — e.g. `https://workmitra.me` (used in password-reset emails)
-- `CORS_ORIGINS` — comma-separated allowed origins, e.g. `https://workmitra.me,https://www.workmitra.me`
+- `FRONTEND_URL` — e.g. `https://myworkmitra.in` (used in password-reset emails)
+- `CORS_ORIGINS` — comma-separated allowed origins, e.g. `https://myworkmitra.in,https://www.myworkmitra.in`
 
 ### AI (Gemini)
 - `GEMINI_API_KEY`
@@ -85,7 +85,7 @@ Set all of these in **Render → Environment**. Values are never committed.
 
 ### Email (Resend)
 - `RESEND_API_KEY`
-- `EMAIL_FROM` — e.g. `workMitra <noreply@workmitra.me>` (verify the domain in Resend)
+- `EMAIL_FROM` — e.g. `workMitra <noreply@myworkmitra.in>` (verify the domain in Resend)
 
 ### File storage (Supabase)
 - `SUPABASE_URL`
@@ -125,8 +125,8 @@ These must exist when the build runs, not just at runtime:
 2. **Razorpay webhook** — send a test event from the Razorpay dashboard; confirm a
    `payment.captured` flips `hasPaidPass` and check Render logs for the confirmation line.
 3. **Google Search Console** — verify domain ownership (DNS TXT record is cleanest for
-   an apex domain like `workmitra.me`). `public/robots.txt` and `public/sitemap.xml`
-   already point at `https://workmitra.me/sitemap.xml` — submit the sitemap.
+   an apex domain like `myworkmitra.in`). `public/robots.txt` and `public/sitemap.xml`
+   already point at `https://myworkmitra.in/sitemap.xml` — submit the sitemap.
 4. **Prerender** — test a crawlable URL with
    `curl -A "Googlebot" https://<domain>/` and confirm you get server-rendered HTML,
    not the empty JS shell.

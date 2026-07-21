@@ -3,4 +3,4 @@ Allow: /
 Disallow: /dashboard
 Disallow: /admin
 Disallow: /api
-Sitemap: https://workmitra.me/sitemap.xml
+Sitemap: https://myworkmitra.in/sitemap.xml
